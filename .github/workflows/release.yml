@@ -30,7 +30,7 @@ jobs:
                     npm install --global semantic-release
                     npm install --global @semantic-release/git
                     npm install --global @semantic-release/exec
-                    npm install --global @ambimax/semantic-release-composer
+                    npm install --global @iwavesmedia/semantic-release-composer
 
             -   name: Run semantic-release
                 env:
