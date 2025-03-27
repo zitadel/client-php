@@ -23,7 +23,7 @@ jobs:
                     php-version: '8.4'
 
             -   name: Install Dependencies
-                run: composer install
+                run: composer install --prefer-dist
 
             -   name: Run Tests
                 run: vendor/bin/phpunit
