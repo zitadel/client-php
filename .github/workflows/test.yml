@@ -1,0 +1,29 @@
+name: Run Tests
+
+on: push
+
+permissions:
+    contents: write
+
+defaults:
+    run:
+        working-directory: ./
+
+jobs:
+    app-testing:
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v4
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '8.4'
+
+            -   name: Install Dependencies
+                run: composer install
+
+            -   name: Run Tests
+                run: vendor/bin/phpunit
