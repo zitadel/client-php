@@ -1,0 +1,14 @@
+.gitignore
+.github/**/*.yml
+composer.json
+LICENSE
+README.md
+docs/**/*.md
+api/*.yaml
+.openapi-generator/FILES
+.openapi-generator/VERSION
+.php-cs-fixer.dist.php
+.gitlab-ci.yml
+.travis.yml
+git_push.sh
+phpunit.xml.dist

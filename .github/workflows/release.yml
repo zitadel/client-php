@@ -1,0 +1,39 @@
+name: Release
+
+on:
+    push:
+        branches:
+            - main
+
+permissions:
+    contents: write
+
+defaults:
+    run:
+        working-directory: ./
+
+jobs:
+    publish-package:
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v4
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '8.4'
+
+            -   name: Install Semantic Release
+                run: |
+                    npm install --global semantic-release
+                    npm install --global @semantic-release/git
+                    npm install --global @semantic-release/exec
+                    npm install --global @ambimax/semantic-release-composer
+
+            -   name: Run semantic-release
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                    PACKAGIST_TOKEN: ${{ secrets.PACKAGIST_TOKEN }}
+                run: npx semantic-release
