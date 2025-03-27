@@ -1,6 +1,6 @@
 version: 2
 updates:
-    - package-ecosystem: "php"
+    - package-ecosystem: "composer"
       schedule:
           interval: "weekly"
     - package-ecosystem: "github-actions"
