@@ -1,6 +1,7 @@
 .gitignore
 .github/**/*.yml
 composer.json
+composer.lock
 LICENSE
 README.md
 docs/**/*.md
@@ -12,3 +13,4 @@ api/*.yaml
 .travis.yml
 git_push.sh
 phpunit.xml.dist
+phpunit.xml
