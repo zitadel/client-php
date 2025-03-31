@@ -1,5 +1,6 @@
 {
 	"name": "zitadel/client",
+	"version": "0.0.1",
 	"description": "Official Zitadel SDK for PHP. Authenticate and access Zitadel's authentication and management APIs in PHP.",
 	"keywords": [
 		"api",
@@ -39,5 +40,12 @@
 		"psr-4": {
 			"Zitadel\\Client\\Test\\": "test/"
 		}
+	},
+	"support": {
+		"email": "support@zitadel.com",
+		"issues": "https://github.com/zitadel/client-php/issues",
+		"source": "https://github.com/zitadel/client-php",
+		"security": "https://github.com/zitadel/client-php/security",
+		"chat": "https://discord.com/servers/zitadel-927474939156643850"
 	}
 }
