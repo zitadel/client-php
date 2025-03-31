@@ -39,10 +39,5 @@
 		"psr-4": {
 			"Zitadel\\Client\\Test\\": "test/"
 		}
-	},
-	"config": {
-		"platform": {
-			"php": "7.4"
-		}
 	}
 }

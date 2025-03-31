@@ -15,3 +15,7 @@ composer.phar
 .phpunit.result.cache
 
 .env
+
+devbox.json
+devbox.lock
+.devbox
