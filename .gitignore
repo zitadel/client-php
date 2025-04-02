@@ -1,0 +1,5 @@
+/vendor/
+devbox.json
+devbox.lock
+.devbox
+.idea

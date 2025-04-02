@@ -1,0 +1,6 @@
+{
+    "name": "zitadel/zitadel",
+    "type": "library",
+    "minimum-stability": "dev",
+    "require": {}
+}
