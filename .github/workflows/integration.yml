@@ -1,0 +1,34 @@
+name: Compatibility
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check-compatibility:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: [ '7.4', '8.0', '8.1' ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          path: project/library
+
+      - name: Checkout sanity stub
+        uses: actions/checkout@v4
+        with:
+          ref: sanity
+          path: project/sanity
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+
+      - name: Check Installability
+        working-directory: project/sanity
+        run: composer require zitadel-client

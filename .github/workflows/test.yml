@@ -3,25 +3,25 @@ name: Run Tests
 on: push
 
 permissions:
-    contents: write
+  contents: write
 
 defaults:
-    run:
-        working-directory: ./
+  run:
+    working-directory: ./
 
 jobs:
-    app-testing:
-        runs-on: ubuntu-latest
+  app-testing:
+    runs-on: ubuntu-latest
 
-        steps:
-            -   name: Checkout code
-                uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            -   name: Setup PHP
-                uses: shivammathur/setup-php@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
 
-            -   name: Install Dependencies
-                run: composer install --prefer-dist
+      - name: Install Dependencies
+        run: composer install --prefer-dist
 
-            -   name: Run Tests
-                run: vendor/bin/phpunit
+      - name: Run Tests
+        run: vendor/bin/phpunit
