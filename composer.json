@@ -2,5 +2,10 @@
     "name": "zitadel/zitadel",
     "type": "library",
     "minimum-stability": "dev",
-    "require": {}
+	"repositories": {
+		"local": {
+			"type": "path",
+			"url": "../library"
+		}
+	}
 }
