@@ -31,4 +31,4 @@ jobs:
 
       - name: Check Installability
         working-directory: project/sanity
-        run: composer require zitadel-client
+        run: composer require zitadel/client
