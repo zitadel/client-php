@@ -9,6 +9,7 @@ use Zitadel\Client\Api\OrganizationServiceApi;
 use Zitadel\Client\Api\SessionServiceApi;
 use Zitadel\Client\Api\SettingsServiceApi;
 use Zitadel\Client\Api\UserServiceApi;
+use Zitadel\Client\Auth\Authenticator;
 use Zitadel\Client\Configuration;
 
 class Zitadel
@@ -21,10 +22,9 @@ class Zitadel
 	public SettingsServiceApi $settings;
 	public UserServiceApi $users;
 
-	public function __construct(string $host, string $accessToken, callable $mutateConfig = null)
+	public function __construct(Authenticator $authenticator)
 	{
-		$config = new Configuration();
-		$config->setHost($host)->setAccessToken($accessToken);
+		$config = new Configuration($authenticator);
 
 		$mutateConfig = $mutateConfig ?? function ($config) {
 		};
