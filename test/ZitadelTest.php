@@ -27,7 +27,7 @@ class ZitadelTest extends TestCase
     });
     sort($expected);
 
-    $zitadel = new Zitadel(new NoAuthAuthenticator("http://dummy"));
+    $zitadel = new Zitadel(new NoAuthAuthenticator());
     $reflection = new ReflectionClass($zitadel);
     $properties = $reflection->getProperties();
     $actual = [];
