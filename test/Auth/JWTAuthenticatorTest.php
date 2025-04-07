@@ -38,4 +38,25 @@ class JWTAuthenticatorTest extends OAuthAuthenticatorTest
     openssl_pkey_export($res, $key);
     return $key;
   }
+
+  /**
+   * It should fail to refresh the token due to an incorrect token endpoint URL.
+   *
+   * @throws Exception
+   */
+  public function testThrowsExceptionWhenTokenRefreshFails(): void
+  {
+    sleep(20);
+
+    $authenticator = JWTAuthenticator::builder(static::$oauthHost, "dummy-client", "dummy-secret")
+      ->tokenEndpoint('/noop')
+      ->build();
+
+    try {
+      $this->assertNotEmpty($authenticator->getAuthToken(), 'Access token should not be empty');
+      $this->fail('Expected exception was not thrown');
+    } catch (Exception $e) {
+      $this->assertStringStartsWith('Token refresh failed', $e->getMessage());
+    }
+  }
 }

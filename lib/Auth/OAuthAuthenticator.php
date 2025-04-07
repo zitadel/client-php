@@ -3,10 +3,9 @@
 namespace Zitadel\Client\Auth;
 
 use Exception;
-use GuzzleHttp\Exception\GuzzleException;
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Token\AccessTokenInterface;
+use Throwable;
 
 /**
  * Abstract base class for OAuth-based authenticators.
@@ -66,7 +65,6 @@ abstract class OAuthAuthenticator extends Authenticator
    *
    * @return string The authentication token
    * @throws Exception
-   * @throws GuzzleException
    */
   public function getAuthToken(): string
   {
@@ -80,7 +78,7 @@ abstract class OAuthAuthenticator extends Authenticator
    * Refresh the access token using the configured grant type and options.
    *
    * @return AccessTokenInterface
-   * @throws Exception|GuzzleException if token fetch fails or response is invalid.
+   * @throws Exception if token fetch fails or response is invalid.
    */
   public function refreshToken(): AccessTokenInterface
   {
@@ -95,7 +93,7 @@ abstract class OAuthAuthenticator extends Authenticator
       }
 
       return $this->token;
-    } catch (IdentityProviderException $e) {
+    } catch (Throwable $e) {
       throw new Exception('Token refresh failed: ' . $e->getMessage(), 0, $e);
     }
   }

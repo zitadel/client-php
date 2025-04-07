@@ -2,7 +2,7 @@
 
 namespace Zitadel\Client\Test\Auth;
 
-use GuzzleHttp\Exception\GuzzleException;
+use Exception;
 use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
 
 /**
@@ -14,7 +14,7 @@ use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
 class ClientCredentialsAuthenticatorTest extends OAuthAuthenticatorTest
 {
   /**
-   * @throws GuzzleException
+   * @throws Exception
    */
   public function testRefreshToken(): void
   {
@@ -31,5 +31,26 @@ class ClientCredentialsAuthenticatorTest extends OAuthAuthenticatorTest
     $this->assertEquals($token->getToken(), $authenticator->getAuthToken());
     $this->assertEquals($authenticator->getHost()->getEndpoint(), static::$oauthHost);
     $this->assertNotEquals($authenticator->refreshToken()->getToken(), $authenticator->refreshToken()->getToken());
+  }
+
+  /**
+   * It should fail to refresh the token due to an incorrect token endpoint URL.
+   *
+   * @throws Exception
+   */
+  public function testThrowsExceptionWhenTokenRefreshFails(): void
+  {
+    sleep(20);
+
+    $authenticator = ClientCredentialsAuthenticator::builder(static::$oauthHost, "dummy-client", "dummy-secret")
+      ->tokenEndpoint('/noop')
+      ->build();
+
+    try {
+      $this->assertNotEmpty($authenticator->getAuthToken(), 'Access token should not be empty');
+      $this->fail('Expected exception was not thrown');
+    } catch (Exception $e) {
+      $this->assertStringStartsWith('Token refresh failed', $e->getMessage());
+    }
   }
 }
