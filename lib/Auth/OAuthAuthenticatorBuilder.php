@@ -10,18 +10,19 @@ namespace Zitadel\Client\Auth;
  */
 abstract class OAuthAuthenticatorBuilder
 {
-  protected string $host;
-  protected string $tokenEndpoint = '/oauth/v2/token';
-  protected string $authScopes = 'openid';
+  protected Hostname $hostName;
+  protected AuthEndpoints $authEndpoints;
+  protected string $authScopes = 'openid urn:zitadel:iam:org:project:id:zitadel:aud';
 
   /**
    * Constructs the builder with the required host.
    *
-   * @param string $host The base URL for API endpoints.
+   * @param string $hostName
    */
-  public function __construct(string $host)
+  public function __construct(string $hostName)
   {
-    $this->host = $host;
+    $this->hostName = new Hostname($hostName);
+    $this->authEndpoints = AuthEndpoints::getInstance($this->hostName);
   }
 
   /**
@@ -32,7 +33,7 @@ abstract class OAuthAuthenticatorBuilder
    */
   public function tokenEndpoint(string $tokenEndpoint): self
   {
-    $this->tokenEndpoint = $tokenEndpoint;
+    $this->authEndpoints = new AuthEndpoints($this->hostName->getEndpointWithPath($tokenEndpoint), $this->authEndpoints->urlAuthorize, $this->authEndpoints->urlResourceOwnerDetails);
     return $this;
   }
 

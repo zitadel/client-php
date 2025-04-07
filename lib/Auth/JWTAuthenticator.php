@@ -66,32 +66,31 @@ class JWTAuthenticator extends OAuthAuthenticator
   /**
    * JWTAuthenticator constructor.
    *
-   * @param string $host The base URL for the API endpoints.
+   * @param Hostname $hostName The base URL for the API endpoints.
    * @param string $clientId The OAuth2 client identifier.
+   * @param string $scope
    * @param string $issuer The issuer claim for the JWT.
    * @param string $subject The subject claim for the JWT.
    * @param string $audience The audience claim.
    * @param string $privateKey The private key to sign the JWT.
-   * @param string|null $tokenUrl The URL of the OAuth2 token endpoint.
-   * @param string $algorithm The signing algorithm. Defaults to "RS256".
+   * @param AuthEndpoints $authEndpoints
    * @param DateInterval $jwtLifetime The lifetime of the JWT in seconds. Defaults to 300.
-   * @throws Exception
+   * @param string $algorithm The signing algorithm. Defaults to "RS256".
    */
-  public function __construct(
-    string       $host,
-    string       $clientId,
-    string       $scope,
-    string       $issuer,
-    string       $subject,
-    string       $audience,
-    string       $privateKey,
-    ?string      $tokenUrl,
-    DateInterval $jwtLifetime,
-    string       $algorithm = 'RS256'
+  function __construct(
+    Hostname      $hostName,
+    string        $clientId,
+    string        $scope,
+    string        $issuer,
+    string        $subject,
+    string        $audience,
+    string        $privateKey,
+    AuthEndpoints $authEndpoints,
+    DateInterval  $jwtLifetime,
+    string        $algorithm = 'RS256'
   )
   {
-    $fullTokenUrl = (strpos($tokenUrl, '/') === 0) ? $host . $tokenUrl : $tokenUrl;
-    parent::__construct($host, $clientId, $tokenUrl, $scope);
+    parent::__construct($hostName, $clientId, $scope);
     $this->jwtIssuer = $issuer;
     $this->jwtSubject = $subject;
     $this->jwtAudience = $audience;
@@ -100,9 +99,9 @@ class JWTAuthenticator extends OAuthAuthenticator
     $this->jwtLifetime = $jwtLifetime;
     $this->provider = new GenericProvider([
       'clientId' => $this->clientId,
-      'urlAccessToken' => $fullTokenUrl,
-      'urlAuthorize' => 'https://service.example.com/authorize', #FIXME
-      'urlResourceOwnerDetails' => 'https://service.example.com/resource'
+      'urlAccessToken' => $authEndpoints->urlAccessToken->toString(),
+      'urlAuthorize' => $authEndpoints->urlAuthorize->toString(),
+      'urlResourceOwnerDetails' => $authEndpoints->urlResourceOwnerDetails->toString()
     ]);
     $this->provider->getGrantFactory()->setGrant(JWTAuthenticator::GRANT_TYPE, new JwtBearer());
   }
@@ -152,7 +151,7 @@ class JWTAuthenticator extends OAuthAuthenticator
       throw new Exception("Missing required configuration keys in JSON file.");
     }
     return new self(
-      $host,
+      $hostName,
       $userId,
       $tokenUrl,
       $userId,
@@ -174,7 +173,8 @@ class JWTAuthenticator extends OAuthAuthenticator
    */
   public static function builder(string $host, string $userId, string $privateKey): JWTAuthenticatorBuilder
   {
-    return new JWTAuthenticatorBuilder($host, $userId, $userId, $host, $privateKey);
+    $hostName = new Hostname($host);
+    return new JWTAuthenticatorBuilder($hostName->getEndpoint(), $userId, $userId, $hostName->getEndpoint(), $privateKey);
   }
 
   /**

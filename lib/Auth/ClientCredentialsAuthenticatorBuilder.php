@@ -35,10 +35,10 @@ final class ClientCredentialsAuthenticatorBuilder extends OAuthAuthenticatorBuil
   public function build(): ClientCredentialsAuthenticator
   {
     return new ClientCredentialsAuthenticator(
-      $this->host,
+      $this->hostName,
       $this->clientId,
       $this->clientSecret,
-      $this->tokenEndpoint,
+      $this->authEndpoints,
       $this->authScopes
     );
   }

@@ -104,14 +104,14 @@ final class JWTAuthenticatorBuilder extends OAuthAuthenticatorBuilder
   {
     try {
       return new JWTAuthenticator(
-        $this->host,
+        $this->hostName,
         "",
         $this->authScopes,
         $this->jwtIssuer,
         $this->jwtSubject,
         $this->jwtAudience,
         $this->privateKey,
-        $this->tokenEndpoint,
+        $this->authEndpoints,
         $this->jwtLifetime,
         $this->jwtAlgorithm,
       );

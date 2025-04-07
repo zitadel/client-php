@@ -22,9 +22,9 @@ abstract class OAuthAuthenticator extends Authenticator
   /**
    * The OAuth2 token endpoint URL.
    *
-   * @var string
+   * @var Hostname
    */
-  protected string $tokenUrl;
+  protected Hostname $hostName;
 
   /**
    * The scope for the token request.
@@ -43,16 +43,14 @@ abstract class OAuthAuthenticator extends Authenticator
   /**
    * OAuthAuthenticator constructor.
    *
-   * @param string $host The base URL for the API endpoints.
+   * @param Hostname $hostName The base URL for the API endpoints.
    * @param string $clientId The OAuth2 client identifier.
-   * @param string $tokenUrl The URL of the OAuth2 token endpoint.
    * @param string|null $scope The scope for the token request.
    */
-  public function __construct(string $host, string $clientId, string $tokenUrl, ?string $scope = null)
+  public function __construct(Hostname $hostName, string $clientId, ?string $scope = null)
   {
-    parent::__construct($host);
+    parent::__construct($hostName);
     $this->clientId = $clientId;
-    $this->tokenUrl = strpos($tokenUrl, '/') === 0 ? $host . $tokenUrl : $tokenUrl;
     $this->scope = $scope;
     $this->token = null;
   }

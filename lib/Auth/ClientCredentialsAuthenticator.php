@@ -15,34 +15,33 @@ use League\OAuth2\Client\Token\AccessTokenInterface;
  */
 class ClientCredentialsAuthenticator extends OAuthAuthenticator
 {
+  private const GRANT_TYPE = "client_credentials";
   private GenericProvider $provider;
 
   /**
    * Constructs a ClientCredentialsAuthenticator.
    *
-   * @param string $host The base URL for the API endpoints.
+   * @param Hostname $hostName The base URL for the API endpoints.
    * @param string $clientId The OAuth2 client identifier.
    * @param string $clientSecret The OAuth2 client secret.
-   * @param string|null $tokenUrl The URL of the OAuth2 token endpoint.
-   *                                  If relative, it will be prepended with the host.
+   * @param AuthEndpoints $authEndpoints
    * @param string $scope The scope for the token request.
    */
-  public function __construct(
-    string  $host,
-    string  $clientId,
-    string  $clientSecret,
-    ?string $tokenUrl,
-    string  $scope = 'openid urn:zitadel:iam:org:project:id:myprojectid:aud additional_scope'
+   function __construct(
+    Hostname      $hostName,
+    string        $clientId,
+    string        $clientSecret,
+    AuthEndpoints $authEndpoints,
+    string        $scope = 'openid urn:zitadel:iam:org:project:id:zitadel:aud'
   )
   {
-    $fullTokenUrl = (strpos($tokenUrl, '/') === 0) ? $host . $tokenUrl : $tokenUrl;
-    parent::__construct($host, $clientId, $fullTokenUrl, $scope);
+    parent::__construct($hostName, $clientId, $scope);
     $this->provider = new GenericProvider([
       'clientId' => $this->clientId,
       'clientSecret' => $clientSecret,
-      'urlAccessToken' => $fullTokenUrl,
-      'urlAuthorize' => 'https://service.example.com/authorize', #FIXME
-      'urlResourceOwnerDetails' => 'https://service.example.com/resource'
+      'urlAccessToken' => $authEndpoints->urlAccessToken->toString(),
+      'urlAuthorize' => $authEndpoints->urlAuthorize->toString(),
+      'urlResourceOwnerDetails' => $authEndpoints->urlResourceOwnerDetails->toString()
     ]);
   }
 
@@ -70,7 +69,7 @@ class ClientCredentialsAuthenticator extends OAuthAuthenticator
   public function refreshToken(): AccessTokenInterface
   {
     try {
-      $this->token = $this->provider->getAccessToken('client_credentials', [
+      $this->token = $this->provider->getAccessToken(ClientCredentialsAuthenticator::GRANT_TYPE, [
         'scope' => $this->scope,
       ]);
 

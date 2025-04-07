@@ -102,7 +102,7 @@ class Configuration
      */
     public function getHost(): string
     {
-        return $this->authenticator->getHost();
+        return $this->authenticator->getHost()->getEndpoint();
     }
 
     /**

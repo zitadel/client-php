@@ -13,18 +13,18 @@ abstract class Authenticator
   /**
    * The base URL for authentication endpoints.
    *
-   * @var string
+   * @var Hostname
    */
-  protected string $host;
+  protected Hostname $hostName;
 
   /**
    * Authenticator constructor.
    *
-   * @param string $host The base URL for all authentication endpoints.
+   * @param Hostname $hostName The base URL for all authentication endpoints.
    */
-  public function __construct(string $host)
+  public function __construct(Hostname $hostName)
   {
-    $this->host = $host;
+    $this->hostName = $hostName;
   }
 
   /**
@@ -37,10 +37,10 @@ abstract class Authenticator
   /**
    * Retrieve the host URL.
    *
-   * @return string The base URL for authentication endpoints.
+   * @return Hostname The base URL for authentication endpoints.
    */
-  public function getHost(): string
+  public function getHost(): Hostname
   {
-    return $this->host;
+    return $this->hostName;
   }
 }
