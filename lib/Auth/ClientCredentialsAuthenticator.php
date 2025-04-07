@@ -2,11 +2,7 @@
 
 namespace Zitadel\Client\Auth;
 
-use Exception;
-use GuzzleHttp\Exception\GuzzleException;
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\GenericProvider;
-use League\OAuth2\Client\Token\AccessTokenInterface;
 
 /**
  * OAuth2 Client Credentials Authenticator.
@@ -16,7 +12,6 @@ use League\OAuth2\Client\Token\AccessTokenInterface;
 class ClientCredentialsAuthenticator extends OAuthAuthenticator
 {
   private const GRANT_TYPE = "client_credentials";
-  private GenericProvider $provider;
 
   /**
    * Constructs a ClientCredentialsAuthenticator.
@@ -35,14 +30,13 @@ class ClientCredentialsAuthenticator extends OAuthAuthenticator
     string        $scope = 'openid urn:zitadel:iam:org:project:id:zitadel:aud'
   )
   {
-    parent::__construct($hostName, $clientId, $scope);
-    $this->provider = new GenericProvider([
-      'clientId' => $this->clientId,
+    parent::__construct($hostName, $clientId, $scope, new GenericProvider([
+      'clientId' => $clientId,
       'clientSecret' => $clientSecret,
       'urlAccessToken' => $authEndpoints->urlAccessToken->toString(),
       'urlAuthorize' => $authEndpoints->urlAuthorize->toString(),
       'urlResourceOwnerDetails' => $authEndpoints->urlResourceOwnerDetails->toString()
-    ]);
+    ]));
   }
 
   /**
@@ -58,28 +52,15 @@ class ClientCredentialsAuthenticator extends OAuthAuthenticator
     return new ClientCredentialsAuthenticatorBuilder($host, $clientId, $clientSecret);
   }
 
-  /**
-   * Refreshes the access token using the client credentials grant.
-   *
-   * Uses the league/oauth2-client library to obtain an access token.
-   *
-   * @return AccessTokenInterface
-   * @throws Exception|GuzzleException if the token request fails.
-   */
-  public function refreshToken(): AccessTokenInterface
+  protected function getGrantType(): string
   {
-    try {
-      $this->token = $this->provider->getAccessToken(ClientCredentialsAuthenticator::GRANT_TYPE, [
-        'scope' => $this->scope,
-      ]);
+    return ClientCredentialsAuthenticator::GRANT_TYPE;
+  }
 
-      if ($this->token === null) {
-        throw new Exception('Unable to refresh token');
-      } else {
-        return $this->token;
-      }
-    } catch (IdentityProviderException $e) {
-      throw new Exception('Token refresh failed: ' . $e->getMessage(), 0, $e);
-    }
+  protected function getAccessTokenOptions(): array
+  {
+    return [
+      'scope' => $this->scope,
+    ];
   }
 }

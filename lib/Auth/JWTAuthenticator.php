@@ -4,12 +4,8 @@ namespace Zitadel\Client\Auth;
 
 use DateInterval;
 use DateTimeImmutable;
-use Exception;
 use Firebase\JWT\JWT;
-use GuzzleHttp\Exception\GuzzleException;
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\GenericProvider;
-use League\OAuth2\Client\Token\AccessTokenInterface;
 
 /**
  * JWT-based Authenticator using the JWT Bearer Grant (RFC7523).
@@ -20,7 +16,6 @@ class JWTAuthenticator extends OAuthAuthenticator
 {
   private const GRANT_TYPE = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
 
-  private GenericProvider $provider;
   /**
    * The issuer claim for the JWT.
    *
@@ -90,19 +85,18 @@ class JWTAuthenticator extends OAuthAuthenticator
     string        $algorithm = 'RS256'
   )
   {
-    parent::__construct($hostName, $clientId, $scope);
     $this->jwtIssuer = $issuer;
     $this->jwtSubject = $subject;
     $this->jwtAudience = $audience;
     $this->privateKey = $privateKey;
     $this->jwtAlgorithm = $algorithm;
     $this->jwtLifetime = $jwtLifetime;
-    $this->provider = new GenericProvider([
-      'clientId' => $this->clientId,
+    parent::__construct($hostName, $clientId, $scope, new GenericProvider([
+      'clientId' => $clientId,
       'urlAccessToken' => $authEndpoints->urlAccessToken->toString(),
       'urlAuthorize' => $authEndpoints->urlAuthorize->toString(),
       'urlResourceOwnerDetails' => $authEndpoints->urlResourceOwnerDetails->toString()
-    ]);
+    ]));
     $this->provider->getGrantFactory()->setGrant(JWTAuthenticator::GRANT_TYPE, new JwtBearer());
   }
 
@@ -120,40 +114,12 @@ class JWTAuthenticator extends OAuthAuthenticator
     return new JWTAuthenticatorBuilder($hostName->getEndpoint(), $userId, $userId, $hostName->getEndpoint(), $privateKey);
   }
 
-  /**
-   * Refresh the access token using a JWT assertion.
-   *
-   * This method generates a JWT assertion and exchanges it for an access token.
-   *
-   * @return AccessTokenInterface
-   * @throws Exception|GuzzleException if the HTTP request fails or returns invalid JSON.
-   */
-  public function refreshToken(): AccessTokenInterface
+  protected function getGrantType(): string
   {
-    $jwtAssertion = $this->generateJwtAssertion();
-
-    try {
-      $this->token = $this->provider->getAccessToken(JWTAuthenticator::GRANT_TYPE, [
-        'scope' => $this->scope,
-        'assertion' => $jwtAssertion,
-      ]);
-
-      if ($this->token === null) {
-        throw new Exception('Unable to refresh token');
-      } else {
-        return $this->token;
-      }
-    } catch (IdentityProviderException $e) {
-      throw new Exception('Token refresh failed: ' . $e->getMessage(), 0, $e);
-    }
+    return JWTAuthenticator::GRANT_TYPE;
   }
 
-  /**
-   * Generate a JWT assertion based on the provided credentials and claims.
-   *
-   * @return string A signed JWT assertion.
-   */
-  private function generateJwtAssertion(): string
+  protected function getAccessTokenOptions(): array
   {
     $now = new DateTimeImmutable();
     $payload = [
@@ -163,6 +129,10 @@ class JWTAuthenticator extends OAuthAuthenticator
       'iat' => $now->getTimestamp(),
       'exp' => $now->add($this->jwtLifetime)->getTimestamp(),
     ];
-    return JWT::encode($payload, $this->privateKey, $this->jwtAlgorithm);
+    return [
+      'scope' => $this->scope,
+      'assertion' => JWT::encode($payload, $this->privateKey, $this->jwtAlgorithm),
+    ];
   }
+
 }
