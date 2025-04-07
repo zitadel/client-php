@@ -1,6 +1,8 @@
-<?php
+<?php /** @noinspection PhpMultipleClassesDeclarationsInOneFile */
 
 namespace Zitadel\Client\Auth;
+
+use League\OAuth2\Client\Token\AccessTokenInterface;
 
 /**
  * Abstract base class for OAuth-based authenticators.
@@ -34,9 +36,9 @@ abstract class OAuthAuthenticator extends Authenticator
   /**
    * The OAuth2 token (associative array containing at least 'access_token' and 'expires_at').
    *
-   * @var array|null
+   * @var AccessTokenInterface|null
    */
-  protected ?array $token;
+  protected ?AccessTokenInterface $token;
 
   /**
    * OAuthAuthenticator constructor.
@@ -64,10 +66,10 @@ abstract class OAuthAuthenticator extends Authenticator
    */
   public function getAuthToken(): string
   {
-    if ($this->token === null || (isset($this->token['expires_at']) && $this->token['expires_at'] < time())) {
+    if ($this->token === null || $this->token->hasExpired()) {
       $this->refreshToken();
     }
-    return $this->token['access_token'];
+    return $this->token->getToken();
   }
 
   /**
@@ -76,7 +78,7 @@ abstract class OAuthAuthenticator extends Authenticator
    * Subclasses must implement this method to refresh the token using their
    * specific OAuth flow.
    *
-   * @return void
+   * @return AccessTokenInterface
    */
-  abstract public function refreshToken(): void;
+  abstract public function refreshToken(): AccessTokenInterface;
 }

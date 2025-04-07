@@ -1,0 +1,32 @@
+<?php
+
+namespace Zitadel\Client\Test\Auth;
+
+use GuzzleHttp\Exception\GuzzleException;
+use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
+
+/**
+ * Tests for the ClientCredentialsAuthenticator.
+ *
+ * This test verifies that the client credentials authenticator correctly refreshes its token
+ * and returns the proper Authorization header.
+ */
+class ClientCredentialsAuthenticatorTest extends OAuthAuthenticatorTest
+{
+  /**
+   * @throws GuzzleException
+   */
+  public function testRefreshToken(): void
+  {
+    sleep(20);
+
+    $authenticator = ClientCredentialsAuthenticator::builder(static::$oauthHost, "dummy-client", "dummy-secret")
+      ->scopes(["openid", "foo"])
+      ->build();
+
+    $token = $authenticator->refreshToken();
+    $this->assertNotEmpty($token->getToken(), "Access token should not be empty");
+    $this->assertFalse($token->hasExpired(), "Token expiry should be in the future");
+    $this->assertEquals($token->getToken(), $authenticator->getAuthToken());
+  }
+}

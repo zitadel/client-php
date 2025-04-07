@@ -4,13 +4,12 @@ namespace Zitadel\Client;
 
 use Zitadel\Client\Api\FeatureServiceApi;
 use Zitadel\Client\Api\IdentityProviderServiceApi;
-use Zitadel\Client\Api\OidcServiceApi;
+use Zitadel\Client\Api\OIDCServiceApi;
 use Zitadel\Client\Api\OrganizationServiceApi;
 use Zitadel\Client\Api\SessionServiceApi;
 use Zitadel\Client\Api\SettingsServiceApi;
 use Zitadel\Client\Api\UserServiceApi;
 use Zitadel\Client\Auth\Authenticator;
-use Zitadel\Client\Configuration;
 
 class Zitadel
 {

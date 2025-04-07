@@ -2,8 +2,14 @@
 
 namespace Zitadel\Client\Auth;
 
+use DateInterval;
+use DateTimeImmutable;
 use Exception;
 use Firebase\JWT\JWT;
+use GuzzleHttp\Exception\GuzzleException;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use League\OAuth2\Client\Provider\GenericProvider;
+use League\OAuth2\Client\Token\AccessTokenInterface;
 
 /**
  * JWT-based Authenticator using the JWT Bearer Grant (RFC7523).
@@ -12,26 +18,29 @@ use Firebase\JWT\JWT;
  */
 class JWTAuthenticator extends OAuthAuthenticator
 {
+  private const GRANT_TYPE = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
+
+  private GenericProvider $provider;
   /**
    * The issuer claim for the JWT.
    *
    * @var string
    */
-  private string $issuer;
+  private string $jwtIssuer;
 
   /**
    * The subject claim for the JWT.
    *
    * @var string
    */
-  private string $subject;
+  private string $jwtSubject;
 
   /**
    * The audience claim for the JWT.
    *
    * @var string
    */
-  private string $audience;
+  private string $jwtAudience;
 
   /**
    * The private key used to sign the JWT.
@@ -45,14 +54,14 @@ class JWTAuthenticator extends OAuthAuthenticator
    *
    * @var string
    */
-  private string $algorithm;
+  private string $jwtAlgorithm;
 
   /**
    * Lifetime of the JWT in seconds.
    *
-   * @var int
+   * @var DateInterval
    */
-  private int $tokenLifetime;
+  private DateInterval $jwtLifetime;
 
   /**
    * JWTAuthenticator constructor.
@@ -65,27 +74,37 @@ class JWTAuthenticator extends OAuthAuthenticator
    * @param string $privateKey The private key to sign the JWT.
    * @param string|null $tokenUrl The URL of the OAuth2 token endpoint.
    * @param string $algorithm The signing algorithm. Defaults to "RS256".
-   * @param int $tokenLifetime The lifetime of the JWT in seconds. Defaults to 300.
+   * @param DateInterval $jwtLifetime The lifetime of the JWT in seconds. Defaults to 300.
+   * @throws Exception
    */
   public function __construct(
-    string  $host,
-    string  $clientId,
-    string  $issuer,
-    string  $subject,
-    string  $audience,
-    string  $privateKey,
-    ?string $tokenUrl,
-    string  $algorithm = 'RS256',
-    int     $tokenLifetime = 300
+    string       $host,
+    string       $clientId,
+    string       $scope,
+    string       $issuer,
+    string       $subject,
+    string       $audience,
+    string       $privateKey,
+    ?string      $tokenUrl,
+    DateInterval $jwtLifetime,
+    string       $algorithm = 'RS256'
   )
   {
-    parent::__construct($host, $clientId, $tokenUrl);
-    $this->issuer = $issuer;
-    $this->subject = $subject;
-    $this->audience = $audience;
+    $fullTokenUrl = (strpos($tokenUrl, '/') === 0) ? $host . $tokenUrl : $tokenUrl;
+    parent::__construct($host, $clientId, $tokenUrl, $scope);
+    $this->jwtIssuer = $issuer;
+    $this->jwtSubject = $subject;
+    $this->jwtAudience = $audience;
     $this->privateKey = $privateKey;
-    $this->algorithm = $algorithm;
-    $this->tokenLifetime = $tokenLifetime;
+    $this->jwtAlgorithm = $algorithm;
+    $this->jwtLifetime = $jwtLifetime;
+    $this->provider = new GenericProvider([
+      'clientId' => $this->clientId,
+      'urlAccessToken' => $fullTokenUrl,
+      'urlAuthorize' => 'https://service.example.com/authorize', #FIXME
+      'urlResourceOwnerDetails' => 'https://service.example.com/resource'
+    ]);
+    $this->provider->getGrantFactory()->setGrant(JWTAuthenticator::GRANT_TYPE, new JwtBearer());
   }
 
   /**
@@ -136,8 +155,8 @@ class JWTAuthenticator extends OAuthAuthenticator
       $host,
       $userId,
       $tokenUrl,
-      $userId,      // issuer
-      $userId,      // subject
+      $userId,
+      $userId,
       $audience,
       $privateKey,
       $algorithm,
@@ -146,22 +165,44 @@ class JWTAuthenticator extends OAuthAuthenticator
   }
 
   /**
+   * Returns a new builder instance for ClientCredentialsAuthenticator.
+   *
+   * @param string $host The base URL for API endpoints.
+   * @param string $userId
+   * @param string $privateKey
+   * @return JWTAuthenticatorBuilder A new builder instance.
+   */
+  public static function builder(string $host, string $userId, string $privateKey): JWTAuthenticatorBuilder
+  {
+    return new JWTAuthenticatorBuilder($host, $userId, $userId, $host, $privateKey);
+  }
+
+  /**
    * Refresh the access token using a JWT assertion.
    *
    * This method generates a JWT assertion and exchanges it for an access token.
    *
-   * @return void
-   * @throws Exception if the HTTP request fails or returns invalid JSON.
+   * @return AccessTokenInterface
+   * @throws Exception|GuzzleException if the HTTP request fails or returns invalid JSON.
    */
-  public function refreshToken(): void
+  public function refreshToken(): AccessTokenInterface
   {
     $jwtAssertion = $this->generateJwtAssertion();
-    $postData = http_build_query([
-      'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      'assertion' => $jwtAssertion,
-      'client_id' => $this->clientId
-    ]);
-    $this->token = $this->sendPostRequest($this->tokenUrl, $postData);
+
+    try {
+      $this->token = $this->provider->getAccessToken(JWTAuthenticator::GRANT_TYPE, [
+        'scope' => $this->scope,
+        'assertion' => $jwtAssertion,
+      ]);
+
+      if ($this->token === null) {
+        throw new Exception('Unable to refresh token');
+      } else {
+        return $this->token;
+      }
+    } catch (IdentityProviderException $e) {
+      throw new Exception('Token refresh failed: ' . $e->getMessage(), 0, $e);
+    }
   }
 
   /**
@@ -171,44 +212,14 @@ class JWTAuthenticator extends OAuthAuthenticator
    */
   private function generateJwtAssertion(): string
   {
-    $currentTime = time();
+    $now = new DateTimeImmutable();
     $payload = [
-      'iss' => $this->issuer,
-      'sub' => $this->subject,
-      'aud' => $this->audience,
-      'iat' => $currentTime,
-      'exp' => $currentTime + $this->tokenLifetime,
-      'jti' => (string)$currentTime
+      'iss' => $this->jwtIssuer,
+      'sub' => $this->jwtSubject,
+      'aud' => $this->jwtAudience,
+      'iat' => $now->getTimestamp(),
+      'exp' => $now->add($this->jwtLifetime)->getTimestamp(),
     ];
-    return JWT::encode($payload, $this->privateKey, $this->algorithm);
-  }
-
-  /**
-   * Sends a POST request to the given URL with the provided data.
-   *
-   * @param string $url The endpoint URL.
-   * @param string $postData The URL-encoded POST data.
-   * @return array The JSON-decoded response as an associative array.
-   * @throws Exception if the request fails or returns invalid JSON.
-   */
-  private function sendPostRequest(string $url, string $postData): array
-  {
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-      'Content-Type: application/x-www-form-urlencoded'
-    ]);
-    $result = curl_exec($ch);
-    if ($result === false) {
-      throw new Exception('CURL error: ' . curl_error($ch));
-    }
-    curl_close($ch);
-    $decoded = json_decode($result, true);
-    if ($decoded === null) {
-      throw new Exception('Invalid JSON response.');
-    }
-    return $decoded;
+    return JWT::encode($payload, $this->privateKey, $this->jwtAlgorithm);
   }
 }

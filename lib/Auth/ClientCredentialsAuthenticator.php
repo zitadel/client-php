@@ -3,8 +3,10 @@
 namespace Zitadel\Client\Auth;
 
 use Exception;
-use GuzzleHttp\Client;
-use Throwable;
+use GuzzleHttp\Exception\GuzzleException;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use League\OAuth2\Client\Provider\GenericProvider;
+use League\OAuth2\Client\Token\AccessTokenInterface;
 
 /**
  * OAuth2 Client Credentials Authenticator.
@@ -13,28 +15,17 @@ use Throwable;
  */
 class ClientCredentialsAuthenticator extends OAuthAuthenticator
 {
-  /**
-   * The OAuth2 client secret.
-   *
-   * @var string
-   */
-  private string $clientSecret;
+  private GenericProvider $provider;
 
   /**
-   * Guzzle HTTP client.
-   *
-   * @var Client
-   */
-  private Client $httpClient;
-
-  /**
-   * ClientCredentialsAuthenticator constructor.
+   * Constructs a ClientCredentialsAuthenticator.
    *
    * @param string $host The base URL for the API endpoints.
    * @param string $clientId The OAuth2 client identifier.
    * @param string $clientSecret The OAuth2 client secret.
-   * @param string|null $tokenUrl The URL of the OAuth2 token endpoint. Defaults to "/oauth/v2/token".
-   * @param string $scope The scope for the token request. Defaults to a predefined scope string.
+   * @param string|null $tokenUrl The URL of the OAuth2 token endpoint.
+   *                                  If relative, it will be prepended with the host.
+   * @param string $scope The scope for the token request.
    */
   public function __construct(
     string  $host,
@@ -44,60 +35,52 @@ class ClientCredentialsAuthenticator extends OAuthAuthenticator
     string  $scope = 'openid urn:zitadel:iam:org:project:id:myprojectid:aud additional_scope'
   )
   {
-    // If tokenUrl is relative, prepend the host.
-    $fullTokenUrl = strpos($tokenUrl, '/') === 0 ? $host . $tokenUrl : $tokenUrl;
+    $fullTokenUrl = (strpos($tokenUrl, '/') === 0) ? $host . $tokenUrl : $tokenUrl;
     parent::__construct($host, $clientId, $fullTokenUrl, $scope);
-    $this->clientSecret = $clientSecret;
-    $this->httpClient = new Client();
-  }
-
-  /**
-   * Refresh the access token using the client credentials grant.
-   *
-   * This method sends a POST request to the token endpoint with the client credentials.
-   *
-   * @return void
-   * @throws Exception if the HTTP request fails or the response is invalid.
-   */
-  public function refreshToken(): void
-  {
-    $postData = http_build_query([
-      'grant_type' => 'client_credentials',
-      'client_id' => $this->clientId,
-      'client_secret' => $this->clientSecret,
-      'scope' => $this->scope
+    $this->provider = new GenericProvider([
+      'clientId' => $this->clientId,
+      'clientSecret' => $clientSecret,
+      'urlAccessToken' => $fullTokenUrl,
+      'urlAuthorize' => 'https://service.example.com/authorize', #FIXME
+      'urlResourceOwnerDetails' => 'https://service.example.com/resource'
     ]);
-
-    $this->token = $this->sendPostRequest($this->tokenUrl, $postData);
   }
 
   /**
-   * Sends a POST request to the given URL with the provided data using Guzzle.
+   * Returns a new builder instance for ClientCredentialsAuthenticator.
    *
-   * @param string $url The endpoint URL.
-   * @param string $postData The URL-encoded POST data.
-   * @return array The JSON-decoded response as an associative array.
-   * @throws Exception if the request fails or returns invalid JSON.
+   * @param string $host The base URL for API endpoints.
+   * @param string $clientId The OAuth2 client identifier.
+   * @param string $clientSecret The OAuth2 client secret.
+   * @return ClientCredentialsAuthenticatorBuilder A new builder instance.
    */
-  private function sendPostRequest(string $url, string $postData): array
+  public static function builder(string $host, string $clientId, string $clientSecret): ClientCredentialsAuthenticatorBuilder
+  {
+    return new ClientCredentialsAuthenticatorBuilder($host, $clientId, $clientSecret);
+  }
+
+  /**
+   * Refreshes the access token using the client credentials grant.
+   *
+   * Uses the league/oauth2-client library to obtain an access token.
+   *
+   * @return AccessTokenInterface
+   * @throws Exception|GuzzleException if the token request fails.
+   */
+  public function refreshToken(): AccessTokenInterface
   {
     try {
-      $response = $this->httpClient->post($url, [
-        'headers' => [
-          'Content-Type' => 'application/x-www-form-urlencoded'
-        ],
-        'body' => $postData
+      $this->token = $this->provider->getAccessToken('client_credentials', [
+        'scope' => $this->scope,
       ]);
-    } catch (Throwable $e) {
-      throw new Exception('HTTP request failed: ' . $e->getMessage());
-    }
 
-    $body = (string)$response->getBody();
-    $decoded = json_decode($body, true);
-    if ($decoded === null) {
-      throw new Exception('Invalid JSON response.');
+      if ($this->token === null) {
+        throw new Exception('Unable to refresh token');
+      } else {
+        return $this->token;
+      }
+    } catch (IdentityProviderException $e) {
+      throw new Exception('Token refresh failed: ' . $e->getMessage(), 0, $e);
     }
-
-    return $decoded;
   }
 }
