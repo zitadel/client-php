@@ -126,21 +126,17 @@ final class JWTAuthenticatorBuilder extends OAuthAuthenticatorBuilder
    */
   public function build(): JWTAuthenticator
   {
-    try {
-      return new JWTAuthenticator(
-        $this->hostName,
-        "",
-        $this->authScopes,
-        $this->jwtIssuer,
-        $this->jwtSubject,
-        $this->jwtAudience,
-        $this->privateKey,
-        $this->authEndpoints,
-        $this->jwtLifetime,
-        $this->jwtAlgorithm,
-      );
-    } catch (Exception $e) {
-      throw new Exception("Failed to generate JWT assertion: " . $e->getMessage(), 0, $e);
-    }
+    return new JWTAuthenticator(
+      $this->hostName,
+      "",
+      $this->authScopes,
+      $this->jwtIssuer,
+      $this->jwtSubject,
+      $this->jwtAudience,
+      $this->privateKey,
+      $this->authEndpoints,
+      $this->jwtLifetime,
+      $this->jwtAlgorithm,
+    );
   }
 }
