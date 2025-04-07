@@ -23,7 +23,7 @@ use Exception;
  *
  * A convenience method "fromKeyfile" is provided to create the builder using a service account JSON file.
  */
-final class JWTAuthenticatorBuilder extends OAuthAuthenticatorBuilder
+final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
 {
   private string $jwtIssuer;
   private string $jwtSubject;
@@ -66,10 +66,10 @@ final class JWTAuthenticatorBuilder extends OAuthAuthenticatorBuilder
    *
    * @param string $host The base URL for the API endpoints.
    * @param string $jsonPath The file path to the JSON configuration file.
-   * @return JWTAuthenticatorBuilder An initialized instance of JWTAuthenticator.
+   * @return WebTokenAuthenticatorBuilder An initialized instance of JWTAuthenticator.
    * @throws Exception if the file cannot be read or the JSON is invalid.
    */
-  public static function fromJson(string $host, string $jsonPath): JWTAuthenticatorBuilder
+  public static function fromJson(string $host, string $jsonPath): WebTokenAuthenticatorBuilder
   {
     $json = file_get_contents($jsonPath);
     if ($json === false) {
@@ -87,7 +87,7 @@ final class JWTAuthenticatorBuilder extends OAuthAuthenticatorBuilder
       throw new Exception("Missing required configuration keys in JSON file.");
     }
 
-    return new JWTAuthenticatorBuilder($host, $userId, $userId, $host, $privateKey);
+    return new WebTokenAuthenticatorBuilder($host, $userId, $userId, $host, $privateKey);
   }
 
   /**
@@ -121,12 +121,12 @@ final class JWTAuthenticatorBuilder extends OAuthAuthenticatorBuilder
    * Generates a JWT assertion using the provided parameters and then constructs
    * a JWTAuthenticator.
    *
-   * @return JWTAuthenticator
+   * @return WebTokenAuthenticator
    * @throws Exception if JWT generation fails.
    */
-  public function build(): JWTAuthenticator
+  public function build(): WebTokenAuthenticator
   {
-    return new JWTAuthenticator(
+    return new WebTokenAuthenticator(
       $this->hostName,
       "",
       $this->authScopes,

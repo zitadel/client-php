@@ -3,22 +3,20 @@
 namespace Auth;
 
 use Exception;
-use GuzzleHttp\Exception\GuzzleException;
-use Zitadel\Client\Auth\JWTAuthenticator;
+use Zitadel\Client\Auth\WebTokenAuthenticator;
 use Zitadel\Client\Test\Auth\OAuthAuthenticatorTest;
 
-class JWTAuthenticatorTest extends OAuthAuthenticatorTest
+class WebTokenAuthenticatorTest extends OAuthAuthenticatorTest
 {
 
   /**
-   * @throws GuzzleException
    * @throws Exception
    */
   public function testRefreshToken(): void
   {
     sleep(20);
 
-    $authenticator = JWTAuthenticator::builder(static::$oauthHost, "1", JWTAuthenticatorTest::getPrivateKey())
+    $authenticator = WebTokenAuthenticator::builder(static::$oauthHost, "1", WebTokenAuthenticatorTest::getPrivateKey())
       ->scopes(["openid", "foo"])
       ->build();
 
@@ -48,7 +46,7 @@ class JWTAuthenticatorTest extends OAuthAuthenticatorTest
   {
     sleep(20);
 
-    $authenticator = JWTAuthenticator::builder(static::$oauthHost, "dummy-client", "dummy-secret")
+    $authenticator = WebTokenAuthenticator::builder(static::$oauthHost, "dummy-client", "dummy-secret")
       ->tokenEndpoint('/noop')
       ->build();
 

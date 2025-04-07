@@ -12,7 +12,7 @@ use League\OAuth2\Client\Provider\GenericProvider;
  *
  * This class creates a JWT assertion and exchanges it for an access token.
  */
-class JWTAuthenticator extends OAuthAuthenticator
+class WebTokenAuthenticator extends OAuthAuthenticator
 {
   private const GRANT_TYPE = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
 
@@ -97,7 +97,7 @@ class JWTAuthenticator extends OAuthAuthenticator
       'urlAuthorize' => $authEndpoints->urlAuthorize->toString(),
       'urlResourceOwnerDetails' => $authEndpoints->urlResourceOwnerDetails->toString()
     ]));
-    $this->provider->getGrantFactory()->setGrant(JWTAuthenticator::GRANT_TYPE, new JwtBearer());
+    $this->provider->getGrantFactory()->setGrant(WebTokenAuthenticator::GRANT_TYPE, new JwtBearer());
   }
 
   /**
@@ -106,17 +106,17 @@ class JWTAuthenticator extends OAuthAuthenticator
    * @param string $host The base URL for API endpoints.
    * @param string $userId
    * @param string $privateKey
-   * @return JWTAuthenticatorBuilder A new builder instance.
+   * @return WebTokenAuthenticatorBuilder A new builder instance.
    */
-  public static function builder(string $host, string $userId, string $privateKey): JWTAuthenticatorBuilder
+  public static function builder(string $host, string $userId, string $privateKey): WebTokenAuthenticatorBuilder
   {
     $hostName = new Hostname($host);
-    return new JWTAuthenticatorBuilder($hostName->getEndpoint(), $userId, $userId, $hostName->getEndpoint(), $privateKey);
+    return new WebTokenAuthenticatorBuilder($hostName->getEndpoint(), $userId, $userId, $hostName->getEndpoint(), $privateKey);
   }
 
   protected function getGrantType(): string
   {
-    return JWTAuthenticator::GRANT_TYPE;
+    return WebTokenAuthenticator::GRANT_TYPE;
   }
 
   protected function getAccessTokenOptions(): array
