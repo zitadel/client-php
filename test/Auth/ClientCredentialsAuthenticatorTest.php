@@ -24,9 +24,12 @@ class ClientCredentialsAuthenticatorTest extends OAuthAuthenticatorTest
       ->scopes(["openid", "foo"])
       ->build();
 
+    $this->assertNotEmpty($authenticator->getAuthToken(), "Access token should not be empty");
     $token = $authenticator->refreshToken();
     $this->assertNotEmpty($token->getToken(), "Access token should not be empty");
     $this->assertFalse($token->hasExpired(), "Token expiry should be in the future");
     $this->assertEquals($token->getToken(), $authenticator->getAuthToken());
+    $this->assertEquals($authenticator->getHost()->getEndpoint(), static::$oauthHost);
+    $this->assertNotEquals($authenticator->refreshToken()->getToken(), $authenticator->refreshToken()->getToken());
   }
 }

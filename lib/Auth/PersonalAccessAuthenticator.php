@@ -29,19 +29,6 @@ class PersonalAccessAuthenticator extends Authenticator
   }
 
   /**
-   * Refresh the token.
-   *
-   * For PersonalAccessAuthenticator, token refresh is not applicable.
-   *
-   * @return void
-   * @noinspection PhpUnused
-   */
-  public function refreshToken(): void
-  {
-    // No refresh logic required.
-  }
-
-  /**
    * Retrieve authentication token using the personal access token.
    *
    * @return string The authentication token

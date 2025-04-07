@@ -15,7 +15,7 @@ class Hostname
       : 'https://' . $input;
 
     $uri = Uri::new($normalized);
-    $this->baseUri = $uri->withScheme(getenv('APP_ENV') === 'test' ? 'http': 'https')->withPort($uri->getPort() ?? 443);
+    $this->baseUri = $uri->withScheme(getenv('APP_ENV') === 'test' ? 'http' : 'https')->withPort($uri->getPort() ?? 443);
   }
 
   public function getEndpoint(): string

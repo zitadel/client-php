@@ -27,7 +27,7 @@ class ClientCredentialsAuthenticator extends OAuthAuthenticator
    * @param AuthEndpoints $authEndpoints
    * @param string $scope The scope for the token request.
    */
-   function __construct(
+  function __construct(
     Hostname      $hostName,
     string        $clientId,
     string        $clientSecret,

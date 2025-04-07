@@ -5,7 +5,6 @@ namespace Zitadel\Client\Test\Auth;
 use PHPUnit\Framework\TestCase;
 use Testcontainers\Container\GenericContainer;
 use Testcontainers\Container\StartedGenericContainer;
-use Testcontainers\Wait\WaitForHttp;
 
 /**
  * Class OAuthAuthenticatorTest
@@ -18,14 +17,13 @@ use Testcontainers\Wait\WaitForHttp;
 abstract class OAuthAuthenticatorTest extends TestCase
 {
   /**
-   * @var StartedGenericContainer|null Holds the container instance.
-   */
-  private static ?StartedGenericContainer $mockOAuth2Server = null;
-
-  /**
    * @var string Holds the OAuth host URL constructed from the container's host and mapped port.
    */
   protected static string $oauthHost;
+  /**
+   * @var StartedGenericContainer|null Holds the container instance.
+   */
+  private static ?StartedGenericContainer $mockOAuth2Server = null;
 
   /**
    * Set up the Docker container before any tests are run.

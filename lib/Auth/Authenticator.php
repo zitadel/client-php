@@ -22,7 +22,7 @@ abstract class Authenticator
    *
    * @param Hostname $hostName The base URL for all authentication endpoints.
    */
-  public function __construct(Hostname $hostName)
+  function __construct(Hostname $hostName)
   {
     $this->hostName = $hostName;
   }

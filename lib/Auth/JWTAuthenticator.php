@@ -107,63 +107,6 @@ class JWTAuthenticator extends OAuthAuthenticator
   }
 
   /**
-   * Initialize a JWTAuthenticator instance from a JSON configuration file.
-   *
-   * The JSON file should have the following structure:
-   * <code>
-   * {
-   *     "type": "serviceaccount",
-   *     "keyId": "100509901696068329",
-   *     "key": "-----BEGIN RSA PRIVATE KEY----- [...] -----END RSA PRIVATE KEY-----\n",
-   *     "userId": "100507859606888466"
-   * }
-   * </code>
-   *
-   * @param string $jsonPath The file path to the JSON configuration file.
-   * @param string $host The base URL for the API endpoints.
-   * @param string $tokenUrl The URL of the OAuth2 token endpoint.
-   * @param string $audience The custom domain to be used as the 'aud' claim.
-   * @param string $algorithm The signing algorithm. Defaults to "RS256".
-   * @param int $tokenLifetime Lifetime of the JWT in seconds. Defaults to 300.
-   * @return JWTAuthenticator An initialized instance of JWTAuthenticator.
-   * @throws Exception if the file cannot be read or the JSON is invalid.
-   */
-  public static function fromJson(
-    string $jsonPath,
-    string $host,
-    string $tokenUrl,
-    string $audience,
-    string $algorithm = 'RS256',
-    int    $tokenLifetime = 300
-  ): JWTAuthenticator
-  {
-    $json = file_get_contents($jsonPath);
-    if ($json === false) {
-      throw new Exception("Unable to read JSON file: $jsonPath");
-    }
-    $config = json_decode($json, true);
-    if ($config === null) {
-      throw new Exception("Invalid JSON in file: $jsonPath");
-    }
-    $userId = $config['userId'] ?? null;
-    $privateKey = $config['key'] ?? null;
-    if ($userId === null || $privateKey === null) {
-      throw new Exception("Missing required configuration keys in JSON file.");
-    }
-    return new self(
-      $hostName,
-      $userId,
-      $tokenUrl,
-      $userId,
-      $userId,
-      $audience,
-      $privateKey,
-      $algorithm,
-      $tokenLifetime
-    );
-  }
-
-  /**
    * Returns a new builder instance for ClientCredentialsAuthenticator.
    *
    * @param string $host The base URL for API endpoints.
