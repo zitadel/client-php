@@ -9,6 +9,8 @@
       <directory suffix=".php">./lib</directory>
     </include>
     <exclude>
+      <directory>lib/Api</directory>
+      <directory>lib/Model</directory>
       <directory suffix=".php">./vendor</directory>
       <directory suffix=".php">./test</directory>
     </exclude>
