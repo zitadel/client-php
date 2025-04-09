@@ -2,6 +2,7 @@
 
 namespace Zitadel\Client\Auth;
 
+use Exception;
 use League\OAuth2\Client\Provider\GenericProvider;
 
 /**
@@ -16,26 +17,24 @@ class ClientCredentialsAuthenticator extends OAuthAuthenticator
   /**
    * Constructs a ClientCredentialsAuthenticator.
    *
-   * @param Hostname $hostName The base URL for the API endpoints.
+   * @param OpenId $hostName The base URL for the API endpoints.
    * @param string $clientId The OAuth2 client identifier.
    * @param string $clientSecret The OAuth2 client secret.
-   * @param AuthEndpoints $authEndpoints
    * @param string $scope The scope for the token request.
    */
   function __construct(
-    Hostname      $hostName,
-    string        $clientId,
-    string        $clientSecret,
-    AuthEndpoints $authEndpoints,
-    string        $scope = 'openid urn:zitadel:iam:org:project:id:zitadel:aud'
+    OpenId $hostName,
+    string $clientId,
+    string $clientSecret,
+    string $scope = 'openid urn:zitadel:iam:org:project:id:zitadel:aud'
   )
   {
     parent::__construct($hostName, $clientId, $scope, new GenericProvider([
       'clientId' => $clientId,
       'clientSecret' => $clientSecret,
-      'urlAccessToken' => $authEndpoints->urlAccessToken->toString(),
-      'urlAuthorize' => $authEndpoints->urlAuthorize->toString(),
-      'urlResourceOwnerDetails' => $authEndpoints->urlResourceOwnerDetails->toString()
+      'urlAccessToken' => $hostName->getTokenEndpoint()->toString(),
+      'urlAuthorize' => $hostName->getAuthorizationEndpoint()->toString(),
+      'urlResourceOwnerDetails' => $hostName->getUserinfoEndpoint()->toString(),
     ]));
   }
 
@@ -46,6 +45,7 @@ class ClientCredentialsAuthenticator extends OAuthAuthenticator
    * @param string $clientId The OAuth2 client identifier.
    * @param string $clientSecret The OAuth2 client secret.
    * @return ClientCredentialsAuthenticatorBuilder A new builder instance.
+   * @throws Exception
    */
   public static function builder(string $host, string $clientId, string $clientSecret): ClientCredentialsAuthenticatorBuilder
   {

@@ -130,7 +130,7 @@ class Configuration
    */
   public function getHost(): string
   {
-    return $this->authenticator->getHost()->getEndpoint();
+    return $this->authenticator->getHost()->toString();
   }
 
   /**

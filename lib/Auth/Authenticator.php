@@ -2,6 +2,8 @@
 
 namespace Zitadel\Client\Auth;
 
+use League\Uri\Uri;
+
 /**
  * Base abstract class for all authentication strategies.
  *
@@ -13,18 +15,18 @@ abstract class Authenticator
   /**
    * The base URL for authentication endpoints.
    *
-   * @var Hostname
+   * @var Uri
    */
-  protected Hostname $hostName;
+  protected Uri $hostName;
 
   /**
    * Authenticator constructor.
    *
-   * @param Hostname $hostName The base URL for all authentication endpoints.
+   * @param string $hostName The base URL for all authentication endpoints.
    */
-  function __construct(Hostname $hostName)
+  function __construct(string $hostName)
   {
-    $this->hostName = $hostName;
+    $this->hostName = Uri::new($hostName);
   }
 
   /**
@@ -37,9 +39,9 @@ abstract class Authenticator
   /**
    * Retrieve the host URL.
    *
-   * @return Hostname The base URL for authentication endpoints.
+   * @return Uri The base URL for authentication endpoints.
    */
-  public function getHost(): Hostname
+  public function getHost(): Uri
   {
     return $this->hostName;
   }

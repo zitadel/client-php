@@ -2,6 +2,8 @@
 
 namespace Zitadel\Client\Auth;
 
+use Exception;
+
 /**
  * Base builder for OAuth authenticators.
  *
@@ -10,31 +12,18 @@ namespace Zitadel\Client\Auth;
  */
 abstract class OAuthAuthenticatorBuilder
 {
-  protected Hostname $hostName;
-  protected AuthEndpoints $authEndpoints;
+  protected OpenId $hostName;
   protected string $authScopes = 'openid urn:zitadel:iam:org:project:id:zitadel:aud';
 
   /**
    * Constructs the builder with the required host.
    *
    * @param string $hostName
+   * @throws Exception
    */
   public function __construct(string $hostName)
   {
-    $this->hostName = new Hostname($hostName);
-    $this->authEndpoints = AuthEndpoints::getInstance($this->hostName);
-  }
-
-  /**
-   * Overrides the default token endpoint.
-   *
-   * @param string $tokenEndpoint The URL (or relative path starting with '/') of the OAuth2 token endpoint.
-   * @return self
-   */
-  public function tokenEndpoint(string $tokenEndpoint): self
-  {
-    $this->authEndpoints = new AuthEndpoints($this->hostName->getEndpointWithPath($tokenEndpoint), $this->authEndpoints->urlAuthorize, $this->authEndpoints->urlResourceOwnerDetails);
-    return $this;
+    $this->hostName = new OpenId($hostName);
   }
 
   /**

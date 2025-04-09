@@ -2,6 +2,8 @@
 
 namespace Zitadel\Client\Auth;
 
+use Exception;
+
 /**
  * Builder for ClientCredentialsAuthenticator.
  *
@@ -19,6 +21,7 @@ final class ClientCredentialsAuthenticatorBuilder extends OAuthAuthenticatorBuil
    * @param string $host The base URL for API endpoints.
    * @param string $clientId The OAuth2 client identifier.
    * @param string $clientSecret The OAuth2 client secret.
+   * @throws Exception
    */
   function __construct(string $host, string $clientId, string $clientSecret)
   {
@@ -38,7 +41,6 @@ final class ClientCredentialsAuthenticatorBuilder extends OAuthAuthenticatorBuil
       $this->hostName,
       $this->clientId,
       $this->clientSecret,
-      $this->authEndpoints,
       $this->authScopes
     );
   }

@@ -16,7 +16,7 @@ class NoAuthAuthenticator extends Authenticator
    */
   public function __construct(string $host = 'localhost')
   {
-    parent::__construct(new Hostname($host));
+    parent::__construct($host);
   }
 
   /**

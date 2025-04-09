@@ -9,11 +9,8 @@ class PersonalAccessAuthenticatorTest extends TestCase
 {
   public function testReturnsToken(): void
   {
-    $host = 'https://api.example.com';
-    $token = 'my-secret-token';
+    $authenticator = new PersonalAccessAuthenticator('https://api.example.com', 'my-secret-token');
 
-    $authenticator = new PersonalAccessAuthenticator($host, $token);
-
-    $this->assertSame($token, $authenticator->getAuthToken());
+    $this->assertSame('my-secret-token', $authenticator->getAuthToken());
   }
 }

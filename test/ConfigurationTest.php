@@ -85,6 +85,6 @@ class ConfigurationTest extends TestCase
     $authenticator = new PersonalAccessAuthenticator("http://zitadel.com", "secretmet");
     $config = new Configuration($authenticator);
 
-    $this->assertEquals('http://zitadel.com:443', $config->getHost());
+    $this->assertEquals('http://zitadel.com', $config->getHost());
   }
 }

@@ -36,6 +36,7 @@ abstract class OAuthAuthenticatorTest extends TestCase
   public static function setUpBeforeClass(): void
   {
     parent::setUpBeforeClass();
+    /** @noinspection SpellCheckingInspection */
     self::$mockOAuth2Server = (new GenericContainer("ghcr.io/navikt/mock-oauth2-server:2.1.10"))
       ->withExposedPorts(8080)
       //->withWait((new WaitForHttp(8080))->withPath("/")->withExpectedStatusCode(405))

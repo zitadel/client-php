@@ -24,7 +24,7 @@ class PersonalAccessAuthenticator extends Authenticator
    */
   public function __construct(string $host, string $token)
   {
-    parent::__construct(new Hostname($host));
+    parent::__construct($host);
     $this->token = $token;
   }
 

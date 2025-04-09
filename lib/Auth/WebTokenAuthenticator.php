@@ -4,6 +4,7 @@ namespace Zitadel\Client\Auth;
 
 use DateInterval;
 use DateTimeImmutable;
+use Exception;
 use Firebase\JWT\JWT;
 use League\OAuth2\Client\Provider\GenericProvider;
 
@@ -61,28 +62,26 @@ class WebTokenAuthenticator extends OAuthAuthenticator
   /**
    * JWTAuthenticator constructor.
    *
-   * @param Hostname $hostName The base URL for the API endpoints.
+   * @param OpenId $hostName The base URL for the API endpoints.
    * @param string $clientId The OAuth2 client identifier.
    * @param string $scope
    * @param string $issuer The issuer claim for the JWT.
    * @param string $subject The subject claim for the JWT.
    * @param string $audience The audience claim.
    * @param string $privateKey The private key to sign the JWT.
-   * @param AuthEndpoints $authEndpoints
    * @param DateInterval $jwtLifetime The lifetime of the JWT in seconds. Defaults to 300.
    * @param string $algorithm The signing algorithm. Defaults to "RS256".
    */
   function __construct(
-    Hostname      $hostName,
-    string        $clientId,
-    string        $scope,
-    string        $issuer,
-    string        $subject,
-    string        $audience,
-    string        $privateKey,
-    AuthEndpoints $authEndpoints,
-    DateInterval  $jwtLifetime,
-    string        $algorithm = 'RS256'
+    OpenId       $hostName,
+    string       $clientId,
+    string       $scope,
+    string       $issuer,
+    string       $subject,
+    string       $audience,
+    string       $privateKey,
+    DateInterval $jwtLifetime,
+    string       $algorithm = 'RS256'
   )
   {
     $this->jwtIssuer = $issuer;
@@ -93,9 +92,9 @@ class WebTokenAuthenticator extends OAuthAuthenticator
     $this->jwtLifetime = $jwtLifetime;
     parent::__construct($hostName, $clientId, $scope, new GenericProvider([
       'clientId' => $clientId,
-      'urlAccessToken' => $authEndpoints->urlAccessToken->toString(),
-      'urlAuthorize' => $authEndpoints->urlAuthorize->toString(),
-      'urlResourceOwnerDetails' => $authEndpoints->urlResourceOwnerDetails->toString()
+      'urlAccessToken' => $hostName->getTokenEndpoint()->toString(),
+      'urlAuthorize' => $hostName->getAuthorizationEndpoint()->toString(),
+      'urlResourceOwnerDetails' => $hostName->getUserinfoEndpoint()->toString(),
     ]));
     $this->provider->getGrantFactory()->setGrant(WebTokenAuthenticator::GRANT_TYPE, new JwtBearer());
   }
@@ -107,11 +106,11 @@ class WebTokenAuthenticator extends OAuthAuthenticator
    * @param string $userId
    * @param string $privateKey
    * @return WebTokenAuthenticatorBuilder A new builder instance.
+   * @throws Exception
    */
   public static function builder(string $host, string $userId, string $privateKey): WebTokenAuthenticatorBuilder
   {
-    $hostName = new Hostname($host);
-    return new WebTokenAuthenticatorBuilder($hostName->getEndpoint(), $userId, $userId, $hostName->getEndpoint(), $privateKey);
+    return new WebTokenAuthenticatorBuilder($host, $userId, $userId, $host, $privateKey);
   }
 
   protected function getGrantType(): string

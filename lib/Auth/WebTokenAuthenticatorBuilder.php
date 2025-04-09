@@ -40,6 +40,7 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
    * @param string $jwtSubject The subject claim for the JWT.
    * @param string $jwtAudience The audience claim for the JWT.
    * @param string $privateKey The PEM-formatted private key used to sign the JWT.
+   * @throws Exception
    */
   function __construct(string $host, string $jwtIssuer, string $jwtSubject, string $jwtAudience, string $privateKey)
   {
@@ -68,6 +69,7 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
    * @param string $jsonPath The file path to the JSON configuration file.
    * @return WebTokenAuthenticatorBuilder An initialized instance of JWTAuthenticator.
    * @throws Exception if the file cannot be read or the JSON is invalid.
+   * @noinspection SpellCheckingInspection
    */
   public static function fromJson(string $host, string $jsonPath): WebTokenAuthenticatorBuilder
   {
@@ -134,7 +136,6 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
       $this->jwtSubject,
       $this->jwtAudience,
       $this->privateKey,
-      $this->authEndpoints,
       $this->jwtLifetime,
       $this->jwtAlgorithm,
     );
