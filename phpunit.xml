@@ -4,23 +4,23 @@
          colors="true"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
          cacheResult="false">
-    <coverage processUncoveredFiles="true">
-        <include>
-            <directory suffix=".php">./lib</directory>
-        </include>
-        <exclude>
-            <directory suffix=".php">./vendor</directory>
-            <directory suffix=".php">./test</directory>
-        </exclude>
-    </coverage>
-    <testsuites>
-        <testsuite name="tests">
-            <directory suffix=".php">./test</directory>
-        </testsuite>
-    </testsuites>
-    <php>
-        <ini name="error_reporting" value="E_ALL &amp; ~E_DEPRECATED &amp; ~E_USER_DEPRECATED"/>
-        <ini name="memory_limit" value="1024M" />
-        <env name="APP_ENV" value="test"/>
-    </php>
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">./lib</directory>
+    </include>
+    <exclude>
+      <directory suffix=".php">./vendor</directory>
+      <directory suffix=".php">./test</directory>
+    </exclude>
+  </coverage>
+  <testsuites>
+    <testsuite name="tests">
+      <directory suffix=".php">./test</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <ini name="error_reporting" value="E_ALL &amp; ~E_DEPRECATED &amp; ~E_USER_DEPRECATED"/>
+    <ini name="memory_limit" value="1024M"/>
+    <env name="APP_ENV" value="test"/>
+  </php>
 </phpunit>

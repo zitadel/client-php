@@ -55,7 +55,7 @@
     "chat": "https://discord.com/servers/zitadel-927474939156643850"
   },
   "scripts": {
-    "test": "vendor/bin/phpunit --coverage-html build/coverage/"
+    "test": "vendor/bin/phpunit --coverage-html=build/coverage/html --coverage-clover=build/coverage/clover.xml"
   },
   "config": {
     "allow-plugins": {
