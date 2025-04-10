@@ -14,6 +14,9 @@ class Setup implements TestListener
 	public function startTestSuite(TestSuite $suite): void
 	{
 		$dotenv = Dotenv::createImmutable(getcwd());
-		$dotenv->load();
+    /** @noinspection PhpStatementHasEmptyBodyInspection */
+    if (empty($dotenv->safeLoad())) {
+      //
+    }
 	}
 }
