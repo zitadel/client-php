@@ -14,8 +14,6 @@ class WebTokenAuthenticatorTest extends OAuthAuthenticatorTest
    */
   public function testRefreshToken(): void
   {
-    sleep(20);
-
     $authenticator = WebTokenAuthenticator::builder(static::$oauthHost, "1", WebTokenAuthenticatorTest::getPrivateKey())
       ->scopes(["openid", "foo"])
       ->build();

@@ -5,6 +5,7 @@ namespace Zitadel\Client\Test\Auth;
 use PHPUnit\Framework\TestCase;
 use Testcontainers\Container\GenericContainer;
 use Testcontainers\Container\StartedGenericContainer;
+use Testcontainers\Wait\WaitForHttp;
 
 /**
  * Class OAuthAuthenticatorTest
@@ -39,8 +40,12 @@ abstract class OAuthAuthenticatorTest extends TestCase
     /** @noinspection SpellCheckingInspection */
     self::$mockOAuth2Server = (new GenericContainer("ghcr.io/navikt/mock-oauth2-server:2.1.10"))
       ->withExposedPorts(8080)
-      //->withWait((new WaitForHttp(8080))->withPath("/")->withExpectedStatusCode(405))
       ->start();
+
+    (new WaitForHttp(self::$mockOAuth2Server->getMappedPort(8080)))
+      ->withPath("/")
+      ->withExpectedStatusCode(405)
+      ->wait(self::$mockOAuth2Server);
 
     /** @noinspection HttpUrlsUsage */
     self::$oauthHost = "http://" . self::$mockOAuth2Server->getHost() . ":" . self::$mockOAuth2Server->getMappedPort(8080);
