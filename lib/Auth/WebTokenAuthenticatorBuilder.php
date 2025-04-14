@@ -31,7 +31,7 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
   private string $privateKey;
   private string $jwtAlgorithm = 'RS256';
   private DateInterval $jwtLifetime;
-  private ?string $keyId;
+  private ?string $keyId = null;
 
   /**
    * Constructs the builder with required parameters.
