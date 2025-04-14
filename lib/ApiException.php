@@ -44,6 +44,7 @@ class ApiException extends Exception
    * The HTTP body of the server response either as Json or string.
    *
    * @var stdClass|string|null
+   * @noinspection PhpMissingFieldTypeInspection
    */
   protected $responseBody;
 
@@ -51,6 +52,7 @@ class ApiException extends Exception
    * The HTTP header of the server response.
    *
    * @var string[][]|null
+   * @noinspection PhpMissingFieldTypeInspection
    */
   protected $responseHeaders;
 
@@ -58,6 +60,7 @@ class ApiException extends Exception
    * The deserialized response object
    *
    * @var stdClass|string|null
+   * @noinspection PhpMissingFieldTypeInspection
    */
   protected $responseObject;
 
@@ -68,6 +71,7 @@ class ApiException extends Exception
    * @param int $code HTTP status code
    * @param string[][]|null $responseHeaders HTTP response header
    * @param stdClass|string|null $responseBody HTTP decoded body of the server response either as \stdClass or string
+   * @noinspection PhpMissingParamTypeInspection
    */
   public function __construct($message = "", $code = 0, $responseHeaders = [], $responseBody = null)
   {
@@ -80,6 +84,7 @@ class ApiException extends Exception
    * Gets the HTTP response header
    *
    * @return string[][]|null HTTP response header
+   * @noinspection PhpMissingReturnTypeInspection
    */
   public function getResponseHeaders()
   {
@@ -90,6 +95,7 @@ class ApiException extends Exception
    * Gets the HTTP body of the server response either as Json or string
    *
    * @return stdClass|string|null HTTP body of the server response either as \stdClass or string
+   * @noinspection PhpMissingReturnTypeInspection
    */
   public function getResponseBody()
   {
@@ -100,6 +106,9 @@ class ApiException extends Exception
    * Gets the deserialized response object (during deserialization)
    *
    * @return mixed the deserialized response object
+   * @noinspection PhpReturnDocTypeMismatchInspection
+   * @noinspection PhpMissingReturnTypeInspection
+   * @noinspection PhpUnused
    */
   public function getResponseObject()
   {
@@ -112,6 +121,8 @@ class ApiException extends Exception
    * @param mixed $obj Deserialized response object
    *
    * @return void
+   * @noinspection PhpMissingReturnTypeInspection
+   * @noinspection PhpMissingParamTypeInspection
    */
   public function setResponseObject($obj)
   {

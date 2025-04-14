@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection HttpUrlsUsage */
 
 use PHPUnit\Framework\TestCase;
 use Zitadel\Client\Auth\PersonalAccessAuthenticator;
@@ -14,7 +14,6 @@ class ConfigurationTest extends TestCase
     $authenticator = new PersonalAccessAuthenticator("http://zitadel.com", "secretmet");
     $config = new Configuration($authenticator);
 
-    $this->assertInstanceOf(Configuration::class, $config);
     $this->assertSame(sys_get_temp_dir(), $config->getTempFolderPath());
   }
 

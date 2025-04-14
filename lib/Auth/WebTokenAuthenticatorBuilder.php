@@ -59,6 +59,7 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
    * @param int $seconds The lifetime of the JWT in seconds.
    * @return self
    * @throws Exception
+   * @noinspection PhpUnused
    */
   public function tokenLifetimeSeconds(int $seconds): self
   {
@@ -71,6 +72,7 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
    *
    * @param string $jwtAlgorithm The JWT signing algorithm (e.g., "RS256").
    * @return self
+   * @noinspection PhpUnused
    */
   public function jwtAlgorithm(string $jwtAlgorithm): self
   {

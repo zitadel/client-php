@@ -37,6 +37,9 @@ class SDKTestUsingWebTokenAssertionAuthenticationSpec extends TestCase
     }
   }
 
+  /**
+   * @throws Exception
+   */
   protected function setUp(): void
   {
     $this->baseUrl = $_ENV['BASE_URL'];

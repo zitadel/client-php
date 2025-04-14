@@ -6,7 +6,6 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use Zitadel\Client\ApiException;
 use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
-use Zitadel\Client\Auth\PersonalAccessAuthenticator;
 use Zitadel\Client\Model\V2AddHumanUserRequest;
 use Zitadel\Client\Model\V2SetHumanEmail;
 use Zitadel\Client\Model\V2SetHumanProfile;
@@ -19,6 +18,9 @@ class SDKTestUsingClientCredentialsAuthenticationSpec extends TestCase
   private string $baseUrl;
   private string $userId;
 
+  /**
+   * @throws Exception
+   */
   protected function setUp(): void
   {
     $this->baseUrl = $_ENV['BASE_URL'];
