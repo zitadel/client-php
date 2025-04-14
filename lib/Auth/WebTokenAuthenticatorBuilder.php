@@ -31,6 +31,7 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
   private string $privateKey;
   private string $jwtAlgorithm = 'RS256';
   private DateInterval $jwtLifetime;
+  private ?string $keyId;
 
   /**
    * Constructs the builder with required parameters.
@@ -77,6 +78,13 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
     return $this;
   }
 
+  public function keyId(string $keyId): self
+  {
+    $this->keyId = $keyId;
+    return $this;
+  }
+
+
   /**
    * Builds and returns a new JWTAuthenticator instance.
    *
@@ -90,14 +98,15 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
   {
     return new WebTokenAuthenticator(
       $this->hostName,
-      "",
+      "zitadel",
       $this->authScopes,
       $this->jwtIssuer,
       $this->jwtSubject,
       $this->jwtAudience,
       $this->privateKey,
       $this->jwtLifetime,
-      $this->jwtAlgorithm,
+      algorithm: $this->jwtAlgorithm,
+      keyId: $this->keyId,
     );
   }
 }

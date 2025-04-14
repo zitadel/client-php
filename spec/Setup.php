@@ -2,21 +2,21 @@
 
 namespace Zitadel\Client\Spec;
 
+use Dotenv\Dotenv;
 use PHPUnit\Framework\TestListener;
 use PHPUnit\Framework\TestListenerDefaultImplementation;
 use PHPUnit\Framework\TestSuite;
-use Dotenv\Dotenv;
 
 class Setup implements TestListener
 {
-	use TestListenerDefaultImplementation;
+  use TestListenerDefaultImplementation;
 
-	public function startTestSuite(TestSuite $suite): void
-	{
-		$dotenv = Dotenv::createImmutable(getcwd());
+  public function startTestSuite(TestSuite $suite): void
+  {
+    $dotenv = Dotenv::createImmutable(getcwd());
     /** @noinspection PhpStatementHasEmptyBodyInspection */
     if (empty($dotenv->safeLoad())) {
       //
     }
-	}
+  }
 }
