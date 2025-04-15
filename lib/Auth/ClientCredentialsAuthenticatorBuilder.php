@@ -12,9 +12,6 @@ use Exception;
  */
 final class ClientCredentialsAuthenticatorBuilder extends OAuthAuthenticatorBuilder
 {
-  private string $clientId;
-  private string $clientSecret;
-
   /**
    * Constructs the builder with the required parameters.
    *
@@ -23,11 +20,9 @@ final class ClientCredentialsAuthenticatorBuilder extends OAuthAuthenticatorBuil
    * @param string $clientSecret The OAuth2 client secret.
    * @throws Exception
    */
-  function __construct(string $host, string $clientId, string $clientSecret)
+  function __construct(string $host, private string $clientId, private string $clientSecret)
   {
     parent::__construct($host);
-    $this->clientId = $clientId;
-    $this->clientSecret = $clientSecret;
   }
 
   /**

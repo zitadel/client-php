@@ -18,82 +18,50 @@ class WebTokenAuthenticator extends OAuthAuthenticator
   private const GRANT_TYPE = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
 
   /**
-   * The issuer claim for the JWT.
-   *
-   * @var string
-   */
-  private string $jwtIssuer;
-
-  /**
-   * The subject claim for the JWT.
-   *
-   * @var string
-   */
-  private string $jwtSubject;
-
-  /**
-   * The audience claim for the JWT.
-   *
-   * @var string
-   */
-  private string $jwtAudience;
-
-  /**
-   * The private key used to sign the JWT.
-   *
-   * @var string
-   */
-  private string $privateKey;
-
-  /**
-   * The signing algorithm.
-   *
-   * @var string
-   */
-  private string $jwtAlgorithm;
-
-  /**
-   * Lifetime of the JWT in seconds.
-   *
-   * @var DateInterval
-   */
-  private DateInterval $jwtLifetime;
-  private ?string $keyId;
-
-  /**
    * JWTAuthenticator constructor.
    *
    * @param OpenId $hostName The base URL for the API endpoints.
    * @param string $clientId The OAuth2 client identifier.
    * @param string $scope
-   * @param string $issuer The issuer claim for the JWT.
-   * @param string $subject The subject claim for the JWT.
-   * @param string $audience The audience claim.
+   * @param string $jwtIssuer The issuer claim for the JWT.
+   * @param string $jwtSubject The subject claim for the JWT.
+   * @param string $jwtAudience The audience claim.
    * @param string $privateKey The private key to sign the JWT.
    * @param DateInterval $jwtLifetime The lifetime of the JWT in seconds. Defaults to 300.
-   * @param string|null $algorithm The signing algorithm. Defaults to "RS256".
+   * @param string $jwtAlgorithm The signing algorithm. Defaults to "RS256".
    * @param string|null $keyId
    */
   function __construct(
     OpenId       $hostName,
     string       $clientId,
     string       $scope,
-    string       $issuer,
-    string       $subject,
-    string       $audience,
-    string       $privateKey,
-    DateInterval $jwtLifetime,
-    ?string       $algorithm = 'RS256',
-    ?string       $keyId = null
+    /**
+     * The issuer claim for the JWT.
+     */
+    private string       $jwtIssuer,
+    /**
+     * The subject claim for the JWT.
+     */
+    private string       $jwtSubject,
+    /**
+     * The audience claim for the JWT.
+     */
+    private string       $jwtAudience,
+    /**
+     * The private key used to sign the JWT.
+     */
+    private string       $privateKey,
+    /**
+     * Lifetime of the JWT in seconds.
+     */
+    private DateInterval $jwtLifetime,
+    /**
+     * The signing algorithm.
+     */
+    private string       $jwtAlgorithm = 'RS256',
+    private ?string       $keyId = null
   )
   {
-    $this->jwtIssuer = $issuer;
-    $this->jwtSubject = $subject;
-    $this->jwtAudience = $audience;
-    $this->privateKey = $privateKey;
-    $this->jwtAlgorithm = $algorithm;
-    $this->jwtLifetime = $jwtLifetime;
-    $this->keyId = $keyId;
     parent::__construct($hostName, $clientId, $scope, new GenericProvider([
       'clientId' => $clientId,
       'urlAccessToken' => $hostName->getTokenEndpoint()->toString(),

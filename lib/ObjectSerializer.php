@@ -439,7 +439,7 @@ class ObjectSerializer
       if (!empty($data)) {
         try {
           return new DateTime($data);
-        } catch (Exception $exception) {
+        } catch (Exception) {
           // Some APIs return a date-time with too high nanosecond
           // precision for php's DateTime to handle.
           // With provided regexp 6 digits of microseconds saved
@@ -583,9 +583,7 @@ class ObjectSerializer
     }
 
     if ($encoding === false) {
-      $encoder = function (string $str): string {
-        return $str;
-      };
+      $encoder = (fn(string $str): string => $str);
     } elseif ($encoding === PHP_QUERY_RFC3986) {
       $encoder = 'rawurlencode';
     } elseif ($encoding === PHP_QUERY_RFC1738) {
@@ -595,12 +593,8 @@ class ObjectSerializer
     }
 
     $castBool = Configuration::BOOLEAN_FORMAT_INT == Configuration::getDefaultConfiguration()->getBooleanFormatForQueryString()
-      ? function ($v) {
-        return (int)$v;
-      }
-      : function ($v) {
-        return $v ? 'true' : 'false';
-      };
+      ? fn($v) => (int)$v
+      : (fn($v) => $v ? 'true' : 'false');
 
     $qs = '';
     foreach ($params as $k => $v) {

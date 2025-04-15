@@ -23,9 +23,7 @@ class ZitadelTest extends TestCase
   public function testServicesDynamic(): void
   {
     $expected = ClassFinder::getClassesInNamespace('Zitadel\Client\Api');
-    $expected = array_filter($expected, function (string $class): bool {
-      return str_ends_with($class, 'ServiceApi');
-    });
+    $expected = array_filter($expected, fn(string $class): bool => str_ends_with($class, 'ServiceApi'));
     sort($expected);
 
     $zitadel = new Zitadel(new NoAuthAuthenticator());

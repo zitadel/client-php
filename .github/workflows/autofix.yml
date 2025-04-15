@@ -1,0 +1,39 @@
+name: Fix Code
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    working-directory: ./
+
+jobs:
+  app-testing:
+    runs-on: ubuntu-latest
+    name: Run Checks
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+
+      - name: Install Dependencies
+        run: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Run Rector
+        run: composer rector -- --dry-run --ansi
+
+      - name: Check for changes
+        run: |
+          if ! git diff --exit-code; then
+            echo "❌ Rector found pending changes! Please run 'composer rector' and commit."
+            exit 1
+          fi

@@ -49,15 +49,13 @@ class Configuration
    * @var string
    */
   protected string $tempFolderPath;
-  protected Authenticator $authenticator;
 
   /**
    * Constructor
    */
-  public function __construct(Authenticator $authenticator)
+  public function __construct(protected Authenticator $authenticator)
   {
     $this->tempFolderPath = sys_get_temp_dir();
-    $this->authenticator = $authenticator;
   }
 
   /**

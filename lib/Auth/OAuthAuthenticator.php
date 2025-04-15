@@ -17,46 +17,36 @@ abstract class OAuthAuthenticator extends Authenticator
 {
 
   /**
-   * The OAuth2 client identifier.
-   *
-   * @var string
-   */
-  protected string $clientId;
-  /**
    * The OAuth2 token endpoint URL.
    *
    * @var OpenId
    */
   protected OpenId $openId;
   /**
-   * The scope for the token request.
-   *
-   * @var string
-   */
-  protected string $scope;
-  /**
    * The OAuth2 token (associative array containing at least 'access_token' and 'expires_at').
    *
    * @var AccessTokenInterface|null
    */
   protected ?AccessTokenInterface $token;
-  protected GenericProvider $provider;
 
   /**
    * OAuthAuthenticator constructor.
    *
    * @param OpenId $openId
    * @param string $clientId The OAuth2 client identifier.
-   * @param string|null $scope The scope for the token request.
+   * @param string $scope The scope for the token request.
    * @param GenericProvider $provider
    */
-  public function __construct(OpenId $openId, string $clientId, ?string $scope, GenericProvider $provider)
+  public function __construct(OpenId $openId, /**
+   * The OAuth2 client identifier.
+   */
+  protected string $clientId, /**
+   * The scope for the token request.
+   */
+  protected string $scope, protected GenericProvider $provider)
   {
     parent::__construct($openId->getHostEndpoint()->toString());
-    $this->clientId = $clientId;
-    $this->scope = $scope;
     $this->token = null;
-    $this->provider = $provider;
     $this->openId = $openId;
   }
 

@@ -44,7 +44,7 @@ class OpenId
     }
 
     $this->hostEndpoint = $this->buildHostname($hostname);
-    $config = $this->fetchOpenIdConfiguration($hostname);
+    $config = self::fetchOpenIdConfiguration($hostname);
 
     $this->tokenEndpoint = Uri::new($config['token_endpoint']);
     $this->authorizationEndpoint = Uri::new($config['authorization_endpoint']);

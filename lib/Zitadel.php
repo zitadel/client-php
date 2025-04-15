@@ -25,7 +25,7 @@ class Zitadel
   {
     $config = new Configuration($authenticator);
 
-    $mutateConfig = $mutateConfig ?? function ($config) {
+    $mutateConfig ??= function ($config) {
     };
     $mutateConfig($config);
 

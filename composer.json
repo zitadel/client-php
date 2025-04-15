@@ -36,7 +36,8 @@
     "haydenpierce/class-finder": "^0.5.3",
     "testcontainers/testcontainers": "^1.0",
     "ext-openssl": "*",
-    "vlucas/phpdotenv": "^5.6"
+    "vlucas/phpdotenv": "^5.6",
+    "rector/rector": "^2.0"
   },
   "autoload": {
     "psr-4": {
@@ -57,7 +58,8 @@
     "chat": "https://discord.com/servers/zitadel-927474939156643850"
   },
   "scripts": {
-    "test": "vendor/bin/phpunit --coverage-html=build/coverage/html --coverage-clover=build/coverage/clover.xml"
+    "test": "vendor/bin/phpunit --coverage-html=build/coverage/html --coverage-clover=build/coverage/clover.xml",
+    "rector": "rector process"
   },
   "config": {
     "allow-plugins": {

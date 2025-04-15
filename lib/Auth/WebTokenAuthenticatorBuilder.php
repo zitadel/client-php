@@ -25,10 +25,6 @@ use Exception;
  */
 final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
 {
-  private string $jwtIssuer;
-  private string $jwtSubject;
-  private string $jwtAudience;
-  private string $privateKey;
   private string $jwtAlgorithm = 'RS256';
   private DateInterval $jwtLifetime;
   private ?string $keyId = null;
@@ -43,13 +39,9 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
    * @param string $privateKey The PEM-formatted private key used to sign the JWT.
    * @throws Exception
    */
-  function __construct(string $host, string $jwtIssuer, string $jwtSubject, string $jwtAudience, string $privateKey)
+  function __construct(string $host, private string $jwtIssuer, private string $jwtSubject, private string $jwtAudience, private string $privateKey)
   {
     parent::__construct($host);
-    $this->jwtIssuer = $jwtIssuer;
-    $this->jwtSubject = $jwtSubject;
-    $this->jwtAudience = $jwtAudience;
-    $this->privateKey = $privateKey;
     $this->jwtLifetime = new DateInterval('PT1H');
   }
 
@@ -107,7 +99,7 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
       $this->jwtAudience,
       $this->privateKey,
       $this->jwtLifetime,
-      algorithm: $this->jwtAlgorithm,
+      jwtAlgorithm: $this->jwtAlgorithm,
       keyId: $this->keyId,
     );
   }

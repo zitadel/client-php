@@ -201,9 +201,7 @@ class HeaderSelector
    */
   private function adjustWeight(array $headers, float &$currentWeight, bool $hasMoreThan28Headers): array
   {
-    usort($headers, function (array $a, array $b) {
-      return $b['weight'] - $a['weight'];
-    });
+    usort($headers, fn(array $a, array $b) => $b['weight'] - $a['weight']);
 
     $acceptHeaders = [];
     foreach ($headers as $index => $header) {
