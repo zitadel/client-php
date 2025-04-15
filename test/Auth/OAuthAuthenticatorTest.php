@@ -60,9 +60,7 @@ abstract class OAuthAuthenticatorTest extends TestCase
    */
   public static function tearDownAfterClass(): void
   {
-    if (self::$mockOAuth2Server !== null) {
-      self::$mockOAuth2Server->stop();
-    }
+      self::$mockOAuth2Server?->stop();
     parent::tearDownAfterClass();
   }
 

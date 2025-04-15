@@ -2,7 +2,6 @@
 
 namespace Zitadel\Client;
 
-use InvalidArgumentException;
 use Zitadel\Client\Auth\Authenticator;
 use Zitadel\Client\Auth\NoAuthAuthenticator;
 
@@ -83,7 +82,7 @@ class Configuration
    * @return void
    * @noinspection PhpUnused
    */
-  public static function setDefaultConfiguration(Configuration $config)
+  public static function setDefaultConfiguration(Configuration $config): void
   {
     self::$defaultConfiguration = $config;
   }
@@ -153,9 +152,6 @@ class Configuration
    */
   public function setUserAgent(string $userAgent): Configuration
   {
-    if (!is_string($userAgent)) {
-      throw new InvalidArgumentException('User-agent must be a string.');
-    }
 
     $this->userAgent = $userAgent;
     return $this;
@@ -203,7 +199,7 @@ class Configuration
    * @return $this
    * @noinspection PhpUnused
    */
-  public function setDebugFile($debugFile): Configuration
+  public function setDebugFile(string $debugFile): Configuration
   {
     $this->debugFile = $debugFile;
     return $this;
@@ -227,7 +223,7 @@ class Configuration
    * @return $this
    * @noinspection PhpUnused
    */
-  public function setTempFolderPath($tempFolderPath): Configuration
+  public function setTempFolderPath(string $tempFolderPath): Configuration
   {
     $this->tempFolderPath = $tempFolderPath;
     return $this;

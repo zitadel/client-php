@@ -1,4 +1,20 @@
-<?php
+<?php /** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
 /**
  * ObjectSerializer
  *
@@ -46,13 +62,17 @@ use Zitadel\Client\Model\ModelInterface;
  */
 class ObjectSerializer
 {
-  /** @var string */
+  /** @var string
+   * @noinspection PhpMissingFieldTypeInspection
+   * @noinspection PhpClassConstantAccessedViaChildClassInspection
+   */
   private static $dateTimeFormat = DateTime::ATOM;
 
   /**
    * Change the date format
    *
    * @param string $format the new date format to use
+   * @noinspection PhpMissingReturnTypeInspection
    */
   public static function setDateTimeFormat($format)
   {
@@ -67,6 +87,8 @@ class ObjectSerializer
    * @param string|null $format the format of the OpenAPITools type of the data
    *
    * @return scalar|object|array|null serialized form of $data
+   * @noinspection PhpUnusedParameterInspection
+   * @noinspection PhpMissingReturnTypeInspection
    */
   public static function sanitizeForSerialization($data, $type = null, $format = null)
   {
@@ -125,6 +147,7 @@ class ObjectSerializer
    * @param string $value a string which will be part of the path
    *
    * @return string the serialized object
+   * @noinspection PhpMissingReturnTypeInspection
    */
   public static function toPathValue($value)
   {
@@ -140,6 +163,7 @@ class ObjectSerializer
    * @param float|int|bool|DateTime $value the value of the parameter
    *
    * @return string the header string
+   * @noinspection PhpMissingReturnTypeInspection
    */
   public static function toString($value)
   {
@@ -181,7 +205,7 @@ class ObjectSerializer
     #    example, 0 as "int" or "boolean" is NOT an empty value.
     if (self::isEmptyValue($value, $openApiType)) {
       if ($required) {
-        return ["{$paramName}" => ''];
+        return ["$paramName" => ''];
       } else {
         return [];
       }
@@ -189,7 +213,7 @@ class ObjectSerializer
 
     # Handle DateTime objects in query
     if ($openApiType === "\\DateTime" && $value instanceof DateTime) {
-      return ["{$paramName}" => $value->format(self::$dateTimeFormat)];
+      return ["$paramName" => $value->format(self::$dateTimeFormat)];
     }
 
     $query = [];
@@ -201,7 +225,7 @@ class ObjectSerializer
       if (!is_array($arr)) return $arr;
 
       foreach ($arr as $k => $v) {
-        $prop = ($style === 'deepObject') ? $prop = "{$name}[{$k}]" : $k;
+        $prop = ($style === 'deepObject') ? $prop = "{$name}[$k]" : $k;
 
         if (is_array($v)) {
           $flattenArray($v, $prop, $result);
@@ -257,31 +281,13 @@ class ObjectSerializer
       return true;
     }
 
-    switch ($openApiType) {
-      # For numeric values, false and '' are considered empty.
-      # This comparison is safe for floating point values, since the previous call to empty() will
-      # filter out values that don't match 0.
-      case 'int':
-      case 'integer':
-        return $value !== 0;
-
-      case 'number':
-      case 'float':
-        return $value !== 0 && $value !== 0.0;
-
-      # For boolean values, '' is considered empty
-      case 'bool':
-      case 'boolean':
-        return !in_array($value, [false, 0], true);
-
-      # For string values, '' is considered empty.
-      case 'string':
-        return $value === '';
-
-      # For all the other types, any value at this point can be considered empty.
-      default:
-        return true;
-    }
+    return match ($openApiType) {
+      'int', 'integer' => $value !== 0,
+      'number', 'float' => $value !== 0 && $value !== 0.0,
+      'bool', 'boolean' => !in_array($value, [false, 0], true),
+      'string' => $value === '',
+      default => true,
+    };
   }
 
   /**
@@ -290,6 +296,7 @@ class ObjectSerializer
    * @param bool $value Boolean value
    *
    * @return int|string Boolean value in format
+   * @noinspection PhpMissingReturnTypeInspection
    */
   public static function convertBoolToQueryStringFormat(bool $value)
   {
@@ -309,6 +316,7 @@ class ObjectSerializer
    * @param bool $allowCollectionFormatMulti allow collection format to be a multidimensional array
    *
    * @return string
+   * @noinspection PhpMissingReturnTypeInspection
    */
   public static function serializeCollection(array $collection, $style, $allowCollectionFormatMulti = false)
   {
@@ -317,24 +325,12 @@ class ObjectSerializer
       // need to fix the result of multidimensional arrays.
       return preg_replace('/%5B[0-9]+%5D=/', '=', http_build_query($collection, '', '&'));
     }
-    switch ($style) {
-      case 'pipeDelimited':
-      case 'pipes':
-        return implode('|', $collection);
-
-      case 'tsv':
-        return implode("\t", $collection);
-
-      case 'spaceDelimited':
-      case 'ssv':
-        return implode(' ', $collection);
-
-      case 'simple':
-      case 'csv':
-        // Deliberate fall through. CSV is default format.
-      default:
-        return implode(',', $collection);
-    }
+    return match ($style) {
+      'pipeDelimited', 'pipes' => implode('|', $collection),
+      'tsv' => implode("\t", $collection),
+      'spaceDelimited', 'ssv' => implode(' ', $collection),
+      default => implode(',', $collection),
+    };
   }
 
   /**
@@ -345,6 +341,7 @@ class ObjectSerializer
    * @param string $value a string which will be part of the header
    *
    * @return string the header string
+   * @noinspection PhpMissingReturnTypeInspection
    */
   public static function toHeaderValue($value)
   {
@@ -364,6 +361,7 @@ class ObjectSerializer
    * @param string|SplFileObject $value the value of the form parameter
    *
    * @return string the form string
+   * @noinspection PhpMissingReturnTypeInspection
    */
   public static function toFormValue($value)
   {
@@ -379,9 +377,13 @@ class ObjectSerializer
    *
    * @param mixed $data object or primitive to be deserialized
    * @param string $class class name is passed as a string
-   * @param string[]|null $httpHeaders HTTP headers
+   * @param null $httpHeaders HTTP headers
    *
    * @return object|array|null a single or an array of $class instances
+   * @throws Exception
+   * @noinspection PhpUnusedLocalVariableInspection
+   * @noinspection PhpMissingReturnTypeInspection
+   * @noinspection PhpRedundantOptionalArgumentInspection
    */
   public static function deserialize($data, $class, $httpHeaders = null)
   {
@@ -519,10 +521,8 @@ class ObjectSerializer
           continue;
         }
 
-        if (isset($data->{$instance::attributeMap()[$property]})) {
-          $propertyValue = $data->{$instance::attributeMap()[$property]};
-          $instance->$propertySetter(self::deserialize($propertyValue, $type, null));
-        }
+        $propertyValue = $data->{$instance::attributeMap()[$property]};
+        $instance->$propertySetter(self::deserialize($propertyValue, $type, null));
       }
       return $instance;
     }
@@ -534,6 +534,7 @@ class ObjectSerializer
    * @param string $timestamp Original timestamp
    *
    * @return string the shorten timestamp
+   * @noinspection PhpMissingReturnTypeInspection
    */
   public static function sanitizeTimestamp($timestamp)
   {
@@ -549,6 +550,7 @@ class ObjectSerializer
    * @param string $filename filename to be sanitized
    *
    * @return string the sanitized filename
+   * @noinspection PhpMissingReturnTypeInspection
    */
   public static function sanitizeFilename($filename)
   {

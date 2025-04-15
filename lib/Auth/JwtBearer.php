@@ -15,6 +15,7 @@ class JwtBearer extends AbstractGrant
    * Get the grant's name.
    *
    * @return string
+   * @noinspection PhpUnused
    */
   protected function getName(): string
   {
@@ -25,6 +26,7 @@ class JwtBearer extends AbstractGrant
    * Get required parameters for this grant type.
    *
    * @return array
+   * @noinspection PhpUnused
    */
   protected function getRequiredRequestParameters(): array
   {

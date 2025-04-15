@@ -58,6 +58,7 @@ class WebTokenAuthenticator extends OAuthAuthenticator
    * @var DateInterval
    */
   private DateInterval $jwtLifetime;
+  private ?string $keyId;
 
   /**
    * JWTAuthenticator constructor.
@@ -70,7 +71,8 @@ class WebTokenAuthenticator extends OAuthAuthenticator
    * @param string $audience The audience claim.
    * @param string $privateKey The private key to sign the JWT.
    * @param DateInterval $jwtLifetime The lifetime of the JWT in seconds. Defaults to 300.
-   * @param string $algorithm The signing algorithm. Defaults to "RS256".
+   * @param string|null $algorithm The signing algorithm. Defaults to "RS256".
+   * @param string|null $keyId
    */
   function __construct(
     OpenId       $hostName,
@@ -81,7 +83,8 @@ class WebTokenAuthenticator extends OAuthAuthenticator
     string       $audience,
     string       $privateKey,
     DateInterval $jwtLifetime,
-    string       $algorithm = 'RS256'
+    ?string       $algorithm = 'RS256',
+    ?string       $keyId = null
   )
   {
     $this->jwtIssuer = $issuer;
@@ -90,6 +93,7 @@ class WebTokenAuthenticator extends OAuthAuthenticator
     $this->privateKey = $privateKey;
     $this->jwtAlgorithm = $algorithm;
     $this->jwtLifetime = $jwtLifetime;
+    $this->keyId = $keyId;
     parent::__construct($hostName, $clientId, $scope, new GenericProvider([
       'clientId' => $clientId,
       'urlAccessToken' => $hostName->getTokenEndpoint()->toString(),
@@ -132,11 +136,12 @@ class WebTokenAuthenticator extends OAuthAuthenticator
 
     $userId = $config['userId'] ?? null;
     $privateKey = $config['key'] ?? null;
-    if ($userId === null || $privateKey === null) {
+    $keyId = $config['keyId'] ?? null;
+    if ($userId === null || $privateKey === null || $keyId === null) {
       throw new Exception("Missing required configuration keys in JSON file.");
     }
 
-    return self::builder($host, $userId, $privateKey)->build();
+    return self::builder($host, $userId, $privateKey)->keyId($keyId)->build();
   }
 
   /**
@@ -170,7 +175,7 @@ class WebTokenAuthenticator extends OAuthAuthenticator
     ];
     return [
       'scope' => $this->scope,
-      'assertion' => JWT::encode($payload, $this->privateKey, $this->jwtAlgorithm),
+      'assertion' => JWT::encode($payload, $this->privateKey, $this->jwtAlgorithm, $this->keyId),
     ];
   }
 

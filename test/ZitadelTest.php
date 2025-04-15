@@ -2,6 +2,7 @@
 
 namespace Zitadel\Client\Test;
 
+use Exception;
 use HaydenPierce\ClassFinder\ClassFinder;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -17,13 +18,13 @@ class ZitadelTest extends TestCase
 {
   /**
    * Verifies that the set of expected API service classes matches the set of actual service properties in Zitadel.
-   * @throws \Exception when it is unable to look up classes in the namespace
+   * @throws Exception when it is unable to look up classes in the namespace
    */
   public function testServicesDynamic(): void
   {
     $expected = ClassFinder::getClassesInNamespace('Zitadel\Client\Api');
     $expected = array_filter($expected, function (string $class): bool {
-      return substr($class, -10) === 'ServiceApi';
+      return str_ends_with($class, 'ServiceApi');
     });
     sort($expected);
 
@@ -33,7 +34,7 @@ class ZitadelTest extends TestCase
     $actual = [];
     foreach ($properties as $prop) {
       $type = $prop->getType();
-      if ($type !== null && strpos($type->getName(), 'Zitadel\Client\Api\\') === 0) {
+      if ($type !== null && str_starts_with($type->getName(), 'Zitadel\Client\Api\\')) {
         $actual[] = $type->getName();
       }
     }
