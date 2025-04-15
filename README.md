@@ -40,51 +40,147 @@ Install the SDK by running one of the following commands:
 composer require zitadel/client
 ```
 
-### Authentication
+## Authentication Methods
 
-The SDK supports three authentication methods:
+Your SDK offers three ways to authenticate with Zitadel. Each method has its
+own benefits—choose the one that fits your situation best.
 
-1. Private Key JWT Authentication
-2. Client Credentials Grant
-3. Personal Access Tokens (PATs)
+#### 1. Private Key JWT Authentication
 
-For most service user scenarios in Zitadel, private key JWT authentication
-is the recommended choice due to its benefits in security, performance, and control.
-However, client credentials authentication might be considered in specific
-situations where simplicity and trust between servers are priorities.
+**What is it?**
+You use a JSON Web Token (JWT) that you sign with a private key stored in a
+JSON file. This process creates a secure token.
 
-For more details on these authentication methods, please refer
-to the [Zitadel documentation on authenticating service users](https://zitadel.com/docs/guides/integrate/service-users/authenticate-service-users).
+**When should you use it?**
+- **Best for production:** It offers strong security.
+- **Advanced control:** You can adjust token settings like expiration.
 
+**How do you use it?**
+1. Save your private key in a JSON file.
+2. Use the provided method to load this key and create a JWT-based
+   authenticator.
 
-### Example
+**Example:**
 
 ```php
-<?php
+use Zitadel\Auth\WebTokenAuthenticator;
+use Zitadel\Zitadel;
 
-use Zitadel\Client\Model\V2AddHumanUserRequest;
-use Zitadel\Client\Model\V2SetHumanEmail;
-use Zitadel\Client\Model\V2SetHumanProfile;
-use Zitadel\Client\Zitadel;
-use Zitadel\Client\ApiException;
+$baseUrl = getenv('BASE_URL');
+$keyFile = '/path/to/jwt-key.json';
 
-$zitadel = new Zitadel('your-zitadel-base-url', 'your-valid-token');
+$authenticator = WebTokenAuthenticator::fromJson($baseUrl, $keyFile);
+$zitadel = new Zitadel($authenticator);
 
 try {
-    $response = $zitadel->users->userServiceAddHumanUser(
-        (new V2AddHumanUserRequest())
-            ->setUsername('john.doe')
-            ->setProfile((new V2SetHumanProfile())
-                ->setGivenName('John')
-                ->setFamilyName('Doe'))
-            ->setEmail((new V2SetHumanEmail())
-                ->setEmail('john@@doe.com'))
-    );
-    echo 'User created with ID: ' . $response->getUserId();
+    $response = $zitadel->users->addHumanUser([
+        'username' => 'john.doe',
+        'profile'  => [
+            'givenName'  => 'John',
+            'familyName' => 'Doe'
+        ],
+        'email' => [
+            'email' => 'john@doe.com'
+        ]
+    ]);
+    echo "User created: " . print_r($response, true);
 } catch (ApiException $e) {
-    echo 'Error creating user: ' . $e->getMessage();
+    echo "Error: " . $e->getMessage();
 }
 ```
+
+#### 2. Client Credentials Grant
+
+**What is it?**
+This method uses a client ID and client secret to get a secure access token,
+which is then used to authenticate.
+
+**When should you use it?**
+- **Simple and straightforward:** Good for server-to-server communication.
+- **Trusted environments:** Use it when both servers are owned or trusted.
+
+**How do you use it?**
+1. Provide your client ID and client secret.
+2. Build the authenticator
+
+**Example:**
+
+```php
+use Zitadel\Auth\ClientCredentialsAuthenticator;
+use Zitadel\Zitadel;
+
+$baseUrl = getenv('BASE_URL');
+$clientId = getenv('CLIENT_ID');
+$clientSecret = getenv('CLIENT_SECRET');
+
+$authenticator = ClientCredentialsAuthenticator::builder($baseUrl, $clientId, $clientSecret)->build();
+$zitadel = new Zitadel($authenticator);
+
+try {
+    $response = $zitadel->users->addHumanUser([
+        'username' => 'john.doe',
+        'profile'  => [
+            'givenName'  => 'John',
+            'familyName' => 'Doe'
+        ],
+        'email' => [
+            'email' => 'john@doe.com'
+        ]
+    ]);
+    echo "User created: " . print_r($response, true);
+} catch (ApiException $e) {
+    echo "Error: " . $e->getMessage();
+}
+```
+
+#### 3. Personal Access Tokens (PATs)
+
+**What is it?**
+A Personal Access Token (PAT) is a pre-generated token that you can use to
+authenticate without exchanging credentials every time.
+
+**When should you use it?**
+- **Easy to use:** Great for development or testing scenarios.
+- **Quick setup:** No need for dynamic token generation.
+
+**How do you use it?**
+1. Obtain a valid personal access token from your account.
+2. Create the authenticator with: `PersonalAccessTokenAuthenticator`
+
+**Example:**
+
+```php
+use Zitadel\Auth\PersonalAccessTokenAuthenticator;
+use Zitadel\Zitadel;
+
+$baseUrl = getenv('BASE_URL');
+$validToken = getenv('AUTH_TOKEN');
+
+$authenticator = new PersonalAccessTokenAuthenticator($baseUrl, $validToken);
+$zitadel = new Zitadel($authenticator);
+
+try {
+    $response = $zitadel->users->addHumanUser([
+        'username' => 'john.doe',
+        'profile'  => [
+            'givenName'  => 'John',
+            'familyName' => 'Doe'
+        ],
+        'email' => [
+            'email' => 'john@doe.com'
+        ]
+    ]);
+    echo "User created: " . print_r($response, true);
+} catch (ApiException $e) {
+    echo "Error: " . $e->getMessage();
+}
+```
+
+---
+
+Choose the authentication method that best suits your needs based on your
+environment and security requirements. For more details, please refer to the
+[Zitadel documentation on authenticating service users](https://zitadel.com/docs/guides/integrate/service-users/authenticate-service-users).
 
 ### Debugging
 The SDK supports debug logging, which can be enabled for troubleshooting

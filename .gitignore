@@ -19,3 +19,4 @@ composer.phar
 devbox.json
 devbox.lock
 .devbox
+package.xml
