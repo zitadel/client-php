@@ -32,9 +32,9 @@ class WebTokenAuthenticator extends OAuthAuthenticator
    * @param string|null $keyId
    */
   function __construct(
-    OpenId       $hostName,
-    string       $clientId,
-    string       $scope,
+    OpenId               $hostName,
+    string               $clientId,
+    string               $scope,
     /**
      * The issuer claim for the JWT.
      */
@@ -59,7 +59,7 @@ class WebTokenAuthenticator extends OAuthAuthenticator
      * The signing algorithm.
      */
     private string       $jwtAlgorithm = 'RS256',
-    private ?string       $keyId = null
+    private ?string      $keyId = null
   )
   {
     parent::__construct($hostName, $clientId, $scope, new GenericProvider([

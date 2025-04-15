@@ -37,13 +37,13 @@ abstract class OAuthAuthenticator extends Authenticator
    * @param string $scope The scope for the token request.
    * @param GenericProvider $provider
    */
-  public function __construct(OpenId $openId, /**
+  public function __construct(OpenId           $openId, /**
    * The OAuth2 client identifier.
    */
-  protected string $clientId, /**
-   * The scope for the token request.
-   */
-  protected string $scope, protected GenericProvider $provider)
+                              protected string $clientId, /**
+     * The scope for the token request.
+     */
+                              protected string $scope, protected GenericProvider $provider)
   {
     parent::__construct($openId->getHostEndpoint()->toString());
     $this->token = null;

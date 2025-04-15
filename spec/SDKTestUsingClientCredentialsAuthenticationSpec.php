@@ -21,40 +21,6 @@ class SDKTestUsingClientCredentialsAuthenticationSpec extends TestCase
   /**
    * @throws Exception
    */
-  protected function setUp(): void
-  {
-    $this->baseUrl = $_ENV['BASE_URL'];
-    $this->clientId = $_ENV['CLIENT_ID'];
-    $this->clientSecret = $_ENV['CLIENT_SECRET'];
-    $this->userId = $this->createUser();
-  }
-
-  /**
-   * @throws Exception
-   */
-  private function createUser(): string
-  {
-    $zitadel = new Zitadel(ClientCredentialsAuthenticator::builder($this->baseUrl, $this->clientId, $this->clientSecret)->build());
-
-    $request = new V2AddHumanUserRequest();
-    $request->setUsername(uniqid('user_'))
-      ->setProfile((new V2SetHumanProfile())
-        ->setGivenName('John')
-        ->setFamilyName('Doe'))
-      ->setEmail((new V2SetHumanEmail())
-        ->setEmail('johndoe' . uniqid() . '@example.com'));
-
-    try {
-      $response = $zitadel->users->addHumanUser($request);
-      return $response->getUserId();
-    } catch (ApiException $e) {
-      $this->fail('Error creating user: ' . $e->getMessage());
-    }
-  }
-
-  /**
-   * @throws Exception
-   */
   public function testDeactivateUserWithValidToken(): void
   {
     $zitadel = new Zitadel(ClientCredentialsAuthenticator::builder($this->baseUrl, $this->clientId, $this->clientSecret)->build());
@@ -93,6 +59,40 @@ class SDKTestUsingClientCredentialsAuthenticationSpec extends TestCase
     } catch (ApiException $e) {
       $this->assertStringContainsString('Unauthorized', $e->getMessage());
       echo "Caught expected ApiException for reactivating user with invalid token: " . $e->getMessage() . "\n";
+    }
+  }
+
+  /**
+   * @throws Exception
+   */
+  protected function setUp(): void
+  {
+    $this->baseUrl = $_ENV['BASE_URL'];
+    $this->clientId = $_ENV['CLIENT_ID'];
+    $this->clientSecret = $_ENV['CLIENT_SECRET'];
+    $this->userId = $this->createUser();
+  }
+
+  /**
+   * @throws Exception
+   */
+  private function createUser(): string
+  {
+    $zitadel = new Zitadel(ClientCredentialsAuthenticator::builder($this->baseUrl, $this->clientId, $this->clientSecret)->build());
+
+    $request = new V2AddHumanUserRequest();
+    $request->setUsername(uniqid('user_'))
+      ->setProfile((new V2SetHumanProfile())
+        ->setGivenName('John')
+        ->setFamilyName('Doe'))
+      ->setEmail((new V2SetHumanEmail())
+        ->setEmail('johndoe' . uniqid() . '@example.com'));
+
+    try {
+      $response = $zitadel->users->addHumanUser($request);
+      return $response->getUserId();
+    } catch (ApiException $e) {
+      $this->fail('Error creating user: ' . $e->getMessage());
     }
   }
 }

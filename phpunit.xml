@@ -5,7 +5,7 @@
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
          cacheResult="false">
   <listeners>
-    <listener class="Zitadel\Client\Spec\Setup" file="spec/Setup.php" />
+    <listener class="Zitadel\Client\Spec\Setup" file="spec/Setup.php"/>
   </listeners>
   <coverage processUncoveredFiles="true">
     <include>

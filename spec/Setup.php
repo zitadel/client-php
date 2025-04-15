@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestListenerDefaultImplementation;
 use PHPUnit\Framework\TestSuite;
 
 /** @noinspection PhpUnused */
+
 class Setup implements TestListener
 {
   use TestListenerDefaultImplementation;
