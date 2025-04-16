@@ -24,7 +24,7 @@ class Zitadel
   public function __construct(Authenticator $authenticator, callable $mutateConfig = null)
   {
     $config = new Configuration($authenticator);
-    $mutateConfig = $mutateConfig ?? static function (Configuration $config): void {
+    $mutateConfig ??= static function (Configuration $config): void {
       // No mutation by default.
     };
     $mutateConfig($config);
