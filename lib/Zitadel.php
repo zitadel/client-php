@@ -21,7 +21,7 @@ class Zitadel
   public SettingsServiceApi $settings;
   public UserServiceApi $users;
 
-  public function __construct(Authenticator $authenticator, callable $mutateConfig = null)
+  public function __construct(Authenticator $authenticator, ?callable $mutateConfig = null)
   {
     $config = new Configuration($authenticator);
     $mutateConfig ??= static function (Configuration $config): void {
