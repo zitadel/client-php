@@ -12,6 +12,15 @@
       }
     ],
     [
+      "semantic-release-plugin-update-version-in-files",
+      {
+        "files": [
+          "lib/Version.php"
+        ],
+        "placeholder": "0.0.0"
+      }
+    ],
+    [
       "@semantic-release/github",
       {
         "assets": [
@@ -24,7 +33,8 @@
       {
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
         "assets": [
-          "composer.json"
+          "composer.json",
+          "lib/Version.php"
         ]
       }
     ]
