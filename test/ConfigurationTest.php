@@ -37,6 +37,10 @@ class ConfigurationTest extends TestCase
     $authenticator = new PersonalAccessAuthenticator("http://zitadel.com", "secretmet");
     $config = new Configuration($authenticator);
 
+    $this->assertMatchesRegularExpression(
+      '/^zitadel-client\/0\.0\.0 \(lang=php; lang_version=[^;]+; os=[^;]+; arch=[^;]+\)$/',
+      $config->getUserAgent()
+    );
     $config->setUserAgent('CustomUserAgent/1.0');
     $this->assertEquals('CustomUserAgent/1.0', $config->getUserAgent());
   }
