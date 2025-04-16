@@ -9,7 +9,7 @@ class ConfigurationTest extends TestCase
   /**
    * Test constructor with valid PersonalAccessAuthenticator
    */
-  public function testConstructor()
+  public function testConstructor(): void
   {
     $authenticator = new PersonalAccessAuthenticator("http://zitadel.com", "secretmet");
     $config = new Configuration($authenticator);
@@ -20,7 +20,7 @@ class ConfigurationTest extends TestCase
   /**
    * Test setting and getting boolean format for query string
    */
-  public function testSetAndGetBooleanFormatForQueryString()
+  public function testSetAndGetBooleanFormatForQueryString(): void
   {
     $authenticator = new PersonalAccessAuthenticator("http://zitadel.com", "secretmet");
     $config = new Configuration($authenticator);
@@ -32,7 +32,7 @@ class ConfigurationTest extends TestCase
   /**
    * Test user agent getter and setter
    */
-  public function testUserAgent()
+  public function testUserAgent(): void
   {
     $authenticator = new PersonalAccessAuthenticator("http://zitadel.com", "secretmet");
     $config = new Configuration($authenticator);
@@ -48,7 +48,7 @@ class ConfigurationTest extends TestCase
   /**
    * Test setting and getting debug flag
    */
-  public function testDebugFlag()
+  public function testDebugFlag(): void
   {
     $authenticator = new PersonalAccessAuthenticator("http://zitadel.com", "secretmet");
     $config = new Configuration($authenticator);
@@ -60,7 +60,7 @@ class ConfigurationTest extends TestCase
   /**
    * Test setting and getting debug file
    */
-  public function testDebugFile()
+  public function testDebugFile(): void
   {
     $authenticator = new PersonalAccessAuthenticator("http://zitadel.com", "secretmet");
     $config = new Configuration($authenticator);
@@ -72,7 +72,7 @@ class ConfigurationTest extends TestCase
   /**
    * Test getting access token
    */
-  public function testGetAccessToken()
+  public function testGetAccessToken(): void
   {
     $authenticator = new PersonalAccessAuthenticator("http://zitadel.com", "secretmet");
     $config = new Configuration($authenticator);
@@ -83,7 +83,7 @@ class ConfigurationTest extends TestCase
   /**
    * Test getting host from authenticator
    */
-  public function testGetHost()
+  public function testGetHost(): void
   {
     $authenticator = new PersonalAccessAuthenticator("http://zitadel.com", "secretmet");
     $config = new Configuration($authenticator);

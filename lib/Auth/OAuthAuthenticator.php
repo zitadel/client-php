@@ -80,6 +80,7 @@ abstract class OAuthAuthenticator extends Authenticator
         $this->getAccessTokenOptions()
       );
 
+      // @phpstan-ignore-next-line
       if ($this->token === null) {
         throw new Exception('Unable to refresh token');
       }

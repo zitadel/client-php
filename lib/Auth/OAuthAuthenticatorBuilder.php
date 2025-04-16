@@ -29,10 +29,10 @@ abstract class OAuthAuthenticatorBuilder
   /**
    * Overrides the default scopes.
    *
-   * @param array $authScopes A list of scopes for the token request.
-   * @return self
+   * @param string[] $authScopes A list of scopes for the token request.
+   * @return static
    */
-  public function scopes(array $authScopes): self
+  public function scopes(array $authScopes): static
   {
     $this->authScopes = implode(' ', $authScopes);
     return $this;

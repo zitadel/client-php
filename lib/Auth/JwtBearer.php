@@ -25,7 +25,7 @@ class JwtBearer extends AbstractGrant
   /**
    * Get required parameters for this grant type.
    *
-   * @return array
+   * @return string[] An array of required request parameter names.
    * @noinspection PhpUnused
    */
   protected function getRequiredRequestParameters(): array

@@ -6,6 +6,7 @@ use Exception;
 use HaydenPierce\ClassFinder\ClassFinder;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionNamedType;
 use Zitadel\Client\Auth\NoAuthAuthenticator;
 use Zitadel\Client\Zitadel;
 
@@ -32,12 +33,12 @@ class ZitadelTest extends TestCase
     $actual = [];
     foreach ($properties as $prop) {
       $type = $prop->getType();
-      if ($type !== null && str_starts_with($type->getName(), 'Zitadel\Client\Api\\')) {
+      if ($type instanceof ReflectionNamedType && str_starts_with($type->getName(), 'Zitadel\Client\Api\\')) {
         $actual[] = $type->getName();
       }
     }
     sort($actual);
 
-    $this->assertEquals(array_values($expected), array_values($actual));
+    $this->assertEquals($expected, $actual);
   }
 }

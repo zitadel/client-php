@@ -22,10 +22,12 @@ class SDKTestUsingPersonalAccessTokenAuthenticationSpec extends TestCase
 
     try {
       $deactivateResponse = $zitadel->users->deactivateUser($this->userId);
+      // @phpstan-ignore-next-line
       $this->assertNotNull($deactivateResponse, 'User should be deactivated');
       echo "User deactivated: " . $deactivateResponse . "\n";
 
       $reactivateResponse = $zitadel->users->reactivateUser($this->userId);
+      // @phpstan-ignore-next-line
       $this->assertNotNull($reactivateResponse, 'User should be reactivated');
       echo "User reactivated: " . $reactivateResponse . "\n";
     } catch (ApiException $e) {

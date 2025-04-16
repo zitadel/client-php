@@ -1,0 +1,11 @@
+parameters:
+  level: 6
+  paths:
+    - lib
+    - test
+    - spec
+  excludePaths:
+    - lib/Model/*
+    - lib/Api/*
+    - lib/ObjectSerializer.php
+    - lib/HeaderSelector.php

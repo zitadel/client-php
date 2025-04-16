@@ -73,10 +73,10 @@ class OpenId
    * in JSON format, and parses it to extract the necessary OpenID configuration fields.
    *
    * @param string $hostname The hostname of the OpenID provider.
-   * @return array An associative array containing the OpenID configuration.
+   * @return mixed An associative array containing the OpenID configuration.
    * @throws Exception If the HTTP request fails, or if the JSON response is malformed.
    */
-  private static function fetchOpenIdConfiguration(string $hostname): array
+  private static function fetchOpenIdConfiguration(string $hostname): mixed
   {
     $wellKnownUrl = self::buildWellKnownUrl($hostname);
     $response = file_get_contents($wellKnownUrl);

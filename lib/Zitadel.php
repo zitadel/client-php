@@ -21,11 +21,11 @@ class Zitadel
   public SettingsServiceApi $settings;
   public UserServiceApi $users;
 
-  public function __construct(Authenticator $authenticator)
+  public function __construct(Authenticator $authenticator, callable $mutateConfig = null)
   {
     $config = new Configuration($authenticator);
-
-    $mutateConfig ??= function ($config) {
+    $mutateConfig = $mutateConfig ?? static function (Configuration $config): void {
+      // No mutation by default.
     };
     $mutateConfig($config);
 
