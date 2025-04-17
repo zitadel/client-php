@@ -17,28 +17,28 @@ use Zitadel\Client\Zitadel;
  */
 class ZitadelTest extends TestCase
 {
-  /**
-   * Verifies that the set of expected API service classes matches the set of actual service properties in Zitadel.
-   * @throws Exception when it is unable to look up classes in the namespace
-   */
-  public function testServicesDynamic(): void
-  {
-    $expected = ClassFinder::getClassesInNamespace('Zitadel\Client\Api');
-    $expected = array_filter($expected, fn(string $class): bool => str_ends_with($class, 'ServiceApi'));
-    sort($expected);
+    /**
+     * Verifies that the set of expected API service classes matches the set of actual service properties in Zitadel.
+     * @throws Exception when it is unable to look up classes in the namespace
+     */
+    public function testServicesDynamic(): void
+    {
+        $expected = ClassFinder::getClassesInNamespace('Zitadel\Client\Api');
+        $expected = array_filter($expected, fn (string $class): bool => str_ends_with($class, 'ServiceApi'));
+        sort($expected);
 
-    $zitadel = new Zitadel(new NoAuthAuthenticator());
-    $reflection = new ReflectionClass($zitadel);
-    $properties = $reflection->getProperties();
-    $actual = [];
-    foreach ($properties as $prop) {
-      $type = $prop->getType();
-      if ($type instanceof ReflectionNamedType && str_starts_with($type->getName(), 'Zitadel\Client\Api\\')) {
-        $actual[] = $type->getName();
-      }
+        $zitadel = new Zitadel(new NoAuthAuthenticator());
+        $reflection = new ReflectionClass($zitadel);
+        $properties = $reflection->getProperties();
+        $actual = [];
+        foreach ($properties as $prop) {
+            $type = $prop->getType();
+            if ($type instanceof ReflectionNamedType && str_starts_with($type->getName(), 'Zitadel\Client\Api\\')) {
+                $actual[] = $type->getName();
+            }
+        }
+        sort($actual);
+
+        $this->assertEquals($expected, $actual);
     }
-    sort($actual);
-
-    $this->assertEquals($expected, $actual);
-  }
 }

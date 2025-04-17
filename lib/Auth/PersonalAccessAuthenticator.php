@@ -9,27 +9,27 @@ namespace Zitadel\Client\Auth;
  */
 class PersonalAccessAuthenticator extends Authenticator
 {
-  /**
-   * PersonalAccessAuthenticator constructor.
-   *
-   * @param string $host The base URL for the API endpoints.
-   * @param string $token The personal access token.
-   */
-  public function __construct(string         $host, /**
+    /**
+     * PersonalAccessAuthenticator constructor.
+     *
+     * @param string $host The base URL for the API endpoints.
+     * @param string $token The personal access token.
+     */
+    public function __construct(string         $host, /**
    * The personal access token.
    */
-                              private string $token)
-  {
-    parent::__construct($host);
-  }
+        private string $token)
+    {
+        parent::__construct($host);
+    }
 
-  /**
-   * Retrieve authentication token using the personal access token.
-   *
-   * @return string The authentication token
-   */
-  public function getAuthToken(): string
-  {
-    return $this->token;
-  }
+    /**
+     * Retrieve authentication token using the personal access token.
+     *
+     * @return string The authentication token
+     */
+    public function getAuthToken(): string
+    {
+        return $this->token;
+    }
 }

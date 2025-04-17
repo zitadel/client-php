@@ -1,0 +1,16 @@
+<?php
+
+use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
+
+$config = new PhpCsFixer\Config();
+$config->setRules([
+  '@PSR12' => true,
+])
+  ->setFinder(PhpCsFixer\Finder::create()
+    ->in(__DIR__)
+    ->exclude('lib/Model')
+    ->exclude('lib/Api'))
+  ->setRiskyAllowed(true)
+  ->setParallelConfig(ParallelConfigFactory::detect());
+
+return $config;

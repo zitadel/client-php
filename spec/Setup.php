@@ -13,15 +13,15 @@ use PHPUnit\Framework\TestSuite;
 
 class Setup implements TestListener
 {
-  use TestListenerDefaultImplementation;
+    use TestListenerDefaultImplementation;
 
-  /** @noinspection PhpUnused */
-  public function startTestSuite(TestSuite $suite): void
-  {
-    $dotenv = Dotenv::createImmutable(getcwd());
-    /** @noinspection PhpStatementHasEmptyBodyInspection */
-    if (empty($dotenv->safeLoad())) {
-      //
+    /** @noinspection PhpUnused */
+    public function startTestSuite(TestSuite $suite): void
+    {
+        $dotenv = Dotenv::createImmutable(getcwd());
+        /** @noinspection PhpStatementHasEmptyBodyInspection */
+        if (empty($dotenv->safeLoad())) {
+            //
+        }
     }
-  }
 }

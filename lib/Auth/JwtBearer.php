@@ -11,25 +11,25 @@ use League\OAuth2\Client\Grant\AbstractGrant;
  */
 class JwtBearer extends AbstractGrant
 {
-  /**
-   * Get the grant's name.
-   *
-   * @return string
-   * @noinspection PhpUnused
-   */
-  protected function getName(): string
-  {
-    return 'urn:ietf:params:oauth:grant-type:jwt-bearer';
-  }
+    /**
+     * Get the grant's name.
+     *
+     * @return string
+     * @noinspection PhpUnused
+     */
+    protected function getName(): string
+    {
+        return 'urn:ietf:params:oauth:grant-type:jwt-bearer';
+    }
 
-  /**
-   * Get required parameters for this grant type.
-   *
-   * @return string[] An array of required request parameter names.
-   * @noinspection PhpUnused
-   */
-  protected function getRequiredRequestParameters(): array
-  {
-    return ['assertion'];
-  }
+    /**
+     * Get required parameters for this grant type.
+     *
+     * @return string[] An array of required request parameter names.
+     * @noinspection PhpUnused
+     */
+    protected function getRequiredRequestParameters(): array
+    {
+        return ['assertion'];
+    }
 }

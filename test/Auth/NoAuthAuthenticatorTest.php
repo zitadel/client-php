@@ -7,10 +7,10 @@ use Zitadel\Client\Auth\NoAuthAuthenticator;
 
 class NoAuthAuthenticatorTest extends TestCase
 {
-  public function testReturnsEmptyToken(): void
-  {
-    $authenticator = new NoAuthAuthenticator();
+    public function testReturnsEmptyToken(): void
+    {
+        $authenticator = new NoAuthAuthenticator();
 
-    $this->assertSame('', $authenticator->getAuthToken());
-  }
+        $this->assertSame('', $authenticator->getAuthToken());
+    }
 }
