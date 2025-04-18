@@ -12,29 +12,29 @@ use Exception;
  */
 abstract class OAuthAuthenticatorBuilder
 {
-  protected OpenId $hostName;
-  protected string $authScopes = 'openid urn:zitadel:iam:org:project:id:zitadel:aud';
+    protected OpenId $hostName;
+    protected string $authScopes = 'openid urn:zitadel:iam:org:project:id:zitadel:aud';
 
-  /**
-   * Constructs the builder with the required host.
-   *
-   * @param string $hostName
-   * @throws Exception
-   */
-  public function __construct(string $hostName)
-  {
-    $this->hostName = new OpenId($hostName);
-  }
+    /**
+     * Constructs the builder with the required host.
+     *
+     * @param string $hostName
+     * @throws Exception
+     */
+    public function __construct(string $hostName)
+    {
+        $this->hostName = new OpenId($hostName);
+    }
 
-  /**
-   * Overrides the default scopes.
-   *
-   * @param string[] $authScopes A list of scopes for the token request.
-   * @return static
-   */
-  public function scopes(array $authScopes): static
-  {
-    $this->authScopes = implode(' ', $authScopes);
-    return $this;
-  }
+    /**
+     * Overrides the default scopes.
+     *
+     * @param string[] $authScopes A list of scopes for the token request.
+     * @return static
+     */
+    public function scopes(array $authScopes): static
+    {
+        $this->authScopes = implode(' ', $authScopes);
+        return $this;
+    }
 }

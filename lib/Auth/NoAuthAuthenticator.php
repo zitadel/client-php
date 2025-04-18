@@ -9,23 +9,23 @@ namespace Zitadel\Client\Auth;
  */
 class NoAuthAuthenticator extends Authenticator
 {
-  /**
-   * NoAuthAuthenticator constructor.
-   *
-   * @param string $host The base URL for all authentication endpoints.
-   */
-  public function __construct(string $host = 'localhost')
-  {
-    parent::__construct($host);
-  }
+    /**
+     * NoAuthAuthenticator constructor.
+     *
+     * @param string $host The base URL for all authentication endpoints.
+     */
+    public function __construct(string $host = 'localhost')
+    {
+        parent::__construct($host);
+    }
 
-  /**
-   * Retrieve the authentication token needed for API requests.
-   *
-   * @return string The authentication token
-   */
-  public function getAuthToken(): string
-  {
-    return "";
-  }
+    /**
+     * Retrieve the authentication token needed for API requests.
+     *
+     * @return string The authentication token
+     */
+    public function getAuthToken(): string
+    {
+        return "";
+    }
 }
