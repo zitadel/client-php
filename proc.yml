@@ -1,0 +1,4 @@
+packageName: zitadel/client
+variableNamingConvention: camelCase
+invokerPackage: Zitadel\Client
+disallowAdditionalPropertiesIfNotPresent: false

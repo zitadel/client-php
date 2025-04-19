@@ -1,0 +1,12 @@
+{
+	"name": "pypi-internal",
+	"online": true,
+	"storage": {
+		"blobStoreName": "default",
+		"strictContentTypeValidation": true,
+		"writePolicy": "allow"
+	},
+	"cleanup": {
+		"policyNames": ["weekly-cleanup"]
+	}
+}
