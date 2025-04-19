@@ -22,7 +22,7 @@ class SDKTestUsingWebTokenAssertionAuthenticationSpec extends TestCase
      */
     public function testDeactivateUserWithValidToken(): void
     {
-        $zitadel = new Zitadel(WebTokenAuthenticator::fromJson($this->baseUrl, $this->keyFile));
+        $zitadel = Zitadel::withPrivateKey($this->baseUrl, $this->keyFile);
 
         try {
             $deactivateResponse = $zitadel->users->deactivateUser($this->userId);
@@ -62,7 +62,7 @@ class SDKTestUsingWebTokenAssertionAuthenticationSpec extends TestCase
      */
     private function createUser(): string
     {
-        $zitadel = new Zitadel(WebTokenAuthenticator::fromJson($this->baseUrl, $this->keyFile));
+        $zitadel = Zitadel::withPrivateKey($this->baseUrl, $this->keyFile);
 
         $request = new V2AddHumanUserRequest();
         $request->setUsername(uniqid('user_'))
