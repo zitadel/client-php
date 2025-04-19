@@ -18,7 +18,7 @@ class SDKTestUsingPersonalAccessTokenAuthenticationSpec extends TestCase
 
     public function testDeactivateUserWithValidToken(): void
     {
-        $zitadel = new Zitadel(new PersonalAccessAuthenticator($this->baseUrl, $this->validToken));
+        $zitadel = Zitadel::withAccessToken($this->baseUrl, $this->validToken);
 
         try {
             $deactivateResponse = $zitadel->users->deactivateUser($this->userId);
@@ -37,7 +37,7 @@ class SDKTestUsingPersonalAccessTokenAuthenticationSpec extends TestCase
 
     public function testDeactivateUserWithInvalidToken(): void
     {
-        $zitadel = new Zitadel(new PersonalAccessAuthenticator($this->baseUrl, "invalid"));
+        $zitadel = Zitadel::withAccessToken($this->baseUrl, "invalid");
 
         try {
             $zitadel->users->deactivateUser($this->userId);
@@ -65,7 +65,7 @@ class SDKTestUsingPersonalAccessTokenAuthenticationSpec extends TestCase
 
     private function createUser(): string
     {
-        $zitadel = new Zitadel(new PersonalAccessAuthenticator($this->baseUrl, $this->validToken));
+        $zitadel = Zitadel::withAccessToken($this->baseUrl, $this->validToken);
 
         $request = new V2AddHumanUserRequest();
         $request->setUsername(uniqid('user_'))

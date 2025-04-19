@@ -23,7 +23,7 @@ class SDKTestUsingClientCredentialsAuthenticationSpec extends TestCase
      */
     public function testDeactivateUserWithValidToken(): void
     {
-        $zitadel = new Zitadel(ClientCredentialsAuthenticator::builder($this->baseUrl, $this->clientId, $this->clientSecret)->build());
+        $zitadel = Zitadel::withClientCredentials($this->baseUrl, $this->clientId, $this->clientSecret);
 
         try {
             $deactivateResponse = $zitadel->users->deactivateUser($this->userId);
@@ -45,7 +45,7 @@ class SDKTestUsingClientCredentialsAuthenticationSpec extends TestCase
      */
     public function testDeactivateUserWithInvalidToken(): void
     {
-        $zitadel = new Zitadel(ClientCredentialsAuthenticator::builder($this->baseUrl, "", "")->build());
+        $zitadel = Zitadel::withClientCredentials($this->baseUrl, "", "");
 
         try {
             $zitadel->users->deactivateUser($this->userId);
@@ -80,7 +80,7 @@ class SDKTestUsingClientCredentialsAuthenticationSpec extends TestCase
      */
     private function createUser(): string
     {
-        $zitadel = new Zitadel(ClientCredentialsAuthenticator::builder($this->baseUrl, $this->clientId, $this->clientSecret)->build());
+        $zitadel = Zitadel::withClientCredentials($this->baseUrl, $this->clientId, $this->clientSecret);
 
         $request = new V2AddHumanUserRequest();
         $request->setUsername(uniqid('user_'))
