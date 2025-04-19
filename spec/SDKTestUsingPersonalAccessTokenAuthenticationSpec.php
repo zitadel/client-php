@@ -58,8 +58,8 @@ class SDKTestUsingPersonalAccessTokenAuthenticationSpec extends TestCase
 
     protected function setUp(): void
     {
-        $this->baseUrl = $_ENV['BASE_URL'] ? getenv('BASE_URL') : null;
-        $this->validToken = $_ENV['AUTH_TOKEN'] ? getenv('AUTH_TOKEN') : null;
+        $this->baseUrl = getenv('BASE_URL') ?: ($_ENV['BASE_URL'] ?? null);
+        $this->validToken = getenv('AUTH_TOKEN') ?: ($_ENV['AUTH_TOKEN'] ?? null);
         $this->userId = $this->createUser();
     }
 

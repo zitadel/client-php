@@ -69,9 +69,9 @@ class SDKTestUsingClientCredentialsAuthenticationSpec extends TestCase
      */
     protected function setUp(): void
     {
-        $this->baseUrl = $_ENV['BASE_URL'] ? getenv('BASE_URL') : null;
-        $this->clientId = $_ENV['CLIENT_ID'] ? getenv('CLIENT_ID') : null;
-        $this->clientSecret = $_ENV['CLIENT_SECRET'] ? getenv('CLIENT_SECRET') : null;
+        $this->baseUrl = getenv('BASE_URL') ?: ($_ENV['BASE_URL'] ?? null);
+        $this->clientId = getenv('CLIENT_ID') ?: ($_ENV['CLIENT_ID'] ?? null);
+        $this->clientSecret = getenv('CLIENT_SECRET') ?: ($_ENV['CLIENT_SECRET'] ?? null);
         $this->userId = $this->createUser();
     }
 
