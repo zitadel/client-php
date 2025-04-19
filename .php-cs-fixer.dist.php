@@ -11,6 +11,8 @@ $config->setRules([
     ->exclude('lib/Model')
     ->exclude('lib/Api'))
   ->setRiskyAllowed(true)
-  ->setParallelConfig(ParallelConfigFactory::detect());
+  ->setParallelConfig(ParallelConfigFactory::detect())
+  ->setCacheFile(__DIR__ . '/build/.php-cs-fixer.cache')
+  ->setUsingCache(!(getenv('GITHUB_ACTIONS') === 'true'));
 
 return $config;
