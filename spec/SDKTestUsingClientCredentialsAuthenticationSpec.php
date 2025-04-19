@@ -69,13 +69,9 @@ class SDKTestUsingClientCredentialsAuthenticationSpec extends TestCase
      */
     protected function setUp(): void
     {
-        print "moo";
-        print  $_ENV['BASE_URL'];
-        print "moox";
-        print getenv('BASE_URL');
-        $this->baseUrl = $_ENV['BASE_URL'];
-        $this->clientId = $_ENV['CLIENT_ID'];
-        $this->clientSecret = $_ENV['CLIENT_SECRET'];
+        $this->baseUrl = $_ENV['BASE_URL'] ? getenv('BASE_URL') : null;
+        $this->clientId = $_ENV['CLIENT_ID'] ? getenv('CLIENT_ID') : null;
+        $this->clientSecret = $_ENV['CLIENT_SECRET'] ? getenv('CLIENT_SECRET') : null;
         $this->userId = $this->createUser();
     }
 

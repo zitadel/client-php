@@ -44,14 +44,14 @@ class SDKTestUsingWebTokenAssertionAuthenticationSpec extends TestCase
      */
     protected function setUp(): void
     {
-        $this->baseUrl = $_ENV['BASE_URL'];
+        $this->baseUrl = $_ENV['BASE_URL'] ? getenv('BASE_URL') : null;
         $this->keyFile = SDKTestUsingWebTokenAssertionAuthenticationSpec::createTempJwtFile();
         $this->userId = $this->createUser();
     }
 
     private static function createTempJwtFile(): string
     {
-        $k = $_ENV['JWT_KEY'];
+        $k = $_ENV['JWT_KEY'] ? getenv('JWT_KEY') : null;
         $p = tempnam(sys_get_temp_dir(), 'jwt_') or exit;
         file_put_contents($p, $k) or exit;
         return $p;
