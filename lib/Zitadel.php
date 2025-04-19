@@ -42,7 +42,12 @@ class Zitadel
     }
 
     /**
-     * Initialize Zitadel with a Personal Access Token.
+     * Initialize the SDK with a Personal Access Token (PAT).
+     *
+     * @param string $host API URL (e.g. "https://api.zitadel.example.com").
+     * @param string $accessToken Personal Access Token for Bearer authentication.
+     * @return self Configured Zitadel client instance.
+     * @see https://zitadel.com/docs/guides/integrate/service-users/personal-access-token
      */
     public static function withAccessToken(string $host, string $accessToken): self
     {
@@ -50,17 +55,31 @@ class Zitadel
     }
 
     /**
-     * Initialize Zitadel with Client Credentials.
-     * @throws \Exception
+     * Initialize the SDK using OAuth2 Client Credentials flow.
+     *
+     * @param string $host API URL.
+     * @param string $clientId OAuth2 client identifier.
+     * @param string $clientSecret OAuth2 client secret.
+     * @return self Configured Zitadel client instance with token auto-refresh.
+     * @throws \Exception If token retrieval fails.
+     * @see https://zitadel.com/docs/guides/integrate/service-users/client-credentials
      */
     public static function withClientCredentials(string $host, string $clientId, string $clientSecret): self
     {
-        return new self(ClientCredentialsAuthenticator::builder($host, $clientId, $clientSecret)->build());
+        return new self(
+            ClientCredentialsAuthenticator::builder($host, $clientId, $clientSecret)
+            ->build()
+        );
     }
 
     /**
-     * Initialize Zitadel with a Private Key.
-     * @throws \Exception
+     * Initialize the SDK via Private Key JWT assertion.
+     *
+     * @param string $host API URL.
+     * @param string $keyFile Path to service account JSON or PEM key file.
+     * @return self Configured Zitadel client instance using JWT assertion.
+     * @throws \Exception If key parsing or token exchange fails.
+     * @see https://zitadel.com/docs/guides/integrate/service-users/private-key-jwt
      */
     public static function withPrivateKey(string $host, string $keyFile): self
     {
