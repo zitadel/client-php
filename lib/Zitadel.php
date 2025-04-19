@@ -46,24 +46,24 @@ class Zitadel
      */
     public static function withAccessToken(string $host, string $accessToken): self
     {
-      return new self(new PersonalAccessAuthenticator($host, $accessToken));
+        return new self(new PersonalAccessAuthenticator($host, $accessToken));
     }
 
-  /**
-   * Initialize Zitadel with Client Credentials.
-   * @throws \Exception
-   */
+    /**
+     * Initialize Zitadel with Client Credentials.
+     * @throws \Exception
+     */
     public static function withClientCredentials(string $host, string $clientId, string $clientSecret): self
     {
-      return new self(ClientCredentialsAuthenticator::builder($host, $clientId, $clientSecret)->build());
+        return new self(ClientCredentialsAuthenticator::builder($host, $clientId, $clientSecret)->build());
     }
 
-  /**
-   * Initialize Zitadel with a Private Key.
-   * @throws \Exception
-   */
+    /**
+     * Initialize Zitadel with a Private Key.
+     * @throws \Exception
+     */
     public static function withPrivateKey(string $host, string $keyFile): self
     {
-      return new self(WebTokenAuthenticator::fromJson($host, $keyFile));
+        return new self(WebTokenAuthenticator::fromJson($host, $keyFile));
     }
 }
