@@ -30,7 +30,7 @@ Zitadel website and obtain the necessary credentials to access the API.
 
 ### Minimum Requirements
 
-Ensure you have PHP 7.4 or higher installed. You also need Composer to
+Ensure you have PHP 8.0 or higher installed. You also need Composer to
 install dependencies.
 
 ## Using the SDK
@@ -68,14 +68,9 @@ JSON file. This process creates a secure token.
 **Example:**
 
 ```php
-use Zitadel\Auth\WebTokenAuthenticator;
-use Zitadel\Zitadel;
+use \Zitadel\Client\Zitadel;
 
-$baseUrl = getenv('BASE_URL');
-$keyFile = '/path/to/jwt-key.json';
-
-$authenticator = WebTokenAuthenticator::fromJson($baseUrl, $keyFile);
-$zitadel = new Zitadel($authenticator);
+$zitadel = Zitadel::withPrivateKey("https://example.us1.zitadel.cloud", "path/to/jwt-key.json");
 
 try {
     $response = $zitadel->users->addHumanUser([
@@ -113,15 +108,9 @@ which is then used to authenticate.
 **Example:**
 
 ```php
-use Zitadel\Auth\ClientCredentialsAuthenticator;
-use Zitadel\Zitadel;
+use \Zitadel\Client\Zitadel;
 
-$baseUrl = getenv('BASE_URL');
-$clientId = getenv('CLIENT_ID');
-$clientSecret = getenv('CLIENT_SECRET');
-
-$authenticator = ClientCredentialsAuthenticator::builder($baseUrl, $clientId, $clientSecret)->build();
-$zitadel = new Zitadel($authenticator);
+$zitadel = Zitadel::withClientCredentials("https://example.us1.zitadel.cloud", "id", "secret");
 
 try {
     $response = $zitadel->users->addHumanUser([
@@ -159,14 +148,9 @@ authenticate without exchanging credentials every time.
 **Example:**
 
 ```php
-use Zitadel\Auth\PersonalAccessTokenAuthenticator;
-use Zitadel\Zitadel;
+use \Zitadel\Client\Zitadel;
 
-$baseUrl = getenv('BASE_URL');
-$validToken = getenv('AUTH_TOKEN');
-
-$authenticator = new PersonalAccessTokenAuthenticator($baseUrl, $validToken);
-$zitadel = new Zitadel($authenticator);
+$zitadel = Zitadel::withAccessToken("https://example.us1.zitadel.cloud", "token");
 
 try {
     $response = $zitadel->users->addHumanUser([
