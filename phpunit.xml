@@ -16,11 +16,13 @@
       <directory>lib/Model</directory>
       <directory suffix=".php">./vendor</directory>
       <directory suffix=".php">./test</directory>
+      <directory suffix=".php">./spec</directory>
     </exclude>
   </coverage>
   <testsuites>
     <testsuite name="tests">
       <directory suffix=".php">./test</directory>
+      <directory suffix=".php">./spec</directory>
     </testsuite>
   </testsuites>
   <php>

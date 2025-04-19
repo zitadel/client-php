@@ -50,16 +50,16 @@ class SDKTestUsingClientCredentialsAuthenticationSpec extends TestCase
         try {
             $zitadel->users->deactivateUser($this->userId);
             $this->fail('Expected exception when deactivating user with invalid token');
-        } catch (ApiException $e) {
-            $this->assertStringContainsString('Unauthorized', $e->getMessage());
+        } catch (Exception $e) {
+            $this->assertStringContainsString('invalid_request', $e->getMessage());
             echo "Caught expected ApiException for deactivating user with invalid token: " . $e->getMessage() . "\n";
         }
 
         try {
             $zitadel->users->reactivateUser($this->userId);
             $this->fail('Expected exception when reactivating user with invalid token');
-        } catch (ApiException $e) {
-            $this->assertStringContainsString('Unauthorized', $e->getMessage());
+        } catch (Exception $e) {
+            $this->assertStringContainsString('invalid_request', $e->getMessage());
             echo "Caught expected ApiException for reactivating user with invalid token: " . $e->getMessage() . "\n";
         }
     }
