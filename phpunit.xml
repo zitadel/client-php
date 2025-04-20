@@ -30,4 +30,7 @@
     <ini name="memory_limit" value="1024M"/>
     <env name="APP_ENV" value="test"/>
   </php>
+  <logging>
+    <junit outputFile="build/reports/junit.xml"/>
+  </logging>
 </phpunit>
