@@ -1,0 +1,106 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "lefthook@latest": {
+      "last_modified": "2025-04-07T13:23:10Z",
+      "resolved": "github:NixOS/nixpkgs/b0b4b5f8f621bfe213b8b21694bab52ecfcbf30b#lefthook",
+      "source": "devbox-search",
+      "version": "1.11.5",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/4fmy4hm7wq4knkgr22afradj65dhl44j-lefthook-1.11.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/4fmy4hm7wq4knkgr22afradj65dhl44j-lefthook-1.11.5"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/gbzlzd5kri8q91hsr0a5ndsqwzar6c80-lefthook-1.11.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/gbzlzd5kri8q91hsr0a5ndsqwzar6c80-lefthook-1.11.5"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/91ngsvl5frcd6fa21b2wp0mrz2mxv0c9-lefthook-1.11.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/91ngsvl5frcd6fa21b2wp0mrz2mxv0c9-lefthook-1.11.5"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/bza0zs1fhm718vq4xr0n8rg4lnbj65p2-lefthook-1.11.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/bza0zs1fhm718vq4xr0n8rg4lnbj65p2-lefthook-1.11.5"
+        }
+      }
+    },
+    "php81": {
+      "plugin_version": "0.0.3",
+      "resolved": "github:NixOS/nixpkgs/75a52265bda7fd25e06e3a67dee3f0354e73243c#php81",
+      "source": "nixpkg"
+    },
+    "php81Extensions.xdebug@latest": {
+      "last_modified": "2025-03-23T05:31:05Z",
+      "resolved": "github:NixOS/nixpkgs/dd613136ee91f67e5dba3f3f41ac99ae89c5406b#php81Extensions.xdebug",
+      "source": "devbox-search",
+      "version": "3.4.2",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/vrgcy4ih3snlk3fwyl8bkz32szna4iqd-php-xdebug-3.4.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/vrgcy4ih3snlk3fwyl8bkz32szna4iqd-php-xdebug-3.4.2"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ffigr6s1vmb9s5623y4qc8lp56mg3fwj-php-xdebug-3.4.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/ffigr6s1vmb9s5623y4qc8lp56mg3fwj-php-xdebug-3.4.2"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/8c243p57vv0awz4i649w9ckkir60a740-php-xdebug-3.4.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/8c243p57vv0awz4i649w9ckkir60a740-php-xdebug-3.4.2"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/4s8v7vp6pzdgai5n6bnc6s12wk7whi8a-php-xdebug-3.4.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/4s8v7vp6pzdgai5n6bnc6s12wk7whi8a-php-xdebug-3.4.2"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.10.7/.schema/devbox.schema.json",
+  "packages": [
+    "php81",
+    "php81Extensions.xdebug@latest",
+    "lefthook@latest"
+  ],
+  "env": {
+    "XDEBUG_MODE": "coverage"
+  },
+  "shell": {
+    "init_hook": [
+      "lefthook install"
+    ],
+    "scripts": {
+      "format": [
+        "composer format"
+      ],
+      "test": [
+        "composer test"
+      ],
+      "check": [
+        "composer rector",
+        "composer phpstan"
+      ]
+    }
+  }
+}
