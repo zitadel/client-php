@@ -2,6 +2,8 @@
 
 /** @noinspection HttpUrlsUsage */
 
+namespace Zitadel\Client\Test;
+
 use PHPUnit\Framework\TestCase;
 use Zitadel\Client\Auth\PersonalAccessAuthenticator;
 use Zitadel\Client\Configuration;

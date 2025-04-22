@@ -1,10 +1,9 @@
 <?php
 
-namespace Auth;
+namespace Zitadel\Client\Test\Auth;
 
 use Exception;
 use Zitadel\Client\Auth\WebTokenAuthenticator;
-use Zitadel\Client\Test\Auth\OAuthAuthenticatorTest;
 
 class WebTokenAuthenticatorTest extends OAuthAuthenticatorTest
 {
