@@ -59,7 +59,8 @@ class UserServiceRetrieveIdentityProviderIntentResponse implements ModelInterfac
     protected static $openAPITypes = [
         'details' => '\Zitadel\Client\Model\UserServiceDetails',
         'idpInformation' => '\Zitadel\Client\Model\UserServiceIDPInformation',
-        'userId' => 'string'
+        'userId' => 'string',
+        'addHumanUser' => '\Zitadel\Client\Model\UserServiceAddHumanUserRequest'
     ];
 
     /**
@@ -72,7 +73,8 @@ class UserServiceRetrieveIdentityProviderIntentResponse implements ModelInterfac
     protected static $openAPIFormats = [
         'details' => null,
         'idpInformation' => null,
-        'userId' => null
+        'userId' => null,
+        'addHumanUser' => null
     ];
 
     /**
@@ -83,7 +85,8 @@ class UserServiceRetrieveIdentityProviderIntentResponse implements ModelInterfac
     protected static array $openAPINullables = [
         'details' => false,
         'idpInformation' => false,
-        'userId' => false
+        'userId' => false,
+        'addHumanUser' => false
     ];
 
     /**
@@ -174,7 +177,8 @@ class UserServiceRetrieveIdentityProviderIntentResponse implements ModelInterfac
     protected static $attributeMap = [
         'details' => 'details',
         'idpInformation' => 'idpInformation',
-        'userId' => 'userId'
+        'userId' => 'userId',
+        'addHumanUser' => 'addHumanUser'
     ];
 
     /**
@@ -185,7 +189,8 @@ class UserServiceRetrieveIdentityProviderIntentResponse implements ModelInterfac
     protected static $setters = [
         'details' => 'setDetails',
         'idpInformation' => 'setIdpInformation',
-        'userId' => 'setUserId'
+        'userId' => 'setUserId',
+        'addHumanUser' => 'setAddHumanUser'
     ];
 
     /**
@@ -196,7 +201,8 @@ class UserServiceRetrieveIdentityProviderIntentResponse implements ModelInterfac
     protected static $getters = [
         'details' => 'getDetails',
         'idpInformation' => 'getIdpInformation',
-        'userId' => 'getUserId'
+        'userId' => 'getUserId',
+        'addHumanUser' => 'getAddHumanUser'
     ];
 
     /**
@@ -259,6 +265,7 @@ class UserServiceRetrieveIdentityProviderIntentResponse implements ModelInterfac
         $this->setIfExists('details', $data ?? [], null);
         $this->setIfExists('idpInformation', $data ?? [], null);
         $this->setIfExists('userId', $data ?? [], null);
+        $this->setIfExists('addHumanUser', $data ?? [], null);
     }
 
     /**
@@ -380,6 +387,33 @@ class UserServiceRetrieveIdentityProviderIntentResponse implements ModelInterfac
             throw new \InvalidArgumentException('non-nullable userId cannot be null');
         }
         $this->container['userId'] = $userId;
+
+        return $this;
+    }
+
+    /**
+     * Gets addHumanUser
+     *
+     * @return \Zitadel\Client\Model\UserServiceAddHumanUserRequest|null
+     */
+    public function getAddHumanUser()
+    {
+        return $this->container['addHumanUser'];
+    }
+
+    /**
+     * Sets addHumanUser
+     *
+     * @param \Zitadel\Client\Model\UserServiceAddHumanUserRequest|null $addHumanUser addHumanUser
+     *
+     * @return self
+     */
+    public function setAddHumanUser($addHumanUser)
+    {
+        if (is_null($addHumanUser)) {
+            throw new \InvalidArgumentException('non-nullable addHumanUser cannot be null');
+        }
+        $this->container['addHumanUser'] = $addHumanUser;
 
         return $this;
     }

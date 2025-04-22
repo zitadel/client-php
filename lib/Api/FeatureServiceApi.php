@@ -158,7 +158,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetInstanceFeatures
      *
-     * Get instance level features
+     * Get Instance Features
      *
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the instance, it will be omitted from the response or Not Found is returned when the instance has no features flags at all. (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetInstanceFeatures'] to see the possible values for this operation
@@ -176,7 +176,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetInstanceFeaturesWithHttpInfo
      *
-     * Get instance level features
+     * Get Instance Features
      *
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the instance, it will be omitted from the response or Not Found is returned when the instance has no features flags at all. (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetInstanceFeatures'] to see the possible values for this operation
@@ -406,7 +406,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetInstanceFeaturesAsync
      *
-     * Get instance level features
+     * Get Instance Features
      *
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the instance, it will be omitted from the response or Not Found is returned when the instance has no features flags at all. (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetInstanceFeatures'] to see the possible values for this operation
@@ -427,7 +427,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetInstanceFeaturesAsyncWithHttpInfo
      *
-     * Get instance level features
+     * Get Instance Features
      *
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the instance, it will be omitted from the response or Not Found is returned when the instance has no features flags at all. (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetInstanceFeatures'] to see the possible values for this operation
@@ -570,7 +570,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetOrganizationFeatures
      *
-     * Get organization level features
+     * Get Organization Features
      *
      * @param  string $organizationId organizationId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the organization, it will be omitted from the response or Not Found is returned when the organization has no features flags at all. (optional)
@@ -589,7 +589,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetOrganizationFeaturesWithHttpInfo
      *
-     * Get organization level features
+     * Get Organization Features
      *
      * @param  string $organizationId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the organization, it will be omitted from the response or Not Found is returned when the organization has no features flags at all. (optional)
@@ -820,7 +820,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetOrganizationFeaturesAsync
      *
-     * Get organization level features
+     * Get Organization Features
      *
      * @param  string $organizationId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the organization, it will be omitted from the response or Not Found is returned when the organization has no features flags at all. (optional)
@@ -842,7 +842,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetOrganizationFeaturesAsyncWithHttpInfo
      *
-     * Get organization level features
+     * Get Organization Features
      *
      * @param  string $organizationId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the organization, it will be omitted from the response or Not Found is returned when the organization has no features flags at all. (optional)
@@ -1002,7 +1002,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetSystemFeatures
      *
-     * Get system level features
+     * Get System Features
      *
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetSystemFeatures'] to see the possible values for this operation
      *
@@ -1019,7 +1019,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetSystemFeaturesWithHttpInfo
      *
-     * Get system level features
+     * Get System Features
      *
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetSystemFeatures'] to see the possible values for this operation
      *
@@ -1248,7 +1248,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetSystemFeaturesAsync
      *
-     * Get system level features
+     * Get System Features
      *
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetSystemFeatures'] to see the possible values for this operation
      *
@@ -1268,7 +1268,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetSystemFeaturesAsyncWithHttpInfo
      *
-     * Get system level features
+     * Get System Features
      *
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetSystemFeatures'] to see the possible values for this operation
      *
@@ -1399,7 +1399,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetUserFeatures
      *
-     * Get organization level features
+     * Get User Features
      *
      * @param  string $userId userId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the user, it will be ommitted from the response or Not Found is returned when the user has no features flags at all. (optional)
@@ -1418,7 +1418,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetUserFeaturesWithHttpInfo
      *
-     * Get organization level features
+     * Get User Features
      *
      * @param  string $userId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the user, it will be ommitted from the response or Not Found is returned when the user has no features flags at all. (optional)
@@ -1649,7 +1649,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetUserFeaturesAsync
      *
-     * Get organization level features
+     * Get User Features
      *
      * @param  string $userId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the user, it will be ommitted from the response or Not Found is returned when the user has no features flags at all. (optional)
@@ -1671,7 +1671,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceGetUserFeaturesAsyncWithHttpInfo
      *
-     * Get organization level features
+     * Get User Features
      *
      * @param  string $userId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the user, it will be ommitted from the response or Not Found is returned when the user has no features flags at all. (optional)
@@ -1831,7 +1831,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetInstanceFeatures
      *
-     * Reset instance level features
+     * Reset Instance Features
      *
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetInstanceFeatures'] to see the possible values for this operation
      *
@@ -1848,7 +1848,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetInstanceFeaturesWithHttpInfo
      *
-     * Reset instance level features
+     * Reset Instance Features
      *
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetInstanceFeatures'] to see the possible values for this operation
      *
@@ -2077,7 +2077,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetInstanceFeaturesAsync
      *
-     * Reset instance level features
+     * Reset Instance Features
      *
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetInstanceFeatures'] to see the possible values for this operation
      *
@@ -2097,7 +2097,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetInstanceFeaturesAsyncWithHttpInfo
      *
-     * Reset instance level features
+     * Reset Instance Features
      *
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetInstanceFeatures'] to see the possible values for this operation
      *
@@ -2228,7 +2228,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetOrganizationFeatures
      *
-     * Reset organization level features
+     * Reset Organization Features
      *
      * @param  string $organizationId organizationId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetOrganizationFeatures'] to see the possible values for this operation
@@ -2246,7 +2246,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetOrganizationFeaturesWithHttpInfo
      *
-     * Reset organization level features
+     * Reset Organization Features
      *
      * @param  string $organizationId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetOrganizationFeatures'] to see the possible values for this operation
@@ -2476,7 +2476,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetOrganizationFeaturesAsync
      *
-     * Reset organization level features
+     * Reset Organization Features
      *
      * @param  string $organizationId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetOrganizationFeatures'] to see the possible values for this operation
@@ -2497,7 +2497,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetOrganizationFeaturesAsyncWithHttpInfo
      *
-     * Reset organization level features
+     * Reset Organization Features
      *
      * @param  string $organizationId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetOrganizationFeatures'] to see the possible values for this operation
@@ -2645,7 +2645,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetSystemFeatures
      *
-     * Reset system level features
+     * Reset System Features
      *
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetSystemFeatures'] to see the possible values for this operation
      *
@@ -2662,7 +2662,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetSystemFeaturesWithHttpInfo
      *
-     * Reset system level features
+     * Reset System Features
      *
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetSystemFeatures'] to see the possible values for this operation
      *
@@ -2891,7 +2891,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetSystemFeaturesAsync
      *
-     * Reset system level features
+     * Reset System Features
      *
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetSystemFeatures'] to see the possible values for this operation
      *
@@ -2911,7 +2911,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetSystemFeaturesAsyncWithHttpInfo
      *
-     * Reset system level features
+     * Reset System Features
      *
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetSystemFeatures'] to see the possible values for this operation
      *
@@ -3042,7 +3042,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetUserFeatures
      *
-     * Reset user level features
+     * Reset User Features
      *
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetUserFeatures'] to see the possible values for this operation
@@ -3060,7 +3060,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetUserFeaturesWithHttpInfo
      *
-     * Reset user level features
+     * Reset User Features
      *
      * @param  string $userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetUserFeatures'] to see the possible values for this operation
@@ -3290,7 +3290,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetUserFeaturesAsync
      *
-     * Reset user level features
+     * Reset User Features
      *
      * @param  string $userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetUserFeatures'] to see the possible values for this operation
@@ -3311,7 +3311,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceResetUserFeaturesAsyncWithHttpInfo
      *
-     * Reset user level features
+     * Reset User Features
      *
      * @param  string $userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetUserFeatures'] to see the possible values for this operation
@@ -3459,7 +3459,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetInstanceFeatures
      *
-     * Set instance level features
+     * Set Instance Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest featureServiceSetInstanceFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetInstanceFeatures'] to see the possible values for this operation
@@ -3477,7 +3477,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetInstanceFeaturesWithHttpInfo
      *
-     * Set instance level features
+     * Set Instance Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetInstanceFeatures'] to see the possible values for this operation
@@ -3707,7 +3707,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetInstanceFeaturesAsync
      *
-     * Set instance level features
+     * Set Instance Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetInstanceFeatures'] to see the possible values for this operation
@@ -3728,7 +3728,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetInstanceFeaturesAsyncWithHttpInfo
      *
-     * Set instance level features
+     * Set Instance Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetInstanceFeatures'] to see the possible values for this operation
@@ -3875,7 +3875,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetOrganizationFeatures
      *
-     * Set organization level features
+     * Set Organization Features
      *
      * @param  string $organizationId organizationId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetOrganizationFeatures'] to see the possible values for this operation
@@ -3893,7 +3893,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetOrganizationFeaturesWithHttpInfo
      *
-     * Set organization level features
+     * Set Organization Features
      *
      * @param  string $organizationId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetOrganizationFeatures'] to see the possible values for this operation
@@ -4123,7 +4123,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetOrganizationFeaturesAsync
      *
-     * Set organization level features
+     * Set Organization Features
      *
      * @param  string $organizationId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetOrganizationFeatures'] to see the possible values for this operation
@@ -4144,7 +4144,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetOrganizationFeaturesAsyncWithHttpInfo
      *
-     * Set organization level features
+     * Set Organization Features
      *
      * @param  string $organizationId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetOrganizationFeatures'] to see the possible values for this operation
@@ -4292,7 +4292,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetSystemFeatures
      *
-     * Set system level features
+     * Set System Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest featureServiceSetSystemFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetSystemFeatures'] to see the possible values for this operation
@@ -4310,7 +4310,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetSystemFeaturesWithHttpInfo
      *
-     * Set system level features
+     * Set System Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetSystemFeatures'] to see the possible values for this operation
@@ -4540,7 +4540,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetSystemFeaturesAsync
      *
-     * Set system level features
+     * Set System Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetSystemFeatures'] to see the possible values for this operation
@@ -4561,7 +4561,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetSystemFeaturesAsyncWithHttpInfo
      *
-     * Set system level features
+     * Set System Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetSystemFeatures'] to see the possible values for this operation
@@ -4708,7 +4708,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetUserFeatures
      *
-     * Set user level features
+     * Set User Features
      *
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetUserFeatures'] to see the possible values for this operation
@@ -4726,7 +4726,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetUserFeaturesWithHttpInfo
      *
-     * Set user level features
+     * Set User Features
      *
      * @param  string $userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetUserFeatures'] to see the possible values for this operation
@@ -4956,7 +4956,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetUserFeaturesAsync
      *
-     * Set user level features
+     * Set User Features
      *
      * @param  string $userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetUserFeatures'] to see the possible values for this operation
@@ -4977,7 +4977,7 @@ class FeatureServiceApi
     /**
      * Operation featureServiceSetUserFeaturesAsyncWithHttpInfo
      *
-     * Set user level features
+     * Set User Features
      *
      * @param  string $userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetUserFeatures'] to see the possible values for this operation
