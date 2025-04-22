@@ -4,10 +4,9 @@ namespace Zitadel\Client\Spec;
 
 use PHPUnit\Framework\TestCase;
 use Zitadel\Client\ApiException;
-use Zitadel\Client\Auth\PersonalAccessAuthenticator;
-use Zitadel\Client\Model\V2AddHumanUserRequest;
-use Zitadel\Client\Model\V2SetHumanEmail;
-use Zitadel\Client\Model\V2SetHumanProfile;
+use Zitadel\Client\Model\UserServiceAddHumanUserRequest;
+use Zitadel\Client\Model\UserServiceSetHumanEmail;
+use Zitadel\Client\Model\UserServiceSetHumanProfile;
 use Zitadel\Client\Zitadel;
 
 class SDKTestUsingPersonalAccessTokenAuthenticationSpec extends TestCase
@@ -21,12 +20,12 @@ class SDKTestUsingPersonalAccessTokenAuthenticationSpec extends TestCase
         $zitadel = Zitadel::withAccessToken($this->baseUrl, $this->validToken);
 
         try {
-            $deactivateResponse = $zitadel->users->deactivateUser($this->userId);
+            $deactivateResponse = $zitadel->users->userServiceDeactivateUser($this->userId);
             // @phpstan-ignore-next-line
             $this->assertNotNull($deactivateResponse, 'User should be deactivated');
             echo "User deactivated: " . $deactivateResponse . "\n";
 
-            $reactivateResponse = $zitadel->users->reactivateUser($this->userId);
+            $reactivateResponse = $zitadel->users->userServiceReactivateUser($this->userId);
             // @phpstan-ignore-next-line
             $this->assertNotNull($reactivateResponse, 'User should be reactivated');
             echo "User reactivated: " . $reactivateResponse . "\n";
@@ -40,7 +39,7 @@ class SDKTestUsingPersonalAccessTokenAuthenticationSpec extends TestCase
         $zitadel = Zitadel::withAccessToken($this->baseUrl, "invalid");
 
         try {
-            $zitadel->users->deactivateUser($this->userId);
+            $zitadel->users->userServiceDeactivateUser($this->userId);
             $this->fail('Expected exception when deactivating user with invalid token');
         } catch (ApiException $e) {
             $this->assertStringContainsString('Unauthorized', $e->getMessage());
@@ -48,7 +47,7 @@ class SDKTestUsingPersonalAccessTokenAuthenticationSpec extends TestCase
         }
 
         try {
-            $zitadel->users->reactivateUser($this->userId);
+            $zitadel->users->userServiceReactivateUser($this->userId);
             $this->fail('Expected exception when reactivating user with invalid token');
         } catch (ApiException $e) {
             $this->assertStringContainsString('Unauthorized', $e->getMessage());
@@ -67,16 +66,16 @@ class SDKTestUsingPersonalAccessTokenAuthenticationSpec extends TestCase
     {
         $zitadel = Zitadel::withAccessToken($this->baseUrl, $this->validToken);
 
-        $request = new V2AddHumanUserRequest();
+        $request = new UserServiceAddHumanUserRequest();
         $request->setUsername(uniqid('user_'))
-          ->setProfile((new V2SetHumanProfile())
+          ->setProfile((new UserServiceSetHumanProfile())
             ->setGivenName('John')
             ->setFamilyName('Doe'))
-          ->setEmail((new V2SetHumanEmail())
+          ->setEmail((new UserServiceSetHumanEmail())
             ->setEmail('johndoe' . uniqid() . '@example.com'));
 
         try {
-            $response = $zitadel->users->addHumanUser($request);
+            $response = $zitadel->users->userServiceAddHumanUser($request);
             return $response->getUserId();
         } catch (ApiException $e) {
             $this->fail('Error creating user: ' . $e->getMessage());

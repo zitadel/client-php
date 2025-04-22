@@ -71,10 +71,16 @@ class OIDCServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'createCallback' => [
+        'oIDCServiceAuthorizeOrDenyDeviceAuthorization' => [
             'application/json',
         ],
-        'getAuthRequest' => [
+        'oIDCServiceCreateCallback' => [
+            'application/json',
+        ],
+        'oIDCServiceGetAuthRequest' => [
+            'application/json',
+        ],
+        'oIDCServiceGetDeviceAuthorizationRequest' => [
             'application/json',
         ],
     ];
@@ -126,40 +132,40 @@ class OIDCServiceApi
     }
 
     /**
-     * Operation createCallback
+     * Operation oIDCServiceAuthorizeOrDenyDeviceAuthorization
      *
-     * Finalize an Auth Request and get the callback URL.
+     * Authorize or deny device authorization
      *
-     * @param  string $authRequestId ID of the Auth Request. (required)
-     * @param  \Zitadel\Client\Model\OIDCServiceCreateCallbackBody $body body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createCallback'] to see the possible values for this operation
+     * @param  string $deviceAuthorizationId The device authorization id returned when submitting the user code. (required)
+     * @param  \Zitadel\Client\Model\OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceAuthorizeOrDenyDeviceAuthorization'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2CreateCallbackResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return object|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus
      */
-    public function createCallback($authRequestId, $body, string $contentType = self::contentTypes['createCallback'][0])
+    public function oIDCServiceAuthorizeOrDenyDeviceAuthorization($deviceAuthorizationId, $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, string $contentType = self::contentTypes['oIDCServiceAuthorizeOrDenyDeviceAuthorization'][0])
     {
-        list($response) = $this->createCallbackWithHttpInfo($authRequestId, $body, $contentType);
+        list($response) = $this->oIDCServiceAuthorizeOrDenyDeviceAuthorizationWithHttpInfo($deviceAuthorizationId, $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, $contentType);
         return $response;
     }
 
     /**
-     * Operation createCallbackWithHttpInfo
+     * Operation oIDCServiceAuthorizeOrDenyDeviceAuthorizationWithHttpInfo
      *
-     * Finalize an Auth Request and get the callback URL.
+     * Authorize or deny device authorization
      *
-     * @param  string $authRequestId ID of the Auth Request. (required)
-     * @param  \Zitadel\Client\Model\OIDCServiceCreateCallbackBody $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createCallback'] to see the possible values for this operation
+     * @param  string $deviceAuthorizationId The device authorization id returned when submitting the user code. (required)
+     * @param  \Zitadel\Client\Model\OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceAuthorizeOrDenyDeviceAuthorization'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2CreateCallbackResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of object|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function createCallbackWithHttpInfo($authRequestId, $body, string $contentType = self::contentTypes['createCallback'][0])
+    public function oIDCServiceAuthorizeOrDenyDeviceAuthorizationWithHttpInfo($deviceAuthorizationId, $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, string $contentType = self::contentTypes['oIDCServiceAuthorizeOrDenyDeviceAuthorization'][0])
     {
-        $request = $this->createCallbackRequest($authRequestId, $body, $contentType);
+        $request = $this->oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest($deviceAuthorizationId, $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -186,11 +192,11 @@ class OIDCServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2CreateCallbackResponse' === '\SplFileObject') {
+                    if ('object' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2CreateCallbackResponse' !== 'string') {
+                        if ('object' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -208,16 +214,16 @@ class OIDCServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2CreateCallbackResponse', []),
+                        ObjectSerializer::deserialize($content, 'object', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -235,16 +241,16 @@ class OIDCServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OIDCServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -262,16 +268,16 @@ class OIDCServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OIDCServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -289,7 +295,7 @@ class OIDCServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OIDCServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -308,7 +314,7 @@ class OIDCServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2CreateCallbackResponse';
+            $returnType = 'object';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -341,7 +347,7 @@ class OIDCServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2CreateCallbackResponse',
+                        'object',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -349,7 +355,7 @@ class OIDCServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\OIDCServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -357,7 +363,7 @@ class OIDCServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\OIDCServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -365,7 +371,7 @@ class OIDCServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\OIDCServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -376,20 +382,20 @@ class OIDCServiceApi
     }
 
     /**
-     * Operation createCallbackAsync
+     * Operation oIDCServiceAuthorizeOrDenyDeviceAuthorizationAsync
      *
-     * Finalize an Auth Request and get the callback URL.
+     * Authorize or deny device authorization
      *
-     * @param  string $authRequestId ID of the Auth Request. (required)
-     * @param  \Zitadel\Client\Model\OIDCServiceCreateCallbackBody $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createCallback'] to see the possible values for this operation
+     * @param  string $deviceAuthorizationId The device authorization id returned when submitting the user code. (required)
+     * @param  \Zitadel\Client\Model\OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceAuthorizeOrDenyDeviceAuthorization'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function createCallbackAsync($authRequestId, $body, string $contentType = self::contentTypes['createCallback'][0])
+    public function oIDCServiceAuthorizeOrDenyDeviceAuthorizationAsync($deviceAuthorizationId, $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, string $contentType = self::contentTypes['oIDCServiceAuthorizeOrDenyDeviceAuthorization'][0])
     {
-        return $this->createCallbackAsyncWithHttpInfo($authRequestId, $body, $contentType)
+        return $this->oIDCServiceAuthorizeOrDenyDeviceAuthorizationAsyncWithHttpInfo($deviceAuthorizationId, $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -398,21 +404,21 @@ class OIDCServiceApi
     }
 
     /**
-     * Operation createCallbackAsyncWithHttpInfo
+     * Operation oIDCServiceAuthorizeOrDenyDeviceAuthorizationAsyncWithHttpInfo
      *
-     * Finalize an Auth Request and get the callback URL.
+     * Authorize or deny device authorization
      *
-     * @param  string $authRequestId ID of the Auth Request. (required)
-     * @param  \Zitadel\Client\Model\OIDCServiceCreateCallbackBody $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createCallback'] to see the possible values for this operation
+     * @param  string $deviceAuthorizationId The device authorization id returned when submitting the user code. (required)
+     * @param  \Zitadel\Client\Model\OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceAuthorizeOrDenyDeviceAuthorization'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function createCallbackAsyncWithHttpInfo($authRequestId, $body, string $contentType = self::contentTypes['createCallback'][0])
+    public function oIDCServiceAuthorizeOrDenyDeviceAuthorizationAsyncWithHttpInfo($deviceAuthorizationId, $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, string $contentType = self::contentTypes['oIDCServiceAuthorizeOrDenyDeviceAuthorization'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2CreateCallbackResponse';
-        $request = $this->createCallbackRequest($authRequestId, $body, $contentType);
+        $returnType = 'object';
+        $request = $this->oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest($deviceAuthorizationId, $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -451,34 +457,34 @@ class OIDCServiceApi
     }
 
     /**
-     * Create request for operation 'createCallback'
+     * Create request for operation 'oIDCServiceAuthorizeOrDenyDeviceAuthorization'
      *
-     * @param  string $authRequestId ID of the Auth Request. (required)
-     * @param  \Zitadel\Client\Model\OIDCServiceCreateCallbackBody $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createCallback'] to see the possible values for this operation
+     * @param  string $deviceAuthorizationId The device authorization id returned when submitting the user code. (required)
+     * @param  \Zitadel\Client\Model\OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceAuthorizeOrDenyDeviceAuthorization'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function createCallbackRequest($authRequestId, $body, string $contentType = self::contentTypes['createCallback'][0])
+    public function oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest($deviceAuthorizationId, $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, string $contentType = self::contentTypes['oIDCServiceAuthorizeOrDenyDeviceAuthorization'][0])
     {
 
-        // verify the required parameter 'authRequestId' is set
-        if ($authRequestId === null || (is_array($authRequestId) && count($authRequestId) === 0)) {
+        // verify the required parameter 'deviceAuthorizationId' is set
+        if ($deviceAuthorizationId === null || (is_array($deviceAuthorizationId) && count($deviceAuthorizationId) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $authRequestId when calling createCallback'
+                'Missing the required parameter $deviceAuthorizationId when calling oIDCServiceAuthorizeOrDenyDeviceAuthorization'
             );
         }
 
-        // verify the required parameter 'body' is set
-        if ($body === null || (is_array($body) && count($body) === 0)) {
+        // verify the required parameter 'oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest' is set
+        if ($oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest === null || (is_array($oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest) && count($oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $body when calling createCallback'
+                'Missing the required parameter $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest when calling oIDCServiceAuthorizeOrDenyDeviceAuthorization'
             );
         }
 
 
-        $resourcePath = '/v2/oidc/auth_requests/{authRequestId}';
+        $resourcePath = '/v2/oidc/device_authorization/{deviceAuthorizationId}';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -488,10 +494,10 @@ class OIDCServiceApi
 
 
         // path params
-        if ($authRequestId !== null) {
+        if ($deviceAuthorizationId !== null) {
             $resourcePath = str_replace(
-                '{' . 'authRequestId' . '}',
-                ObjectSerializer::toPathValue($authRequestId),
+                '{' . 'deviceAuthorizationId' . '}',
+                ObjectSerializer::toPathValue($deviceAuthorizationId),
                 $resourcePath
             );
         }
@@ -504,12 +510,12 @@ class OIDCServiceApi
         );
 
         // for model (json/xml)
-        if (isset($body)) {
+        if (isset($oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest));
             } else {
-                $httpBody = $body;
+                $httpBody = $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -562,38 +568,40 @@ class OIDCServiceApi
     }
 
     /**
-     * Operation getAuthRequest
+     * Operation oIDCServiceCreateCallback
      *
-     * Get OIDC Auth Request details
+     * Finalize an Auth Request and get the callback URL.
      *
-     * @param  string $authRequestId ID of the Auth Request, as obtained from the redirect URL. (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAuthRequest'] to see the possible values for this operation
+     * @param  string $authRequestId ID of the Auth Request. (required)
+     * @param  \Zitadel\Client\Model\OIDCServiceCreateCallbackRequest $oIDCServiceCreateCallbackRequest oIDCServiceCreateCallbackRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceCreateCallback'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetAuthRequestResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\OIDCServiceCreateCallbackResponse|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus
      */
-    public function getAuthRequest($authRequestId, string $contentType = self::contentTypes['getAuthRequest'][0])
+    public function oIDCServiceCreateCallback($authRequestId, $oIDCServiceCreateCallbackRequest, string $contentType = self::contentTypes['oIDCServiceCreateCallback'][0])
     {
-        list($response) = $this->getAuthRequestWithHttpInfo($authRequestId, $contentType);
+        list($response) = $this->oIDCServiceCreateCallbackWithHttpInfo($authRequestId, $oIDCServiceCreateCallbackRequest, $contentType);
         return $response;
     }
 
     /**
-     * Operation getAuthRequestWithHttpInfo
+     * Operation oIDCServiceCreateCallbackWithHttpInfo
      *
-     * Get OIDC Auth Request details
+     * Finalize an Auth Request and get the callback URL.
      *
-     * @param  string $authRequestId ID of the Auth Request, as obtained from the redirect URL. (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAuthRequest'] to see the possible values for this operation
+     * @param  string $authRequestId ID of the Auth Request. (required)
+     * @param  \Zitadel\Client\Model\OIDCServiceCreateCallbackRequest $oIDCServiceCreateCallbackRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceCreateCallback'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetAuthRequestResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\OIDCServiceCreateCallbackResponse|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getAuthRequestWithHttpInfo($authRequestId, string $contentType = self::contentTypes['getAuthRequest'][0])
+    public function oIDCServiceCreateCallbackWithHttpInfo($authRequestId, $oIDCServiceCreateCallbackRequest, string $contentType = self::contentTypes['oIDCServiceCreateCallback'][0])
     {
-        $request = $this->getAuthRequestRequest($authRequestId, $contentType);
+        $request = $this->oIDCServiceCreateCallbackRequest($authRequestId, $oIDCServiceCreateCallbackRequest, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -620,11 +628,11 @@ class OIDCServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetAuthRequestResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OIDCServiceCreateCallbackResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetAuthRequestResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\OIDCServiceCreateCallbackResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -642,16 +650,16 @@ class OIDCServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetAuthRequestResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OIDCServiceCreateCallbackResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -669,16 +677,16 @@ class OIDCServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OIDCServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -696,16 +704,16 @@ class OIDCServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OIDCServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -723,7 +731,7 @@ class OIDCServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OIDCServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -742,7 +750,7 @@ class OIDCServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetAuthRequestResponse';
+            $returnType = '\Zitadel\Client\Model\OIDCServiceCreateCallbackResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -775,7 +783,7 @@ class OIDCServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetAuthRequestResponse',
+                        '\Zitadel\Client\Model\OIDCServiceCreateCallbackResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -783,7 +791,7 @@ class OIDCServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\OIDCServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -791,7 +799,7 @@ class OIDCServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\OIDCServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -799,7 +807,7 @@ class OIDCServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\OIDCServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -810,19 +818,20 @@ class OIDCServiceApi
     }
 
     /**
-     * Operation getAuthRequestAsync
+     * Operation oIDCServiceCreateCallbackAsync
      *
-     * Get OIDC Auth Request details
+     * Finalize an Auth Request and get the callback URL.
      *
-     * @param  string $authRequestId ID of the Auth Request, as obtained from the redirect URL. (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAuthRequest'] to see the possible values for this operation
+     * @param  string $authRequestId ID of the Auth Request. (required)
+     * @param  \Zitadel\Client\Model\OIDCServiceCreateCallbackRequest $oIDCServiceCreateCallbackRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceCreateCallback'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getAuthRequestAsync($authRequestId, string $contentType = self::contentTypes['getAuthRequest'][0])
+    public function oIDCServiceCreateCallbackAsync($authRequestId, $oIDCServiceCreateCallbackRequest, string $contentType = self::contentTypes['oIDCServiceCreateCallback'][0])
     {
-        return $this->getAuthRequestAsyncWithHttpInfo($authRequestId, $contentType)
+        return $this->oIDCServiceCreateCallbackAsyncWithHttpInfo($authRequestId, $oIDCServiceCreateCallbackRequest, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -831,20 +840,21 @@ class OIDCServiceApi
     }
 
     /**
-     * Operation getAuthRequestAsyncWithHttpInfo
+     * Operation oIDCServiceCreateCallbackAsyncWithHttpInfo
      *
-     * Get OIDC Auth Request details
+     * Finalize an Auth Request and get the callback URL.
      *
-     * @param  string $authRequestId ID of the Auth Request, as obtained from the redirect URL. (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAuthRequest'] to see the possible values for this operation
+     * @param  string $authRequestId ID of the Auth Request. (required)
+     * @param  \Zitadel\Client\Model\OIDCServiceCreateCallbackRequest $oIDCServiceCreateCallbackRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceCreateCallback'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getAuthRequestAsyncWithHttpInfo($authRequestId, string $contentType = self::contentTypes['getAuthRequest'][0])
+    public function oIDCServiceCreateCallbackAsyncWithHttpInfo($authRequestId, $oIDCServiceCreateCallbackRequest, string $contentType = self::contentTypes['oIDCServiceCreateCallback'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetAuthRequestResponse';
-        $request = $this->getAuthRequestRequest($authRequestId, $contentType);
+        $returnType = '\Zitadel\Client\Model\OIDCServiceCreateCallbackResponse';
+        $request = $this->oIDCServiceCreateCallbackRequest($authRequestId, $oIDCServiceCreateCallbackRequest, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -883,21 +893,29 @@ class OIDCServiceApi
     }
 
     /**
-     * Create request for operation 'getAuthRequest'
+     * Create request for operation 'oIDCServiceCreateCallback'
      *
-     * @param  string $authRequestId ID of the Auth Request, as obtained from the redirect URL. (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAuthRequest'] to see the possible values for this operation
+     * @param  string $authRequestId ID of the Auth Request. (required)
+     * @param  \Zitadel\Client\Model\OIDCServiceCreateCallbackRequest $oIDCServiceCreateCallbackRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceCreateCallback'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getAuthRequestRequest($authRequestId, string $contentType = self::contentTypes['getAuthRequest'][0])
+    public function oIDCServiceCreateCallbackRequest($authRequestId, $oIDCServiceCreateCallbackRequest, string $contentType = self::contentTypes['oIDCServiceCreateCallback'][0])
     {
 
         // verify the required parameter 'authRequestId' is set
         if ($authRequestId === null || (is_array($authRequestId) && count($authRequestId) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $authRequestId when calling getAuthRequest'
+                'Missing the required parameter $authRequestId when calling oIDCServiceCreateCallback'
+            );
+        }
+
+        // verify the required parameter 'oIDCServiceCreateCallbackRequest' is set
+        if ($oIDCServiceCreateCallbackRequest === null || (is_array($oIDCServiceCreateCallbackRequest) && count($oIDCServiceCreateCallbackRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $oIDCServiceCreateCallbackRequest when calling oIDCServiceCreateCallback'
             );
         }
 
@@ -916,6 +934,847 @@ class OIDCServiceApi
             $resourcePath = str_replace(
                 '{' . 'authRequestId' . '}',
                 ObjectSerializer::toPathValue($authRequestId),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($oIDCServiceCreateCallbackRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($oIDCServiceCreateCallbackRequest));
+            } else {
+                $httpBody = $oIDCServiceCreateCallbackRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation oIDCServiceGetAuthRequest
+     *
+     * Get OIDC Auth Request details
+     *
+     * @param  string $authRequestId ID of the Auth Request, as obtained from the redirect URL. (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceGetAuthRequest'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Zitadel\Client\Model\OIDCServiceGetAuthRequestResponse|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus
+     */
+    public function oIDCServiceGetAuthRequest($authRequestId, string $contentType = self::contentTypes['oIDCServiceGetAuthRequest'][0])
+    {
+        list($response) = $this->oIDCServiceGetAuthRequestWithHttpInfo($authRequestId, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation oIDCServiceGetAuthRequestWithHttpInfo
+     *
+     * Get OIDC Auth Request details
+     *
+     * @param  string $authRequestId ID of the Auth Request, as obtained from the redirect URL. (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceGetAuthRequest'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Zitadel\Client\Model\OIDCServiceGetAuthRequestResponse|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function oIDCServiceGetAuthRequestWithHttpInfo($authRequestId, string $contentType = self::contentTypes['oIDCServiceGetAuthRequest'][0])
+    {
+        $request = $this->oIDCServiceGetAuthRequestRequest($authRequestId, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Zitadel\Client\Model\OIDCServiceGetAuthRequestResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\OIDCServiceGetAuthRequestResponse' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OIDCServiceGetAuthRequestResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                case 403:
+                    if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OIDCServiceRpcStatus', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                case 404:
+                    if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OIDCServiceRpcStatus', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                default:
+                    if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OIDCServiceRpcStatus', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Zitadel\Client\Model\OIDCServiceGetAuthRequestResponse';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\OIDCServiceGetAuthRequestResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                case 403:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\OIDCServiceRpcStatus',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                case 404:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\OIDCServiceRpcStatus',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                default:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\OIDCServiceRpcStatus',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation oIDCServiceGetAuthRequestAsync
+     *
+     * Get OIDC Auth Request details
+     *
+     * @param  string $authRequestId ID of the Auth Request, as obtained from the redirect URL. (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceGetAuthRequest'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function oIDCServiceGetAuthRequestAsync($authRequestId, string $contentType = self::contentTypes['oIDCServiceGetAuthRequest'][0])
+    {
+        return $this->oIDCServiceGetAuthRequestAsyncWithHttpInfo($authRequestId, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation oIDCServiceGetAuthRequestAsyncWithHttpInfo
+     *
+     * Get OIDC Auth Request details
+     *
+     * @param  string $authRequestId ID of the Auth Request, as obtained from the redirect URL. (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceGetAuthRequest'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function oIDCServiceGetAuthRequestAsyncWithHttpInfo($authRequestId, string $contentType = self::contentTypes['oIDCServiceGetAuthRequest'][0])
+    {
+        $returnType = '\Zitadel\Client\Model\OIDCServiceGetAuthRequestResponse';
+        $request = $this->oIDCServiceGetAuthRequestRequest($authRequestId, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'oIDCServiceGetAuthRequest'
+     *
+     * @param  string $authRequestId ID of the Auth Request, as obtained from the redirect URL. (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceGetAuthRequest'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function oIDCServiceGetAuthRequestRequest($authRequestId, string $contentType = self::contentTypes['oIDCServiceGetAuthRequest'][0])
+    {
+
+        // verify the required parameter 'authRequestId' is set
+        if ($authRequestId === null || (is_array($authRequestId) && count($authRequestId) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $authRequestId when calling oIDCServiceGetAuthRequest'
+            );
+        }
+
+
+        $resourcePath = '/v2/oidc/auth_requests/{authRequestId}';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($authRequestId !== null) {
+            $resourcePath = str_replace(
+                '{' . 'authRequestId' . '}',
+                ObjectSerializer::toPathValue($authRequestId),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'GET',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation oIDCServiceGetDeviceAuthorizationRequest
+     *
+     * Get device authorization request
+     *
+     * @param  string $userCode The user_code returned by the device authorization request and provided to the user by the device. (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceGetDeviceAuthorizationRequest'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Zitadel\Client\Model\OIDCServiceGetDeviceAuthorizationRequestResponse|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus
+     */
+    public function oIDCServiceGetDeviceAuthorizationRequest($userCode, string $contentType = self::contentTypes['oIDCServiceGetDeviceAuthorizationRequest'][0])
+    {
+        list($response) = $this->oIDCServiceGetDeviceAuthorizationRequestWithHttpInfo($userCode, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation oIDCServiceGetDeviceAuthorizationRequestWithHttpInfo
+     *
+     * Get device authorization request
+     *
+     * @param  string $userCode The user_code returned by the device authorization request and provided to the user by the device. (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceGetDeviceAuthorizationRequest'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Zitadel\Client\Model\OIDCServiceGetDeviceAuthorizationRequestResponse|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus|\Zitadel\Client\Model\OIDCServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function oIDCServiceGetDeviceAuthorizationRequestWithHttpInfo($userCode, string $contentType = self::contentTypes['oIDCServiceGetDeviceAuthorizationRequest'][0])
+    {
+        $request = $this->oIDCServiceGetDeviceAuthorizationRequestRequest($userCode, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Zitadel\Client\Model\OIDCServiceGetDeviceAuthorizationRequestResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\OIDCServiceGetDeviceAuthorizationRequestResponse' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OIDCServiceGetDeviceAuthorizationRequestResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                case 403:
+                    if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OIDCServiceRpcStatus', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                case 404:
+                    if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OIDCServiceRpcStatus', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                default:
+                    if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\OIDCServiceRpcStatus' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OIDCServiceRpcStatus', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Zitadel\Client\Model\OIDCServiceGetDeviceAuthorizationRequestResponse';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\OIDCServiceGetDeviceAuthorizationRequestResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                case 403:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\OIDCServiceRpcStatus',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                case 404:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\OIDCServiceRpcStatus',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                default:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\OIDCServiceRpcStatus',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation oIDCServiceGetDeviceAuthorizationRequestAsync
+     *
+     * Get device authorization request
+     *
+     * @param  string $userCode The user_code returned by the device authorization request and provided to the user by the device. (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceGetDeviceAuthorizationRequest'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function oIDCServiceGetDeviceAuthorizationRequestAsync($userCode, string $contentType = self::contentTypes['oIDCServiceGetDeviceAuthorizationRequest'][0])
+    {
+        return $this->oIDCServiceGetDeviceAuthorizationRequestAsyncWithHttpInfo($userCode, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation oIDCServiceGetDeviceAuthorizationRequestAsyncWithHttpInfo
+     *
+     * Get device authorization request
+     *
+     * @param  string $userCode The user_code returned by the device authorization request and provided to the user by the device. (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceGetDeviceAuthorizationRequest'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function oIDCServiceGetDeviceAuthorizationRequestAsyncWithHttpInfo($userCode, string $contentType = self::contentTypes['oIDCServiceGetDeviceAuthorizationRequest'][0])
+    {
+        $returnType = '\Zitadel\Client\Model\OIDCServiceGetDeviceAuthorizationRequestResponse';
+        $request = $this->oIDCServiceGetDeviceAuthorizationRequestRequest($userCode, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'oIDCServiceGetDeviceAuthorizationRequest'
+     *
+     * @param  string $userCode The user_code returned by the device authorization request and provided to the user by the device. (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceGetDeviceAuthorizationRequest'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function oIDCServiceGetDeviceAuthorizationRequestRequest($userCode, string $contentType = self::contentTypes['oIDCServiceGetDeviceAuthorizationRequest'][0])
+    {
+
+        // verify the required parameter 'userCode' is set
+        if ($userCode === null || (is_array($userCode) && count($userCode) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $userCode when calling oIDCServiceGetDeviceAuthorizationRequest'
+            );
+        }
+
+
+        $resourcePath = '/v2/oidc/device_authorization/{userCode}';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($userCode !== null) {
+            $resourcePath = str_replace(
+                '{' . 'userCode' . '}',
+                ObjectSerializer::toPathValue($userCode),
                 $resourcePath
             );
         }

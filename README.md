@@ -73,7 +73,7 @@ use \Zitadel\Client\Zitadel;
 $zitadel = Zitadel::withPrivateKey("https://example.us1.zitadel.cloud", "path/to/jwt-key.json");
 
 try {
-    $response = $zitadel->users->addHumanUser([
+    $response = $zitadel->users->userServiceAddHumanUser([
         'username' => 'john.doe',
         'profile'  => [
             'givenName'  => 'John',
@@ -113,7 +113,7 @@ use \Zitadel\Client\Zitadel;
 $zitadel = Zitadel::withClientCredentials("https://example.us1.zitadel.cloud", "id", "secret");
 
 try {
-    $response = $zitadel->users->addHumanUser([
+    $response = $zitadel->users->userServiceAddHumanUser([
         'username' => 'john.doe',
         'profile'  => [
             'givenName'  => 'John',
@@ -153,7 +153,7 @@ use \Zitadel\Client\Zitadel;
 $zitadel = Zitadel::withAccessToken("https://example.us1.zitadel.cloud", "token");
 
 try {
-    $response = $zitadel->users->addHumanUser([
+    $response = $zitadel->users->userServiceAddHumanUser([
         'username' => 'john.doe',
         'profile'  => [
             'givenName'  => 'John',
