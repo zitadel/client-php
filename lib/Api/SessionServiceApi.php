@@ -71,19 +71,19 @@ class SessionServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'createSession' => [
+        'sessionServiceCreateSession' => [
             'application/json',
         ],
-        'deleteSession' => [
+        'sessionServiceDeleteSession' => [
             'application/json',
         ],
-        'getSession' => [
+        'sessionServiceGetSession' => [
             'application/json',
         ],
-        'listSessions' => [
+        'sessionServiceListSessions' => [
             'application/json',
         ],
-        'setSession' => [
+        'sessionServiceSetSession' => [
             'application/json',
         ],
     ];
@@ -135,38 +135,38 @@ class SessionServiceApi
     }
 
     /**
-     * Operation createSession
+     * Operation sessionServiceCreateSession
      *
      * Create a new session
      *
-     * @param  \Zitadel\Client\Model\V2CreateSessionRequest $body body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceCreateSessionRequest $sessionServiceCreateSessionRequest sessionServiceCreateSessionRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceCreateSession'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2CreateSessionResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\SessionServiceCreateSessionResponse|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus
      */
-    public function createSession($body, string $contentType = self::contentTypes['createSession'][0])
+    public function sessionServiceCreateSession($sessionServiceCreateSessionRequest, string $contentType = self::contentTypes['sessionServiceCreateSession'][0])
     {
-        list($response) = $this->createSessionWithHttpInfo($body, $contentType);
+        list($response) = $this->sessionServiceCreateSessionWithHttpInfo($sessionServiceCreateSessionRequest, $contentType);
         return $response;
     }
 
     /**
-     * Operation createSessionWithHttpInfo
+     * Operation sessionServiceCreateSessionWithHttpInfo
      *
      * Create a new session
      *
-     * @param  \Zitadel\Client\Model\V2CreateSessionRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceCreateSessionRequest $sessionServiceCreateSessionRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceCreateSession'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2CreateSessionResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\SessionServiceCreateSessionResponse|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function createSessionWithHttpInfo($body, string $contentType = self::contentTypes['createSession'][0])
+    public function sessionServiceCreateSessionWithHttpInfo($sessionServiceCreateSessionRequest, string $contentType = self::contentTypes['sessionServiceCreateSession'][0])
     {
-        $request = $this->createSessionRequest($body, $contentType);
+        $request = $this->sessionServiceCreateSessionRequest($sessionServiceCreateSessionRequest, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -193,11 +193,11 @@ class SessionServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2CreateSessionResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceCreateSessionResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2CreateSessionResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceCreateSessionResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -215,16 +215,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2CreateSessionResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceCreateSessionResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -242,16 +242,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -269,16 +269,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -296,7 +296,7 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -315,7 +315,7 @@ class SessionServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2CreateSessionResponse';
+            $returnType = '\Zitadel\Client\Model\SessionServiceCreateSessionResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -348,7 +348,7 @@ class SessionServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2CreateSessionResponse',
+                        '\Zitadel\Client\Model\SessionServiceCreateSessionResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -356,7 +356,7 @@ class SessionServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -364,7 +364,7 @@ class SessionServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -372,7 +372,7 @@ class SessionServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -383,19 +383,19 @@ class SessionServiceApi
     }
 
     /**
-     * Operation createSessionAsync
+     * Operation sessionServiceCreateSessionAsync
      *
      * Create a new session
      *
-     * @param  \Zitadel\Client\Model\V2CreateSessionRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceCreateSessionRequest $sessionServiceCreateSessionRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceCreateSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function createSessionAsync($body, string $contentType = self::contentTypes['createSession'][0])
+    public function sessionServiceCreateSessionAsync($sessionServiceCreateSessionRequest, string $contentType = self::contentTypes['sessionServiceCreateSession'][0])
     {
-        return $this->createSessionAsyncWithHttpInfo($body, $contentType)
+        return $this->sessionServiceCreateSessionAsyncWithHttpInfo($sessionServiceCreateSessionRequest, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -404,20 +404,20 @@ class SessionServiceApi
     }
 
     /**
-     * Operation createSessionAsyncWithHttpInfo
+     * Operation sessionServiceCreateSessionAsyncWithHttpInfo
      *
      * Create a new session
      *
-     * @param  \Zitadel\Client\Model\V2CreateSessionRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceCreateSessionRequest $sessionServiceCreateSessionRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceCreateSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function createSessionAsyncWithHttpInfo($body, string $contentType = self::contentTypes['createSession'][0])
+    public function sessionServiceCreateSessionAsyncWithHttpInfo($sessionServiceCreateSessionRequest, string $contentType = self::contentTypes['sessionServiceCreateSession'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2CreateSessionResponse';
-        $request = $this->createSessionRequest($body, $contentType);
+        $returnType = '\Zitadel\Client\Model\SessionServiceCreateSessionResponse';
+        $request = $this->sessionServiceCreateSessionRequest($sessionServiceCreateSessionRequest, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -456,21 +456,21 @@ class SessionServiceApi
     }
 
     /**
-     * Create request for operation 'createSession'
+     * Create request for operation 'sessionServiceCreateSession'
      *
-     * @param  \Zitadel\Client\Model\V2CreateSessionRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceCreateSessionRequest $sessionServiceCreateSessionRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceCreateSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function createSessionRequest($body, string $contentType = self::contentTypes['createSession'][0])
+    public function sessionServiceCreateSessionRequest($sessionServiceCreateSessionRequest, string $contentType = self::contentTypes['sessionServiceCreateSession'][0])
     {
 
-        // verify the required parameter 'body' is set
-        if ($body === null || (is_array($body) && count($body) === 0)) {
+        // verify the required parameter 'sessionServiceCreateSessionRequest' is set
+        if ($sessionServiceCreateSessionRequest === null || (is_array($sessionServiceCreateSessionRequest) && count($sessionServiceCreateSessionRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $body when calling createSession'
+                'Missing the required parameter $sessionServiceCreateSessionRequest when calling sessionServiceCreateSession'
             );
         }
 
@@ -493,12 +493,12 @@ class SessionServiceApi
         );
 
         // for model (json/xml)
-        if (isset($body)) {
+        if (isset($sessionServiceCreateSessionRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($sessionServiceCreateSessionRequest));
             } else {
-                $httpBody = $body;
+                $httpBody = $sessionServiceCreateSessionRequest;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -551,40 +551,40 @@ class SessionServiceApi
     }
 
     /**
-     * Operation deleteSession
+     * Operation sessionServiceDeleteSession
      *
      * Terminate an existing session
      *
      * @param  string $sessionId \&quot;id of the session to terminate\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionBody $body body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionBody $sessionServiceDeleteSessionBody sessionServiceDeleteSessionBody (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceDeleteSession'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2DeleteSessionResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\SessionServiceDeleteSessionResponse|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus
      */
-    public function deleteSession($sessionId, $body, string $contentType = self::contentTypes['deleteSession'][0])
+    public function sessionServiceDeleteSession($sessionId, $sessionServiceDeleteSessionBody, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
     {
-        list($response) = $this->deleteSessionWithHttpInfo($sessionId, $body, $contentType);
+        list($response) = $this->sessionServiceDeleteSessionWithHttpInfo($sessionId, $sessionServiceDeleteSessionBody, $contentType);
         return $response;
     }
 
     /**
-     * Operation deleteSessionWithHttpInfo
+     * Operation sessionServiceDeleteSessionWithHttpInfo
      *
      * Terminate an existing session
      *
      * @param  string $sessionId \&quot;id of the session to terminate\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionBody $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionBody $sessionServiceDeleteSessionBody (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceDeleteSession'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2DeleteSessionResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\SessionServiceDeleteSessionResponse|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function deleteSessionWithHttpInfo($sessionId, $body, string $contentType = self::contentTypes['deleteSession'][0])
+    public function sessionServiceDeleteSessionWithHttpInfo($sessionId, $sessionServiceDeleteSessionBody, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
     {
-        $request = $this->deleteSessionRequest($sessionId, $body, $contentType);
+        $request = $this->sessionServiceDeleteSessionRequest($sessionId, $sessionServiceDeleteSessionBody, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -611,11 +611,11 @@ class SessionServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2DeleteSessionResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceDeleteSessionResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2DeleteSessionResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceDeleteSessionResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -633,16 +633,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2DeleteSessionResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceDeleteSessionResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -660,16 +660,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -687,16 +687,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -714,7 +714,7 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -733,7 +733,7 @@ class SessionServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2DeleteSessionResponse';
+            $returnType = '\Zitadel\Client\Model\SessionServiceDeleteSessionResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -766,7 +766,7 @@ class SessionServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2DeleteSessionResponse',
+                        '\Zitadel\Client\Model\SessionServiceDeleteSessionResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -774,7 +774,7 @@ class SessionServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -782,7 +782,7 @@ class SessionServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -790,7 +790,7 @@ class SessionServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -801,20 +801,20 @@ class SessionServiceApi
     }
 
     /**
-     * Operation deleteSessionAsync
+     * Operation sessionServiceDeleteSessionAsync
      *
      * Terminate an existing session
      *
      * @param  string $sessionId \&quot;id of the session to terminate\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionBody $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionBody $sessionServiceDeleteSessionBody (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceDeleteSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function deleteSessionAsync($sessionId, $body, string $contentType = self::contentTypes['deleteSession'][0])
+    public function sessionServiceDeleteSessionAsync($sessionId, $sessionServiceDeleteSessionBody, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
     {
-        return $this->deleteSessionAsyncWithHttpInfo($sessionId, $body, $contentType)
+        return $this->sessionServiceDeleteSessionAsyncWithHttpInfo($sessionId, $sessionServiceDeleteSessionBody, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -823,21 +823,21 @@ class SessionServiceApi
     }
 
     /**
-     * Operation deleteSessionAsyncWithHttpInfo
+     * Operation sessionServiceDeleteSessionAsyncWithHttpInfo
      *
      * Terminate an existing session
      *
      * @param  string $sessionId \&quot;id of the session to terminate\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionBody $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionBody $sessionServiceDeleteSessionBody (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceDeleteSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function deleteSessionAsyncWithHttpInfo($sessionId, $body, string $contentType = self::contentTypes['deleteSession'][0])
+    public function sessionServiceDeleteSessionAsyncWithHttpInfo($sessionId, $sessionServiceDeleteSessionBody, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2DeleteSessionResponse';
-        $request = $this->deleteSessionRequest($sessionId, $body, $contentType);
+        $returnType = '\Zitadel\Client\Model\SessionServiceDeleteSessionResponse';
+        $request = $this->sessionServiceDeleteSessionRequest($sessionId, $sessionServiceDeleteSessionBody, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -876,29 +876,29 @@ class SessionServiceApi
     }
 
     /**
-     * Create request for operation 'deleteSession'
+     * Create request for operation 'sessionServiceDeleteSession'
      *
      * @param  string $sessionId \&quot;id of the session to terminate\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionBody $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionBody $sessionServiceDeleteSessionBody (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceDeleteSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function deleteSessionRequest($sessionId, $body, string $contentType = self::contentTypes['deleteSession'][0])
+    public function sessionServiceDeleteSessionRequest($sessionId, $sessionServiceDeleteSessionBody, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
     {
 
         // verify the required parameter 'sessionId' is set
         if ($sessionId === null || (is_array($sessionId) && count($sessionId) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionId when calling deleteSession'
+                'Missing the required parameter $sessionId when calling sessionServiceDeleteSession'
             );
         }
 
-        // verify the required parameter 'body' is set
-        if ($body === null || (is_array($body) && count($body) === 0)) {
+        // verify the required parameter 'sessionServiceDeleteSessionBody' is set
+        if ($sessionServiceDeleteSessionBody === null || (is_array($sessionServiceDeleteSessionBody) && count($sessionServiceDeleteSessionBody) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $body when calling deleteSession'
+                'Missing the required parameter $sessionServiceDeleteSessionBody when calling sessionServiceDeleteSession'
             );
         }
 
@@ -929,12 +929,12 @@ class SessionServiceApi
         );
 
         // for model (json/xml)
-        if (isset($body)) {
+        if (isset($sessionServiceDeleteSessionBody)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($sessionServiceDeleteSessionBody));
             } else {
-                $httpBody = $body;
+                $httpBody = $sessionServiceDeleteSessionBody;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -987,40 +987,40 @@ class SessionServiceApi
     }
 
     /**
-     * Operation getSession
+     * Operation sessionServiceGetSession
      *
      * Get a session
      *
      * @param  string $sessionId sessionId (required)
      * @param  string|null $sessionToken sessionToken (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSession'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceGetSession'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetSessionResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\SessionServiceGetSessionResponse|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus
      */
-    public function getSession($sessionId, $sessionToken = null, string $contentType = self::contentTypes['getSession'][0])
+    public function sessionServiceGetSession($sessionId, $sessionToken = null, string $contentType = self::contentTypes['sessionServiceGetSession'][0])
     {
-        list($response) = $this->getSessionWithHttpInfo($sessionId, $sessionToken, $contentType);
+        list($response) = $this->sessionServiceGetSessionWithHttpInfo($sessionId, $sessionToken, $contentType);
         return $response;
     }
 
     /**
-     * Operation getSessionWithHttpInfo
+     * Operation sessionServiceGetSessionWithHttpInfo
      *
      * Get a session
      *
      * @param  string $sessionId (required)
      * @param  string|null $sessionToken (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSession'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceGetSession'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetSessionResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\SessionServiceGetSessionResponse|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getSessionWithHttpInfo($sessionId, $sessionToken = null, string $contentType = self::contentTypes['getSession'][0])
+    public function sessionServiceGetSessionWithHttpInfo($sessionId, $sessionToken = null, string $contentType = self::contentTypes['sessionServiceGetSession'][0])
     {
-        $request = $this->getSessionRequest($sessionId, $sessionToken, $contentType);
+        $request = $this->sessionServiceGetSessionRequest($sessionId, $sessionToken, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -1047,11 +1047,11 @@ class SessionServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetSessionResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceGetSessionResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetSessionResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceGetSessionResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1069,16 +1069,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetSessionResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceGetSessionResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1096,16 +1096,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1123,16 +1123,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1150,7 +1150,7 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1169,7 +1169,7 @@ class SessionServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetSessionResponse';
+            $returnType = '\Zitadel\Client\Model\SessionServiceGetSessionResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -1202,7 +1202,7 @@ class SessionServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetSessionResponse',
+                        '\Zitadel\Client\Model\SessionServiceGetSessionResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1210,7 +1210,7 @@ class SessionServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1218,7 +1218,7 @@ class SessionServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1226,7 +1226,7 @@ class SessionServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1237,20 +1237,20 @@ class SessionServiceApi
     }
 
     /**
-     * Operation getSessionAsync
+     * Operation sessionServiceGetSessionAsync
      *
      * Get a session
      *
      * @param  string $sessionId (required)
      * @param  string|null $sessionToken (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSession'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceGetSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSessionAsync($sessionId, $sessionToken = null, string $contentType = self::contentTypes['getSession'][0])
+    public function sessionServiceGetSessionAsync($sessionId, $sessionToken = null, string $contentType = self::contentTypes['sessionServiceGetSession'][0])
     {
-        return $this->getSessionAsyncWithHttpInfo($sessionId, $sessionToken, $contentType)
+        return $this->sessionServiceGetSessionAsyncWithHttpInfo($sessionId, $sessionToken, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1259,21 +1259,21 @@ class SessionServiceApi
     }
 
     /**
-     * Operation getSessionAsyncWithHttpInfo
+     * Operation sessionServiceGetSessionAsyncWithHttpInfo
      *
      * Get a session
      *
      * @param  string $sessionId (required)
      * @param  string|null $sessionToken (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSession'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceGetSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSessionAsyncWithHttpInfo($sessionId, $sessionToken = null, string $contentType = self::contentTypes['getSession'][0])
+    public function sessionServiceGetSessionAsyncWithHttpInfo($sessionId, $sessionToken = null, string $contentType = self::contentTypes['sessionServiceGetSession'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetSessionResponse';
-        $request = $this->getSessionRequest($sessionId, $sessionToken, $contentType);
+        $returnType = '\Zitadel\Client\Model\SessionServiceGetSessionResponse';
+        $request = $this->sessionServiceGetSessionRequest($sessionId, $sessionToken, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1312,22 +1312,22 @@ class SessionServiceApi
     }
 
     /**
-     * Create request for operation 'getSession'
+     * Create request for operation 'sessionServiceGetSession'
      *
      * @param  string $sessionId (required)
      * @param  string|null $sessionToken (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSession'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceGetSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getSessionRequest($sessionId, $sessionToken = null, string $contentType = self::contentTypes['getSession'][0])
+    public function sessionServiceGetSessionRequest($sessionId, $sessionToken = null, string $contentType = self::contentTypes['sessionServiceGetSession'][0])
     {
 
         // verify the required parameter 'sessionId' is set
         if ($sessionId === null || (is_array($sessionId) && count($sessionId) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionId when calling getSession'
+                'Missing the required parameter $sessionId when calling sessionServiceGetSession'
             );
         }
 
@@ -1419,38 +1419,38 @@ class SessionServiceApi
     }
 
     /**
-     * Operation listSessions
+     * Operation sessionServiceListSessions
      *
      * Search sessions
      *
-     * @param  \Zitadel\Client\Model\V2ListSessionsRequest $body body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listSessions'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceListSessionsRequest $sessionServiceListSessionsRequest sessionServiceListSessionsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceListSessions'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2ListSessionsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\SessionServiceListSessionsResponse|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus
      */
-    public function listSessions($body, string $contentType = self::contentTypes['listSessions'][0])
+    public function sessionServiceListSessions($sessionServiceListSessionsRequest, string $contentType = self::contentTypes['sessionServiceListSessions'][0])
     {
-        list($response) = $this->listSessionsWithHttpInfo($body, $contentType);
+        list($response) = $this->sessionServiceListSessionsWithHttpInfo($sessionServiceListSessionsRequest, $contentType);
         return $response;
     }
 
     /**
-     * Operation listSessionsWithHttpInfo
+     * Operation sessionServiceListSessionsWithHttpInfo
      *
      * Search sessions
      *
-     * @param  \Zitadel\Client\Model\V2ListSessionsRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listSessions'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceListSessionsRequest $sessionServiceListSessionsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceListSessions'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2ListSessionsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\SessionServiceListSessionsResponse|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function listSessionsWithHttpInfo($body, string $contentType = self::contentTypes['listSessions'][0])
+    public function sessionServiceListSessionsWithHttpInfo($sessionServiceListSessionsRequest, string $contentType = self::contentTypes['sessionServiceListSessions'][0])
     {
-        $request = $this->listSessionsRequest($body, $contentType);
+        $request = $this->sessionServiceListSessionsRequest($sessionServiceListSessionsRequest, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -1477,11 +1477,11 @@ class SessionServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2ListSessionsResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceListSessionsResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2ListSessionsResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceListSessionsResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1499,16 +1499,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2ListSessionsResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceListSessionsResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 400:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1526,16 +1526,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1553,16 +1553,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1580,16 +1580,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1607,7 +1607,7 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1626,7 +1626,7 @@ class SessionServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2ListSessionsResponse';
+            $returnType = '\Zitadel\Client\Model\SessionServiceListSessionsResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -1659,7 +1659,7 @@ class SessionServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2ListSessionsResponse',
+                        '\Zitadel\Client\Model\SessionServiceListSessionsResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1667,7 +1667,7 @@ class SessionServiceApi
                 case 400:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1675,7 +1675,7 @@ class SessionServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1683,7 +1683,7 @@ class SessionServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1691,7 +1691,7 @@ class SessionServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1702,19 +1702,19 @@ class SessionServiceApi
     }
 
     /**
-     * Operation listSessionsAsync
+     * Operation sessionServiceListSessionsAsync
      *
      * Search sessions
      *
-     * @param  \Zitadel\Client\Model\V2ListSessionsRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listSessions'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceListSessionsRequest $sessionServiceListSessionsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceListSessions'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function listSessionsAsync($body, string $contentType = self::contentTypes['listSessions'][0])
+    public function sessionServiceListSessionsAsync($sessionServiceListSessionsRequest, string $contentType = self::contentTypes['sessionServiceListSessions'][0])
     {
-        return $this->listSessionsAsyncWithHttpInfo($body, $contentType)
+        return $this->sessionServiceListSessionsAsyncWithHttpInfo($sessionServiceListSessionsRequest, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1723,20 +1723,20 @@ class SessionServiceApi
     }
 
     /**
-     * Operation listSessionsAsyncWithHttpInfo
+     * Operation sessionServiceListSessionsAsyncWithHttpInfo
      *
      * Search sessions
      *
-     * @param  \Zitadel\Client\Model\V2ListSessionsRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listSessions'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceListSessionsRequest $sessionServiceListSessionsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceListSessions'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function listSessionsAsyncWithHttpInfo($body, string $contentType = self::contentTypes['listSessions'][0])
+    public function sessionServiceListSessionsAsyncWithHttpInfo($sessionServiceListSessionsRequest, string $contentType = self::contentTypes['sessionServiceListSessions'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2ListSessionsResponse';
-        $request = $this->listSessionsRequest($body, $contentType);
+        $returnType = '\Zitadel\Client\Model\SessionServiceListSessionsResponse';
+        $request = $this->sessionServiceListSessionsRequest($sessionServiceListSessionsRequest, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1775,21 +1775,21 @@ class SessionServiceApi
     }
 
     /**
-     * Create request for operation 'listSessions'
+     * Create request for operation 'sessionServiceListSessions'
      *
-     * @param  \Zitadel\Client\Model\V2ListSessionsRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listSessions'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceListSessionsRequest $sessionServiceListSessionsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceListSessions'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function listSessionsRequest($body, string $contentType = self::contentTypes['listSessions'][0])
+    public function sessionServiceListSessionsRequest($sessionServiceListSessionsRequest, string $contentType = self::contentTypes['sessionServiceListSessions'][0])
     {
 
-        // verify the required parameter 'body' is set
-        if ($body === null || (is_array($body) && count($body) === 0)) {
+        // verify the required parameter 'sessionServiceListSessionsRequest' is set
+        if ($sessionServiceListSessionsRequest === null || (is_array($sessionServiceListSessionsRequest) && count($sessionServiceListSessionsRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $body when calling listSessions'
+                'Missing the required parameter $sessionServiceListSessionsRequest when calling sessionServiceListSessions'
             );
         }
 
@@ -1812,12 +1812,12 @@ class SessionServiceApi
         );
 
         // for model (json/xml)
-        if (isset($body)) {
+        if (isset($sessionServiceListSessionsRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($sessionServiceListSessionsRequest));
             } else {
-                $httpBody = $body;
+                $httpBody = $sessionServiceListSessionsRequest;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -1870,40 +1870,40 @@ class SessionServiceApi
     }
 
     /**
-     * Operation setSession
+     * Operation sessionServiceSetSession
      *
      * Update an existing session
      *
      * @param  string $sessionId \&quot;id of the session to update\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceSetSessionBody $body body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceSetSessionRequest $sessionServiceSetSessionRequest sessionServiceSetSessionRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceSetSession'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2SetSessionResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\SessionServiceSetSessionResponse|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus
      */
-    public function setSession($sessionId, $body, string $contentType = self::contentTypes['setSession'][0])
+    public function sessionServiceSetSession($sessionId, $sessionServiceSetSessionRequest, string $contentType = self::contentTypes['sessionServiceSetSession'][0])
     {
-        list($response) = $this->setSessionWithHttpInfo($sessionId, $body, $contentType);
+        list($response) = $this->sessionServiceSetSessionWithHttpInfo($sessionId, $sessionServiceSetSessionRequest, $contentType);
         return $response;
     }
 
     /**
-     * Operation setSessionWithHttpInfo
+     * Operation sessionServiceSetSessionWithHttpInfo
      *
      * Update an existing session
      *
      * @param  string $sessionId \&quot;id of the session to update\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceSetSessionBody $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceSetSessionRequest $sessionServiceSetSessionRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceSetSession'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2SetSessionResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\SessionServiceSetSessionResponse|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function setSessionWithHttpInfo($sessionId, $body, string $contentType = self::contentTypes['setSession'][0])
+    public function sessionServiceSetSessionWithHttpInfo($sessionId, $sessionServiceSetSessionRequest, string $contentType = self::contentTypes['sessionServiceSetSession'][0])
     {
-        $request = $this->setSessionRequest($sessionId, $body, $contentType);
+        $request = $this->sessionServiceSetSessionRequest($sessionId, $sessionServiceSetSessionRequest, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -1930,11 +1930,11 @@ class SessionServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2SetSessionResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceSetSessionResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2SetSessionResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceSetSessionResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1952,16 +1952,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2SetSessionResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceSetSessionResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1979,16 +1979,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2006,16 +2006,16 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SessionServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SessionServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2033,7 +2033,7 @@ class SessionServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SessionServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2052,7 +2052,7 @@ class SessionServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2SetSessionResponse';
+            $returnType = '\Zitadel\Client\Model\SessionServiceSetSessionResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -2085,7 +2085,7 @@ class SessionServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2SetSessionResponse',
+                        '\Zitadel\Client\Model\SessionServiceSetSessionResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2093,7 +2093,7 @@ class SessionServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2101,7 +2101,7 @@ class SessionServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2109,7 +2109,7 @@ class SessionServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SessionServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2120,20 +2120,20 @@ class SessionServiceApi
     }
 
     /**
-     * Operation setSessionAsync
+     * Operation sessionServiceSetSessionAsync
      *
      * Update an existing session
      *
      * @param  string $sessionId \&quot;id of the session to update\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceSetSessionBody $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceSetSessionRequest $sessionServiceSetSessionRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceSetSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function setSessionAsync($sessionId, $body, string $contentType = self::contentTypes['setSession'][0])
+    public function sessionServiceSetSessionAsync($sessionId, $sessionServiceSetSessionRequest, string $contentType = self::contentTypes['sessionServiceSetSession'][0])
     {
-        return $this->setSessionAsyncWithHttpInfo($sessionId, $body, $contentType)
+        return $this->sessionServiceSetSessionAsyncWithHttpInfo($sessionId, $sessionServiceSetSessionRequest, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -2142,21 +2142,21 @@ class SessionServiceApi
     }
 
     /**
-     * Operation setSessionAsyncWithHttpInfo
+     * Operation sessionServiceSetSessionAsyncWithHttpInfo
      *
      * Update an existing session
      *
      * @param  string $sessionId \&quot;id of the session to update\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceSetSessionBody $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceSetSessionRequest $sessionServiceSetSessionRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceSetSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function setSessionAsyncWithHttpInfo($sessionId, $body, string $contentType = self::contentTypes['setSession'][0])
+    public function sessionServiceSetSessionAsyncWithHttpInfo($sessionId, $sessionServiceSetSessionRequest, string $contentType = self::contentTypes['sessionServiceSetSession'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2SetSessionResponse';
-        $request = $this->setSessionRequest($sessionId, $body, $contentType);
+        $returnType = '\Zitadel\Client\Model\SessionServiceSetSessionResponse';
+        $request = $this->sessionServiceSetSessionRequest($sessionId, $sessionServiceSetSessionRequest, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -2195,29 +2195,29 @@ class SessionServiceApi
     }
 
     /**
-     * Create request for operation 'setSession'
+     * Create request for operation 'sessionServiceSetSession'
      *
      * @param  string $sessionId \&quot;id of the session to update\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceSetSessionBody $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceSetSessionRequest $sessionServiceSetSessionRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceSetSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function setSessionRequest($sessionId, $body, string $contentType = self::contentTypes['setSession'][0])
+    public function sessionServiceSetSessionRequest($sessionId, $sessionServiceSetSessionRequest, string $contentType = self::contentTypes['sessionServiceSetSession'][0])
     {
 
         // verify the required parameter 'sessionId' is set
         if ($sessionId === null || (is_array($sessionId) && count($sessionId) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionId when calling setSession'
+                'Missing the required parameter $sessionId when calling sessionServiceSetSession'
             );
         }
 
-        // verify the required parameter 'body' is set
-        if ($body === null || (is_array($body) && count($body) === 0)) {
+        // verify the required parameter 'sessionServiceSetSessionRequest' is set
+        if ($sessionServiceSetSessionRequest === null || (is_array($sessionServiceSetSessionRequest) && count($sessionServiceSetSessionRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $body when calling setSession'
+                'Missing the required parameter $sessionServiceSetSessionRequest when calling sessionServiceSetSession'
             );
         }
 
@@ -2248,12 +2248,12 @@ class SessionServiceApi
         );
 
         // for model (json/xml)
-        if (isset($body)) {
+        if (isset($sessionServiceSetSessionRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($sessionServiceSetSessionRequest));
             } else {
-                $httpBody = $body;
+                $httpBody = $sessionServiceSetSessionRequest;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
