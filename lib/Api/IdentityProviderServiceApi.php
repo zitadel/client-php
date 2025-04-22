@@ -71,7 +71,7 @@ class IdentityProviderServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'getIDPByID' => [
+        'identityProviderServiceGetIDPByID' => [
             'application/json',
         ],
     ];
@@ -123,38 +123,38 @@ class IdentityProviderServiceApi
     }
 
     /**
-     * Operation getIDPByID
+     * Operation identityProviderServiceGetIDPByID
      *
      * Get identity provider (IdP) by ID
      *
      * @param  string $id id (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getIDPByID'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProviderServiceGetIDPByID'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetIDPByIDResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\IdentityProviderServiceGetIDPByIDResponse|\Zitadel\Client\Model\IdentityProviderServiceRpcStatus|\Zitadel\Client\Model\IdentityProviderServiceRpcStatus|\Zitadel\Client\Model\IdentityProviderServiceRpcStatus
      */
-    public function getIDPByID($id, string $contentType = self::contentTypes['getIDPByID'][0])
+    public function identityProviderServiceGetIDPByID($id, string $contentType = self::contentTypes['identityProviderServiceGetIDPByID'][0])
     {
-        list($response) = $this->getIDPByIDWithHttpInfo($id, $contentType);
+        list($response) = $this->identityProviderServiceGetIDPByIDWithHttpInfo($id, $contentType);
         return $response;
     }
 
     /**
-     * Operation getIDPByIDWithHttpInfo
+     * Operation identityProviderServiceGetIDPByIDWithHttpInfo
      *
      * Get identity provider (IdP) by ID
      *
      * @param  string $id (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getIDPByID'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProviderServiceGetIDPByID'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetIDPByIDResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\IdentityProviderServiceGetIDPByIDResponse|\Zitadel\Client\Model\IdentityProviderServiceRpcStatus|\Zitadel\Client\Model\IdentityProviderServiceRpcStatus|\Zitadel\Client\Model\IdentityProviderServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getIDPByIDWithHttpInfo($id, string $contentType = self::contentTypes['getIDPByID'][0])
+    public function identityProviderServiceGetIDPByIDWithHttpInfo($id, string $contentType = self::contentTypes['identityProviderServiceGetIDPByID'][0])
     {
-        $request = $this->getIDPByIDRequest($id, $contentType);
+        $request = $this->identityProviderServiceGetIDPByIDRequest($id, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -181,11 +181,11 @@ class IdentityProviderServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetIDPByIDResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\IdentityProviderServiceGetIDPByIDResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetIDPByIDResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\IdentityProviderServiceGetIDPByIDResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -203,16 +203,16 @@ class IdentityProviderServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetIDPByIDResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\IdentityProviderServiceGetIDPByIDResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\IdentityProviderServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\IdentityProviderServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -230,16 +230,16 @@ class IdentityProviderServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\IdentityProviderServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\IdentityProviderServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\IdentityProviderServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -257,16 +257,16 @@ class IdentityProviderServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\IdentityProviderServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\IdentityProviderServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\IdentityProviderServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -284,7 +284,7 @@ class IdentityProviderServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\IdentityProviderServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -303,7 +303,7 @@ class IdentityProviderServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetIDPByIDResponse';
+            $returnType = '\Zitadel\Client\Model\IdentityProviderServiceGetIDPByIDResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -336,7 +336,7 @@ class IdentityProviderServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetIDPByIDResponse',
+                        '\Zitadel\Client\Model\IdentityProviderServiceGetIDPByIDResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -344,7 +344,7 @@ class IdentityProviderServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\IdentityProviderServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -352,7 +352,7 @@ class IdentityProviderServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\IdentityProviderServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -360,7 +360,7 @@ class IdentityProviderServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\IdentityProviderServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -371,19 +371,19 @@ class IdentityProviderServiceApi
     }
 
     /**
-     * Operation getIDPByIDAsync
+     * Operation identityProviderServiceGetIDPByIDAsync
      *
      * Get identity provider (IdP) by ID
      *
      * @param  string $id (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getIDPByID'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProviderServiceGetIDPByID'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getIDPByIDAsync($id, string $contentType = self::contentTypes['getIDPByID'][0])
+    public function identityProviderServiceGetIDPByIDAsync($id, string $contentType = self::contentTypes['identityProviderServiceGetIDPByID'][0])
     {
-        return $this->getIDPByIDAsyncWithHttpInfo($id, $contentType)
+        return $this->identityProviderServiceGetIDPByIDAsyncWithHttpInfo($id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -392,20 +392,20 @@ class IdentityProviderServiceApi
     }
 
     /**
-     * Operation getIDPByIDAsyncWithHttpInfo
+     * Operation identityProviderServiceGetIDPByIDAsyncWithHttpInfo
      *
      * Get identity provider (IdP) by ID
      *
      * @param  string $id (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getIDPByID'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProviderServiceGetIDPByID'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getIDPByIDAsyncWithHttpInfo($id, string $contentType = self::contentTypes['getIDPByID'][0])
+    public function identityProviderServiceGetIDPByIDAsyncWithHttpInfo($id, string $contentType = self::contentTypes['identityProviderServiceGetIDPByID'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetIDPByIDResponse';
-        $request = $this->getIDPByIDRequest($id, $contentType);
+        $returnType = '\Zitadel\Client\Model\IdentityProviderServiceGetIDPByIDResponse';
+        $request = $this->identityProviderServiceGetIDPByIDRequest($id, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -444,21 +444,21 @@ class IdentityProviderServiceApi
     }
 
     /**
-     * Create request for operation 'getIDPByID'
+     * Create request for operation 'identityProviderServiceGetIDPByID'
      *
      * @param  string $id (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getIDPByID'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProviderServiceGetIDPByID'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getIDPByIDRequest($id, string $contentType = self::contentTypes['getIDPByID'][0])
+    public function identityProviderServiceGetIDPByIDRequest($id, string $contentType = self::contentTypes['identityProviderServiceGetIDPByID'][0])
     {
 
         // verify the required parameter 'id' is set
         if ($id === null || (is_array($id) && count($id) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $id when calling getIDPByID'
+                'Missing the required parameter $id when calling identityProviderServiceGetIDPByID'
             );
         }
 

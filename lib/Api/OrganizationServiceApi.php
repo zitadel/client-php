@@ -71,10 +71,10 @@ class OrganizationServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'addOrganization' => [
+        'organizationServiceAddOrganization' => [
             'application/json',
         ],
-        'listOrganizations' => [
+        'organizationServiceListOrganizations' => [
             'application/json',
         ],
     ];
@@ -126,38 +126,38 @@ class OrganizationServiceApi
     }
 
     /**
-     * Operation addOrganization
+     * Operation organizationServiceAddOrganization
      *
      * Create an Organization
      *
-     * @param  \Zitadel\Client\Model\V2AddOrganizationRequest $body body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOrganization'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\OrganizationServiceAddOrganizationRequest $organizationServiceAddOrganizationRequest organizationServiceAddOrganizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['organizationServiceAddOrganization'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2AddOrganizationResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\OrganizationServiceAddOrganizationResponse|\Zitadel\Client\Model\OrganizationServiceRpcStatus|\Zitadel\Client\Model\OrganizationServiceRpcStatus|\Zitadel\Client\Model\OrganizationServiceRpcStatus
      */
-    public function addOrganization($body, string $contentType = self::contentTypes['addOrganization'][0])
+    public function organizationServiceAddOrganization($organizationServiceAddOrganizationRequest, string $contentType = self::contentTypes['organizationServiceAddOrganization'][0])
     {
-        list($response) = $this->addOrganizationWithHttpInfo($body, $contentType);
+        list($response) = $this->organizationServiceAddOrganizationWithHttpInfo($organizationServiceAddOrganizationRequest, $contentType);
         return $response;
     }
 
     /**
-     * Operation addOrganizationWithHttpInfo
+     * Operation organizationServiceAddOrganizationWithHttpInfo
      *
      * Create an Organization
      *
-     * @param  \Zitadel\Client\Model\V2AddOrganizationRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOrganization'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\OrganizationServiceAddOrganizationRequest $organizationServiceAddOrganizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['organizationServiceAddOrganization'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2AddOrganizationResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\OrganizationServiceAddOrganizationResponse|\Zitadel\Client\Model\OrganizationServiceRpcStatus|\Zitadel\Client\Model\OrganizationServiceRpcStatus|\Zitadel\Client\Model\OrganizationServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function addOrganizationWithHttpInfo($body, string $contentType = self::contentTypes['addOrganization'][0])
+    public function organizationServiceAddOrganizationWithHttpInfo($organizationServiceAddOrganizationRequest, string $contentType = self::contentTypes['organizationServiceAddOrganization'][0])
     {
-        $request = $this->addOrganizationRequest($body, $contentType);
+        $request = $this->organizationServiceAddOrganizationRequest($organizationServiceAddOrganizationRequest, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -184,11 +184,11 @@ class OrganizationServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2AddOrganizationResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OrganizationServiceAddOrganizationResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2AddOrganizationResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\OrganizationServiceAddOrganizationResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -206,16 +206,16 @@ class OrganizationServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2AddOrganizationResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OrganizationServiceAddOrganizationResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OrganizationServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\OrganizationServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -233,16 +233,16 @@ class OrganizationServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OrganizationServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OrganizationServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\OrganizationServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -260,16 +260,16 @@ class OrganizationServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OrganizationServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OrganizationServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\OrganizationServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -287,7 +287,7 @@ class OrganizationServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OrganizationServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -306,7 +306,7 @@ class OrganizationServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2AddOrganizationResponse';
+            $returnType = '\Zitadel\Client\Model\OrganizationServiceAddOrganizationResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -339,7 +339,7 @@ class OrganizationServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2AddOrganizationResponse',
+                        '\Zitadel\Client\Model\OrganizationServiceAddOrganizationResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -347,7 +347,7 @@ class OrganizationServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\OrganizationServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -355,7 +355,7 @@ class OrganizationServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\OrganizationServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -363,7 +363,7 @@ class OrganizationServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\OrganizationServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -374,19 +374,19 @@ class OrganizationServiceApi
     }
 
     /**
-     * Operation addOrganizationAsync
+     * Operation organizationServiceAddOrganizationAsync
      *
      * Create an Organization
      *
-     * @param  \Zitadel\Client\Model\V2AddOrganizationRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOrganization'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\OrganizationServiceAddOrganizationRequest $organizationServiceAddOrganizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['organizationServiceAddOrganization'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function addOrganizationAsync($body, string $contentType = self::contentTypes['addOrganization'][0])
+    public function organizationServiceAddOrganizationAsync($organizationServiceAddOrganizationRequest, string $contentType = self::contentTypes['organizationServiceAddOrganization'][0])
     {
-        return $this->addOrganizationAsyncWithHttpInfo($body, $contentType)
+        return $this->organizationServiceAddOrganizationAsyncWithHttpInfo($organizationServiceAddOrganizationRequest, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -395,20 +395,20 @@ class OrganizationServiceApi
     }
 
     /**
-     * Operation addOrganizationAsyncWithHttpInfo
+     * Operation organizationServiceAddOrganizationAsyncWithHttpInfo
      *
      * Create an Organization
      *
-     * @param  \Zitadel\Client\Model\V2AddOrganizationRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOrganization'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\OrganizationServiceAddOrganizationRequest $organizationServiceAddOrganizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['organizationServiceAddOrganization'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function addOrganizationAsyncWithHttpInfo($body, string $contentType = self::contentTypes['addOrganization'][0])
+    public function organizationServiceAddOrganizationAsyncWithHttpInfo($organizationServiceAddOrganizationRequest, string $contentType = self::contentTypes['organizationServiceAddOrganization'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2AddOrganizationResponse';
-        $request = $this->addOrganizationRequest($body, $contentType);
+        $returnType = '\Zitadel\Client\Model\OrganizationServiceAddOrganizationResponse';
+        $request = $this->organizationServiceAddOrganizationRequest($organizationServiceAddOrganizationRequest, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -447,21 +447,21 @@ class OrganizationServiceApi
     }
 
     /**
-     * Create request for operation 'addOrganization'
+     * Create request for operation 'organizationServiceAddOrganization'
      *
-     * @param  \Zitadel\Client\Model\V2AddOrganizationRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOrganization'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\OrganizationServiceAddOrganizationRequest $organizationServiceAddOrganizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['organizationServiceAddOrganization'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function addOrganizationRequest($body, string $contentType = self::contentTypes['addOrganization'][0])
+    public function organizationServiceAddOrganizationRequest($organizationServiceAddOrganizationRequest, string $contentType = self::contentTypes['organizationServiceAddOrganization'][0])
     {
 
-        // verify the required parameter 'body' is set
-        if ($body === null || (is_array($body) && count($body) === 0)) {
+        // verify the required parameter 'organizationServiceAddOrganizationRequest' is set
+        if ($organizationServiceAddOrganizationRequest === null || (is_array($organizationServiceAddOrganizationRequest) && count($organizationServiceAddOrganizationRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $body when calling addOrganization'
+                'Missing the required parameter $organizationServiceAddOrganizationRequest when calling organizationServiceAddOrganization'
             );
         }
 
@@ -484,12 +484,12 @@ class OrganizationServiceApi
         );
 
         // for model (json/xml)
-        if (isset($body)) {
+        if (isset($organizationServiceAddOrganizationRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($organizationServiceAddOrganizationRequest));
             } else {
-                $httpBody = $body;
+                $httpBody = $organizationServiceAddOrganizationRequest;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -542,38 +542,38 @@ class OrganizationServiceApi
     }
 
     /**
-     * Operation listOrganizations
+     * Operation organizationServiceListOrganizations
      *
      * Search Organizations
      *
-     * @param  \Zitadel\Client\Model\V2ListOrganizationsRequest $body body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizations'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\OrganizationServiceListOrganizationsRequest $organizationServiceListOrganizationsRequest organizationServiceListOrganizationsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['organizationServiceListOrganizations'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2ListOrganizationsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\OrganizationServiceListOrganizationsResponse|\Zitadel\Client\Model\OrganizationServiceRpcStatus|\Zitadel\Client\Model\OrganizationServiceRpcStatus|\Zitadel\Client\Model\OrganizationServiceRpcStatus|\Zitadel\Client\Model\OrganizationServiceRpcStatus
      */
-    public function listOrganizations($body, string $contentType = self::contentTypes['listOrganizations'][0])
+    public function organizationServiceListOrganizations($organizationServiceListOrganizationsRequest, string $contentType = self::contentTypes['organizationServiceListOrganizations'][0])
     {
-        list($response) = $this->listOrganizationsWithHttpInfo($body, $contentType);
+        list($response) = $this->organizationServiceListOrganizationsWithHttpInfo($organizationServiceListOrganizationsRequest, $contentType);
         return $response;
     }
 
     /**
-     * Operation listOrganizationsWithHttpInfo
+     * Operation organizationServiceListOrganizationsWithHttpInfo
      *
      * Search Organizations
      *
-     * @param  \Zitadel\Client\Model\V2ListOrganizationsRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizations'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\OrganizationServiceListOrganizationsRequest $organizationServiceListOrganizationsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['organizationServiceListOrganizations'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2ListOrganizationsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\OrganizationServiceListOrganizationsResponse|\Zitadel\Client\Model\OrganizationServiceRpcStatus|\Zitadel\Client\Model\OrganizationServiceRpcStatus|\Zitadel\Client\Model\OrganizationServiceRpcStatus|\Zitadel\Client\Model\OrganizationServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function listOrganizationsWithHttpInfo($body, string $contentType = self::contentTypes['listOrganizations'][0])
+    public function organizationServiceListOrganizationsWithHttpInfo($organizationServiceListOrganizationsRequest, string $contentType = self::contentTypes['organizationServiceListOrganizations'][0])
     {
-        $request = $this->listOrganizationsRequest($body, $contentType);
+        $request = $this->organizationServiceListOrganizationsRequest($organizationServiceListOrganizationsRequest, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -600,11 +600,11 @@ class OrganizationServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2ListOrganizationsResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OrganizationServiceListOrganizationsResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2ListOrganizationsResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\OrganizationServiceListOrganizationsResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -622,16 +622,16 @@ class OrganizationServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2ListOrganizationsResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OrganizationServiceListOrganizationsResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 400:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OrganizationServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\OrganizationServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -649,16 +649,16 @@ class OrganizationServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OrganizationServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OrganizationServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\OrganizationServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -676,16 +676,16 @@ class OrganizationServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OrganizationServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OrganizationServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\OrganizationServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -703,16 +703,16 @@ class OrganizationServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OrganizationServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\OrganizationServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\OrganizationServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -730,7 +730,7 @@ class OrganizationServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\OrganizationServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -749,7 +749,7 @@ class OrganizationServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2ListOrganizationsResponse';
+            $returnType = '\Zitadel\Client\Model\OrganizationServiceListOrganizationsResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -782,7 +782,7 @@ class OrganizationServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2ListOrganizationsResponse',
+                        '\Zitadel\Client\Model\OrganizationServiceListOrganizationsResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -790,7 +790,7 @@ class OrganizationServiceApi
                 case 400:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\OrganizationServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -798,7 +798,7 @@ class OrganizationServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\OrganizationServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -806,7 +806,7 @@ class OrganizationServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\OrganizationServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -814,7 +814,7 @@ class OrganizationServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\OrganizationServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -825,19 +825,19 @@ class OrganizationServiceApi
     }
 
     /**
-     * Operation listOrganizationsAsync
+     * Operation organizationServiceListOrganizationsAsync
      *
      * Search Organizations
      *
-     * @param  \Zitadel\Client\Model\V2ListOrganizationsRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizations'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\OrganizationServiceListOrganizationsRequest $organizationServiceListOrganizationsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['organizationServiceListOrganizations'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function listOrganizationsAsync($body, string $contentType = self::contentTypes['listOrganizations'][0])
+    public function organizationServiceListOrganizationsAsync($organizationServiceListOrganizationsRequest, string $contentType = self::contentTypes['organizationServiceListOrganizations'][0])
     {
-        return $this->listOrganizationsAsyncWithHttpInfo($body, $contentType)
+        return $this->organizationServiceListOrganizationsAsyncWithHttpInfo($organizationServiceListOrganizationsRequest, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -846,20 +846,20 @@ class OrganizationServiceApi
     }
 
     /**
-     * Operation listOrganizationsAsyncWithHttpInfo
+     * Operation organizationServiceListOrganizationsAsyncWithHttpInfo
      *
      * Search Organizations
      *
-     * @param  \Zitadel\Client\Model\V2ListOrganizationsRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizations'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\OrganizationServiceListOrganizationsRequest $organizationServiceListOrganizationsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['organizationServiceListOrganizations'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function listOrganizationsAsyncWithHttpInfo($body, string $contentType = self::contentTypes['listOrganizations'][0])
+    public function organizationServiceListOrganizationsAsyncWithHttpInfo($organizationServiceListOrganizationsRequest, string $contentType = self::contentTypes['organizationServiceListOrganizations'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2ListOrganizationsResponse';
-        $request = $this->listOrganizationsRequest($body, $contentType);
+        $returnType = '\Zitadel\Client\Model\OrganizationServiceListOrganizationsResponse';
+        $request = $this->organizationServiceListOrganizationsRequest($organizationServiceListOrganizationsRequest, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -898,21 +898,21 @@ class OrganizationServiceApi
     }
 
     /**
-     * Create request for operation 'listOrganizations'
+     * Create request for operation 'organizationServiceListOrganizations'
      *
-     * @param  \Zitadel\Client\Model\V2ListOrganizationsRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizations'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\OrganizationServiceListOrganizationsRequest $organizationServiceListOrganizationsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['organizationServiceListOrganizations'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function listOrganizationsRequest($body, string $contentType = self::contentTypes['listOrganizations'][0])
+    public function organizationServiceListOrganizationsRequest($organizationServiceListOrganizationsRequest, string $contentType = self::contentTypes['organizationServiceListOrganizations'][0])
     {
 
-        // verify the required parameter 'body' is set
-        if ($body === null || (is_array($body) && count($body) === 0)) {
+        // verify the required parameter 'organizationServiceListOrganizationsRequest' is set
+        if ($organizationServiceListOrganizationsRequest === null || (is_array($organizationServiceListOrganizationsRequest) && count($organizationServiceListOrganizationsRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $body when calling listOrganizations'
+                'Missing the required parameter $organizationServiceListOrganizationsRequest when calling organizationServiceListOrganizations'
             );
         }
 
@@ -935,12 +935,12 @@ class OrganizationServiceApi
         );
 
         // for model (json/xml)
-        if (isset($body)) {
+        if (isset($organizationServiceListOrganizationsRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($organizationServiceListOrganizationsRequest));
             } else {
-                $httpBody = $body;
+                $httpBody = $organizationServiceListOrganizationsRequest;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
