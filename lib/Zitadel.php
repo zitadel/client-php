@@ -6,6 +6,7 @@ use Zitadel\Client\Api\FeatureServiceApi;
 use Zitadel\Client\Api\IdentityProviderServiceApi;
 use Zitadel\Client\Api\OIDCServiceApi;
 use Zitadel\Client\Api\OrganizationServiceApi;
+use Zitadel\Client\Api\SAMLServiceApi;
 use Zitadel\Client\Api\SessionServiceApi;
 use Zitadel\Client\Api\SettingsServiceApi;
 use Zitadel\Client\Api\UserServiceApi;
@@ -23,6 +24,7 @@ class Zitadel
     public SessionServiceApi $sessions;
     public SettingsServiceApi $settings;
     public UserServiceApi $users;
+    public SAMLServiceApi $saml;
 
     public function __construct(Authenticator $authenticator, ?callable $mutateConfig = null)
     {
@@ -39,6 +41,7 @@ class Zitadel
         $this->sessions = new SessionServiceApi(null, $config);
         $this->settings = new SettingsServiceApi(null, $config);
         $this->users = new UserServiceApi(null, $config);
+        $this->saml = new SAMLServiceApi(null, $config);
     }
 
     /**
