@@ -71,31 +71,31 @@ class SettingsServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'getActiveIdentityProviders' => [
+        'settingsServiceGetActiveIdentityProviders' => [
             'application/json',
         ],
-        'getBrandingSettings' => [
+        'settingsServiceGetBrandingSettings' => [
             'application/json',
         ],
-        'getDomainSettings' => [
+        'settingsServiceGetDomainSettings' => [
             'application/json',
         ],
-        'getGeneralSettings' => [
+        'settingsServiceGetGeneralSettings' => [
             'application/json',
         ],
-        'getLegalAndSupportSettings' => [
+        'settingsServiceGetLegalAndSupportSettings' => [
             'application/json',
         ],
-        'getLockoutSettings' => [
+        'settingsServiceGetLockoutSettings' => [
             'application/json',
         ],
-        'getLoginSettings' => [
+        'settingsServiceGetLoginSettings' => [
             'application/json',
         ],
-        'getPasswordComplexitySettings' => [
+        'settingsServiceGetPasswordComplexitySettings' => [
             'application/json',
         ],
-        'getPasswordExpirySettings' => [
+        'settingsServiceGetPasswordExpirySettings' => [
             'application/json',
         ],
     ];
@@ -147,7 +147,7 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getActiveIdentityProviders
+     * Operation settingsServiceGetActiveIdentityProviders
      *
      * Get the current active identity providers
      *
@@ -157,20 +157,20 @@ class SettingsServiceApi
      * @param  bool|null $linkingAllowed linkingAllowed (optional)
      * @param  bool|null $autoCreation autoCreation (optional)
      * @param  bool|null $autoLinking autoLinking (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getActiveIdentityProviders'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetActiveIdentityProviders'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetActiveIdentityProvidersResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\SettingsServiceGetActiveIdentityProvidersResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus
      */
-    public function getActiveIdentityProviders($ctxOrgId = null, $ctxInstance = null, $creationAllowed = null, $linkingAllowed = null, $autoCreation = null, $autoLinking = null, string $contentType = self::contentTypes['getActiveIdentityProviders'][0])
+    public function settingsServiceGetActiveIdentityProviders($ctxOrgId = null, $ctxInstance = null, $creationAllowed = null, $linkingAllowed = null, $autoCreation = null, $autoLinking = null, string $contentType = self::contentTypes['settingsServiceGetActiveIdentityProviders'][0])
     {
-        list($response) = $this->getActiveIdentityProvidersWithHttpInfo($ctxOrgId, $ctxInstance, $creationAllowed, $linkingAllowed, $autoCreation, $autoLinking, $contentType);
+        list($response) = $this->settingsServiceGetActiveIdentityProvidersWithHttpInfo($ctxOrgId, $ctxInstance, $creationAllowed, $linkingAllowed, $autoCreation, $autoLinking, $contentType);
         return $response;
     }
 
     /**
-     * Operation getActiveIdentityProvidersWithHttpInfo
+     * Operation settingsServiceGetActiveIdentityProvidersWithHttpInfo
      *
      * Get the current active identity providers
      *
@@ -180,15 +180,15 @@ class SettingsServiceApi
      * @param  bool|null $linkingAllowed (optional)
      * @param  bool|null $autoCreation (optional)
      * @param  bool|null $autoLinking (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getActiveIdentityProviders'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetActiveIdentityProviders'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetActiveIdentityProvidersResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\SettingsServiceGetActiveIdentityProvidersResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getActiveIdentityProvidersWithHttpInfo($ctxOrgId = null, $ctxInstance = null, $creationAllowed = null, $linkingAllowed = null, $autoCreation = null, $autoLinking = null, string $contentType = self::contentTypes['getActiveIdentityProviders'][0])
+    public function settingsServiceGetActiveIdentityProvidersWithHttpInfo($ctxOrgId = null, $ctxInstance = null, $creationAllowed = null, $linkingAllowed = null, $autoCreation = null, $autoLinking = null, string $contentType = self::contentTypes['settingsServiceGetActiveIdentityProviders'][0])
     {
-        $request = $this->getActiveIdentityProvidersRequest($ctxOrgId, $ctxInstance, $creationAllowed, $linkingAllowed, $autoCreation, $autoLinking, $contentType);
+        $request = $this->settingsServiceGetActiveIdentityProvidersRequest($ctxOrgId, $ctxInstance, $creationAllowed, $linkingAllowed, $autoCreation, $autoLinking, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -215,11 +215,11 @@ class SettingsServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetActiveIdentityProvidersResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceGetActiveIdentityProvidersResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetActiveIdentityProvidersResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceGetActiveIdentityProvidersResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -237,16 +237,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetActiveIdentityProvidersResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceGetActiveIdentityProvidersResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -264,16 +264,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -291,16 +291,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -318,7 +318,7 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -337,7 +337,7 @@ class SettingsServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetActiveIdentityProvidersResponse';
+            $returnType = '\Zitadel\Client\Model\SettingsServiceGetActiveIdentityProvidersResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -370,7 +370,7 @@ class SettingsServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetActiveIdentityProvidersResponse',
+                        '\Zitadel\Client\Model\SettingsServiceGetActiveIdentityProvidersResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -378,7 +378,7 @@ class SettingsServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -386,7 +386,7 @@ class SettingsServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -394,7 +394,7 @@ class SettingsServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -405,7 +405,7 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getActiveIdentityProvidersAsync
+     * Operation settingsServiceGetActiveIdentityProvidersAsync
      *
      * Get the current active identity providers
      *
@@ -415,14 +415,14 @@ class SettingsServiceApi
      * @param  bool|null $linkingAllowed (optional)
      * @param  bool|null $autoCreation (optional)
      * @param  bool|null $autoLinking (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getActiveIdentityProviders'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetActiveIdentityProviders'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getActiveIdentityProvidersAsync($ctxOrgId = null, $ctxInstance = null, $creationAllowed = null, $linkingAllowed = null, $autoCreation = null, $autoLinking = null, string $contentType = self::contentTypes['getActiveIdentityProviders'][0])
+    public function settingsServiceGetActiveIdentityProvidersAsync($ctxOrgId = null, $ctxInstance = null, $creationAllowed = null, $linkingAllowed = null, $autoCreation = null, $autoLinking = null, string $contentType = self::contentTypes['settingsServiceGetActiveIdentityProviders'][0])
     {
-        return $this->getActiveIdentityProvidersAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $creationAllowed, $linkingAllowed, $autoCreation, $autoLinking, $contentType)
+        return $this->settingsServiceGetActiveIdentityProvidersAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $creationAllowed, $linkingAllowed, $autoCreation, $autoLinking, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -431,7 +431,7 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getActiveIdentityProvidersAsyncWithHttpInfo
+     * Operation settingsServiceGetActiveIdentityProvidersAsyncWithHttpInfo
      *
      * Get the current active identity providers
      *
@@ -441,15 +441,15 @@ class SettingsServiceApi
      * @param  bool|null $linkingAllowed (optional)
      * @param  bool|null $autoCreation (optional)
      * @param  bool|null $autoLinking (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getActiveIdentityProviders'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetActiveIdentityProviders'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getActiveIdentityProvidersAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, $creationAllowed = null, $linkingAllowed = null, $autoCreation = null, $autoLinking = null, string $contentType = self::contentTypes['getActiveIdentityProviders'][0])
+    public function settingsServiceGetActiveIdentityProvidersAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, $creationAllowed = null, $linkingAllowed = null, $autoCreation = null, $autoLinking = null, string $contentType = self::contentTypes['settingsServiceGetActiveIdentityProviders'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetActiveIdentityProvidersResponse';
-        $request = $this->getActiveIdentityProvidersRequest($ctxOrgId, $ctxInstance, $creationAllowed, $linkingAllowed, $autoCreation, $autoLinking, $contentType);
+        $returnType = '\Zitadel\Client\Model\SettingsServiceGetActiveIdentityProvidersResponse';
+        $request = $this->settingsServiceGetActiveIdentityProvidersRequest($ctxOrgId, $ctxInstance, $creationAllowed, $linkingAllowed, $autoCreation, $autoLinking, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -488,7 +488,7 @@ class SettingsServiceApi
     }
 
     /**
-     * Create request for operation 'getActiveIdentityProviders'
+     * Create request for operation 'settingsServiceGetActiveIdentityProviders'
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
@@ -496,12 +496,12 @@ class SettingsServiceApi
      * @param  bool|null $linkingAllowed (optional)
      * @param  bool|null $autoCreation (optional)
      * @param  bool|null $autoLinking (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getActiveIdentityProviders'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetActiveIdentityProviders'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getActiveIdentityProvidersRequest($ctxOrgId = null, $ctxInstance = null, $creationAllowed = null, $linkingAllowed = null, $autoCreation = null, $autoLinking = null, string $contentType = self::contentTypes['getActiveIdentityProviders'][0])
+    public function settingsServiceGetActiveIdentityProvidersRequest($ctxOrgId = null, $ctxInstance = null, $creationAllowed = null, $linkingAllowed = null, $autoCreation = null, $autoLinking = null, string $contentType = self::contentTypes['settingsServiceGetActiveIdentityProviders'][0])
     {
 
 
@@ -634,40 +634,40 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getBrandingSettings
+     * Operation settingsServiceGetBrandingSettings
      *
      * Get the current active branding settings
      *
      * @param  string|null $ctxOrgId ctxOrgId (optional)
      * @param  bool|null $ctxInstance ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBrandingSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetBrandingSettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetBrandingSettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\SettingsServiceGetBrandingSettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus
      */
-    public function getBrandingSettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getBrandingSettings'][0])
+    public function settingsServiceGetBrandingSettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetBrandingSettings'][0])
     {
-        list($response) = $this->getBrandingSettingsWithHttpInfo($ctxOrgId, $ctxInstance, $contentType);
+        list($response) = $this->settingsServiceGetBrandingSettingsWithHttpInfo($ctxOrgId, $ctxInstance, $contentType);
         return $response;
     }
 
     /**
-     * Operation getBrandingSettingsWithHttpInfo
+     * Operation settingsServiceGetBrandingSettingsWithHttpInfo
      *
      * Get the current active branding settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBrandingSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetBrandingSettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetBrandingSettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\SettingsServiceGetBrandingSettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getBrandingSettingsWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getBrandingSettings'][0])
+    public function settingsServiceGetBrandingSettingsWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetBrandingSettings'][0])
     {
-        $request = $this->getBrandingSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $request = $this->settingsServiceGetBrandingSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -694,11 +694,11 @@ class SettingsServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetBrandingSettingsResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceGetBrandingSettingsResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetBrandingSettingsResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceGetBrandingSettingsResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -716,16 +716,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetBrandingSettingsResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceGetBrandingSettingsResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -743,16 +743,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -770,16 +770,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -797,7 +797,7 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -816,7 +816,7 @@ class SettingsServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetBrandingSettingsResponse';
+            $returnType = '\Zitadel\Client\Model\SettingsServiceGetBrandingSettingsResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -849,7 +849,7 @@ class SettingsServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetBrandingSettingsResponse',
+                        '\Zitadel\Client\Model\SettingsServiceGetBrandingSettingsResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -857,7 +857,7 @@ class SettingsServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -865,7 +865,7 @@ class SettingsServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -873,7 +873,7 @@ class SettingsServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -884,20 +884,20 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getBrandingSettingsAsync
+     * Operation settingsServiceGetBrandingSettingsAsync
      *
      * Get the current active branding settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBrandingSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetBrandingSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBrandingSettingsAsync($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getBrandingSettings'][0])
+    public function settingsServiceGetBrandingSettingsAsync($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetBrandingSettings'][0])
     {
-        return $this->getBrandingSettingsAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $contentType)
+        return $this->settingsServiceGetBrandingSettingsAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -906,21 +906,21 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getBrandingSettingsAsyncWithHttpInfo
+     * Operation settingsServiceGetBrandingSettingsAsyncWithHttpInfo
      *
      * Get the current active branding settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBrandingSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetBrandingSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBrandingSettingsAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getBrandingSettings'][0])
+    public function settingsServiceGetBrandingSettingsAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetBrandingSettings'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetBrandingSettingsResponse';
-        $request = $this->getBrandingSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $returnType = '\Zitadel\Client\Model\SettingsServiceGetBrandingSettingsResponse';
+        $request = $this->settingsServiceGetBrandingSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -959,16 +959,16 @@ class SettingsServiceApi
     }
 
     /**
-     * Create request for operation 'getBrandingSettings'
+     * Create request for operation 'settingsServiceGetBrandingSettings'
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBrandingSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetBrandingSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getBrandingSettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getBrandingSettings'][0])
+    public function settingsServiceGetBrandingSettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetBrandingSettings'][0])
     {
 
 
@@ -1061,40 +1061,40 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getDomainSettings
+     * Operation settingsServiceGetDomainSettings
      *
      * Get the domain settings
      *
      * @param  string|null $ctxOrgId ctxOrgId (optional)
      * @param  bool|null $ctxInstance ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDomainSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetDomainSettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetDomainSettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\SettingsServiceGetDomainSettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus
      */
-    public function getDomainSettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getDomainSettings'][0])
+    public function settingsServiceGetDomainSettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetDomainSettings'][0])
     {
-        list($response) = $this->getDomainSettingsWithHttpInfo($ctxOrgId, $ctxInstance, $contentType);
+        list($response) = $this->settingsServiceGetDomainSettingsWithHttpInfo($ctxOrgId, $ctxInstance, $contentType);
         return $response;
     }
 
     /**
-     * Operation getDomainSettingsWithHttpInfo
+     * Operation settingsServiceGetDomainSettingsWithHttpInfo
      *
      * Get the domain settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDomainSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetDomainSettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetDomainSettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\SettingsServiceGetDomainSettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getDomainSettingsWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getDomainSettings'][0])
+    public function settingsServiceGetDomainSettingsWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetDomainSettings'][0])
     {
-        $request = $this->getDomainSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $request = $this->settingsServiceGetDomainSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -1121,11 +1121,11 @@ class SettingsServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetDomainSettingsResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceGetDomainSettingsResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetDomainSettingsResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceGetDomainSettingsResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1143,16 +1143,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetDomainSettingsResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceGetDomainSettingsResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1170,16 +1170,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1197,16 +1197,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1224,7 +1224,7 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1243,7 +1243,7 @@ class SettingsServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetDomainSettingsResponse';
+            $returnType = '\Zitadel\Client\Model\SettingsServiceGetDomainSettingsResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -1276,7 +1276,7 @@ class SettingsServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetDomainSettingsResponse',
+                        '\Zitadel\Client\Model\SettingsServiceGetDomainSettingsResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1284,7 +1284,7 @@ class SettingsServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1292,7 +1292,7 @@ class SettingsServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1300,7 +1300,7 @@ class SettingsServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1311,20 +1311,20 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getDomainSettingsAsync
+     * Operation settingsServiceGetDomainSettingsAsync
      *
      * Get the domain settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDomainSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetDomainSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getDomainSettingsAsync($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getDomainSettings'][0])
+    public function settingsServiceGetDomainSettingsAsync($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetDomainSettings'][0])
     {
-        return $this->getDomainSettingsAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $contentType)
+        return $this->settingsServiceGetDomainSettingsAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1333,21 +1333,21 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getDomainSettingsAsyncWithHttpInfo
+     * Operation settingsServiceGetDomainSettingsAsyncWithHttpInfo
      *
      * Get the domain settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDomainSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetDomainSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getDomainSettingsAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getDomainSettings'][0])
+    public function settingsServiceGetDomainSettingsAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetDomainSettings'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetDomainSettingsResponse';
-        $request = $this->getDomainSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $returnType = '\Zitadel\Client\Model\SettingsServiceGetDomainSettingsResponse';
+        $request = $this->settingsServiceGetDomainSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1386,16 +1386,16 @@ class SettingsServiceApi
     }
 
     /**
-     * Create request for operation 'getDomainSettings'
+     * Create request for operation 'settingsServiceGetDomainSettings'
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDomainSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetDomainSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getDomainSettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getDomainSettings'][0])
+    public function settingsServiceGetDomainSettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetDomainSettings'][0])
     {
 
 
@@ -1488,36 +1488,36 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getGeneralSettings
+     * Operation settingsServiceGetGeneralSettings
      *
      * Get basic information over the instance
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getGeneralSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetGeneralSettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetGeneralSettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\SettingsServiceGetGeneralSettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus
      */
-    public function getGeneralSettings(string $contentType = self::contentTypes['getGeneralSettings'][0])
+    public function settingsServiceGetGeneralSettings(string $contentType = self::contentTypes['settingsServiceGetGeneralSettings'][0])
     {
-        list($response) = $this->getGeneralSettingsWithHttpInfo($contentType);
+        list($response) = $this->settingsServiceGetGeneralSettingsWithHttpInfo($contentType);
         return $response;
     }
 
     /**
-     * Operation getGeneralSettingsWithHttpInfo
+     * Operation settingsServiceGetGeneralSettingsWithHttpInfo
      *
      * Get basic information over the instance
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getGeneralSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetGeneralSettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetGeneralSettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\SettingsServiceGetGeneralSettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getGeneralSettingsWithHttpInfo(string $contentType = self::contentTypes['getGeneralSettings'][0])
+    public function settingsServiceGetGeneralSettingsWithHttpInfo(string $contentType = self::contentTypes['settingsServiceGetGeneralSettings'][0])
     {
-        $request = $this->getGeneralSettingsRequest($contentType);
+        $request = $this->settingsServiceGetGeneralSettingsRequest($contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -1544,11 +1544,11 @@ class SettingsServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetGeneralSettingsResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceGetGeneralSettingsResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetGeneralSettingsResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceGetGeneralSettingsResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1566,16 +1566,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetGeneralSettingsResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceGetGeneralSettingsResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1593,16 +1593,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1620,16 +1620,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1647,7 +1647,7 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1666,7 +1666,7 @@ class SettingsServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetGeneralSettingsResponse';
+            $returnType = '\Zitadel\Client\Model\SettingsServiceGetGeneralSettingsResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -1699,7 +1699,7 @@ class SettingsServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetGeneralSettingsResponse',
+                        '\Zitadel\Client\Model\SettingsServiceGetGeneralSettingsResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1707,7 +1707,7 @@ class SettingsServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1715,7 +1715,7 @@ class SettingsServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1723,7 +1723,7 @@ class SettingsServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1734,18 +1734,18 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getGeneralSettingsAsync
+     * Operation settingsServiceGetGeneralSettingsAsync
      *
      * Get basic information over the instance
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getGeneralSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetGeneralSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getGeneralSettingsAsync(string $contentType = self::contentTypes['getGeneralSettings'][0])
+    public function settingsServiceGetGeneralSettingsAsync(string $contentType = self::contentTypes['settingsServiceGetGeneralSettings'][0])
     {
-        return $this->getGeneralSettingsAsyncWithHttpInfo($contentType)
+        return $this->settingsServiceGetGeneralSettingsAsyncWithHttpInfo($contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1754,19 +1754,19 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getGeneralSettingsAsyncWithHttpInfo
+     * Operation settingsServiceGetGeneralSettingsAsyncWithHttpInfo
      *
      * Get basic information over the instance
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getGeneralSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetGeneralSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getGeneralSettingsAsyncWithHttpInfo(string $contentType = self::contentTypes['getGeneralSettings'][0])
+    public function settingsServiceGetGeneralSettingsAsyncWithHttpInfo(string $contentType = self::contentTypes['settingsServiceGetGeneralSettings'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetGeneralSettingsResponse';
-        $request = $this->getGeneralSettingsRequest($contentType);
+        $returnType = '\Zitadel\Client\Model\SettingsServiceGetGeneralSettingsResponse';
+        $request = $this->settingsServiceGetGeneralSettingsRequest($contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1805,14 +1805,14 @@ class SettingsServiceApi
     }
 
     /**
-     * Create request for operation 'getGeneralSettings'
+     * Create request for operation 'settingsServiceGetGeneralSettings'
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getGeneralSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetGeneralSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getGeneralSettingsRequest(string $contentType = self::contentTypes['getGeneralSettings'][0])
+    public function settingsServiceGetGeneralSettingsRequest(string $contentType = self::contentTypes['settingsServiceGetGeneralSettings'][0])
     {
 
 
@@ -1885,40 +1885,40 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getLegalAndSupportSettings
+     * Operation settingsServiceGetLegalAndSupportSettings
      *
      * Get the legal and support settings
      *
      * @param  string|null $ctxOrgId ctxOrgId (optional)
      * @param  bool|null $ctxInstance ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLegalAndSupportSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLegalAndSupportSettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetLegalAndSupportSettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\SettingsServiceGetLegalAndSupportSettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus
      */
-    public function getLegalAndSupportSettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getLegalAndSupportSettings'][0])
+    public function settingsServiceGetLegalAndSupportSettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLegalAndSupportSettings'][0])
     {
-        list($response) = $this->getLegalAndSupportSettingsWithHttpInfo($ctxOrgId, $ctxInstance, $contentType);
+        list($response) = $this->settingsServiceGetLegalAndSupportSettingsWithHttpInfo($ctxOrgId, $ctxInstance, $contentType);
         return $response;
     }
 
     /**
-     * Operation getLegalAndSupportSettingsWithHttpInfo
+     * Operation settingsServiceGetLegalAndSupportSettingsWithHttpInfo
      *
      * Get the legal and support settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLegalAndSupportSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLegalAndSupportSettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetLegalAndSupportSettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\SettingsServiceGetLegalAndSupportSettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getLegalAndSupportSettingsWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getLegalAndSupportSettings'][0])
+    public function settingsServiceGetLegalAndSupportSettingsWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLegalAndSupportSettings'][0])
     {
-        $request = $this->getLegalAndSupportSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $request = $this->settingsServiceGetLegalAndSupportSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -1945,11 +1945,11 @@ class SettingsServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetLegalAndSupportSettingsResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceGetLegalAndSupportSettingsResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetLegalAndSupportSettingsResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceGetLegalAndSupportSettingsResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1967,16 +1967,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetLegalAndSupportSettingsResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceGetLegalAndSupportSettingsResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1994,16 +1994,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2021,16 +2021,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2048,7 +2048,7 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2067,7 +2067,7 @@ class SettingsServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetLegalAndSupportSettingsResponse';
+            $returnType = '\Zitadel\Client\Model\SettingsServiceGetLegalAndSupportSettingsResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -2100,7 +2100,7 @@ class SettingsServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetLegalAndSupportSettingsResponse',
+                        '\Zitadel\Client\Model\SettingsServiceGetLegalAndSupportSettingsResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2108,7 +2108,7 @@ class SettingsServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2116,7 +2116,7 @@ class SettingsServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2124,7 +2124,7 @@ class SettingsServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2135,20 +2135,20 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getLegalAndSupportSettingsAsync
+     * Operation settingsServiceGetLegalAndSupportSettingsAsync
      *
      * Get the legal and support settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLegalAndSupportSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLegalAndSupportSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getLegalAndSupportSettingsAsync($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getLegalAndSupportSettings'][0])
+    public function settingsServiceGetLegalAndSupportSettingsAsync($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLegalAndSupportSettings'][0])
     {
-        return $this->getLegalAndSupportSettingsAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $contentType)
+        return $this->settingsServiceGetLegalAndSupportSettingsAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -2157,21 +2157,21 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getLegalAndSupportSettingsAsyncWithHttpInfo
+     * Operation settingsServiceGetLegalAndSupportSettingsAsyncWithHttpInfo
      *
      * Get the legal and support settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLegalAndSupportSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLegalAndSupportSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getLegalAndSupportSettingsAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getLegalAndSupportSettings'][0])
+    public function settingsServiceGetLegalAndSupportSettingsAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLegalAndSupportSettings'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetLegalAndSupportSettingsResponse';
-        $request = $this->getLegalAndSupportSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $returnType = '\Zitadel\Client\Model\SettingsServiceGetLegalAndSupportSettingsResponse';
+        $request = $this->settingsServiceGetLegalAndSupportSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -2210,16 +2210,16 @@ class SettingsServiceApi
     }
 
     /**
-     * Create request for operation 'getLegalAndSupportSettings'
+     * Create request for operation 'settingsServiceGetLegalAndSupportSettings'
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLegalAndSupportSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLegalAndSupportSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getLegalAndSupportSettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getLegalAndSupportSettings'][0])
+    public function settingsServiceGetLegalAndSupportSettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLegalAndSupportSettings'][0])
     {
 
 
@@ -2312,40 +2312,40 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getLockoutSettings
+     * Operation settingsServiceGetLockoutSettings
      *
      * Get the lockout settings
      *
      * @param  string|null $ctxOrgId ctxOrgId (optional)
      * @param  bool|null $ctxInstance ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLockoutSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLockoutSettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetLockoutSettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\SettingsServiceGetLockoutSettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus
      */
-    public function getLockoutSettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getLockoutSettings'][0])
+    public function settingsServiceGetLockoutSettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLockoutSettings'][0])
     {
-        list($response) = $this->getLockoutSettingsWithHttpInfo($ctxOrgId, $ctxInstance, $contentType);
+        list($response) = $this->settingsServiceGetLockoutSettingsWithHttpInfo($ctxOrgId, $ctxInstance, $contentType);
         return $response;
     }
 
     /**
-     * Operation getLockoutSettingsWithHttpInfo
+     * Operation settingsServiceGetLockoutSettingsWithHttpInfo
      *
      * Get the lockout settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLockoutSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLockoutSettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetLockoutSettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\SettingsServiceGetLockoutSettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getLockoutSettingsWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getLockoutSettings'][0])
+    public function settingsServiceGetLockoutSettingsWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLockoutSettings'][0])
     {
-        $request = $this->getLockoutSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $request = $this->settingsServiceGetLockoutSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -2372,11 +2372,11 @@ class SettingsServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetLockoutSettingsResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceGetLockoutSettingsResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetLockoutSettingsResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceGetLockoutSettingsResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2394,16 +2394,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetLockoutSettingsResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceGetLockoutSettingsResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2421,16 +2421,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2448,16 +2448,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2475,7 +2475,7 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2494,7 +2494,7 @@ class SettingsServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetLockoutSettingsResponse';
+            $returnType = '\Zitadel\Client\Model\SettingsServiceGetLockoutSettingsResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -2527,7 +2527,7 @@ class SettingsServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetLockoutSettingsResponse',
+                        '\Zitadel\Client\Model\SettingsServiceGetLockoutSettingsResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2535,7 +2535,7 @@ class SettingsServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2543,7 +2543,7 @@ class SettingsServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2551,7 +2551,7 @@ class SettingsServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2562,20 +2562,20 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getLockoutSettingsAsync
+     * Operation settingsServiceGetLockoutSettingsAsync
      *
      * Get the lockout settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLockoutSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLockoutSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getLockoutSettingsAsync($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getLockoutSettings'][0])
+    public function settingsServiceGetLockoutSettingsAsync($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLockoutSettings'][0])
     {
-        return $this->getLockoutSettingsAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $contentType)
+        return $this->settingsServiceGetLockoutSettingsAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -2584,21 +2584,21 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getLockoutSettingsAsyncWithHttpInfo
+     * Operation settingsServiceGetLockoutSettingsAsyncWithHttpInfo
      *
      * Get the lockout settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLockoutSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLockoutSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getLockoutSettingsAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getLockoutSettings'][0])
+    public function settingsServiceGetLockoutSettingsAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLockoutSettings'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetLockoutSettingsResponse';
-        $request = $this->getLockoutSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $returnType = '\Zitadel\Client\Model\SettingsServiceGetLockoutSettingsResponse';
+        $request = $this->settingsServiceGetLockoutSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -2637,16 +2637,16 @@ class SettingsServiceApi
     }
 
     /**
-     * Create request for operation 'getLockoutSettings'
+     * Create request for operation 'settingsServiceGetLockoutSettings'
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLockoutSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLockoutSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getLockoutSettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getLockoutSettings'][0])
+    public function settingsServiceGetLockoutSettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLockoutSettings'][0])
     {
 
 
@@ -2739,40 +2739,40 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getLoginSettings
+     * Operation settingsServiceGetLoginSettings
      *
      * Get the login settings
      *
      * @param  string|null $ctxOrgId ctxOrgId (optional)
      * @param  bool|null $ctxInstance ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLoginSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLoginSettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetLoginSettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\SettingsServiceGetLoginSettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus
      */
-    public function getLoginSettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getLoginSettings'][0])
+    public function settingsServiceGetLoginSettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLoginSettings'][0])
     {
-        list($response) = $this->getLoginSettingsWithHttpInfo($ctxOrgId, $ctxInstance, $contentType);
+        list($response) = $this->settingsServiceGetLoginSettingsWithHttpInfo($ctxOrgId, $ctxInstance, $contentType);
         return $response;
     }
 
     /**
-     * Operation getLoginSettingsWithHttpInfo
+     * Operation settingsServiceGetLoginSettingsWithHttpInfo
      *
      * Get the login settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLoginSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLoginSettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetLoginSettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\SettingsServiceGetLoginSettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getLoginSettingsWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getLoginSettings'][0])
+    public function settingsServiceGetLoginSettingsWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLoginSettings'][0])
     {
-        $request = $this->getLoginSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $request = $this->settingsServiceGetLoginSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -2799,11 +2799,11 @@ class SettingsServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetLoginSettingsResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceGetLoginSettingsResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetLoginSettingsResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceGetLoginSettingsResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2821,16 +2821,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetLoginSettingsResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceGetLoginSettingsResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2848,16 +2848,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2875,16 +2875,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2902,7 +2902,7 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2921,7 +2921,7 @@ class SettingsServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetLoginSettingsResponse';
+            $returnType = '\Zitadel\Client\Model\SettingsServiceGetLoginSettingsResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -2954,7 +2954,7 @@ class SettingsServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetLoginSettingsResponse',
+                        '\Zitadel\Client\Model\SettingsServiceGetLoginSettingsResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2962,7 +2962,7 @@ class SettingsServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2970,7 +2970,7 @@ class SettingsServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2978,7 +2978,7 @@ class SettingsServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2989,20 +2989,20 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getLoginSettingsAsync
+     * Operation settingsServiceGetLoginSettingsAsync
      *
      * Get the login settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLoginSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLoginSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getLoginSettingsAsync($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getLoginSettings'][0])
+    public function settingsServiceGetLoginSettingsAsync($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLoginSettings'][0])
     {
-        return $this->getLoginSettingsAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $contentType)
+        return $this->settingsServiceGetLoginSettingsAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -3011,21 +3011,21 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getLoginSettingsAsyncWithHttpInfo
+     * Operation settingsServiceGetLoginSettingsAsyncWithHttpInfo
      *
      * Get the login settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLoginSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLoginSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getLoginSettingsAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getLoginSettings'][0])
+    public function settingsServiceGetLoginSettingsAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLoginSettings'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetLoginSettingsResponse';
-        $request = $this->getLoginSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $returnType = '\Zitadel\Client\Model\SettingsServiceGetLoginSettingsResponse';
+        $request = $this->settingsServiceGetLoginSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -3064,16 +3064,16 @@ class SettingsServiceApi
     }
 
     /**
-     * Create request for operation 'getLoginSettings'
+     * Create request for operation 'settingsServiceGetLoginSettings'
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLoginSettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLoginSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getLoginSettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getLoginSettings'][0])
+    public function settingsServiceGetLoginSettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLoginSettings'][0])
     {
 
 
@@ -3166,40 +3166,40 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getPasswordComplexitySettings
+     * Operation settingsServiceGetPasswordComplexitySettings
      *
      * Get the password complexity settings
      *
      * @param  string|null $ctxOrgId ctxOrgId (optional)
      * @param  bool|null $ctxInstance ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordComplexitySettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetPasswordComplexitySettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetPasswordComplexitySettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\SettingsServiceGetPasswordComplexitySettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus
      */
-    public function getPasswordComplexitySettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getPasswordComplexitySettings'][0])
+    public function settingsServiceGetPasswordComplexitySettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetPasswordComplexitySettings'][0])
     {
-        list($response) = $this->getPasswordComplexitySettingsWithHttpInfo($ctxOrgId, $ctxInstance, $contentType);
+        list($response) = $this->settingsServiceGetPasswordComplexitySettingsWithHttpInfo($ctxOrgId, $ctxInstance, $contentType);
         return $response;
     }
 
     /**
-     * Operation getPasswordComplexitySettingsWithHttpInfo
+     * Operation settingsServiceGetPasswordComplexitySettingsWithHttpInfo
      *
      * Get the password complexity settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordComplexitySettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetPasswordComplexitySettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetPasswordComplexitySettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\SettingsServiceGetPasswordComplexitySettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getPasswordComplexitySettingsWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getPasswordComplexitySettings'][0])
+    public function settingsServiceGetPasswordComplexitySettingsWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetPasswordComplexitySettings'][0])
     {
-        $request = $this->getPasswordComplexitySettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $request = $this->settingsServiceGetPasswordComplexitySettingsRequest($ctxOrgId, $ctxInstance, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -3226,11 +3226,11 @@ class SettingsServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetPasswordComplexitySettingsResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceGetPasswordComplexitySettingsResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetPasswordComplexitySettingsResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceGetPasswordComplexitySettingsResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3248,16 +3248,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetPasswordComplexitySettingsResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceGetPasswordComplexitySettingsResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3275,16 +3275,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3302,16 +3302,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3329,7 +3329,7 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -3348,7 +3348,7 @@ class SettingsServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetPasswordComplexitySettingsResponse';
+            $returnType = '\Zitadel\Client\Model\SettingsServiceGetPasswordComplexitySettingsResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -3381,7 +3381,7 @@ class SettingsServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetPasswordComplexitySettingsResponse',
+                        '\Zitadel\Client\Model\SettingsServiceGetPasswordComplexitySettingsResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3389,7 +3389,7 @@ class SettingsServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3397,7 +3397,7 @@ class SettingsServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3405,7 +3405,7 @@ class SettingsServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3416,20 +3416,20 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getPasswordComplexitySettingsAsync
+     * Operation settingsServiceGetPasswordComplexitySettingsAsync
      *
      * Get the password complexity settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordComplexitySettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetPasswordComplexitySettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getPasswordComplexitySettingsAsync($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getPasswordComplexitySettings'][0])
+    public function settingsServiceGetPasswordComplexitySettingsAsync($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetPasswordComplexitySettings'][0])
     {
-        return $this->getPasswordComplexitySettingsAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $contentType)
+        return $this->settingsServiceGetPasswordComplexitySettingsAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -3438,21 +3438,21 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getPasswordComplexitySettingsAsyncWithHttpInfo
+     * Operation settingsServiceGetPasswordComplexitySettingsAsyncWithHttpInfo
      *
      * Get the password complexity settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordComplexitySettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetPasswordComplexitySettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getPasswordComplexitySettingsAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getPasswordComplexitySettings'][0])
+    public function settingsServiceGetPasswordComplexitySettingsAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetPasswordComplexitySettings'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetPasswordComplexitySettingsResponse';
-        $request = $this->getPasswordComplexitySettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $returnType = '\Zitadel\Client\Model\SettingsServiceGetPasswordComplexitySettingsResponse';
+        $request = $this->settingsServiceGetPasswordComplexitySettingsRequest($ctxOrgId, $ctxInstance, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -3491,16 +3491,16 @@ class SettingsServiceApi
     }
 
     /**
-     * Create request for operation 'getPasswordComplexitySettings'
+     * Create request for operation 'settingsServiceGetPasswordComplexitySettings'
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordComplexitySettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetPasswordComplexitySettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getPasswordComplexitySettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getPasswordComplexitySettings'][0])
+    public function settingsServiceGetPasswordComplexitySettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetPasswordComplexitySettings'][0])
     {
 
 
@@ -3593,40 +3593,40 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getPasswordExpirySettings
+     * Operation settingsServiceGetPasswordExpirySettings
      *
      * Get the password expiry settings
      *
      * @param  string|null $ctxOrgId ctxOrgId (optional)
      * @param  bool|null $ctxInstance ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordExpirySettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetPasswordExpirySettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetPasswordExpirySettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\SettingsServiceGetPasswordExpirySettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus
      */
-    public function getPasswordExpirySettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getPasswordExpirySettings'][0])
+    public function settingsServiceGetPasswordExpirySettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetPasswordExpirySettings'][0])
     {
-        list($response) = $this->getPasswordExpirySettingsWithHttpInfo($ctxOrgId, $ctxInstance, $contentType);
+        list($response) = $this->settingsServiceGetPasswordExpirySettingsWithHttpInfo($ctxOrgId, $ctxInstance, $contentType);
         return $response;
     }
 
     /**
-     * Operation getPasswordExpirySettingsWithHttpInfo
+     * Operation settingsServiceGetPasswordExpirySettingsWithHttpInfo
      *
      * Get the password expiry settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordExpirySettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetPasswordExpirySettings'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetPasswordExpirySettingsResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\SettingsServiceGetPasswordExpirySettingsResponse|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus|\Zitadel\Client\Model\SettingsServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getPasswordExpirySettingsWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getPasswordExpirySettings'][0])
+    public function settingsServiceGetPasswordExpirySettingsWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetPasswordExpirySettings'][0])
     {
-        $request = $this->getPasswordExpirySettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $request = $this->settingsServiceGetPasswordExpirySettingsRequest($ctxOrgId, $ctxInstance, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -3653,11 +3653,11 @@ class SettingsServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetPasswordExpirySettingsResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceGetPasswordExpirySettingsResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetPasswordExpirySettingsResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceGetPasswordExpirySettingsResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3675,16 +3675,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetPasswordExpirySettingsResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceGetPasswordExpirySettingsResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3702,16 +3702,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3729,16 +3729,16 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\SettingsServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3756,7 +3756,7 @@ class SettingsServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\SettingsServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -3775,7 +3775,7 @@ class SettingsServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetPasswordExpirySettingsResponse';
+            $returnType = '\Zitadel\Client\Model\SettingsServiceGetPasswordExpirySettingsResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -3808,7 +3808,7 @@ class SettingsServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetPasswordExpirySettingsResponse',
+                        '\Zitadel\Client\Model\SettingsServiceGetPasswordExpirySettingsResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3816,7 +3816,7 @@ class SettingsServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3824,7 +3824,7 @@ class SettingsServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3832,7 +3832,7 @@ class SettingsServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\SettingsServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3843,20 +3843,20 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getPasswordExpirySettingsAsync
+     * Operation settingsServiceGetPasswordExpirySettingsAsync
      *
      * Get the password expiry settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordExpirySettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetPasswordExpirySettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getPasswordExpirySettingsAsync($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getPasswordExpirySettings'][0])
+    public function settingsServiceGetPasswordExpirySettingsAsync($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetPasswordExpirySettings'][0])
     {
-        return $this->getPasswordExpirySettingsAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $contentType)
+        return $this->settingsServiceGetPasswordExpirySettingsAsyncWithHttpInfo($ctxOrgId, $ctxInstance, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -3865,21 +3865,21 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation getPasswordExpirySettingsAsyncWithHttpInfo
+     * Operation settingsServiceGetPasswordExpirySettingsAsyncWithHttpInfo
      *
      * Get the password expiry settings
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordExpirySettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetPasswordExpirySettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getPasswordExpirySettingsAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getPasswordExpirySettings'][0])
+    public function settingsServiceGetPasswordExpirySettingsAsyncWithHttpInfo($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetPasswordExpirySettings'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetPasswordExpirySettingsResponse';
-        $request = $this->getPasswordExpirySettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $returnType = '\Zitadel\Client\Model\SettingsServiceGetPasswordExpirySettingsResponse';
+        $request = $this->settingsServiceGetPasswordExpirySettingsRequest($ctxOrgId, $ctxInstance, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -3918,16 +3918,16 @@ class SettingsServiceApi
     }
 
     /**
-     * Create request for operation 'getPasswordExpirySettings'
+     * Create request for operation 'settingsServiceGetPasswordExpirySettings'
      *
      * @param  string|null $ctxOrgId (optional)
      * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordExpirySettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetPasswordExpirySettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getPasswordExpirySettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['getPasswordExpirySettings'][0])
+    public function settingsServiceGetPasswordExpirySettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetPasswordExpirySettings'][0])
     {
 
 

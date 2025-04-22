@@ -71,40 +71,40 @@ class FeatureServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'getInstanceFeatures' => [
+        'featureServiceGetInstanceFeatures' => [
             'application/json',
         ],
-        'getOrganizationFeatures' => [
+        'featureServiceGetOrganizationFeatures' => [
             'application/json',
         ],
-        'getSystemFeatures' => [
+        'featureServiceGetSystemFeatures' => [
             'application/json',
         ],
-        'getUserFeatures' => [
+        'featureServiceGetUserFeatures' => [
             'application/json',
         ],
-        'resetInstanceFeatures' => [
+        'featureServiceResetInstanceFeatures' => [
             'application/json',
         ],
-        'resetOrganizationFeatures' => [
+        'featureServiceResetOrganizationFeatures' => [
             'application/json',
         ],
-        'resetSystemFeatures' => [
+        'featureServiceResetSystemFeatures' => [
             'application/json',
         ],
-        'resetUserFeatures' => [
+        'featureServiceResetUserFeatures' => [
             'application/json',
         ],
-        'setInstanceFeatures' => [
+        'featureServiceSetInstanceFeatures' => [
             'application/json',
         ],
-        'setOrganizationFeatures' => [
+        'featureServiceSetOrganizationFeatures' => [
             'application/json',
         ],
-        'setSystemFeatures' => [
+        'featureServiceSetSystemFeatures' => [
             'application/json',
         ],
-        'setUserFeatures' => [
+        'featureServiceSetUserFeatures' => [
             'application/json',
         ],
     ];
@@ -156,38 +156,38 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation getInstanceFeatures
+     * Operation featureServiceGetInstanceFeatures
      *
-     * Get instance level features
+     * Get Instance Features
      *
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the instance, it will be omitted from the response or Not Found is returned when the instance has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getInstanceFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetInstanceFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus
      */
-    public function getInstanceFeatures($inheritance = null, string $contentType = self::contentTypes['getInstanceFeatures'][0])
+    public function featureServiceGetInstanceFeatures($inheritance = null, string $contentType = self::contentTypes['featureServiceGetInstanceFeatures'][0])
     {
-        list($response) = $this->getInstanceFeaturesWithHttpInfo($inheritance, $contentType);
+        list($response) = $this->featureServiceGetInstanceFeaturesWithHttpInfo($inheritance, $contentType);
         return $response;
     }
 
     /**
-     * Operation getInstanceFeaturesWithHttpInfo
+     * Operation featureServiceGetInstanceFeaturesWithHttpInfo
      *
-     * Get instance level features
+     * Get Instance Features
      *
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the instance, it will be omitted from the response or Not Found is returned when the instance has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getInstanceFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetInstanceFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getInstanceFeaturesWithHttpInfo($inheritance = null, string $contentType = self::contentTypes['getInstanceFeatures'][0])
+    public function featureServiceGetInstanceFeaturesWithHttpInfo($inheritance = null, string $contentType = self::contentTypes['featureServiceGetInstanceFeatures'][0])
     {
-        $request = $this->getInstanceFeaturesRequest($inheritance, $contentType);
+        $request = $this->featureServiceGetInstanceFeaturesRequest($inheritance, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -214,11 +214,11 @@ class FeatureServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetInstanceFeaturesResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetInstanceFeaturesResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -236,16 +236,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetInstanceFeaturesResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -263,16 +263,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -290,16 +290,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -317,7 +317,7 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -336,7 +336,7 @@ class FeatureServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetInstanceFeaturesResponse';
+            $returnType = '\Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -369,7 +369,7 @@ class FeatureServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetInstanceFeaturesResponse',
+                        '\Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -377,7 +377,7 @@ class FeatureServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -385,7 +385,7 @@ class FeatureServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -393,7 +393,7 @@ class FeatureServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -404,19 +404,19 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation getInstanceFeaturesAsync
+     * Operation featureServiceGetInstanceFeaturesAsync
      *
-     * Get instance level features
+     * Get Instance Features
      *
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the instance, it will be omitted from the response or Not Found is returned when the instance has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getInstanceFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getInstanceFeaturesAsync($inheritance = null, string $contentType = self::contentTypes['getInstanceFeatures'][0])
+    public function featureServiceGetInstanceFeaturesAsync($inheritance = null, string $contentType = self::contentTypes['featureServiceGetInstanceFeatures'][0])
     {
-        return $this->getInstanceFeaturesAsyncWithHttpInfo($inheritance, $contentType)
+        return $this->featureServiceGetInstanceFeaturesAsyncWithHttpInfo($inheritance, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -425,20 +425,20 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation getInstanceFeaturesAsyncWithHttpInfo
+     * Operation featureServiceGetInstanceFeaturesAsyncWithHttpInfo
      *
-     * Get instance level features
+     * Get Instance Features
      *
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the instance, it will be omitted from the response or Not Found is returned when the instance has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getInstanceFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getInstanceFeaturesAsyncWithHttpInfo($inheritance = null, string $contentType = self::contentTypes['getInstanceFeatures'][0])
+    public function featureServiceGetInstanceFeaturesAsyncWithHttpInfo($inheritance = null, string $contentType = self::contentTypes['featureServiceGetInstanceFeatures'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetInstanceFeaturesResponse';
-        $request = $this->getInstanceFeaturesRequest($inheritance, $contentType);
+        $returnType = '\Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse';
+        $request = $this->featureServiceGetInstanceFeaturesRequest($inheritance, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -477,15 +477,15 @@ class FeatureServiceApi
     }
 
     /**
-     * Create request for operation 'getInstanceFeatures'
+     * Create request for operation 'featureServiceGetInstanceFeatures'
      *
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the instance, it will be omitted from the response or Not Found is returned when the instance has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getInstanceFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getInstanceFeaturesRequest($inheritance = null, string $contentType = self::contentTypes['getInstanceFeatures'][0])
+    public function featureServiceGetInstanceFeaturesRequest($inheritance = null, string $contentType = self::contentTypes['featureServiceGetInstanceFeatures'][0])
     {
 
 
@@ -568,40 +568,40 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation getOrganizationFeatures
+     * Operation featureServiceGetOrganizationFeatures
      *
-     * Get organization level features
+     * Get Organization Features
      *
      * @param  string $organizationId organizationId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the organization, it will be omitted from the response or Not Found is returned when the organization has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOrganizationFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetOrganizationFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus
      */
-    public function getOrganizationFeatures($organizationId, $inheritance = null, string $contentType = self::contentTypes['getOrganizationFeatures'][0])
+    public function featureServiceGetOrganizationFeatures($organizationId, $inheritance = null, string $contentType = self::contentTypes['featureServiceGetOrganizationFeatures'][0])
     {
-        list($response) = $this->getOrganizationFeaturesWithHttpInfo($organizationId, $inheritance, $contentType);
+        list($response) = $this->featureServiceGetOrganizationFeaturesWithHttpInfo($organizationId, $inheritance, $contentType);
         return $response;
     }
 
     /**
-     * Operation getOrganizationFeaturesWithHttpInfo
+     * Operation featureServiceGetOrganizationFeaturesWithHttpInfo
      *
-     * Get organization level features
+     * Get Organization Features
      *
      * @param  string $organizationId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the organization, it will be omitted from the response or Not Found is returned when the organization has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOrganizationFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetOrganizationFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getOrganizationFeaturesWithHttpInfo($organizationId, $inheritance = null, string $contentType = self::contentTypes['getOrganizationFeatures'][0])
+    public function featureServiceGetOrganizationFeaturesWithHttpInfo($organizationId, $inheritance = null, string $contentType = self::contentTypes['featureServiceGetOrganizationFeatures'][0])
     {
-        $request = $this->getOrganizationFeaturesRequest($organizationId, $inheritance, $contentType);
+        $request = $this->featureServiceGetOrganizationFeaturesRequest($organizationId, $inheritance, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -628,11 +628,11 @@ class FeatureServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetOrganizationFeaturesResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetOrganizationFeaturesResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -650,16 +650,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetOrganizationFeaturesResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -677,16 +677,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -704,16 +704,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -731,7 +731,7 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -750,7 +750,7 @@ class FeatureServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetOrganizationFeaturesResponse';
+            $returnType = '\Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -783,7 +783,7 @@ class FeatureServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetOrganizationFeaturesResponse',
+                        '\Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -791,7 +791,7 @@ class FeatureServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -799,7 +799,7 @@ class FeatureServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -807,7 +807,7 @@ class FeatureServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -818,20 +818,20 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation getOrganizationFeaturesAsync
+     * Operation featureServiceGetOrganizationFeaturesAsync
      *
-     * Get organization level features
+     * Get Organization Features
      *
      * @param  string $organizationId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the organization, it will be omitted from the response or Not Found is returned when the organization has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOrganizationFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getOrganizationFeaturesAsync($organizationId, $inheritance = null, string $contentType = self::contentTypes['getOrganizationFeatures'][0])
+    public function featureServiceGetOrganizationFeaturesAsync($organizationId, $inheritance = null, string $contentType = self::contentTypes['featureServiceGetOrganizationFeatures'][0])
     {
-        return $this->getOrganizationFeaturesAsyncWithHttpInfo($organizationId, $inheritance, $contentType)
+        return $this->featureServiceGetOrganizationFeaturesAsyncWithHttpInfo($organizationId, $inheritance, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -840,21 +840,21 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation getOrganizationFeaturesAsyncWithHttpInfo
+     * Operation featureServiceGetOrganizationFeaturesAsyncWithHttpInfo
      *
-     * Get organization level features
+     * Get Organization Features
      *
      * @param  string $organizationId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the organization, it will be omitted from the response or Not Found is returned when the organization has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOrganizationFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getOrganizationFeaturesAsyncWithHttpInfo($organizationId, $inheritance = null, string $contentType = self::contentTypes['getOrganizationFeatures'][0])
+    public function featureServiceGetOrganizationFeaturesAsyncWithHttpInfo($organizationId, $inheritance = null, string $contentType = self::contentTypes['featureServiceGetOrganizationFeatures'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetOrganizationFeaturesResponse';
-        $request = $this->getOrganizationFeaturesRequest($organizationId, $inheritance, $contentType);
+        $returnType = '\Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse';
+        $request = $this->featureServiceGetOrganizationFeaturesRequest($organizationId, $inheritance, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -893,22 +893,22 @@ class FeatureServiceApi
     }
 
     /**
-     * Create request for operation 'getOrganizationFeatures'
+     * Create request for operation 'featureServiceGetOrganizationFeatures'
      *
      * @param  string $organizationId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the organization, it will be omitted from the response or Not Found is returned when the organization has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOrganizationFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getOrganizationFeaturesRequest($organizationId, $inheritance = null, string $contentType = self::contentTypes['getOrganizationFeatures'][0])
+    public function featureServiceGetOrganizationFeaturesRequest($organizationId, $inheritance = null, string $contentType = self::contentTypes['featureServiceGetOrganizationFeatures'][0])
     {
 
         // verify the required parameter 'organizationId' is set
         if ($organizationId === null || (is_array($organizationId) && count($organizationId) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $organizationId when calling getOrganizationFeatures'
+                'Missing the required parameter $organizationId when calling featureServiceGetOrganizationFeatures'
             );
         }
 
@@ -1000,36 +1000,36 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation getSystemFeatures
+     * Operation featureServiceGetSystemFeatures
      *
-     * Get system level features
+     * Get System Features
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSystemFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetSystemFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetSystemFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus
      */
-    public function getSystemFeatures(string $contentType = self::contentTypes['getSystemFeatures'][0])
+    public function featureServiceGetSystemFeatures(string $contentType = self::contentTypes['featureServiceGetSystemFeatures'][0])
     {
-        list($response) = $this->getSystemFeaturesWithHttpInfo($contentType);
+        list($response) = $this->featureServiceGetSystemFeaturesWithHttpInfo($contentType);
         return $response;
     }
 
     /**
-     * Operation getSystemFeaturesWithHttpInfo
+     * Operation featureServiceGetSystemFeaturesWithHttpInfo
      *
-     * Get system level features
+     * Get System Features
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSystemFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetSystemFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetSystemFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getSystemFeaturesWithHttpInfo(string $contentType = self::contentTypes['getSystemFeatures'][0])
+    public function featureServiceGetSystemFeaturesWithHttpInfo(string $contentType = self::contentTypes['featureServiceGetSystemFeatures'][0])
     {
-        $request = $this->getSystemFeaturesRequest($contentType);
+        $request = $this->featureServiceGetSystemFeaturesRequest($contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -1056,11 +1056,11 @@ class FeatureServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetSystemFeaturesResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetSystemFeaturesResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1078,16 +1078,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetSystemFeaturesResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1105,16 +1105,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1132,16 +1132,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1159,7 +1159,7 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1178,7 +1178,7 @@ class FeatureServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetSystemFeaturesResponse';
+            $returnType = '\Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -1211,7 +1211,7 @@ class FeatureServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetSystemFeaturesResponse',
+                        '\Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1219,7 +1219,7 @@ class FeatureServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1227,7 +1227,7 @@ class FeatureServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1235,7 +1235,7 @@ class FeatureServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1246,18 +1246,18 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation getSystemFeaturesAsync
+     * Operation featureServiceGetSystemFeaturesAsync
      *
-     * Get system level features
+     * Get System Features
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSystemFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetSystemFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSystemFeaturesAsync(string $contentType = self::contentTypes['getSystemFeatures'][0])
+    public function featureServiceGetSystemFeaturesAsync(string $contentType = self::contentTypes['featureServiceGetSystemFeatures'][0])
     {
-        return $this->getSystemFeaturesAsyncWithHttpInfo($contentType)
+        return $this->featureServiceGetSystemFeaturesAsyncWithHttpInfo($contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1266,19 +1266,19 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation getSystemFeaturesAsyncWithHttpInfo
+     * Operation featureServiceGetSystemFeaturesAsyncWithHttpInfo
      *
-     * Get system level features
+     * Get System Features
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSystemFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetSystemFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSystemFeaturesAsyncWithHttpInfo(string $contentType = self::contentTypes['getSystemFeatures'][0])
+    public function featureServiceGetSystemFeaturesAsyncWithHttpInfo(string $contentType = self::contentTypes['featureServiceGetSystemFeatures'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetSystemFeaturesResponse';
-        $request = $this->getSystemFeaturesRequest($contentType);
+        $returnType = '\Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse';
+        $request = $this->featureServiceGetSystemFeaturesRequest($contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1317,14 +1317,14 @@ class FeatureServiceApi
     }
 
     /**
-     * Create request for operation 'getSystemFeatures'
+     * Create request for operation 'featureServiceGetSystemFeatures'
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSystemFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetSystemFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getSystemFeaturesRequest(string $contentType = self::contentTypes['getSystemFeatures'][0])
+    public function featureServiceGetSystemFeaturesRequest(string $contentType = self::contentTypes['featureServiceGetSystemFeatures'][0])
     {
 
 
@@ -1397,40 +1397,40 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation getUserFeatures
+     * Operation featureServiceGetUserFeatures
      *
-     * Get organization level features
+     * Get User Features
      *
      * @param  string $userId userId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the user, it will be ommitted from the response or Not Found is returned when the user has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetUserFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2GetUserFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus
      */
-    public function getUserFeatures($userId, $inheritance = null, string $contentType = self::contentTypes['getUserFeatures'][0])
+    public function featureServiceGetUserFeatures($userId, $inheritance = null, string $contentType = self::contentTypes['featureServiceGetUserFeatures'][0])
     {
-        list($response) = $this->getUserFeaturesWithHttpInfo($userId, $inheritance, $contentType);
+        list($response) = $this->featureServiceGetUserFeaturesWithHttpInfo($userId, $inheritance, $contentType);
         return $response;
     }
 
     /**
-     * Operation getUserFeaturesWithHttpInfo
+     * Operation featureServiceGetUserFeaturesWithHttpInfo
      *
-     * Get organization level features
+     * Get User Features
      *
      * @param  string $userId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the user, it will be ommitted from the response or Not Found is returned when the user has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetUserFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2GetUserFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getUserFeaturesWithHttpInfo($userId, $inheritance = null, string $contentType = self::contentTypes['getUserFeatures'][0])
+    public function featureServiceGetUserFeaturesWithHttpInfo($userId, $inheritance = null, string $contentType = self::contentTypes['featureServiceGetUserFeatures'][0])
     {
-        $request = $this->getUserFeaturesRequest($userId, $inheritance, $contentType);
+        $request = $this->featureServiceGetUserFeaturesRequest($userId, $inheritance, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -1457,11 +1457,11 @@ class FeatureServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2GetUserFeaturesResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2GetUserFeaturesResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1479,16 +1479,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2GetUserFeaturesResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1506,16 +1506,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1533,16 +1533,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1560,7 +1560,7 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1579,7 +1579,7 @@ class FeatureServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2GetUserFeaturesResponse';
+            $returnType = '\Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -1612,7 +1612,7 @@ class FeatureServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2GetUserFeaturesResponse',
+                        '\Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1620,7 +1620,7 @@ class FeatureServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1628,7 +1628,7 @@ class FeatureServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1636,7 +1636,7 @@ class FeatureServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1647,20 +1647,20 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation getUserFeaturesAsync
+     * Operation featureServiceGetUserFeaturesAsync
      *
-     * Get organization level features
+     * Get User Features
      *
      * @param  string $userId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the user, it will be ommitted from the response or Not Found is returned when the user has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetUserFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getUserFeaturesAsync($userId, $inheritance = null, string $contentType = self::contentTypes['getUserFeatures'][0])
+    public function featureServiceGetUserFeaturesAsync($userId, $inheritance = null, string $contentType = self::contentTypes['featureServiceGetUserFeatures'][0])
     {
-        return $this->getUserFeaturesAsyncWithHttpInfo($userId, $inheritance, $contentType)
+        return $this->featureServiceGetUserFeaturesAsyncWithHttpInfo($userId, $inheritance, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1669,21 +1669,21 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation getUserFeaturesAsyncWithHttpInfo
+     * Operation featureServiceGetUserFeaturesAsyncWithHttpInfo
      *
-     * Get organization level features
+     * Get User Features
      *
      * @param  string $userId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the user, it will be ommitted from the response or Not Found is returned when the user has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetUserFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getUserFeaturesAsyncWithHttpInfo($userId, $inheritance = null, string $contentType = self::contentTypes['getUserFeatures'][0])
+    public function featureServiceGetUserFeaturesAsyncWithHttpInfo($userId, $inheritance = null, string $contentType = self::contentTypes['featureServiceGetUserFeatures'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2GetUserFeaturesResponse';
-        $request = $this->getUserFeaturesRequest($userId, $inheritance, $contentType);
+        $returnType = '\Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse';
+        $request = $this->featureServiceGetUserFeaturesRequest($userId, $inheritance, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1722,22 +1722,22 @@ class FeatureServiceApi
     }
 
     /**
-     * Create request for operation 'getUserFeatures'
+     * Create request for operation 'featureServiceGetUserFeatures'
      *
      * @param  string $userId (required)
      * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the user, it will be ommitted from the response or Not Found is returned when the user has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetUserFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getUserFeaturesRequest($userId, $inheritance = null, string $contentType = self::contentTypes['getUserFeatures'][0])
+    public function featureServiceGetUserFeaturesRequest($userId, $inheritance = null, string $contentType = self::contentTypes['featureServiceGetUserFeatures'][0])
     {
 
         // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $userId when calling getUserFeatures'
+                'Missing the required parameter $userId when calling featureServiceGetUserFeatures'
             );
         }
 
@@ -1829,36 +1829,36 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation resetInstanceFeatures
+     * Operation featureServiceResetInstanceFeatures
      *
-     * Reset instance level features
+     * Reset Instance Features
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetInstanceFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2ResetInstanceFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus
      */
-    public function resetInstanceFeatures(string $contentType = self::contentTypes['resetInstanceFeatures'][0])
+    public function featureServiceResetInstanceFeatures(string $contentType = self::contentTypes['featureServiceResetInstanceFeatures'][0])
     {
-        list($response) = $this->resetInstanceFeaturesWithHttpInfo($contentType);
+        list($response) = $this->featureServiceResetInstanceFeaturesWithHttpInfo($contentType);
         return $response;
     }
 
     /**
-     * Operation resetInstanceFeaturesWithHttpInfo
+     * Operation featureServiceResetInstanceFeaturesWithHttpInfo
      *
-     * Reset instance level features
+     * Reset Instance Features
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetInstanceFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2ResetInstanceFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function resetInstanceFeaturesWithHttpInfo(string $contentType = self::contentTypes['resetInstanceFeatures'][0])
+    public function featureServiceResetInstanceFeaturesWithHttpInfo(string $contentType = self::contentTypes['featureServiceResetInstanceFeatures'][0])
     {
-        $request = $this->resetInstanceFeaturesRequest($contentType);
+        $request = $this->featureServiceResetInstanceFeaturesRequest($contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -1885,11 +1885,11 @@ class FeatureServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2ResetInstanceFeaturesResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2ResetInstanceFeaturesResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1907,16 +1907,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2ResetInstanceFeaturesResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1934,16 +1934,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1961,16 +1961,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -1988,7 +1988,7 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2007,7 +2007,7 @@ class FeatureServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2ResetInstanceFeaturesResponse';
+            $returnType = '\Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -2040,7 +2040,7 @@ class FeatureServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2ResetInstanceFeaturesResponse',
+                        '\Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2048,7 +2048,7 @@ class FeatureServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2056,7 +2056,7 @@ class FeatureServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2064,7 +2064,7 @@ class FeatureServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2075,18 +2075,18 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation resetInstanceFeaturesAsync
+     * Operation featureServiceResetInstanceFeaturesAsync
      *
-     * Reset instance level features
+     * Reset Instance Features
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetInstanceFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function resetInstanceFeaturesAsync(string $contentType = self::contentTypes['resetInstanceFeatures'][0])
+    public function featureServiceResetInstanceFeaturesAsync(string $contentType = self::contentTypes['featureServiceResetInstanceFeatures'][0])
     {
-        return $this->resetInstanceFeaturesAsyncWithHttpInfo($contentType)
+        return $this->featureServiceResetInstanceFeaturesAsyncWithHttpInfo($contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -2095,19 +2095,19 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation resetInstanceFeaturesAsyncWithHttpInfo
+     * Operation featureServiceResetInstanceFeaturesAsyncWithHttpInfo
      *
-     * Reset instance level features
+     * Reset Instance Features
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetInstanceFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function resetInstanceFeaturesAsyncWithHttpInfo(string $contentType = self::contentTypes['resetInstanceFeatures'][0])
+    public function featureServiceResetInstanceFeaturesAsyncWithHttpInfo(string $contentType = self::contentTypes['featureServiceResetInstanceFeatures'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2ResetInstanceFeaturesResponse';
-        $request = $this->resetInstanceFeaturesRequest($contentType);
+        $returnType = '\Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse';
+        $request = $this->featureServiceResetInstanceFeaturesRequest($contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -2146,14 +2146,14 @@ class FeatureServiceApi
     }
 
     /**
-     * Create request for operation 'resetInstanceFeatures'
+     * Create request for operation 'featureServiceResetInstanceFeatures'
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetInstanceFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function resetInstanceFeaturesRequest(string $contentType = self::contentTypes['resetInstanceFeatures'][0])
+    public function featureServiceResetInstanceFeaturesRequest(string $contentType = self::contentTypes['featureServiceResetInstanceFeatures'][0])
     {
 
 
@@ -2226,38 +2226,38 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation resetOrganizationFeatures
+     * Operation featureServiceResetOrganizationFeatures
      *
-     * Reset organization level features
+     * Reset Organization Features
      *
      * @param  string $organizationId organizationId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetOrganizationFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2ResetOrganizationFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus
      */
-    public function resetOrganizationFeatures($organizationId, string $contentType = self::contentTypes['resetOrganizationFeatures'][0])
+    public function featureServiceResetOrganizationFeatures($organizationId, string $contentType = self::contentTypes['featureServiceResetOrganizationFeatures'][0])
     {
-        list($response) = $this->resetOrganizationFeaturesWithHttpInfo($organizationId, $contentType);
+        list($response) = $this->featureServiceResetOrganizationFeaturesWithHttpInfo($organizationId, $contentType);
         return $response;
     }
 
     /**
-     * Operation resetOrganizationFeaturesWithHttpInfo
+     * Operation featureServiceResetOrganizationFeaturesWithHttpInfo
      *
-     * Reset organization level features
+     * Reset Organization Features
      *
      * @param  string $organizationId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetOrganizationFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2ResetOrganizationFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function resetOrganizationFeaturesWithHttpInfo($organizationId, string $contentType = self::contentTypes['resetOrganizationFeatures'][0])
+    public function featureServiceResetOrganizationFeaturesWithHttpInfo($organizationId, string $contentType = self::contentTypes['featureServiceResetOrganizationFeatures'][0])
     {
-        $request = $this->resetOrganizationFeaturesRequest($organizationId, $contentType);
+        $request = $this->featureServiceResetOrganizationFeaturesRequest($organizationId, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -2284,11 +2284,11 @@ class FeatureServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2ResetOrganizationFeaturesResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2ResetOrganizationFeaturesResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2306,16 +2306,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2ResetOrganizationFeaturesResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2333,16 +2333,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2360,16 +2360,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2387,7 +2387,7 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2406,7 +2406,7 @@ class FeatureServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2ResetOrganizationFeaturesResponse';
+            $returnType = '\Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -2439,7 +2439,7 @@ class FeatureServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2ResetOrganizationFeaturesResponse',
+                        '\Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2447,7 +2447,7 @@ class FeatureServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2455,7 +2455,7 @@ class FeatureServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2463,7 +2463,7 @@ class FeatureServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2474,19 +2474,19 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation resetOrganizationFeaturesAsync
+     * Operation featureServiceResetOrganizationFeaturesAsync
      *
-     * Reset organization level features
+     * Reset Organization Features
      *
      * @param  string $organizationId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetOrganizationFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function resetOrganizationFeaturesAsync($organizationId, string $contentType = self::contentTypes['resetOrganizationFeatures'][0])
+    public function featureServiceResetOrganizationFeaturesAsync($organizationId, string $contentType = self::contentTypes['featureServiceResetOrganizationFeatures'][0])
     {
-        return $this->resetOrganizationFeaturesAsyncWithHttpInfo($organizationId, $contentType)
+        return $this->featureServiceResetOrganizationFeaturesAsyncWithHttpInfo($organizationId, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -2495,20 +2495,20 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation resetOrganizationFeaturesAsyncWithHttpInfo
+     * Operation featureServiceResetOrganizationFeaturesAsyncWithHttpInfo
      *
-     * Reset organization level features
+     * Reset Organization Features
      *
      * @param  string $organizationId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetOrganizationFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function resetOrganizationFeaturesAsyncWithHttpInfo($organizationId, string $contentType = self::contentTypes['resetOrganizationFeatures'][0])
+    public function featureServiceResetOrganizationFeaturesAsyncWithHttpInfo($organizationId, string $contentType = self::contentTypes['featureServiceResetOrganizationFeatures'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2ResetOrganizationFeaturesResponse';
-        $request = $this->resetOrganizationFeaturesRequest($organizationId, $contentType);
+        $returnType = '\Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse';
+        $request = $this->featureServiceResetOrganizationFeaturesRequest($organizationId, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -2547,21 +2547,21 @@ class FeatureServiceApi
     }
 
     /**
-     * Create request for operation 'resetOrganizationFeatures'
+     * Create request for operation 'featureServiceResetOrganizationFeatures'
      *
      * @param  string $organizationId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetOrganizationFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function resetOrganizationFeaturesRequest($organizationId, string $contentType = self::contentTypes['resetOrganizationFeatures'][0])
+    public function featureServiceResetOrganizationFeaturesRequest($organizationId, string $contentType = self::contentTypes['featureServiceResetOrganizationFeatures'][0])
     {
 
         // verify the required parameter 'organizationId' is set
         if ($organizationId === null || (is_array($organizationId) && count($organizationId) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $organizationId when calling resetOrganizationFeatures'
+                'Missing the required parameter $organizationId when calling featureServiceResetOrganizationFeatures'
             );
         }
 
@@ -2643,36 +2643,36 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation resetSystemFeatures
+     * Operation featureServiceResetSystemFeatures
      *
-     * Reset system level features
+     * Reset System Features
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetSystemFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetSystemFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2ResetSystemFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus
      */
-    public function resetSystemFeatures(string $contentType = self::contentTypes['resetSystemFeatures'][0])
+    public function featureServiceResetSystemFeatures(string $contentType = self::contentTypes['featureServiceResetSystemFeatures'][0])
     {
-        list($response) = $this->resetSystemFeaturesWithHttpInfo($contentType);
+        list($response) = $this->featureServiceResetSystemFeaturesWithHttpInfo($contentType);
         return $response;
     }
 
     /**
-     * Operation resetSystemFeaturesWithHttpInfo
+     * Operation featureServiceResetSystemFeaturesWithHttpInfo
      *
-     * Reset system level features
+     * Reset System Features
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetSystemFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetSystemFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2ResetSystemFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function resetSystemFeaturesWithHttpInfo(string $contentType = self::contentTypes['resetSystemFeatures'][0])
+    public function featureServiceResetSystemFeaturesWithHttpInfo(string $contentType = self::contentTypes['featureServiceResetSystemFeatures'][0])
     {
-        $request = $this->resetSystemFeaturesRequest($contentType);
+        $request = $this->featureServiceResetSystemFeaturesRequest($contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -2699,11 +2699,11 @@ class FeatureServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2ResetSystemFeaturesResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2ResetSystemFeaturesResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2721,16 +2721,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2ResetSystemFeaturesResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2748,16 +2748,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2775,16 +2775,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2802,7 +2802,7 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2821,7 +2821,7 @@ class FeatureServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2ResetSystemFeaturesResponse';
+            $returnType = '\Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -2854,7 +2854,7 @@ class FeatureServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2ResetSystemFeaturesResponse',
+                        '\Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2862,7 +2862,7 @@ class FeatureServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2870,7 +2870,7 @@ class FeatureServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2878,7 +2878,7 @@ class FeatureServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2889,18 +2889,18 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation resetSystemFeaturesAsync
+     * Operation featureServiceResetSystemFeaturesAsync
      *
-     * Reset system level features
+     * Reset System Features
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetSystemFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetSystemFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function resetSystemFeaturesAsync(string $contentType = self::contentTypes['resetSystemFeatures'][0])
+    public function featureServiceResetSystemFeaturesAsync(string $contentType = self::contentTypes['featureServiceResetSystemFeatures'][0])
     {
-        return $this->resetSystemFeaturesAsyncWithHttpInfo($contentType)
+        return $this->featureServiceResetSystemFeaturesAsyncWithHttpInfo($contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -2909,19 +2909,19 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation resetSystemFeaturesAsyncWithHttpInfo
+     * Operation featureServiceResetSystemFeaturesAsyncWithHttpInfo
      *
-     * Reset system level features
+     * Reset System Features
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetSystemFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetSystemFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function resetSystemFeaturesAsyncWithHttpInfo(string $contentType = self::contentTypes['resetSystemFeatures'][0])
+    public function featureServiceResetSystemFeaturesAsyncWithHttpInfo(string $contentType = self::contentTypes['featureServiceResetSystemFeatures'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2ResetSystemFeaturesResponse';
-        $request = $this->resetSystemFeaturesRequest($contentType);
+        $returnType = '\Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse';
+        $request = $this->featureServiceResetSystemFeaturesRequest($contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -2960,14 +2960,14 @@ class FeatureServiceApi
     }
 
     /**
-     * Create request for operation 'resetSystemFeatures'
+     * Create request for operation 'featureServiceResetSystemFeatures'
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetSystemFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetSystemFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function resetSystemFeaturesRequest(string $contentType = self::contentTypes['resetSystemFeatures'][0])
+    public function featureServiceResetSystemFeaturesRequest(string $contentType = self::contentTypes['featureServiceResetSystemFeatures'][0])
     {
 
 
@@ -3040,38 +3040,38 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation resetUserFeatures
+     * Operation featureServiceResetUserFeatures
      *
-     * Reset user level features
+     * Reset User Features
      *
      * @param  string $userId userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetUserFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetUserFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2ResetUserFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus
      */
-    public function resetUserFeatures($userId, string $contentType = self::contentTypes['resetUserFeatures'][0])
+    public function featureServiceResetUserFeatures($userId, string $contentType = self::contentTypes['featureServiceResetUserFeatures'][0])
     {
-        list($response) = $this->resetUserFeaturesWithHttpInfo($userId, $contentType);
+        list($response) = $this->featureServiceResetUserFeaturesWithHttpInfo($userId, $contentType);
         return $response;
     }
 
     /**
-     * Operation resetUserFeaturesWithHttpInfo
+     * Operation featureServiceResetUserFeaturesWithHttpInfo
      *
-     * Reset user level features
+     * Reset User Features
      *
      * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetUserFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetUserFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2ResetUserFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function resetUserFeaturesWithHttpInfo($userId, string $contentType = self::contentTypes['resetUserFeatures'][0])
+    public function featureServiceResetUserFeaturesWithHttpInfo($userId, string $contentType = self::contentTypes['featureServiceResetUserFeatures'][0])
     {
-        $request = $this->resetUserFeaturesRequest($userId, $contentType);
+        $request = $this->featureServiceResetUserFeaturesRequest($userId, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -3098,11 +3098,11 @@ class FeatureServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2ResetUserFeaturesResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2ResetUserFeaturesResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3120,16 +3120,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2ResetUserFeaturesResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3147,16 +3147,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3174,16 +3174,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3201,7 +3201,7 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -3220,7 +3220,7 @@ class FeatureServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2ResetUserFeaturesResponse';
+            $returnType = '\Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -3253,7 +3253,7 @@ class FeatureServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2ResetUserFeaturesResponse',
+                        '\Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3261,7 +3261,7 @@ class FeatureServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3269,7 +3269,7 @@ class FeatureServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3277,7 +3277,7 @@ class FeatureServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3288,19 +3288,19 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation resetUserFeaturesAsync
+     * Operation featureServiceResetUserFeaturesAsync
      *
-     * Reset user level features
+     * Reset User Features
      *
      * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetUserFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetUserFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function resetUserFeaturesAsync($userId, string $contentType = self::contentTypes['resetUserFeatures'][0])
+    public function featureServiceResetUserFeaturesAsync($userId, string $contentType = self::contentTypes['featureServiceResetUserFeatures'][0])
     {
-        return $this->resetUserFeaturesAsyncWithHttpInfo($userId, $contentType)
+        return $this->featureServiceResetUserFeaturesAsyncWithHttpInfo($userId, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -3309,20 +3309,20 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation resetUserFeaturesAsyncWithHttpInfo
+     * Operation featureServiceResetUserFeaturesAsyncWithHttpInfo
      *
-     * Reset user level features
+     * Reset User Features
      *
      * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetUserFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetUserFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function resetUserFeaturesAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['resetUserFeatures'][0])
+    public function featureServiceResetUserFeaturesAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['featureServiceResetUserFeatures'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2ResetUserFeaturesResponse';
-        $request = $this->resetUserFeaturesRequest($userId, $contentType);
+        $returnType = '\Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse';
+        $request = $this->featureServiceResetUserFeaturesRequest($userId, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -3361,21 +3361,21 @@ class FeatureServiceApi
     }
 
     /**
-     * Create request for operation 'resetUserFeatures'
+     * Create request for operation 'featureServiceResetUserFeatures'
      *
      * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetUserFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetUserFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function resetUserFeaturesRequest($userId, string $contentType = self::contentTypes['resetUserFeatures'][0])
+    public function featureServiceResetUserFeaturesRequest($userId, string $contentType = self::contentTypes['featureServiceResetUserFeatures'][0])
     {
 
         // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $userId when calling resetUserFeatures'
+                'Missing the required parameter $userId when calling featureServiceResetUserFeatures'
             );
         }
 
@@ -3457,38 +3457,38 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation setInstanceFeatures
+     * Operation featureServiceSetInstanceFeatures
      *
-     * Set instance level features
+     * Set Instance Features
      *
-     * @param  \Zitadel\Client\Model\V2SetInstanceFeaturesRequest $body body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setInstanceFeatures'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest featureServiceSetInstanceFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2SetInstanceFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus
      */
-    public function setInstanceFeatures($body, string $contentType = self::contentTypes['setInstanceFeatures'][0])
+    public function featureServiceSetInstanceFeatures($featureServiceSetInstanceFeaturesRequest, string $contentType = self::contentTypes['featureServiceSetInstanceFeatures'][0])
     {
-        list($response) = $this->setInstanceFeaturesWithHttpInfo($body, $contentType);
+        list($response) = $this->featureServiceSetInstanceFeaturesWithHttpInfo($featureServiceSetInstanceFeaturesRequest, $contentType);
         return $response;
     }
 
     /**
-     * Operation setInstanceFeaturesWithHttpInfo
+     * Operation featureServiceSetInstanceFeaturesWithHttpInfo
      *
-     * Set instance level features
+     * Set Instance Features
      *
-     * @param  \Zitadel\Client\Model\V2SetInstanceFeaturesRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setInstanceFeatures'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2SetInstanceFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function setInstanceFeaturesWithHttpInfo($body, string $contentType = self::contentTypes['setInstanceFeatures'][0])
+    public function featureServiceSetInstanceFeaturesWithHttpInfo($featureServiceSetInstanceFeaturesRequest, string $contentType = self::contentTypes['featureServiceSetInstanceFeatures'][0])
     {
-        $request = $this->setInstanceFeaturesRequest($body, $contentType);
+        $request = $this->featureServiceSetInstanceFeaturesRequest($featureServiceSetInstanceFeaturesRequest, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -3515,11 +3515,11 @@ class FeatureServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2SetInstanceFeaturesResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2SetInstanceFeaturesResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3537,16 +3537,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2SetInstanceFeaturesResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3564,16 +3564,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3591,16 +3591,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3618,7 +3618,7 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -3637,7 +3637,7 @@ class FeatureServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2SetInstanceFeaturesResponse';
+            $returnType = '\Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -3670,7 +3670,7 @@ class FeatureServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2SetInstanceFeaturesResponse',
+                        '\Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3678,7 +3678,7 @@ class FeatureServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3686,7 +3686,7 @@ class FeatureServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3694,7 +3694,7 @@ class FeatureServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3705,19 +3705,19 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation setInstanceFeaturesAsync
+     * Operation featureServiceSetInstanceFeaturesAsync
      *
-     * Set instance level features
+     * Set Instance Features
      *
-     * @param  \Zitadel\Client\Model\V2SetInstanceFeaturesRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setInstanceFeatures'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function setInstanceFeaturesAsync($body, string $contentType = self::contentTypes['setInstanceFeatures'][0])
+    public function featureServiceSetInstanceFeaturesAsync($featureServiceSetInstanceFeaturesRequest, string $contentType = self::contentTypes['featureServiceSetInstanceFeatures'][0])
     {
-        return $this->setInstanceFeaturesAsyncWithHttpInfo($body, $contentType)
+        return $this->featureServiceSetInstanceFeaturesAsyncWithHttpInfo($featureServiceSetInstanceFeaturesRequest, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -3726,20 +3726,20 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation setInstanceFeaturesAsyncWithHttpInfo
+     * Operation featureServiceSetInstanceFeaturesAsyncWithHttpInfo
      *
-     * Set instance level features
+     * Set Instance Features
      *
-     * @param  \Zitadel\Client\Model\V2SetInstanceFeaturesRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setInstanceFeatures'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function setInstanceFeaturesAsyncWithHttpInfo($body, string $contentType = self::contentTypes['setInstanceFeatures'][0])
+    public function featureServiceSetInstanceFeaturesAsyncWithHttpInfo($featureServiceSetInstanceFeaturesRequest, string $contentType = self::contentTypes['featureServiceSetInstanceFeatures'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2SetInstanceFeaturesResponse';
-        $request = $this->setInstanceFeaturesRequest($body, $contentType);
+        $returnType = '\Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse';
+        $request = $this->featureServiceSetInstanceFeaturesRequest($featureServiceSetInstanceFeaturesRequest, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -3778,21 +3778,21 @@ class FeatureServiceApi
     }
 
     /**
-     * Create request for operation 'setInstanceFeatures'
+     * Create request for operation 'featureServiceSetInstanceFeatures'
      *
-     * @param  \Zitadel\Client\Model\V2SetInstanceFeaturesRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setInstanceFeatures'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function setInstanceFeaturesRequest($body, string $contentType = self::contentTypes['setInstanceFeatures'][0])
+    public function featureServiceSetInstanceFeaturesRequest($featureServiceSetInstanceFeaturesRequest, string $contentType = self::contentTypes['featureServiceSetInstanceFeatures'][0])
     {
 
-        // verify the required parameter 'body' is set
-        if ($body === null || (is_array($body) && count($body) === 0)) {
+        // verify the required parameter 'featureServiceSetInstanceFeaturesRequest' is set
+        if ($featureServiceSetInstanceFeaturesRequest === null || (is_array($featureServiceSetInstanceFeaturesRequest) && count($featureServiceSetInstanceFeaturesRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $body when calling setInstanceFeatures'
+                'Missing the required parameter $featureServiceSetInstanceFeaturesRequest when calling featureServiceSetInstanceFeatures'
             );
         }
 
@@ -3815,12 +3815,12 @@ class FeatureServiceApi
         );
 
         // for model (json/xml)
-        if (isset($body)) {
+        if (isset($featureServiceSetInstanceFeaturesRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($featureServiceSetInstanceFeaturesRequest));
             } else {
-                $httpBody = $body;
+                $httpBody = $featureServiceSetInstanceFeaturesRequest;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -3873,38 +3873,38 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation setOrganizationFeatures
+     * Operation featureServiceSetOrganizationFeatures
      *
-     * Set organization level features
+     * Set Organization Features
      *
      * @param  string $organizationId organizationId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setOrganizationFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2SetOrganizationFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus
      */
-    public function setOrganizationFeatures($organizationId, string $contentType = self::contentTypes['setOrganizationFeatures'][0])
+    public function featureServiceSetOrganizationFeatures($organizationId, string $contentType = self::contentTypes['featureServiceSetOrganizationFeatures'][0])
     {
-        list($response) = $this->setOrganizationFeaturesWithHttpInfo($organizationId, $contentType);
+        list($response) = $this->featureServiceSetOrganizationFeaturesWithHttpInfo($organizationId, $contentType);
         return $response;
     }
 
     /**
-     * Operation setOrganizationFeaturesWithHttpInfo
+     * Operation featureServiceSetOrganizationFeaturesWithHttpInfo
      *
-     * Set organization level features
+     * Set Organization Features
      *
      * @param  string $organizationId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setOrganizationFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2SetOrganizationFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function setOrganizationFeaturesWithHttpInfo($organizationId, string $contentType = self::contentTypes['setOrganizationFeatures'][0])
+    public function featureServiceSetOrganizationFeaturesWithHttpInfo($organizationId, string $contentType = self::contentTypes['featureServiceSetOrganizationFeatures'][0])
     {
-        $request = $this->setOrganizationFeaturesRequest($organizationId, $contentType);
+        $request = $this->featureServiceSetOrganizationFeaturesRequest($organizationId, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -3931,11 +3931,11 @@ class FeatureServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2SetOrganizationFeaturesResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2SetOrganizationFeaturesResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3953,16 +3953,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2SetOrganizationFeaturesResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -3980,16 +3980,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -4007,16 +4007,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -4034,7 +4034,7 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -4053,7 +4053,7 @@ class FeatureServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2SetOrganizationFeaturesResponse';
+            $returnType = '\Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -4086,7 +4086,7 @@ class FeatureServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2SetOrganizationFeaturesResponse',
+                        '\Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4094,7 +4094,7 @@ class FeatureServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4102,7 +4102,7 @@ class FeatureServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4110,7 +4110,7 @@ class FeatureServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4121,19 +4121,19 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation setOrganizationFeaturesAsync
+     * Operation featureServiceSetOrganizationFeaturesAsync
      *
-     * Set organization level features
+     * Set Organization Features
      *
      * @param  string $organizationId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setOrganizationFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function setOrganizationFeaturesAsync($organizationId, string $contentType = self::contentTypes['setOrganizationFeatures'][0])
+    public function featureServiceSetOrganizationFeaturesAsync($organizationId, string $contentType = self::contentTypes['featureServiceSetOrganizationFeatures'][0])
     {
-        return $this->setOrganizationFeaturesAsyncWithHttpInfo($organizationId, $contentType)
+        return $this->featureServiceSetOrganizationFeaturesAsyncWithHttpInfo($organizationId, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -4142,20 +4142,20 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation setOrganizationFeaturesAsyncWithHttpInfo
+     * Operation featureServiceSetOrganizationFeaturesAsyncWithHttpInfo
      *
-     * Set organization level features
+     * Set Organization Features
      *
      * @param  string $organizationId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setOrganizationFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function setOrganizationFeaturesAsyncWithHttpInfo($organizationId, string $contentType = self::contentTypes['setOrganizationFeatures'][0])
+    public function featureServiceSetOrganizationFeaturesAsyncWithHttpInfo($organizationId, string $contentType = self::contentTypes['featureServiceSetOrganizationFeatures'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2SetOrganizationFeaturesResponse';
-        $request = $this->setOrganizationFeaturesRequest($organizationId, $contentType);
+        $returnType = '\Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse';
+        $request = $this->featureServiceSetOrganizationFeaturesRequest($organizationId, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -4194,21 +4194,21 @@ class FeatureServiceApi
     }
 
     /**
-     * Create request for operation 'setOrganizationFeatures'
+     * Create request for operation 'featureServiceSetOrganizationFeatures'
      *
      * @param  string $organizationId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setOrganizationFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function setOrganizationFeaturesRequest($organizationId, string $contentType = self::contentTypes['setOrganizationFeatures'][0])
+    public function featureServiceSetOrganizationFeaturesRequest($organizationId, string $contentType = self::contentTypes['featureServiceSetOrganizationFeatures'][0])
     {
 
         // verify the required parameter 'organizationId' is set
         if ($organizationId === null || (is_array($organizationId) && count($organizationId) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $organizationId when calling setOrganizationFeatures'
+                'Missing the required parameter $organizationId when calling featureServiceSetOrganizationFeatures'
             );
         }
 
@@ -4290,38 +4290,38 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation setSystemFeatures
+     * Operation featureServiceSetSystemFeatures
      *
-     * Set system level features
+     * Set System Features
      *
-     * @param  \Zitadel\Client\Model\V2SetSystemFeaturesRequest $body body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSystemFeatures'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest featureServiceSetSystemFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetSystemFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2SetSystemFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus
      */
-    public function setSystemFeatures($body, string $contentType = self::contentTypes['setSystemFeatures'][0])
+    public function featureServiceSetSystemFeatures($featureServiceSetSystemFeaturesRequest, string $contentType = self::contentTypes['featureServiceSetSystemFeatures'][0])
     {
-        list($response) = $this->setSystemFeaturesWithHttpInfo($body, $contentType);
+        list($response) = $this->featureServiceSetSystemFeaturesWithHttpInfo($featureServiceSetSystemFeaturesRequest, $contentType);
         return $response;
     }
 
     /**
-     * Operation setSystemFeaturesWithHttpInfo
+     * Operation featureServiceSetSystemFeaturesWithHttpInfo
      *
-     * Set system level features
+     * Set System Features
      *
-     * @param  \Zitadel\Client\Model\V2SetSystemFeaturesRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSystemFeatures'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetSystemFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2SetSystemFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function setSystemFeaturesWithHttpInfo($body, string $contentType = self::contentTypes['setSystemFeatures'][0])
+    public function featureServiceSetSystemFeaturesWithHttpInfo($featureServiceSetSystemFeaturesRequest, string $contentType = self::contentTypes['featureServiceSetSystemFeatures'][0])
     {
-        $request = $this->setSystemFeaturesRequest($body, $contentType);
+        $request = $this->featureServiceSetSystemFeaturesRequest($featureServiceSetSystemFeaturesRequest, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -4348,11 +4348,11 @@ class FeatureServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2SetSystemFeaturesResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2SetSystemFeaturesResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -4370,16 +4370,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2SetSystemFeaturesResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -4397,16 +4397,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -4424,16 +4424,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -4451,7 +4451,7 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -4470,7 +4470,7 @@ class FeatureServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2SetSystemFeaturesResponse';
+            $returnType = '\Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -4503,7 +4503,7 @@ class FeatureServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2SetSystemFeaturesResponse',
+                        '\Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4511,7 +4511,7 @@ class FeatureServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4519,7 +4519,7 @@ class FeatureServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4527,7 +4527,7 @@ class FeatureServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4538,19 +4538,19 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation setSystemFeaturesAsync
+     * Operation featureServiceSetSystemFeaturesAsync
      *
-     * Set system level features
+     * Set System Features
      *
-     * @param  \Zitadel\Client\Model\V2SetSystemFeaturesRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSystemFeatures'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetSystemFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function setSystemFeaturesAsync($body, string $contentType = self::contentTypes['setSystemFeatures'][0])
+    public function featureServiceSetSystemFeaturesAsync($featureServiceSetSystemFeaturesRequest, string $contentType = self::contentTypes['featureServiceSetSystemFeatures'][0])
     {
-        return $this->setSystemFeaturesAsyncWithHttpInfo($body, $contentType)
+        return $this->featureServiceSetSystemFeaturesAsyncWithHttpInfo($featureServiceSetSystemFeaturesRequest, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -4559,20 +4559,20 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation setSystemFeaturesAsyncWithHttpInfo
+     * Operation featureServiceSetSystemFeaturesAsyncWithHttpInfo
      *
-     * Set system level features
+     * Set System Features
      *
-     * @param  \Zitadel\Client\Model\V2SetSystemFeaturesRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSystemFeatures'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetSystemFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function setSystemFeaturesAsyncWithHttpInfo($body, string $contentType = self::contentTypes['setSystemFeatures'][0])
+    public function featureServiceSetSystemFeaturesAsyncWithHttpInfo($featureServiceSetSystemFeaturesRequest, string $contentType = self::contentTypes['featureServiceSetSystemFeatures'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2SetSystemFeaturesResponse';
-        $request = $this->setSystemFeaturesRequest($body, $contentType);
+        $returnType = '\Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse';
+        $request = $this->featureServiceSetSystemFeaturesRequest($featureServiceSetSystemFeaturesRequest, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -4611,21 +4611,21 @@ class FeatureServiceApi
     }
 
     /**
-     * Create request for operation 'setSystemFeatures'
+     * Create request for operation 'featureServiceSetSystemFeatures'
      *
-     * @param  \Zitadel\Client\Model\V2SetSystemFeaturesRequest $body (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSystemFeatures'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetSystemFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function setSystemFeaturesRequest($body, string $contentType = self::contentTypes['setSystemFeatures'][0])
+    public function featureServiceSetSystemFeaturesRequest($featureServiceSetSystemFeaturesRequest, string $contentType = self::contentTypes['featureServiceSetSystemFeatures'][0])
     {
 
-        // verify the required parameter 'body' is set
-        if ($body === null || (is_array($body) && count($body) === 0)) {
+        // verify the required parameter 'featureServiceSetSystemFeaturesRequest' is set
+        if ($featureServiceSetSystemFeaturesRequest === null || (is_array($featureServiceSetSystemFeaturesRequest) && count($featureServiceSetSystemFeaturesRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $body when calling setSystemFeatures'
+                'Missing the required parameter $featureServiceSetSystemFeaturesRequest when calling featureServiceSetSystemFeatures'
             );
         }
 
@@ -4648,12 +4648,12 @@ class FeatureServiceApi
         );
 
         // for model (json/xml)
-        if (isset($body)) {
+        if (isset($featureServiceSetSystemFeaturesRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($featureServiceSetSystemFeaturesRequest));
             } else {
-                $httpBody = $body;
+                $httpBody = $featureServiceSetSystemFeaturesRequest;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -4706,38 +4706,38 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation setUserFeatures
+     * Operation featureServiceSetUserFeatures
      *
-     * Set user level features
+     * Set User Features
      *
      * @param  string $userId userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setUserFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetUserFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\V2SetUserFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus
+     * @return \Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus
      */
-    public function setUserFeatures($userId, string $contentType = self::contentTypes['setUserFeatures'][0])
+    public function featureServiceSetUserFeatures($userId, string $contentType = self::contentTypes['featureServiceSetUserFeatures'][0])
     {
-        list($response) = $this->setUserFeaturesWithHttpInfo($userId, $contentType);
+        list($response) = $this->featureServiceSetUserFeaturesWithHttpInfo($userId, $contentType);
         return $response;
     }
 
     /**
-     * Operation setUserFeaturesWithHttpInfo
+     * Operation featureServiceSetUserFeaturesWithHttpInfo
      *
-     * Set user level features
+     * Set User Features
      *
      * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setUserFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetUserFeatures'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\V2SetUserFeaturesResponse|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus|\Zitadel\Client\Model\RpcStatus, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus|\Zitadel\Client\Model\FeatureServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function setUserFeaturesWithHttpInfo($userId, string $contentType = self::contentTypes['setUserFeatures'][0])
+    public function featureServiceSetUserFeaturesWithHttpInfo($userId, string $contentType = self::contentTypes['featureServiceSetUserFeatures'][0])
     {
-        $request = $this->setUserFeaturesRequest($userId, $contentType);
+        $request = $this->featureServiceSetUserFeaturesRequest($userId, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -4764,11 +4764,11 @@ class FeatureServiceApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Zitadel\Client\Model\V2SetUserFeaturesResponse' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\V2SetUserFeaturesResponse' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -4786,16 +4786,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\V2SetUserFeaturesResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 403:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -4813,16 +4813,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 case 404:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -4840,16 +4840,16 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
                 default:
-                    if ('\Zitadel\Client\Model\RpcStatus' === '\SplFileObject') {
+                    if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\RpcStatus' !== 'string') {
+                        if ('\Zitadel\Client\Model\FeatureServiceRpcStatus' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -4867,7 +4867,7 @@ class FeatureServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\RpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceRpcStatus', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -4886,7 +4886,7 @@ class FeatureServiceApi
                 );
             }
 
-            $returnType = '\Zitadel\Client\Model\V2SetUserFeaturesResponse';
+            $returnType = '\Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -4919,7 +4919,7 @@ class FeatureServiceApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\V2SetUserFeaturesResponse',
+                        '\Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4927,7 +4927,7 @@ class FeatureServiceApi
                 case 403:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4935,7 +4935,7 @@ class FeatureServiceApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4943,7 +4943,7 @@ class FeatureServiceApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Zitadel\Client\Model\RpcStatus',
+                        '\Zitadel\Client\Model\FeatureServiceRpcStatus',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4954,19 +4954,19 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation setUserFeaturesAsync
+     * Operation featureServiceSetUserFeaturesAsync
      *
-     * Set user level features
+     * Set User Features
      *
      * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setUserFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetUserFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function setUserFeaturesAsync($userId, string $contentType = self::contentTypes['setUserFeatures'][0])
+    public function featureServiceSetUserFeaturesAsync($userId, string $contentType = self::contentTypes['featureServiceSetUserFeatures'][0])
     {
-        return $this->setUserFeaturesAsyncWithHttpInfo($userId, $contentType)
+        return $this->featureServiceSetUserFeaturesAsyncWithHttpInfo($userId, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -4975,20 +4975,20 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation setUserFeaturesAsyncWithHttpInfo
+     * Operation featureServiceSetUserFeaturesAsyncWithHttpInfo
      *
-     * Set user level features
+     * Set User Features
      *
      * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setUserFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetUserFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function setUserFeaturesAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['setUserFeatures'][0])
+    public function featureServiceSetUserFeaturesAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['featureServiceSetUserFeatures'][0])
     {
-        $returnType = '\Zitadel\Client\Model\V2SetUserFeaturesResponse';
-        $request = $this->setUserFeaturesRequest($userId, $contentType);
+        $returnType = '\Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse';
+        $request = $this->featureServiceSetUserFeaturesRequest($userId, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -5027,21 +5027,21 @@ class FeatureServiceApi
     }
 
     /**
-     * Create request for operation 'setUserFeatures'
+     * Create request for operation 'featureServiceSetUserFeatures'
      *
      * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setUserFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetUserFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function setUserFeaturesRequest($userId, string $contentType = self::contentTypes['setUserFeatures'][0])
+    public function featureServiceSetUserFeaturesRequest($userId, string $contentType = self::contentTypes['featureServiceSetUserFeatures'][0])
     {
 
         // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $userId when calling setUserFeatures'
+                'Missing the required parameter $userId when calling featureServiceSetUserFeatures'
             );
         }
 

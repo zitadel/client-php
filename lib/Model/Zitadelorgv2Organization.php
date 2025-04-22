@@ -58,8 +58,8 @@ class Zitadelorgv2Organization implements ModelInterface, ArrayAccess, \JsonSeri
       */
     protected static $openAPITypes = [
         'id' => 'string',
-        'details' => '\Zitadel\Client\Model\V2Details',
-        'state' => '\Zitadel\Client\Model\V2OrganizationState',
+        'details' => '\Zitadel\Client\Model\OrganizationServiceDetails',
+        'state' => '\Zitadel\Client\Model\OrganizationServiceOrganizationState',
         'name' => 'string',
         'primaryDomain' => 'string'
     ];
@@ -347,7 +347,7 @@ class Zitadelorgv2Organization implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Gets details
      *
-     * @return \Zitadel\Client\Model\V2Details|null
+     * @return \Zitadel\Client\Model\OrganizationServiceDetails|null
      */
     public function getDetails()
     {
@@ -357,7 +357,7 @@ class Zitadelorgv2Organization implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Sets details
      *
-     * @param \Zitadel\Client\Model\V2Details|null $details details
+     * @param \Zitadel\Client\Model\OrganizationServiceDetails|null $details details
      *
      * @return self
      */
@@ -374,7 +374,7 @@ class Zitadelorgv2Organization implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Gets state
      *
-     * @return \Zitadel\Client\Model\V2OrganizationState|null
+     * @return \Zitadel\Client\Model\OrganizationServiceOrganizationState|null
      */
     public function getState()
     {
@@ -384,7 +384,7 @@ class Zitadelorgv2Organization implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Sets state
      *
-     * @param \Zitadel\Client\Model\V2OrganizationState|null $state state
+     * @param \Zitadel\Client\Model\OrganizationServiceOrganizationState|null $state state
      *
      * @return self
      */
