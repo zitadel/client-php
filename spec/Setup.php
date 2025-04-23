@@ -197,6 +197,8 @@ class Setup extends Printer implements TestListener
 
         $testSuite = $this->document->createElement('testsuite');
         $testSuite->setAttribute('name', $suite->getName());
+        $testSuite->setAttribute('timestamp', date('c'));
+        $testSuite->setAttribute('hostname', gethostname() ?: 'localhost');
 
         try {
             $class = new ReflectionClass($suite->getName());
