@@ -71,8 +71,7 @@ class Configuration
      */
     public static function getDefaultConfiguration(): Configuration
     {
-        // @phpstan-ignore-next-line
-        if (self::$defaultConfiguration === null) {
+        if (!isset(self::$defaultConfiguration)) {
             self::$defaultConfiguration = new Configuration(new NoAuthAuthenticator());
         }
 
