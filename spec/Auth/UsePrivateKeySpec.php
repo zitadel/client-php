@@ -19,6 +19,14 @@ use Zitadel\Client\Zitadel;
 class UsePrivateKeySpec extends TestCase
 {
     /**
+     * Retrieve a configuration variable from the environment, falling back to $_ENV.
+     */
+    private static function env(string $key): string
+    {
+        return getenv($key) ?: ($_ENV[$key] ?? '');
+    }
+
+    /**
      * Validate retrieval of general settings with a valid private key assertion.
      *
      * @throws ApiException on API error
@@ -33,14 +41,6 @@ class UsePrivateKeySpec extends TestCase
         );
 
         $client->settings->settingsServiceGetGeneralSettings();
-    }
-
-    /**
-     * Retrieve a configuration variable from the environment, falling back to $_ENV.
-     */
-    private static function env(string $key): string
-    {
-        return getenv($key) ?: ($_ENV[$key] ?? '');
     }
 
     private static function createTempJwtFile(): string

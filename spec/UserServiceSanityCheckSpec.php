@@ -35,10 +35,18 @@ class UserServiceSanityCheckSpec extends TestCase
     protected static Zitadel $client;
     protected UserServiceAddHumanUserResponse $user;
 
+    /**
+     * Retrieve a configuration variable from the environment, falling back to $_ENV.
+     */
+    private static function env(string $key): string
+    {
+        return getenv($key) ?: ($_ENV[$key] ?? '');
+    }
+
     public static function setUpBeforeClass(): void
     {
-        self::$validToken = getenv('AUTH_TOKEN') ?: ($_ENV['AUTH_TOKEN'] ?? '');
-        self::$baseUrl = getenv('BASE_URL') ?: ($_ENV['BASE_URL'] ?? '');
+        self::$validToken = self::env('AUTH_TOKEN');
+        self::$baseUrl = self::env('BASE_URL');
         self::$client = Zitadel::withAccessToken(self::$baseUrl, self::$validToken);
     }
 
