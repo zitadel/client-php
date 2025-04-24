@@ -1,0 +1,2 @@
+run = "php replit.php"
+onBoot = "echo '🔧 Installing dependencies…' && composer install && echo '✅ Ready! Click Run.'"
