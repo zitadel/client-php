@@ -192,7 +192,7 @@ class SessionServiceApi
 
 
             switch($statusCode) {
-                case 200:
+                case 201:
                     if ('\Zitadel\Client\Model\SessionServiceCreateSessionResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {

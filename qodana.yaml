@@ -13,3 +13,218 @@ php:
   version: 8.0
 
 linter: jetbrains/qodana-php:2025.1
+
+inspections:
+  # Code Coverage
+  - id: PyCoverageInspection
+    enabled: true
+  - id: JsCoverageInspection
+    enabled: true
+
+  # Dependency analysis
+  - id: CheckThirdPartySoftwareList
+    enabled: true
+  - id: CheckDependencyLicenses
+    enabled: true
+  - id: CheckModuleLicenses
+    enabled: true
+
+  # EditorConfig
+  - id: EditorConfigCharClassRedundancy
+    enabled: true
+  - id: EditorConfigRootDeclarationUniqueness
+    enabled: true
+  - id: EditorConfigNumerousWildcards
+    enabled: true
+  - id: EditorConfigPartialOverride
+    enabled: true
+  - id: EditorConfigEmptySection
+    enabled: true
+  - id: EditorConfigShadowingOption
+    enabled: true
+  - id: EditorConfigListAcceptability
+    enabled: true
+  - id: EditorConfigKeyCorrectness
+    enabled: true
+  - id: EditorConfigPatternEnumerationRedundancy
+    enabled: true
+  - id: EditorConfigEncoding
+    enabled: true
+  - id: EditorConfigRootDeclarationCorrectness
+    enabled: true
+  - id: EditorConfigReferenceCorrectness
+    enabled: true
+  - id: EditorConfigPairAcceptability
+    enabled: true
+  - id: EditorConfigPatternRedundancy
+    enabled: true
+  - id: EditorConfigNoMatchingFiles
+    enabled: true
+  - id: EditorConfigDeprecatedDescriptor
+    enabled: true
+  - id: EditorConfigWildcardRedundancy
+    enabled: true
+  - id: EditorConfigHeaderUniqueness
+    enabled: true
+  - id: EditorConfigShadowedOption
+    enabled: true
+  - id: EditorConfigEmptyHeader
+    enabled: true
+  - id: EditorConfigValueCorrectness
+    enabled: true
+  - id: EditorConfigVerifyByCore
+    enabled: true
+  - id: EditorConfigValueUniqueness
+    enabled: true
+  - id: EditorConfigMissingRequiredDeclaration
+    enabled: true
+  - id: EditorConfigCharClassLetterRedundancy
+    enabled: true
+  - id: EditorConfigSpaceInHeader
+    enabled: true
+  - id: EditorConfigOptionRedundancy
+    enabled: true
+  - id: EditorConfigUnusedDeclaration
+    enabled: true
+  - id: EditorConfigUnexpectedComma
+    enabled: true
+
+  # JSON and JSON5
+  - id: JsonSchemaDeprecation
+    enabled: true
+  - id: JsonSchemaRefReference
+    enabled: true
+  - id: Json5StandardCompliance
+    enabled: true
+  - id: JsonDuplicatePropertyKeys
+    enabled: true
+  - id: JsonSchemaCompliance
+    enabled: true
+  - id: JsonStandardCompliance
+    enabled: true
+
+  # JSONPath
+  - id: JsonPathEvaluateUnknownKey
+    enabled: true
+  - id: JsonPathUnknownFunction
+    enabled: true
+  - id: JsonPathUnknownOperator
+    enabled: true
+
+  # Properties files
+  - id: DuplicatePropertyInspection
+    enabled: true
+  - id: UseEllipsisInPropertyInspection
+    enabled: true
+  - id: AlphaUnsortedPropertiesFile
+    enabled: true
+  - id: TrailingSpacesInProperty
+    enabled: true
+  - id: UnusedProperty
+    enabled: true
+  - id: WrongPropertyKeyValueDelimiter
+    enabled: true
+
+  # Qodana
+  - id: CyclomaticComplexityInspection
+    enabled: true
+
+  # RegExp
+  - id: RegExpSuspiciousBackref
+    enabled: true
+  - id: RegExpSingleCharAlternation
+    enabled: true
+  - id: RegExpRedundantEscape
+    enabled: true
+  - id: CustomRegExpInspection
+    enabled: true
+  - id: RegExpUnexpectedAnchor
+    enabled: true
+  - id: RegExpEscapedMetaCharacter
+    enabled: true
+  - id: RegExpDuplicateCharacterInClass
+    enabled: true
+  - id: RegExpRedundantClassElement
+    enabled: true
+  - id: RegExpSimplifiable
+    enabled: true
+  - id: RegExpEmptyAlternationBranch
+    enabled: true
+  - id: RegExpUnnecessaryNonCapturingGroup
+    enabled: true
+  - id: RegExpRedundantNestedCharacterClass
+    enabled: true
+  - id: RegExpOctalEscape
+    enabled: true
+  - id: RegExpAnonymousGroup
+    enabled: true
+  - id: RegExpRepeatedSpace
+    enabled: true
+  - id: RegExpDuplicateAlternationBranch
+    enabled: true
+
+  # Requirements
+  - id: UnsatisfiedRequirementInspection
+    enabled: true
+
+  # Security
+  - id: HttpUrlsUsage
+    enabled: true
+  - id: VulnerableLibrariesLocal
+    enabled: true
+  - id: MaliciousLibrariesLocal
+    enabled: true
+  - id: HardcodedPasswords
+    enabled: true
+
+  # Shell script
+  - id: ShellCheck
+    enabled: true
+
+  # TOML
+  - id: TomlUnresolvedReference
+    enabled: true
+
+  # XML
+  - id: XmlWrongRootElement
+    enabled: true
+  - id: CheckTagEmptyBody
+    enabled: true
+  - id: CheckXmlFileWithXercesValidator
+    enabled: true
+  - id: XmlHighlighting
+    enabled: true
+  - id: XmlDuplicatedId
+    enabled: true
+  - id: XmlInvalidId
+    enabled: true
+  - id: XmlUnboundNsPrefix
+    enabled: true
+  - id: XmlUnusedNamespaceDeclaration
+    enabled: true
+  - id: XmlPathReference
+    enabled: true
+  - id: XmlDeprecatedElement
+    enabled: true
+  - id: XmlDefaultAttributeValue
+    enabled: true
+  - id: CheckDtdRefs
+    enabled: true
+  - id: XmlUnresolvedReference
+    enabled: true
+
+  # YAML
+  - id: YAMLSchemaValidation
+    enabled: true
+  - id: YAMLIncompatibleTypes
+    enabled: true
+  - id: YAMLUnresolvedAlias
+    enabled: true
+  - id: YAMLSchemaDeprecation
+    enabled: true
+  - id: YAMLRecursiveAlias
+    enabled: true
+  - id: YAMLDuplicatedKeys
+    enabled: true
+  - id: YAMLUnusedAnchor
+    enabled: true
