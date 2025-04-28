@@ -190,8 +190,9 @@ class SessionServiceApi
 
             $statusCode = $response->getStatusCode();
 
+
             switch($statusCode) {
-                case 201:
+                case 200:
                     if ('\Zitadel\Client\Model\SessionServiceCreateSessionResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
@@ -555,16 +556,16 @@ class SessionServiceApi
      * Terminate an existing session
      *
      * @param  string $sessionId \&quot;id of the session to terminate\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionBody $sessionServiceDeleteSessionBody sessionServiceDeleteSessionBody (required)
+     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionRequest $sessionServiceDeleteSessionRequest sessionServiceDeleteSessionRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceDeleteSession'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return \Zitadel\Client\Model\SessionServiceDeleteSessionResponse|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus
      */
-    public function sessionServiceDeleteSession($sessionId, $sessionServiceDeleteSessionBody, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
+    public function sessionServiceDeleteSession($sessionId, $sessionServiceDeleteSessionRequest, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
     {
-        list($response) = $this->sessionServiceDeleteSessionWithHttpInfo($sessionId, $sessionServiceDeleteSessionBody, $contentType);
+        list($response) = $this->sessionServiceDeleteSessionWithHttpInfo($sessionId, $sessionServiceDeleteSessionRequest, $contentType);
         return $response;
     }
 
@@ -574,16 +575,16 @@ class SessionServiceApi
      * Terminate an existing session
      *
      * @param  string $sessionId \&quot;id of the session to terminate\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionBody $sessionServiceDeleteSessionBody (required)
+     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionRequest $sessionServiceDeleteSessionRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceDeleteSession'] to see the possible values for this operation
      *
      * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return array of \Zitadel\Client\Model\SessionServiceDeleteSessionResponse|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus|\Zitadel\Client\Model\SessionServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
      */
-    public function sessionServiceDeleteSessionWithHttpInfo($sessionId, $sessionServiceDeleteSessionBody, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
+    public function sessionServiceDeleteSessionWithHttpInfo($sessionId, $sessionServiceDeleteSessionRequest, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
     {
-        $request = $this->sessionServiceDeleteSessionRequest($sessionId, $sessionServiceDeleteSessionBody, $contentType);
+        $request = $this->sessionServiceDeleteSessionRequest($sessionId, $sessionServiceDeleteSessionRequest, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -805,15 +806,15 @@ class SessionServiceApi
      * Terminate an existing session
      *
      * @param  string $sessionId \&quot;id of the session to terminate\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionBody $sessionServiceDeleteSessionBody (required)
+     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionRequest $sessionServiceDeleteSessionRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceDeleteSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function sessionServiceDeleteSessionAsync($sessionId, $sessionServiceDeleteSessionBody, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
+    public function sessionServiceDeleteSessionAsync($sessionId, $sessionServiceDeleteSessionRequest, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
     {
-        return $this->sessionServiceDeleteSessionAsyncWithHttpInfo($sessionId, $sessionServiceDeleteSessionBody, $contentType)
+        return $this->sessionServiceDeleteSessionAsyncWithHttpInfo($sessionId, $sessionServiceDeleteSessionRequest, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -827,16 +828,16 @@ class SessionServiceApi
      * Terminate an existing session
      *
      * @param  string $sessionId \&quot;id of the session to terminate\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionBody $sessionServiceDeleteSessionBody (required)
+     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionRequest $sessionServiceDeleteSessionRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceDeleteSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function sessionServiceDeleteSessionAsyncWithHttpInfo($sessionId, $sessionServiceDeleteSessionBody, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
+    public function sessionServiceDeleteSessionAsyncWithHttpInfo($sessionId, $sessionServiceDeleteSessionRequest, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
     {
         $returnType = '\Zitadel\Client\Model\SessionServiceDeleteSessionResponse';
-        $request = $this->sessionServiceDeleteSessionRequest($sessionId, $sessionServiceDeleteSessionBody, $contentType);
+        $request = $this->sessionServiceDeleteSessionRequest($sessionId, $sessionServiceDeleteSessionRequest, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -878,13 +879,13 @@ class SessionServiceApi
      * Create request for operation 'sessionServiceDeleteSession'
      *
      * @param  string $sessionId \&quot;id of the session to terminate\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionBody $sessionServiceDeleteSessionBody (required)
+     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionRequest $sessionServiceDeleteSessionRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceDeleteSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function sessionServiceDeleteSessionRequest($sessionId, $sessionServiceDeleteSessionBody, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
+    public function sessionServiceDeleteSessionRequest($sessionId, $sessionServiceDeleteSessionRequest, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
     {
 
         // verify the required parameter 'sessionId' is set
@@ -894,10 +895,10 @@ class SessionServiceApi
             );
         }
 
-        // verify the required parameter 'sessionServiceDeleteSessionBody' is set
-        if ($sessionServiceDeleteSessionBody === null || (is_array($sessionServiceDeleteSessionBody) && count($sessionServiceDeleteSessionBody) === 0)) {
+        // verify the required parameter 'sessionServiceDeleteSessionRequest' is set
+        if ($sessionServiceDeleteSessionRequest === null || (is_array($sessionServiceDeleteSessionRequest) && count($sessionServiceDeleteSessionRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionServiceDeleteSessionBody when calling sessionServiceDeleteSession'
+                'Missing the required parameter $sessionServiceDeleteSessionRequest when calling sessionServiceDeleteSession'
             );
         }
 
@@ -928,12 +929,12 @@ class SessionServiceApi
         );
 
         // for model (json/xml)
-        if (isset($sessionServiceDeleteSessionBody)) {
+        if (isset($sessionServiceDeleteSessionRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($sessionServiceDeleteSessionBody));
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($sessionServiceDeleteSessionRequest));
             } else {
-                $httpBody = $sessionServiceDeleteSessionBody;
+                $httpBody = $sessionServiceDeleteSessionRequest;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * SessionServiceRequestChallengesOTPEmailSendCode
+ * SessionServiceOTPEmailSendCode
  *
  * PHP version 7.4
  *
@@ -32,7 +32,7 @@ use \ArrayAccess;
 use \Zitadel\Client\ObjectSerializer;
 
 /**
- * SessionServiceRequestChallengesOTPEmailSendCode Class Doc Comment
+ * SessionServiceOTPEmailSendCode Class Doc Comment
  *
  * @category Class
  * @package  Zitadel\Client
@@ -40,7 +40,7 @@ use \Zitadel\Client\ObjectSerializer;
  * @link     https://openapi-generator.tech
  * @implements \ArrayAccess<string, mixed>
  */
-class SessionServiceRequestChallengesOTPEmailSendCode implements ModelInterface, ArrayAccess, \JsonSerializable
+class SessionServiceOTPEmailSendCode implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class SessionServiceRequestChallengesOTPEmailSendCode implements ModelInterface,
       *
       * @var string
       */
-    protected static $openAPIModelName = 'SessionServiceRequestChallengesOTPEmailSendCode';
+    protected static $openAPIModelName = 'SessionServiceOTPEmailSendCode';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -320,10 +320,10 @@ class SessionServiceRequestChallengesOTPEmailSendCode implements ModelInterface,
             throw new \InvalidArgumentException('non-nullable urlTemplate cannot be null');
         }
         if ((mb_strlen($urlTemplate) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $urlTemplate when calling SessionServiceRequestChallengesOTPEmailSendCode., must be smaller than or equal to 200.');
+            throw new \InvalidArgumentException('invalid length for $urlTemplate when calling SessionServiceOTPEmailSendCode., must be smaller than or equal to 200.');
         }
         if ((mb_strlen($urlTemplate) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $urlTemplate when calling SessionServiceRequestChallengesOTPEmailSendCode., must be bigger than or equal to 1.');
+            throw new \InvalidArgumentException('invalid length for $urlTemplate when calling SessionServiceOTPEmailSendCode., must be bigger than or equal to 1.');
         }
 
         $this->container['urlTemplate'] = $urlTemplate;

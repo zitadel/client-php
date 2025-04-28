@@ -312,7 +312,7 @@ class UserServiceApi
 
 
             switch($statusCode) {
-                case 201:
+                case 200:
                     if ('\Zitadel\Client\Model\UserServiceAddHumanUserResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
@@ -465,7 +465,7 @@ class UserServiceApi
 
         } catch (ApiException $e) {
             switch ($e->getCode()) {
-                case 201:
+                case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceAddHumanUserResponse',
