@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpMissingFieldTypeInspection */
+<?php
+
+/** @noinspection PhpMissingFieldTypeInspection */
 
 /** @noinspection PhpDeprecationInspection */
 

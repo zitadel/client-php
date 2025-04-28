@@ -57,7 +57,7 @@ class SessionServiceRequestChallengesOTPEmail implements ModelInterface, ArrayAc
       * @var string[]
       */
     protected static $openAPITypes = [
-        'sendCode' => '\Zitadel\Client\Model\SessionServiceRequestChallengesOTPEmailSendCode',
+        'sendCode' => '\Zitadel\Client\Model\SessionServiceOTPEmailSendCode',
         'returnCode' => 'object'
     ];
 
@@ -299,7 +299,7 @@ class SessionServiceRequestChallengesOTPEmail implements ModelInterface, ArrayAc
     /**
      * Gets sendCode
      *
-     * @return \Zitadel\Client\Model\SessionServiceRequestChallengesOTPEmailSendCode|null
+     * @return \Zitadel\Client\Model\SessionServiceOTPEmailSendCode|null
      */
     public function getSendCode()
     {
@@ -309,7 +309,7 @@ class SessionServiceRequestChallengesOTPEmail implements ModelInterface, ArrayAc
     /**
      * Sets sendCode
      *
-     * @param \Zitadel\Client\Model\SessionServiceRequestChallengesOTPEmailSendCode|null $sendCode sendCode
+     * @param \Zitadel\Client\Model\SessionServiceOTPEmailSendCode|null $sendCode sendCode
      *
      * @return self
      */
