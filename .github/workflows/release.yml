@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: write
+  checks: read
+  statuses: read
 
 defaults:
   run:
@@ -18,6 +20,11 @@ jobs:
     name: To Artifactory
 
     steps:
+      - name: Wait Up
+        uses: poseidon/wait-for-status-checks@v0.6.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Checkout code
         uses: actions/checkout@v4
 

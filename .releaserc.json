@@ -27,7 +27,6 @@
         ]
       }
     ],
-    "@ambimax/semantic-release-composer",
     [
       "@semantic-release/git",
       {
