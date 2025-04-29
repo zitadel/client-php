@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   code-style:
-    name: Lint and Format
+    name: Run Linter Formatter
     uses: ./.github/workflows/linting.yml
     with:
       ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
@@ -22,14 +22,14 @@ jobs:
     secrets: inherit
 
   auto-fix:
-    name: Static Analysis
+    name: Run Static Analysis
     uses: ./.github/workflows/autofix.yml
     with:
       ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
     secrets: inherit
 
   compat-check:
-    name: Compatibility Check
+    name: Run Compatibility Checks
     uses: ./.github/workflows/integration.yml
     with:
       library_ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
@@ -37,30 +37,31 @@ jobs:
     secrets: inherit
 
   type-check:
-    name: Type Check
+    name: Run Type Checks
     uses: ./.github/workflows/typecheck.yml
     with:
       ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
     secrets: inherit
 
   run-tests:
-    name: Run Tests
+    name: Run Test Suite
     uses: ./.github/workflows/test.yml
     with:
       ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
     secrets: inherit
 
   code-inspection:
-    name: Qodana Inspection
+    name: Run Qodana Inspections
     needs: run-tests
     uses: ./.github/workflows/qodana.yml
     with:
       ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
     secrets: inherit
 
-  release-package:
-    name: Release Package
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  all-passed:
+    name: Check Build Status
+    if: always()
+    runs-on: ubuntu-latest
     needs:
       - code-style
       - auto-fix
@@ -68,5 +69,14 @@ jobs:
       - type-check
       - run-tests
       - code-inspection
+    steps:
+      - name: Report Success
+        run: echo "All required checks passed successfully."
+
+  release-package:
+    name: Do Release Artifact
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs:
+      - all-passed
     uses: ./.github/workflows/release.yml
     secrets: inherit
