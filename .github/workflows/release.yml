@@ -5,8 +5,6 @@ on:
     permissions:
       contents: write
     secrets:
-      GITHUB_TOKEN:
-        required: true
       PACKAGIST_TOKEN:
         required: true
 

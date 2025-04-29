@@ -29,8 +29,6 @@ on:
         required: false
       CLIENT_SECRET:
         required: false
-      GITHUB_TOKEN:
-        required: true
 
 defaults:
   run:
