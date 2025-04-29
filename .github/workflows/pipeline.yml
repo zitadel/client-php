@@ -51,7 +51,7 @@ jobs:
     secrets: inherit
 
   code-inspection:
-    name: Detailed Code Inspection
+    name: Qodana Inspection
     needs: run-tests
     uses: ./.github/workflows/qodana.yml
     with:
