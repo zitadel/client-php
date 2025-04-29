@@ -10,8 +10,6 @@ on:
         required: false
         type: boolean
         default: false
-    permissions:
-      contents: write
 
 defaults:
   run:
