@@ -6,10 +6,6 @@ on:
       ref:
         required: true
         type: string
-    permissions:
-      contents: read
-      checks: write
-      pull-requests: write
     secrets:
       QODANA_TOKEN:
         required: true

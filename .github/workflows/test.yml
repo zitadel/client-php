@@ -14,10 +14,6 @@ on:
         required: false
         type: string
         default: Tests
-    permissions:
-      contents: read
-      actions: read
-      checks: write
     secrets:
       BASE_URL:
         required: false

@@ -2,8 +2,6 @@ name: Release
 
 on:
   workflow_call:
-    permissions:
-      contents: write
     secrets:
       PACKAGIST_TOKEN:
         required: true
