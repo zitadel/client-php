@@ -1,15 +1,18 @@
 name: Qodana
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-
-permissions:
-  contents: read
-  checks: write
-  pull-requests: write
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    secrets:
+      QODANA_TOKEN:
+        required: true
 
 defaults:
   run:
@@ -24,6 +27,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          ref: ${{ inputs.ref }}
           fetch-depth: 0
 
       - name: Run Qodana

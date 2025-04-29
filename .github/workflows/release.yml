@@ -1,14 +1,14 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
-
-permissions:
-  contents: write
-  checks: read
-  statuses: read
+  workflow_call:
+    permissions:
+      contents: write
+    secrets:
+      GITHUB_TOKEN:
+        required: true
+      PACKAGIST_TOKEN:
+        required: true
 
 defaults:
   run:
@@ -20,13 +20,15 @@ jobs:
     name: To Artifactory
 
     steps:
-      - name: Wait Up
-        uses: poseidon/wait-for-status-checks@v0.6.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2

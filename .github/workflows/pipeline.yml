@@ -1,0 +1,72 @@
+name: Main CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: write
+  actions: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  code-style:
+    name: Lint and Format
+    uses: ./.github/workflows/linting.yml@main
+    with:
+      ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
+      commit_changes: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    secrets: inherit
+
+  auto-fix:
+    name: Static Analysis
+    uses: ./.github/workflows/autofix.yml@main
+    with:
+      ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
+    secrets: inherit
+
+  compat-check:
+    name: Compatibility Check
+    uses: ./.github/workflows/integration.yml@main
+    with:
+      library_ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
+      sanity_ref: sanity
+    secrets: inherit
+
+  type-check:
+    name: Type Check
+    uses: ./.github/workflows/typecheck.yml@main
+    with:
+      ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
+    secrets: inherit
+
+  run-tests:
+    name: Run Tests
+    uses: ./.github/workflows/test.yml@main
+    with:
+      ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
+    secrets: inherit
+
+  code-inspection:
+    name: Detailed Code Inspection
+    needs: run-tests
+    uses: ./.github/workflows/qodana.yml@main
+    with:
+      ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
+    secrets: inherit
+
+  release-package:
+    name: Release Package
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs:
+      - code-style
+      - auto-fix
+      - compat-check
+      - type-check
+      - run-tests
+      - code-inspection
+    uses: ./.github/workflows/release.yml@main
+    secrets: inherit

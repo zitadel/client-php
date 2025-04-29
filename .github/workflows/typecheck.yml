@@ -1,13 +1,13 @@
 name: Typecheck
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-
-permissions:
-  contents: read
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+    permissions:
+      contents: read
 
 defaults:
   run:
@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
