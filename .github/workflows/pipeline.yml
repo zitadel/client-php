@@ -14,6 +14,14 @@ permissions:
   packages: write
 
 jobs:
+  lint-commits:
+    name: Run Commitlint Checks
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/commitlint.yml
+    with:
+      ref: ${{ github.event.pull_request.head.sha }}
+    secrets: inherit
+
   code-style:
     name: Run Linter Formatter
     uses: ./.github/workflows/linting.yml
@@ -63,6 +71,7 @@ jobs:
     name: Check Build Status
     runs-on: ubuntu-latest
     needs:
+      - lint-commits
       - code-style
       - auto-fix
       - compat-check

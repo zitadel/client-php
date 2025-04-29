@@ -8,7 +8,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "composer install"
+        "prepareCmd": "composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader"
       }
     ],
     [
@@ -34,6 +34,8 @@
     [
       "@semantic-release/github",
       {
+        "successComment": false,
+        "failComment": false,
         "assets": [
         ]
       }
