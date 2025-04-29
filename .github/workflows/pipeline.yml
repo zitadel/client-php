@@ -15,7 +15,7 @@ permissions:
 jobs:
   code-style:
     name: Lint and Format
-    uses: ./.github/workflows/linting.yml@main
+    uses: ./.github/workflows/linting.yml
     with:
       ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
       commit_changes: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
@@ -23,14 +23,14 @@ jobs:
 
   auto-fix:
     name: Static Analysis
-    uses: ./.github/workflows/autofix.yml@main
+    uses: ./.github/workflows/autofix.yml
     with:
       ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
     secrets: inherit
 
   compat-check:
     name: Compatibility Check
-    uses: ./.github/workflows/integration.yml@main
+    uses: ./.github/workflows/integration.yml
     with:
       library_ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
       sanity_ref: sanity
@@ -38,14 +38,14 @@ jobs:
 
   type-check:
     name: Type Check
-    uses: ./.github/workflows/typecheck.yml@main
+    uses: ./.github/workflows/typecheck.yml
     with:
       ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
     secrets: inherit
 
   run-tests:
     name: Run Tests
-    uses: ./.github/workflows/test.yml@main
+    uses: ./.github/workflows/test.yml
     with:
       ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
     secrets: inherit
@@ -53,7 +53,7 @@ jobs:
   code-inspection:
     name: Detailed Code Inspection
     needs: run-tests
-    uses: ./.github/workflows/qodana.yml@main
+    uses: ./.github/workflows/qodana.yml
     with:
       ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
     secrets: inherit
@@ -68,5 +68,5 @@ jobs:
       - type-check
       - run-tests
       - code-inspection
-    uses: ./.github/workflows/release.yml@main
+    uses: ./.github/workflows/release.yml
     secrets: inherit
