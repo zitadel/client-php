@@ -6,14 +6,6 @@ on:
       ref:
         required: true
         type: string
-      upload_name:
-        required: false
-        type: string
-        default: test-results
-      report_name:
-        required: false
-        type: string
-        default: Tests
     secrets:
       BASE_URL:
         required: false
@@ -60,14 +52,21 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: ${{ inputs.upload_name }}
+          name: test-results
           path: build/reports/**/*.xml
+
+      - name: Upload Coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-coverage
+          path: build/coverage/clover.xml
 
       - name: Generate Report
         if: ${{ always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false) }}
         uses: dorny/test-reporter@v2.0.0
         with:
-          name: ${{ inputs.report_name }}
+          name: Tests
           reporter: java-junit
           path: build/reports/**/*.xml
           token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,4 +1,4 @@
-name: Reusable - Fix Code (Rector Check)
+name: Autofix
 
 on:
   workflow_call:
