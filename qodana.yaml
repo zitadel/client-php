@@ -8,6 +8,8 @@ exclude:
     paths:
       - lib/Api
       - lib/Model
+      - lib/ObjectSerializer.php
+      - lib/HeaderSelector.php
 
 php:
   version: 8.0
