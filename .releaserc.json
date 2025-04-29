@@ -8,16 +8,13 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader"
+        "prepareCmd": "sed -i 's/0\\.0\\.0/'\"$NEXT_RELEASE_VERSION\"'/' lib/Version.php"
       }
     ],
     [
-      "semantic-release-plugin-update-version-in-files",
+      "@semantic-release/exec",
       {
-        "files": [
-          "lib/Version.php"
-        ],
-        "placeholder": "0.0.0"
+        "prepareCmd": "composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader"
       }
     ],
     [
@@ -36,8 +33,7 @@
       {
         "successComment": false,
         "failComment": false,
-        "assets": [
-        ]
+        "assets": []
       }
     ],
     [
