@@ -40,7 +40,7 @@ jobs:
         run: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Run Tests
-        run: vendor/bin/phpunit
+        run: composer test
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
           AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
