@@ -60,7 +60,6 @@ jobs:
 
   all-passed:
     name: Check Build Status
-    if: always()
     runs-on: ubuntu-latest
     needs:
       - code-style
