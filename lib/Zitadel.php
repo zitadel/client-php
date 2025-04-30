@@ -2,6 +2,7 @@
 
 namespace Zitadel\Client;
 
+use Exception;
 use Zitadel\Client\Api\FeatureServiceApi;
 use Zitadel\Client\Api\IdentityProviderServiceApi;
 use Zitadel\Client\Api\OIDCServiceApi;
@@ -64,7 +65,7 @@ class Zitadel
      * @param string $clientId OAuth2 client identifier.
      * @param string $clientSecret OAuth2 client secret.
      * @return self Configured Zitadel client instance with token auto-refresh.
-     * @throws \Exception If token retrieval fails.
+     * @throws Exception If token retrieval fails.
      * @see https://zitadel.com/docs/guides/integrate/service-users/client-credentials
      */
     public static function withClientCredentials(string $host, string $clientId, string $clientSecret): self
@@ -81,7 +82,7 @@ class Zitadel
      * @param string $host API URL.
      * @param string $keyFile Path to service account JSON or PEM key file.
      * @return self Configured Zitadel client instance using JWT assertion.
-     * @throws \Exception If key parsing or token exchange fails.
+     * @throws Exception If key parsing or token exchange fails.
      * @see https://zitadel.com/docs/guides/integrate/service-users/private-key-jwt
      */
     public static function withPrivateKey(string $host, string $keyFile): self

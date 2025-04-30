@@ -1,6 +1,6 @@
 <?php
 /**
- * SessionServiceDeleteSessionBody
+ * SessionServiceDeleteSessionRequest
  *
  * PHP version 7.4
  *
@@ -32,7 +32,7 @@ use \ArrayAccess;
 use \Zitadel\Client\ObjectSerializer;
 
 /**
- * SessionServiceDeleteSessionBody Class Doc Comment
+ * SessionServiceDeleteSessionRequest Class Doc Comment
  *
  * @category Class
  * @package  Zitadel\Client
@@ -40,7 +40,7 @@ use \Zitadel\Client\ObjectSerializer;
  * @link     https://openapi-generator.tech
  * @implements \ArrayAccess<string, mixed>
  */
-class SessionServiceDeleteSessionBody implements ModelInterface, ArrayAccess, \JsonSerializable
+class SessionServiceDeleteSessionRequest implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class SessionServiceDeleteSessionBody implements ModelInterface, ArrayAccess, \J
       *
       * @var string
       */
-    protected static $openAPIModelName = 'SessionServiceDeleteSessionBody';
+    protected static $openAPIModelName = 'SessionServiceDeleteSessionRequest';
 
     /**
       * Array of property to type mappings. Used for (de)serialization

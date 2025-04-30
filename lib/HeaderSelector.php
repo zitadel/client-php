@@ -121,6 +121,7 @@ class HeaderSelector
      */
     public function isJsonMime(string $searchString): bool
     {
+        /** @noinspection PhpCoveredCharacterInClassInspection */
         return preg_match('~^application/(json|[\w!#$&.+-^_]+\+json)\s*(;|$)~', $searchString) === 1;
     }
 

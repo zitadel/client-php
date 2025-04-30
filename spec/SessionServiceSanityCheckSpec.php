@@ -7,7 +7,7 @@ use Zitadel\Client\ApiException;
 use Zitadel\Client\Model\SessionServiceChecks;
 use Zitadel\Client\Model\SessionServiceCheckUser;
 use Zitadel\Client\Model\SessionServiceCreateSessionRequest;
-use Zitadel\Client\Model\SessionServiceDeleteSessionBody;
+use Zitadel\Client\Model\SessionServiceDeleteSessionRequest;
 use Zitadel\Client\Model\SessionServiceListSessionsRequest;
 use Zitadel\Client\Model\SessionServiceSetSessionRequest;
 use Zitadel\Client\Zitadel;
@@ -70,7 +70,7 @@ class SessionServiceSanityCheckSpec extends TestCase
 
     protected function tearDown(): void
     {
-        $request = new SessionServiceDeleteSessionBody();
+        $request = new SessionServiceDeleteSessionRequest();
         try {
             self::$client->sessions->sessionServiceDeleteSession(
                 $this->sessionId,

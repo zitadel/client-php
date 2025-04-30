@@ -1,11 +1,14 @@
 <?php
 
+/** @noinspection PhpMissingFieldTypeInspection */
+
 /** @noinspection PhpDeprecationInspection */
 
 namespace Zitadel\Client\Spec;
 
 use DOMDocument;
 use DOMElement;
+use DOMException;
 use Dotenv\Dotenv;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\ExceptionWrapper;
@@ -90,6 +93,7 @@ class Setup extends Printer implements TestListener
 
     /**
      * @param null|mixed $out
+     * @throws DOMException
      */
     public function __construct($out = null, private bool $reportRiskyTests = false)
     {
@@ -126,6 +130,7 @@ class Setup extends Printer implements TestListener
 
     /**
      * An error occurred.
+     * @throws DOMException
      */
     public function addError(Test $test, Throwable $t, float $time): void
     {
@@ -135,6 +140,7 @@ class Setup extends Printer implements TestListener
 
     /**
      * A warning occurred.
+     * @throws DOMException
      */
     public function addWarning(Test $test, Warning $e, float $time): void
     {
@@ -144,6 +150,7 @@ class Setup extends Printer implements TestListener
 
     /**
      * A failure occurred.
+     * @throws DOMException
      */
     public function addFailure(Test $test, AssertionFailedError $e, float $time): void
     {
@@ -153,6 +160,7 @@ class Setup extends Printer implements TestListener
 
     /**
      * Incomplete test.
+     * @throws DOMException
      */
     public function addIncompleteTest(Test $test, Throwable $t, float $time): void
     {
@@ -161,6 +169,7 @@ class Setup extends Printer implements TestListener
 
     /**
      * Risky test.
+     * @throws DOMException
      */
     public function addRiskyTest(Test $test, Throwable $t, float $time): void
     {
@@ -174,6 +183,7 @@ class Setup extends Printer implements TestListener
 
     /**
      * Skipped test.
+     * @throws DOMException
      */
     public function addSkippedTest(Test $test, Throwable $t, float $time): void
     {
@@ -182,6 +192,7 @@ class Setup extends Printer implements TestListener
 
     /**
      * A testsuite started.
+     * @throws DOMException
      */
     public function startTestSuite(TestSuite $suite): void
     {
@@ -284,6 +295,7 @@ class Setup extends Printer implements TestListener
 
     /**
      * A test started.
+     * @throws DOMException
      */
     public function startTest(Test $test): void
     {
@@ -315,6 +327,7 @@ class Setup extends Printer implements TestListener
 
     /**
      * A test ended.
+     * @throws DOMException
      */
     public function endTest(Test $test, float $time): void
     {
@@ -369,6 +382,9 @@ class Setup extends Printer implements TestListener
         return $this->document->saveXML();
     }
 
+    /**
+     * @throws DOMException
+     */
     private function doAddFault(Test $test, Throwable $t, string $type): void
     {
         if ($this->currentTestCase === null) {
@@ -400,6 +416,9 @@ class Setup extends Printer implements TestListener
         $this->currentTestCase->appendChild($fault);
     }
 
+    /**
+     * @throws DOMException
+     */
     private function doAddSkipped(): void
     {
         if ($this->currentTestCase === null) {

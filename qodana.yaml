@@ -1,0 +1,17 @@
+version: "1.0"
+
+profile:
+  name: qodana.recommended
+
+exclude:
+  - name: All
+    paths:
+      - lib/Api
+      - lib/Model
+      - lib/ObjectSerializer.php
+      - lib/HeaderSelector.php
+
+php:
+  version: 8.0
+
+linter: jetbrains/qodana-php:2025.1

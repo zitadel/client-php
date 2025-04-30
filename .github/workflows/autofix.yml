@@ -1,29 +1,33 @@
-name: Fix Code
+name: Autofix
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-
-permissions:
-  contents: write
+  workflow_call:
+    inputs:
+      ref:
+        description: 'The Git ref (branch, tag, or SHA) to checkout'
+        required: true
+        type: string
 
 defaults:
   run:
     working-directory: ./
 
 jobs:
-  app-testing:
+  rector-check:
     runs-on: ubuntu-latest
-    name: Run Checks
+    name: Run Rector Checks
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
 
       - name: Install Dependencies
         run: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader
@@ -34,6 +38,6 @@ jobs:
       - name: Check for changes
         run: |
           if ! git diff --exit-code; then
-            echo "❌ Rector found pending changes! Please run 'composer rector' and commit."
+            echo "❌ Rector found pending changes! Please run 'composer rector' locally and commit the fixes."
             exit 1
           fi

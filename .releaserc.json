@@ -8,26 +8,34 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "composer install"
+        "prepareCmd": "sed -i 's/[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+/${nextRelease.version}/' lib/Version.php"
       }
     ],
     [
-      "semantic-release-plugin-update-version-in-files",
+      "@semantic-release/exec",
       {
-        "files": [
-          "lib/Version.php"
-        ],
-        "placeholder": "0.0.0"
+        "prepareCmd": "composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader"
+      }
+    ],
+    [
+      "@codedependant/semantic-release-docker",
+      {
+        "dockerRegistry": "ghcr.io",
+        "dockerProject": "zitadel",
+        "dockerImage": "client-php",
+        "dockerTags": [
+          "{{version}}"
+        ]
       }
     ],
     [
       "@semantic-release/github",
       {
-        "assets": [
-        ]
+        "successComment": false,
+        "failComment": false,
+        "assets": []
       }
     ],
-    "@ambimax/semantic-release-composer",
     [
       "@semantic-release/git",
       {
