@@ -152,6 +152,7 @@ class ObjectSerializer
     public static function toQueryValue(
         $value,
         string $paramName,
+        $format,
         string $openApiType = 'string',
         string $style = 'form',
         bool $explode = true,
@@ -213,7 +214,7 @@ class ObjectSerializer
         }
 
         if ('boolean' === $openApiType && is_bool($value)) {
-            $value = self::convertBoolToQueryStringFormat($value);
+            $value = self::convertBoolToQueryStringFormat($value, $format);
         }
 
         // handle style in serializeCollection
@@ -259,9 +260,9 @@ class ObjectSerializer
      * @return int|string Boolean value in format
      * @noinspection PhpMissingReturnTypeInspection
      */
-    public static function convertBoolToQueryStringFormat(bool $value)
+    public static function convertBoolToQueryStringFormat(bool $value, $format)
     {
-        if (Configuration::BOOLEAN_FORMAT_STRING == Configuration::getDefaultConfiguration()->getBooleanFormatForQueryString()) {
+        if (Configuration::BOOLEAN_FORMAT_STRING == $format) {
             return $value ? 'true' : 'false';
         }
 
@@ -346,7 +347,7 @@ class ObjectSerializer
      * @noinspection PhpMissingReturnTypeInspection
      * @noinspection PhpRedundantOptionalArgumentInspection
      */
-    public static function deserialize($data, $class, $httpHeaders = null)
+    public static function deserialize($data, $class, $config, $httpHeaders = null)
     {
         if (null === $data) {
             return null;
@@ -362,7 +363,7 @@ class ObjectSerializer
             $subClass = substr($class, 0, -2);
             $values = [];
             foreach ($data as $key => $value) {
-                $values[] = self::deserialize($value, $subClass, null);
+                $values[] = self::deserialize($value, $subClass, $config, null);
             }
             return $values;
         }
@@ -376,7 +377,7 @@ class ObjectSerializer
                 $subClass_array = explode(',', $inner, 2);
                 $subClass = $subClass_array[1];
                 foreach ($data as $key => $value) {
-                    $deserialized[$key] = self::deserialize($value, $subClass, null);
+                    $deserialized[$key] = self::deserialize($value, $subClass, $config, null);
                 }
             }
             return $deserialized;
@@ -417,14 +418,16 @@ class ObjectSerializer
             /** @var StreamInterface $data */
 
             // determine file name
+            $tempFolderPath = $configuration?->getTempFolderPath() ?? sys_get_temp_dir();
+            $filename = null;
             if (
                 is_array($httpHeaders)
                 && array_key_exists('Content-Disposition', $httpHeaders)
                 && preg_match('/inline; filename=[\'"]?([^\'"\s]+)[\'"]?$/i', $httpHeaders['Content-Disposition'], $match)
             ) {
-                $filename = Configuration::getDefaultConfiguration()->getTempFolderPath() . DIRECTORY_SEPARATOR . self::sanitizeFilename($match[1]);
+                $filename = $tempFolderPath . DIRECTORY_SEPARATOR . self::sanitizeFilename($match[1]);
             } else {
-                $filename = tempnam(Configuration::getDefaultConfiguration()->getTempFolderPath(), '');
+                $filename = tempnam($tempFolderPath, '');
             }
 
             $file = fopen($filename, 'w');
@@ -483,7 +486,7 @@ class ObjectSerializer
                 }
 
                 $propertyValue = $data->{$instance::attributeMap()[$property]};
-                $instance->$propertySetter(self::deserialize($propertyValue, $type, null));
+                $instance->$propertySetter(self::deserialize($propertyValue, $type, $config, null));
             }
             return $instance;
         }
@@ -539,7 +542,7 @@ class ObjectSerializer
      *                                       to encode using RFC3986, or PHP_QUERY_RFC1738
      *                                       to encode using RFC1738.
      */
-    public static function buildQuery(array $params, $encoding = PHP_QUERY_RFC3986): string
+    public static function buildQuery(array $params, $format, $encoding = PHP_QUERY_RFC3986): string
     {
         if (!$params) {
             return '';
@@ -555,7 +558,7 @@ class ObjectSerializer
             throw new InvalidArgumentException('Invalid type');
         }
 
-        $castBool = Configuration::BOOLEAN_FORMAT_INT == Configuration::getDefaultConfiguration()->getBooleanFormatForQueryString()
+        $castBool = Configuration::BOOLEAN_FORMAT_INT == $format
           ? fn ($v) => (int)$v
           : (fn ($v) => $v ? 'true' : 'false');
 

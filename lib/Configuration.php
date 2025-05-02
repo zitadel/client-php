@@ -3,7 +3,6 @@
 namespace Zitadel\Client;
 
 use Zitadel\Client\Auth\Authenticator;
-use Zitadel\Client\Auth\NoAuthAuthenticator;
 
 class Configuration
 {
@@ -14,11 +13,6 @@ class Configuration
 
     public const BOOLEAN_FORMAT_INT = 'int';
     public const BOOLEAN_FORMAT_STRING = 'string';
-
-    /**
-     * @var Configuration
-     */
-    private static Configuration $defaultConfiguration;
 
     /**
      * Boolean format for query string
@@ -62,33 +56,6 @@ class Configuration
     {
         $this->tempFolderPath = sys_get_temp_dir();
         $this->userAgent = self::myUserAgent();
-    }
-
-    /**
-     * Gets the default configuration instance
-     *
-     * @return Configuration
-     */
-    public static function getDefaultConfiguration(): Configuration
-    {
-        if (!isset(self::$defaultConfiguration)) {
-            self::$defaultConfiguration = new Configuration(new NoAuthAuthenticator());
-        }
-
-        return self::$defaultConfiguration;
-    }
-
-    /**
-     * Sets the default configuration instance
-     *
-     * @param Configuration $config An instance of the Configuration Object
-     *
-     * @return void
-     * @noinspection PhpUnused
-     */
-    public static function setDefaultConfiguration(Configuration $config): void
-    {
-        self::$defaultConfiguration = $config;
     }
 
     /**
