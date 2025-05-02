@@ -36,7 +36,6 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use Zitadel\Client\ApiException;
 use Zitadel\Client\Configuration;
-use Zitadel\Client\HeaderSelector;
 use Zitadel\Client\ObjectSerializer;
 
 /**
@@ -58,11 +57,6 @@ class UserServiceApi
      * @var Configuration
      */
     protected $config;
-
-    /**
-     * @var HeaderSelector
-     */
-    protected $headerSelector;
 
     /**
      * @var int Host index
@@ -211,18 +205,15 @@ class UserServiceApi
     /**
      * @param ClientInterface $client
      * @param Configuration   $config
-     * @param HeaderSelector  $selector
      * @param int             $hostIndex (Optional) host index to select the list of hosts if defined in the OpenAPI spec
      */
     public function __construct(
         ?ClientInterface $client = null,
-        ?Configuration $config = null,
-        ?HeaderSelector $selector = null,
+        Configuration $config = null,
         int $hostIndex = 0
     ) {
         $this->client = $client ?: new Client();
-        $this->config = $config ?: Configuration::getDefaultConfiguration();
-        $this->headerSelector = $selector ?: new HeaderSelector();
+        $this->config = $config;
         $this->hostIndex = $hostIndex;
     }
 
@@ -253,6 +244,239 @@ class UserServiceApi
     {
         return $this->config;
     }
+
+    /**
+     * @param string[] $accept
+     * @param string $contentType
+     * @param bool $isMultipart
+     * @return string[]
+     */
+    private function selectHeaders(array $accept, string $contentType, bool $isMultipart): array
+    {
+        $headers = [];
+
+        $accept = $this->selectAcceptHeader($accept);
+        if ($accept !== null) {
+            $headers['Accept'] = $accept;
+        }
+
+        if (!$isMultipart) {
+            if ($contentType === '') {
+                $contentType = 'application/json';
+            }
+
+            $headers['Content-Type'] = $contentType;
+        }
+
+        return $headers;
+    }
+
+    /**
+     * Return the header 'Accept' based on an array of Accept provided.
+     *
+     * @param string[] $accept Array of header
+     *
+     * @return null|string Accept (e.g. application/json)
+     */
+    private function selectAcceptHeader(array $accept): ?string
+    {
+        # filter out empty entries
+        $accept = array_filter($accept);
+
+        if (count($accept) === 0) {
+            return null;
+        }
+
+        # If there's only one Accept header, just use it
+        if (count($accept) === 1) {
+            return reset($accept);
+        }
+
+        # If none of the available Accept headers is of type "json", then just use all them
+        $headersWithJson = $this->selectJsonMimeList($accept);
+        if (count($headersWithJson) === 0) {
+            return implode(',', $accept);
+        }
+
+        # If we got here, then we need add quality values (weight), as described in IETF RFC 9110, Items 12.4.2/12.5.1,
+        # to give the highest priority to json-like headers - recalculating the existing ones, if needed
+        return $this->getAcceptHeaderWithAdjustedWeight($accept, $headersWithJson);
+    }
+
+    /**
+     * Select all items from a list containing a JSON mime type
+     *
+     * @param array $mimeList
+     * @return array
+     */
+    private function selectJsonMimeList(array $mimeList): array
+    {
+        $jsonMimeList = [];
+        foreach ($mimeList as $mime) {
+            if ($this->isJsonMime($mime)) {
+                $jsonMimeList[] = $mime;
+            }
+        }
+        return $jsonMimeList;
+    }
+
+    /**
+     * Detects whether a string contains a valid JSON mime type
+     *
+     * @param string $searchString
+     * @return bool
+     */
+    private function isJsonMime(string $searchString): bool
+    {
+        /** @noinspection PhpCoveredCharacterInClassInspection */
+        return preg_match('~^application/(json|[\w!#$&.+-^_]+\+json)\s*(;|$)~', $searchString) === 1;
+    }
+
+    /**
+     * Create an Accept header string from the given "Accept" headers array, recalculating all weights
+     *
+     * @param string[] $accept Array of Accept Headers
+     * @param string[] $headersWithJson Array of Accept Headers of type "json"
+     *
+     * @return string "Accept" Header (e.g. "application/json, text/html; q=0.9")
+     */
+    private function getAcceptHeaderWithAdjustedWeight(array $accept, array $headersWithJson): string
+    {
+        $processedHeaders = [
+          'withApplicationJson' => [],
+          'withJson' => [],
+          'withoutJson' => [],
+        ];
+
+        foreach ($accept as $header) {
+
+            $headerData = $this->getHeaderAndWeight($header);
+
+            if (stripos($headerData['header'], 'application/json') === 0) {
+                $processedHeaders['withApplicationJson'][] = $headerData;
+            } elseif (in_array($header, $headersWithJson, true)) {
+                $processedHeaders['withJson'][] = $headerData;
+            } else {
+                $processedHeaders['withoutJson'][] = $headerData;
+            }
+        }
+
+        $acceptHeaders = [];
+        $currentWeight = 1000;
+
+        $hasMoreThan28Headers = count($accept) > 28;
+
+        foreach ($processedHeaders as $headers) {
+            if (count($headers) > 0) {
+                $acceptHeaders[] = $this->adjustWeight($headers, $currentWeight, $hasMoreThan28Headers);
+            }
+        }
+
+        $acceptHeaders = array_merge(...$acceptHeaders);
+
+        return implode(',', $acceptHeaders);
+    }
+
+    /**
+     * Given an Accept header, returns an associative array splitting the header and its weight
+     *
+     * @param string $header "Accept" Header
+     *
+     * @return array with the header and its weight
+     */
+    private function getHeaderAndWeight(string $header): array
+    {
+        # matches headers with weight, splitting the header and the weight in $outputArray
+        if (preg_match('/(.*);\s*q=(1(?:\.0+)?|0\.\d+)$/', $header, $outputArray) === 1) {
+            $headerData = [
+              'header' => $outputArray[1],
+              'weight' => (int)($outputArray[2] * 1000),
+            ];
+        } else {
+            $headerData = [
+              'header' => trim($header),
+              'weight' => 1000,
+            ];
+        }
+
+        return $headerData;
+    }
+
+    /**
+     * @param array[] $headers
+     * @param float $currentWeight
+     * @param bool $hasMoreThan28Headers
+     * @return string[] array of adjusted "Accept" headers
+     */
+    private function adjustWeight(array $headers, float &$currentWeight, bool $hasMoreThan28Headers): array
+    {
+        usort($headers, fn (array $a, array $b) => $b['weight'] - $a['weight']);
+
+        $acceptHeaders = [];
+        foreach ($headers as $index => $header) {
+            if ($index > 0 && $headers[$index - 1]['weight'] > $header['weight']) {
+                $currentWeight = $this->getNextWeight($currentWeight, $hasMoreThan28Headers);
+            }
+
+            $weight = $currentWeight;
+
+            $acceptHeaders[] = $this->buildAcceptHeader($header['header'], $weight);
+        }
+
+        $currentWeight = $this->getNextWeight($currentWeight, $hasMoreThan28Headers);
+
+        return $acceptHeaders;
+    }
+
+    /**
+     * Calculate the next weight, based on the current one.
+     *
+     * If there are less than 28 "Accept" headers, the weights will be decreased by 1 on its highest significant digit, using the
+     * following formula:
+     *
+     *    next weight = current weight - 10 ^ (floor(log(current weight - 1)))
+     *
+     *    ( current weight minus ( 10 raised to the power of ( floor of (log to the base 10 of ( current weight minus 1 ) ) ) ) )
+     *
+     * Starting from 1000, this generates the following series:
+     *
+     * 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1
+     *
+     * The resulting quality codes are closer to the average "normal" usage of them (like "q=0.9", "q=0.8" and so on), but it only works
+     * if there is a maximum of 28 "Accept" headers. If we have more than that (which is extremely unlikely), then we fall back to a 1-by-1
+     * decrement rule, which will result in quality codes like "q=0.999", "q=0.998" etc.
+     *
+     * @param int $currentWeight varying from 1 to 1000 (will be divided by 1000 to build the quality value)
+     * @param bool $hasMoreThan28Headers
+     * @return int
+     */
+    private function getNextWeight(int $currentWeight, bool $hasMoreThan28Headers): int
+    {
+        if ($currentWeight <= 1) {
+            return 1;
+        }
+
+        if ($hasMoreThan28Headers) {
+            return $currentWeight - 1;
+        }
+
+        return $currentWeight - 10 ** floor(log10($currentWeight - 1));
+    }
+
+    /**
+     * @param string $header
+     * @param int $weight
+     * @return string
+     */
+    private function buildAcceptHeader(string $header, int $weight): string
+    {
+        if ($weight === 1000) {
+            return $header;
+        }
+
+        return trim($header, '; ') . ';q=' . rtrim(sprintf('%0.3f', $weight / 1000), '0');
+    }
+
 
     /**
      * Operation userServiceAddHumanUser
@@ -335,7 +559,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceAddHumanUserResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceAddHumanUserResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -362,7 +586,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -389,7 +613,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -416,7 +640,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -458,7 +682,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -469,6 +693,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceAddHumanUserResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -477,6 +702,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -485,6 +711,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -493,6 +720,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -553,7 +781,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -606,7 +834,7 @@ class UserServiceApi
 
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -640,7 +868,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -661,7 +889,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -753,7 +981,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceAddIDPLinkResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceAddIDPLinkResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -780,7 +1008,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -807,7 +1035,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -834,7 +1062,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -876,7 +1104,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -887,6 +1115,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceAddIDPLinkResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -895,6 +1124,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -903,6 +1133,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -911,6 +1142,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -973,7 +1205,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1042,7 +1274,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -1076,7 +1308,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -1097,7 +1329,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1187,7 +1419,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceAddOTPEmailResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceAddOTPEmailResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1214,7 +1446,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1241,7 +1473,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1268,7 +1500,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1310,7 +1542,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -1321,6 +1553,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceAddOTPEmailResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1329,6 +1562,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1337,6 +1571,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1345,6 +1580,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1405,7 +1641,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1466,7 +1702,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -1493,7 +1729,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -1514,7 +1750,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1604,7 +1840,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceAddOTPSMSResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceAddOTPSMSResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1631,7 +1867,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1658,7 +1894,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1685,7 +1921,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1727,7 +1963,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -1738,6 +1974,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceAddOTPSMSResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1746,6 +1983,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1754,6 +1992,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1762,6 +2001,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1822,7 +2062,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -1883,7 +2123,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -1910,7 +2150,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -1931,7 +2171,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -2023,7 +2263,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceCreateInviteCodeResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceCreateInviteCodeResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2050,7 +2290,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2077,7 +2317,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2104,7 +2344,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2146,7 +2386,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -2157,6 +2397,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceCreateInviteCodeResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2165,6 +2406,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2173,6 +2415,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2181,6 +2424,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2243,7 +2487,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2312,7 +2556,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -2346,7 +2590,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -2367,7 +2611,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -2459,7 +2703,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2486,7 +2730,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2513,7 +2757,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2540,7 +2784,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2582,7 +2826,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -2593,6 +2837,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2601,6 +2846,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2609,6 +2855,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2617,6 +2864,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2679,7 +2927,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2748,7 +2996,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -2782,7 +3030,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -2803,7 +3051,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -2893,7 +3141,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceDeactivateUserResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceDeactivateUserResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2920,7 +3168,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2947,7 +3195,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2974,7 +3222,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -3016,7 +3264,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -3027,6 +3275,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceDeactivateUserResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3035,6 +3284,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3043,6 +3293,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3051,6 +3302,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3111,7 +3363,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -3172,7 +3424,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -3199,7 +3451,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -3220,7 +3472,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -3310,7 +3562,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceDeleteUserResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceDeleteUserResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -3337,7 +3589,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -3364,7 +3616,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -3391,7 +3643,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -3433,7 +3685,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -3444,6 +3696,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceDeleteUserResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3452,6 +3705,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3460,6 +3714,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3468,6 +3723,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3528,7 +3784,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -3589,7 +3845,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -3616,7 +3872,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -3637,7 +3893,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -3727,7 +3983,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceGetUserByIDResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceGetUserByIDResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -3754,7 +4010,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -3781,7 +4037,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -3808,7 +4064,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -3850,7 +4106,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -3861,6 +4117,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceGetUserByIDResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3869,6 +4126,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3877,6 +4135,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3885,6 +4144,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3945,7 +4205,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -4006,7 +4266,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -4033,7 +4293,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -4054,7 +4314,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'GET',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -4144,7 +4404,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceHumanMFAInitSkippedResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceHumanMFAInitSkippedResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -4171,7 +4431,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -4198,7 +4458,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -4225,7 +4485,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -4267,7 +4527,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -4278,6 +4538,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceHumanMFAInitSkippedResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4286,6 +4547,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4294,6 +4556,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4302,6 +4565,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4362,7 +4626,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -4423,7 +4687,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -4450,7 +4714,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -4471,7 +4735,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -4561,7 +4825,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceListAuthenticationFactorsResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceListAuthenticationFactorsResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -4588,7 +4852,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -4615,7 +4879,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -4642,7 +4906,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -4684,7 +4948,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -4695,6 +4959,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceListAuthenticationFactorsResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4703,6 +4968,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4711,6 +4977,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4719,6 +4986,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4779,7 +5047,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -4836,6 +5104,7 @@ class UserServiceApi
         $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
             $authFactors,
             'authFactors', // param base name
+            $this->config->getBooleanFormatForQueryString(),
             'array', // openApiType
             '', // style
             true, // explode
@@ -4845,6 +5114,7 @@ class UserServiceApi
         $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
             $states,
             'states', // param base name
+            $this->config->getBooleanFormatForQueryString(),
             'array', // openApiType
             '', // style
             true, // explode
@@ -4862,7 +5132,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -4889,7 +5159,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -4910,7 +5180,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -5004,7 +5274,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceListAuthenticationMethodTypesResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceListAuthenticationMethodTypesResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -5031,7 +5301,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -5058,7 +5328,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -5085,7 +5355,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -5127,7 +5397,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -5138,6 +5408,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceListAuthenticationMethodTypesResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -5146,6 +5417,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -5154,6 +5426,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -5162,6 +5435,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -5226,7 +5500,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -5283,6 +5557,7 @@ class UserServiceApi
         $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
             $domainQueryIncludeWithoutDomain,
             'domainQuery.includeWithoutDomain', // param base name
+            $this->config->getBooleanFormatForQueryString(),
             'boolean', // openApiType
             '', // style
             false, // explode
@@ -5292,6 +5567,7 @@ class UserServiceApi
         $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
             $domainQueryDomain,
             'domainQuery.domain', // param base name
+            $this->config->getBooleanFormatForQueryString(),
             'string', // openApiType
             '', // style
             false, // explode
@@ -5309,7 +5585,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -5336,7 +5612,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -5357,7 +5633,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'GET',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -5449,7 +5725,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceListIDPLinksResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceListIDPLinksResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -5476,7 +5752,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -5503,7 +5779,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -5530,7 +5806,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -5572,7 +5848,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -5583,6 +5859,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceListIDPLinksResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -5591,6 +5868,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -5599,6 +5877,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -5607,6 +5886,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -5669,7 +5949,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -5738,7 +6018,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -5772,7 +6052,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -5793,7 +6073,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -5883,7 +6163,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceListPasskeysResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceListPasskeysResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -5910,7 +6190,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -5937,7 +6217,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -5964,7 +6244,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -6006,7 +6286,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -6017,6 +6297,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceListPasskeysResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -6025,6 +6306,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -6033,6 +6315,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -6041,6 +6324,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -6101,7 +6385,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -6162,7 +6446,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -6189,7 +6473,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -6210,7 +6494,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -6300,7 +6584,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceListUsersResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceListUsersResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -6327,7 +6611,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -6354,7 +6638,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -6381,7 +6665,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -6408,7 +6692,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -6450,7 +6734,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -6461,6 +6745,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceListUsersResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -6469,6 +6754,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -6477,6 +6763,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -6485,6 +6772,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -6493,6 +6781,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -6553,7 +6842,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -6606,7 +6895,7 @@ class UserServiceApi
 
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -6640,7 +6929,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -6661,7 +6950,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -6751,7 +7040,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceLockUserResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceLockUserResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -6778,7 +7067,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -6805,7 +7094,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -6832,7 +7121,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -6874,7 +7163,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -6885,6 +7174,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceLockUserResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -6893,6 +7183,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -6901,6 +7192,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -6909,6 +7201,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -6969,7 +7262,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -7030,7 +7323,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -7057,7 +7350,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -7078,7 +7371,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -7170,7 +7463,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServicePasswordResetResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServicePasswordResetResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -7197,7 +7490,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -7224,7 +7517,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -7251,7 +7544,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -7293,7 +7586,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -7304,6 +7597,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServicePasswordResetResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -7312,6 +7606,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -7320,6 +7615,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -7328,6 +7624,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -7390,7 +7687,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -7459,7 +7756,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -7493,7 +7790,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -7514,7 +7811,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -7604,7 +7901,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceReactivateUserResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceReactivateUserResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -7631,7 +7928,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -7658,7 +7955,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -7685,7 +7982,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -7727,7 +8024,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -7738,6 +8035,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceReactivateUserResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -7746,6 +8044,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -7754,6 +8053,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -7762,6 +8062,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -7822,7 +8123,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -7883,7 +8184,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -7910,7 +8211,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -7931,7 +8232,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -8023,7 +8324,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRegisterPasskeyResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRegisterPasskeyResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8050,7 +8351,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8077,7 +8378,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8104,7 +8405,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8146,7 +8447,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -8157,6 +8458,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRegisterPasskeyResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -8165,6 +8467,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -8173,6 +8476,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -8181,6 +8485,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -8243,7 +8548,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8312,7 +8617,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -8346,7 +8651,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -8367,7 +8672,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -8457,7 +8762,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRegisterTOTPResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRegisterTOTPResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8484,7 +8789,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8511,7 +8816,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8538,7 +8843,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8580,7 +8885,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -8591,6 +8896,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRegisterTOTPResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -8599,6 +8905,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -8607,6 +8914,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -8615,6 +8923,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -8675,7 +8984,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8736,7 +9045,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -8763,7 +9072,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -8784,7 +9093,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -8876,7 +9185,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRegisterU2FResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRegisterU2FResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8903,7 +9212,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8930,7 +9239,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8957,7 +9266,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8999,7 +9308,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -9010,6 +9319,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRegisterU2FResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -9018,6 +9328,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -9026,6 +9337,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -9034,6 +9346,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -9096,7 +9409,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -9165,7 +9478,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -9199,7 +9512,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -9220,7 +9533,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -9314,7 +9627,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemoveIDPLinkResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemoveIDPLinkResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -9341,7 +9654,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -9368,7 +9681,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -9395,7 +9708,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -9437,7 +9750,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -9448,6 +9761,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRemoveIDPLinkResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -9456,6 +9770,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -9464,6 +9779,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -9472,6 +9788,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -9536,7 +9853,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -9629,7 +9946,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -9656,7 +9973,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -9677,7 +9994,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -9767,7 +10084,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemoveOTPEmailResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemoveOTPEmailResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -9794,7 +10111,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -9821,7 +10138,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -9848,7 +10165,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -9890,7 +10207,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -9901,6 +10218,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRemoveOTPEmailResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -9909,6 +10227,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -9917,6 +10236,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -9925,6 +10245,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -9985,7 +10306,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -10046,7 +10367,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -10073,7 +10394,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -10094,7 +10415,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -10184,7 +10505,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemoveOTPSMSResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemoveOTPSMSResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -10211,7 +10532,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -10238,7 +10559,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -10265,7 +10586,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -10307,7 +10628,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -10318,6 +10639,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRemoveOTPSMSResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -10326,6 +10648,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -10334,6 +10657,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -10342,6 +10666,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -10402,7 +10727,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -10463,7 +10788,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -10490,7 +10815,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -10511,7 +10836,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -10603,7 +10928,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemovePasskeyResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemovePasskeyResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -10630,7 +10955,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -10657,7 +10982,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -10684,7 +11009,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -10726,7 +11051,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -10737,6 +11062,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRemovePasskeyResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -10745,6 +11071,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -10753,6 +11080,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -10761,6 +11089,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -10823,7 +11152,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -10900,7 +11229,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -10927,7 +11256,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -10948,7 +11277,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -11038,7 +11367,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemovePhoneResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemovePhoneResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -11065,7 +11394,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -11092,7 +11421,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -11119,7 +11448,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -11161,7 +11490,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -11172,6 +11501,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRemovePhoneResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -11180,6 +11510,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -11188,6 +11519,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -11196,6 +11528,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -11256,7 +11589,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -11317,7 +11650,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -11344,7 +11677,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -11365,7 +11698,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -11455,7 +11788,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemoveTOTPResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemoveTOTPResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -11482,7 +11815,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -11509,7 +11842,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -11536,7 +11869,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -11578,7 +11911,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -11589,6 +11922,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRemoveTOTPResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -11597,6 +11931,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -11605,6 +11940,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -11613,6 +11949,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -11673,7 +12010,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -11734,7 +12071,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -11761,7 +12098,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -11782,7 +12119,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -11874,7 +12211,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemoveU2FResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemoveU2FResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -11901,7 +12238,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -11928,7 +12265,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -11955,7 +12292,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -11997,7 +12334,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -12008,6 +12345,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRemoveU2FResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -12016,6 +12354,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -12024,6 +12363,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -12032,6 +12372,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -12094,7 +12435,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -12171,7 +12512,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -12198,7 +12539,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -12219,7 +12560,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -12311,7 +12652,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceResendEmailCodeResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceResendEmailCodeResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -12338,7 +12679,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -12365,7 +12706,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -12392,7 +12733,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -12434,7 +12775,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -12445,6 +12786,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceResendEmailCodeResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -12453,6 +12795,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -12461,6 +12804,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -12469,6 +12813,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -12531,7 +12876,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -12600,7 +12945,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -12634,7 +12979,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -12655,7 +13000,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -12745,7 +13090,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceResendInviteCodeResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceResendInviteCodeResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -12772,7 +13117,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -12799,7 +13144,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -12826,7 +13171,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -12868,7 +13213,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -12879,6 +13224,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceResendInviteCodeResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -12887,6 +13233,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -12895,6 +13242,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -12903,6 +13251,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -12963,7 +13312,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -13024,7 +13373,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -13051,7 +13400,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -13072,7 +13421,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -13164,7 +13513,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceResendPhoneCodeResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceResendPhoneCodeResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -13191,7 +13540,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -13218,7 +13567,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -13245,7 +13594,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -13287,7 +13636,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -13298,6 +13647,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceResendPhoneCodeResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -13306,6 +13656,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -13314,6 +13665,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -13322,6 +13674,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -13384,7 +13737,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -13453,7 +13806,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -13487,7 +13840,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -13508,7 +13861,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -13600,7 +13953,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -13627,7 +13980,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -13654,7 +14007,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -13681,7 +14034,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -13723,7 +14076,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -13734,6 +14087,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -13742,6 +14096,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -13750,6 +14105,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -13758,6 +14114,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -13820,7 +14177,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -13889,7 +14246,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -13923,7 +14280,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -13944,7 +14301,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -14036,7 +14393,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceSendEmailCodeResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceSendEmailCodeResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -14063,7 +14420,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -14090,7 +14447,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -14117,7 +14474,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -14159,7 +14516,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -14170,6 +14527,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceSendEmailCodeResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -14178,6 +14536,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -14186,6 +14545,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -14194,6 +14554,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -14256,7 +14617,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -14325,7 +14686,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -14359,7 +14720,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -14380,7 +14741,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -14472,7 +14833,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceSetEmailResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceSetEmailResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -14499,7 +14860,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -14526,7 +14887,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -14553,7 +14914,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -14595,7 +14956,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -14606,6 +14967,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceSetEmailResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -14614,6 +14976,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -14622,6 +14985,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -14630,6 +14994,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -14692,7 +15057,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -14761,7 +15126,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -14795,7 +15160,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -14816,7 +15181,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -14908,7 +15273,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceSetPasswordResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceSetPasswordResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -14935,7 +15300,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -14962,7 +15327,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -14989,7 +15354,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -15031,7 +15396,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -15042,6 +15407,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceSetPasswordResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -15050,6 +15416,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -15058,6 +15425,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -15066,6 +15434,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -15128,7 +15497,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -15197,7 +15566,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -15231,7 +15600,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -15252,7 +15621,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -15344,7 +15713,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceSetPhoneResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceSetPhoneResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -15371,7 +15740,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -15398,7 +15767,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -15425,7 +15794,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -15467,7 +15836,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -15478,6 +15847,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceSetPhoneResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -15486,6 +15856,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -15494,6 +15865,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -15502,6 +15874,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -15564,7 +15937,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -15633,7 +16006,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -15667,7 +16040,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -15688,7 +16061,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -15778,7 +16151,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceStartIdentityProviderIntentResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceStartIdentityProviderIntentResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -15805,7 +16178,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -15832,7 +16205,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -15859,7 +16232,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -15901,7 +16274,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -15912,6 +16285,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceStartIdentityProviderIntentResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -15920,6 +16294,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -15928,6 +16303,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -15936,6 +16312,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -15996,7 +16373,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -16049,7 +16426,7 @@ class UserServiceApi
 
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -16083,7 +16460,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -16104,7 +16481,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -16194,7 +16571,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceUnlockUserResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceUnlockUserResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -16221,7 +16598,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -16248,7 +16625,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -16275,7 +16652,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -16317,7 +16694,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -16328,6 +16705,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceUnlockUserResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -16336,6 +16714,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -16344,6 +16723,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -16352,6 +16732,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -16412,7 +16793,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -16473,7 +16854,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -16500,7 +16881,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -16521,7 +16902,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -16613,7 +16994,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceUpdateHumanUserResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceUpdateHumanUserResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -16640,7 +17021,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -16667,7 +17048,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -16694,7 +17075,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -16736,7 +17117,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -16747,6 +17128,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceUpdateHumanUserResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -16755,6 +17137,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -16763,6 +17146,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -16771,6 +17155,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -16833,7 +17218,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -16902,7 +17287,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -16936,7 +17321,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -16957,7 +17342,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'PUT',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -17049,7 +17434,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyEmailResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyEmailResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -17076,7 +17461,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -17103,7 +17488,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -17130,7 +17515,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -17172,7 +17557,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -17183,6 +17568,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceVerifyEmailResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -17191,6 +17577,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -17199,6 +17586,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -17207,6 +17595,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -17269,7 +17658,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -17338,7 +17727,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -17372,7 +17761,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -17393,7 +17782,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -17485,7 +17874,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyInviteCodeResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyInviteCodeResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -17512,7 +17901,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -17539,7 +17928,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -17566,7 +17955,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -17608,7 +17997,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -17619,6 +18008,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceVerifyInviteCodeResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -17627,6 +18017,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -17635,6 +18026,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -17643,6 +18035,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -17705,7 +18098,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -17774,7 +18167,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -17808,7 +18201,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -17829,7 +18222,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -17923,7 +18316,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -17950,7 +18343,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -17977,7 +18370,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -18004,7 +18397,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -18046,7 +18439,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -18057,6 +18450,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -18065,6 +18459,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -18073,6 +18468,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -18081,6 +18477,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -18145,7 +18542,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -18230,7 +18627,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -18264,7 +18661,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -18285,7 +18682,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -18377,7 +18774,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyPhoneResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyPhoneResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -18404,7 +18801,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -18431,7 +18828,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -18458,7 +18855,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -18500,7 +18897,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -18511,6 +18908,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceVerifyPhoneResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -18519,6 +18917,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -18527,6 +18926,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -18535,6 +18935,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -18597,7 +18998,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -18666,7 +19067,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -18700,7 +19101,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -18721,7 +19122,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -18813,7 +19214,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -18840,7 +19241,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -18867,7 +19268,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -18894,7 +19295,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -18936,7 +19337,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -18947,6 +19348,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -18955,6 +19357,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -18963,6 +19366,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -18971,6 +19375,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -19033,7 +19438,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -19102,7 +19507,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -19136,7 +19541,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -19157,7 +19562,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -19251,7 +19656,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyU2FRegistrationResponse', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyU2FRegistrationResponse', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -19278,7 +19683,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -19305,7 +19710,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -19332,7 +19737,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -19374,7 +19779,7 @@ class UserServiceApi
             }
 
             return [
-                ObjectSerializer::deserialize($content, $returnType, []),
+                ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
@@ -19385,6 +19790,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceVerifyU2FRegistrationResponse',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -19393,6 +19799,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -19401,6 +19808,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -19409,6 +19817,7 @@ class UserServiceApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Zitadel\Client\Model\UserServiceRpcStatus',
+                        $this->config,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -19473,7 +19882,7 @@ class UserServiceApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
+                        ObjectSerializer::deserialize($content, $returnType, $this->config, []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -19558,7 +19967,7 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
@@ -19592,7 +20001,7 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
@@ -19613,7 +20022,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
