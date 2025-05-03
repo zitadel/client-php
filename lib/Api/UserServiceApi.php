@@ -29,15 +29,15 @@ namespace Zitadel\Client\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use Zitadel\Client\ApiException;
 use Zitadel\Client\Configuration;
-use Zitadel\Client\HeaderSelector;
 use Zitadel\Client\ObjectSerializer;
+use RuntimeException;
+use Exception;
 
 /**
  * UserServiceApi Class Doc Comment
@@ -58,11 +58,6 @@ class UserServiceApi
      * @var Configuration
      */
     protected $config;
-
-    /**
-     * @var HeaderSelector
-     */
-    protected $headerSelector;
 
     /**
      * @var int Host index
@@ -211,18 +206,17 @@ class UserServiceApi
     /**
      * @param ClientInterface $client
      * @param Configuration   $config
-     * @param HeaderSelector  $selector
      * @param int             $hostIndex (Optional) host index to select the list of hosts if defined in the OpenAPI spec
      */
     public function __construct(
         ?ClientInterface $client = null,
-        ?Configuration $config = null,
-        ?HeaderSelector $selector = null,
+        Configuration $config = null,
         int $hostIndex = 0
     ) {
-        $this->client = $client ?: new Client();
-        $this->config = $config ?: Configuration::getDefaultConfiguration();
-        $this->headerSelector = $selector ?: new HeaderSelector();
+        $this->client = $client ?: new Client([
+            'http_errors' => false,
+        ]);
+        $this->config = $config;
         $this->hostIndex = $hostIndex;
     }
 
@@ -255,6 +249,323 @@ class UserServiceApi
     }
 
     /**
+     * @param string[] $accept
+     * @param string $contentType
+     * @param bool $isMultipart
+     * @return string[]
+     */
+    private function selectHeaders(array $accept, string $contentType, bool $isMultipart): array
+    {
+        $headers = [];
+
+        $accept = $this->selectAcceptHeader($accept);
+        if ($accept !== null) {
+            $headers['Accept'] = $accept;
+        }
+
+        if (!$isMultipart) {
+            if ($contentType === '') {
+                $contentType = 'application/json';
+            }
+
+            $headers['Content-Type'] = $contentType;
+        }
+
+        return $headers;
+    }
+
+    /**
+     * Return the header 'Accept' based on an array of Accept provided.
+     *
+     * @param string[] $accept Array of header
+     *
+     * @return null|string Accept (e.g. application/json)
+     */
+    private function selectAcceptHeader(array $accept): ?string
+    {
+        # filter out empty entries
+        $accept = array_filter($accept);
+
+        if (count($accept) === 0) {
+            return null;
+        }
+
+        # If there's only one Accept header, just use it
+        if (count($accept) === 1) {
+            return reset($accept);
+        }
+
+        # If none of the available Accept headers is of type "json", then just use all them
+        $headersWithJson = $this->selectJsonMimeList($accept);
+        if (count($headersWithJson) === 0) {
+            return implode(',', $accept);
+        }
+
+        # If we got here, then we need add quality values (weight), as described in IETF RFC 9110, Items 12.4.2/12.5.1,
+        # to give the highest priority to json-like headers - recalculating the existing ones, if needed
+        return $this->getAcceptHeaderWithAdjustedWeight($accept, $headersWithJson);
+    }
+
+    /**
+     * Select all items from a list containing a JSON mime type
+     *
+     * @param array $mimeList
+     * @return array
+     */
+    private function selectJsonMimeList(array $mimeList): array
+    {
+        $jsonMimeList = [];
+        foreach ($mimeList as $mime) {
+            if ($this->isJsonMime($mime)) {
+                $jsonMimeList[] = $mime;
+            }
+        }
+        return $jsonMimeList;
+    }
+
+    /**
+     * Detects whether a string contains a valid JSON mime type
+     *
+     * @param string $searchString
+     * @return bool
+     */
+    private function isJsonMime(string $searchString): bool
+    {
+        /** @noinspection PhpCoveredCharacterInClassInspection */
+        return preg_match('~^application/(json|[\w!#$&.+-^_]+\+json)\s*(;|$)~', $searchString) === 1;
+    }
+
+    /**
+     * Create an Accept header string from the given "Accept" headers array, recalculating all weights
+     *
+     * @param string[] $accept Array of Accept Headers
+     * @param string[] $headersWithJson Array of Accept Headers of type "json"
+     *
+     * @return string "Accept" Header (e.g. "application/json, text/html; q=0.9")
+     */
+    private function getAcceptHeaderWithAdjustedWeight(array $accept, array $headersWithJson): string
+    {
+        $processedHeaders = [
+          'withApplicationJson' => [],
+          'withJson' => [],
+          'withoutJson' => [],
+        ];
+
+        foreach ($accept as $header) {
+
+            $headerData = $this->getHeaderAndWeight($header);
+
+            if (stripos($headerData['header'], 'application/json') === 0) {
+                $processedHeaders['withApplicationJson'][] = $headerData;
+            } elseif (in_array($header, $headersWithJson, true)) {
+                $processedHeaders['withJson'][] = $headerData;
+            } else {
+                $processedHeaders['withoutJson'][] = $headerData;
+            }
+        }
+
+        $acceptHeaders = [];
+        $currentWeight = 1000;
+
+        $hasMoreThan28Headers = count($accept) > 28;
+
+        foreach ($processedHeaders as $headers) {
+            if (count($headers) > 0) {
+                $acceptHeaders[] = $this->adjustWeight($headers, $currentWeight, $hasMoreThan28Headers);
+            }
+        }
+
+        $acceptHeaders = array_merge(...$acceptHeaders);
+
+        return implode(',', $acceptHeaders);
+    }
+
+    /**
+     * Given an Accept header, returns an associative array splitting the header and its weight
+     *
+     * @param string $header "Accept" Header
+     *
+     * @return array with the header and its weight
+     */
+    private function getHeaderAndWeight(string $header): array
+    {
+        # matches headers with weight, splitting the header and the weight in $outputArray
+        if (preg_match('/(.*);\s*q=(1(?:\.0+)?|0\.\d+)$/', $header, $outputArray) === 1) {
+            $headerData = [
+              'header' => $outputArray[1],
+              'weight' => (int)($outputArray[2] * 1000),
+            ];
+        } else {
+            $headerData = [
+              'header' => trim($header),
+              'weight' => 1000,
+            ];
+        }
+
+        return $headerData;
+    }
+
+    /**
+     * @param array[] $headers
+     * @param float $currentWeight
+     * @param bool $hasMoreThan28Headers
+     * @return string[] array of adjusted "Accept" headers
+     */
+    private function adjustWeight(array $headers, float &$currentWeight, bool $hasMoreThan28Headers): array
+    {
+        usort($headers, fn (array $a, array $b) => $b['weight'] - $a['weight']);
+
+        $acceptHeaders = [];
+        foreach ($headers as $index => $header) {
+            if ($index > 0 && $headers[$index - 1]['weight'] > $header['weight']) {
+                $currentWeight = $this->getNextWeight($currentWeight, $hasMoreThan28Headers);
+            }
+
+            $weight = $currentWeight;
+
+            $acceptHeaders[] = $this->buildAcceptHeader($header['header'], $weight);
+        }
+
+        $currentWeight = $this->getNextWeight($currentWeight, $hasMoreThan28Headers);
+
+        return $acceptHeaders;
+    }
+
+    /**
+     * Calculate the next weight, based on the current one.
+     *
+     * If there are less than 28 "Accept" headers, the weights will be decreased by 1 on its highest significant digit, using the
+     * following formula:
+     *
+     *    next weight = current weight - 10 ^ (floor(log(current weight - 1)))
+     *
+     *    ( current weight minus ( 10 raised to the power of ( floor of (log to the base 10 of ( current weight minus 1 ) ) ) ) )
+     *
+     * Starting from 1000, this generates the following series:
+     *
+     * 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1
+     *
+     * The resulting quality codes are closer to the average "normal" usage of them (like "q=0.9", "q=0.8" and so on), but it only works
+     * if there is a maximum of 28 "Accept" headers. If we have more than that (which is extremely unlikely), then we fall back to a 1-by-1
+     * decrement rule, which will result in quality codes like "q=0.999", "q=0.998" etc.
+     *
+     * @param int $currentWeight varying from 1 to 1000 (will be divided by 1000 to build the quality value)
+     * @param bool $hasMoreThan28Headers
+     * @return int
+     */
+    private function getNextWeight(int $currentWeight, bool $hasMoreThan28Headers): int
+    {
+        if ($currentWeight <= 1) {
+            return 1;
+        }
+
+        if ($hasMoreThan28Headers) {
+            return $currentWeight - 1;
+        }
+
+        return $currentWeight - 10 ** floor(log10($currentWeight - 1));
+    }
+
+    /**
+     * @param string $header
+     * @param int $weight
+     * @return string
+     */
+    private function buildAcceptHeader(string $header, int $weight): string
+    {
+        if ($weight === 1000) {
+            return $header;
+        }
+
+        return trim($header, '; ') . ';q=' . rtrim(sprintf('%0.3f', $weight / 1000), '0');
+    }
+
+
+        /**
+     * @throws ApiException
+     */
+    private function executeRequest(
+        Request $request,
+        array $responseTypes,
+        string $defaultResponseType
+    ): mixed {
+        try {
+            $options = $this->createHttpClientOption();
+            $response = $this->client->send($request, $options);
+        } catch (GuzzleException $e) {
+            throw new RuntimeException(
+                "API Request failed: [{$e->getCode()}] {$e->getMessage()}",
+                (int) $e->getCode(),
+                $e
+            );
+        }
+
+        $statusCode = $response->getStatusCode();
+        $responseBody = $response->getBody();
+        $responseHeaders = $response->getHeaders();
+
+        if ($statusCode >= 200 && $statusCode < 300) {
+            $returnType = $responseTypes[$statusCode] ?? $defaultResponseType;
+
+            if ($returnType === '\SplFileObject') {
+                return $responseBody;
+            } else {
+                $content = (string) $responseBody;
+
+                if (empty(trim($content)) && $returnType !== 'string') {
+                    $content = null;
+                }
+
+                try {
+                    return ObjectSerializer::deserialize($content, $returnType, $this->config, []);
+                } catch (Exception $e) {
+                    throw new RuntimeException(
+                        "Failed to process successful response for status $statusCode",
+                        $statusCode,
+                        $e
+                    );
+                }
+            }
+        } else {
+            $errorType = $responseTypes[$statusCode] ?? $defaultResponseType;
+
+            if ($errorType === '\SplFileObject') {
+                throw new ApiException(
+                    sprintf('[%d] API Error (%s) - Expected file object', $statusCode, $request->getUri()),
+                    $statusCode,
+                    $responseHeaders,
+                    $responseBody
+                );
+            } elseif ($errorType !== 'string' && !empty(trim((string) $responseBody))) {
+                try {
+                    $decodedContent = json_decode((string)$responseBody, false, 512, JSON_THROW_ON_ERROR);
+                    throw new ApiException(
+                        sprintf('[%d] API Error (%s)', $statusCode, (string)$request->getUri()),
+                        $statusCode,
+                        $responseHeaders,
+                        $decodedContent,
+                    );
+                } catch (ApiException $e) {
+                    throw $e;
+                } catch (Exception $e) {
+                    throw new RuntimeException(
+                        "Failed to process error response for status $statusCode",
+                        $statusCode,
+                        $e
+                    );
+                }
+            } else {
+                throw new ApiException(
+                    sprintf('[%d] API Error (%s)', $statusCode, $request->getUri()),
+                    $statusCode,
+                    $responseHeaders,
+                    $responseBody
+                );
+            }
+        }
+    }
+
+    /**
      * Operation userServiceAddHumanUser
      *
      * Create a new human user
@@ -262,317 +573,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceAddHumanUserRequest $userServiceAddHumanUserRequest userServiceAddHumanUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddHumanUser'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceAddHumanUserResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceAddHumanUserResponse
+     * @throws ApiException
      */
     public function userServiceAddHumanUser($userServiceAddHumanUserRequest, string $contentType = self::contentTypes['userServiceAddHumanUser'][0])
     {
-        list($response) = $this->userServiceAddHumanUserWithHttpInfo($userServiceAddHumanUserRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceAddHumanUserWithHttpInfo
-     *
-     * Create a new human user
-     *
-     * @param  \Zitadel\Client\Model\UserServiceAddHumanUserRequest $userServiceAddHumanUserRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddHumanUser'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceAddHumanUserResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceAddHumanUserWithHttpInfo($userServiceAddHumanUserRequest, string $contentType = self::contentTypes['userServiceAddHumanUser'][0])
-    {
         $request = $this->userServiceAddHumanUserRequest($userServiceAddHumanUserRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 201:
-                    if ('\Zitadel\Client\Model\UserServiceAddHumanUserResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceAddHumanUserResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceAddHumanUserResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceAddHumanUserResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 201:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceAddHumanUserResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceAddHumanUserAsync
-     *
-     * Create a new human user
-     *
-     * @param  \Zitadel\Client\Model\UserServiceAddHumanUserRequest $userServiceAddHumanUserRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddHumanUser'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceAddHumanUserAsync($userServiceAddHumanUserRequest, string $contentType = self::contentTypes['userServiceAddHumanUser'][0])
-    {
-        return $this->userServiceAddHumanUserAsyncWithHttpInfo($userServiceAddHumanUserRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceAddHumanUserAsyncWithHttpInfo
-     *
-     * Create a new human user
-     *
-     * @param  \Zitadel\Client\Model\UserServiceAddHumanUserRequest $userServiceAddHumanUserRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddHumanUser'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceAddHumanUserAsyncWithHttpInfo($userServiceAddHumanUserRequest, string $contentType = self::contentTypes['userServiceAddHumanUser'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceAddHumanUserResponse';
-        $request = $this->userServiceAddHumanUserRequest($userServiceAddHumanUserRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            201 => '\Zitadel\Client\Model\UserServiceAddHumanUserResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceAddHumanUserResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -584,10 +599,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceAddHumanUserRequest($userServiceAddHumanUserRequest, string $contentType = self::contentTypes['userServiceAddHumanUser'][0])
+    private function userServiceAddHumanUserRequest($userServiceAddHumanUserRequest, string $contentType = self::contentTypes['userServiceAddHumanUser'][0])
     {
 
-        // verify the required parameter 'userServiceAddHumanUserRequest' is set
         if ($userServiceAddHumanUserRequest === null || (is_array($userServiceAddHumanUserRequest) && count($userServiceAddHumanUserRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceAddHumanUserRequest when calling userServiceAddHumanUser'
@@ -606,13 +620,11 @@ class UserServiceApi
 
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceAddHumanUserRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -632,19 +644,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -661,7 +670,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -679,320 +688,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceAddIDPLinkRequest $userServiceAddIDPLinkRequest userServiceAddIDPLinkRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddIDPLink'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceAddIDPLinkResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceAddIDPLinkResponse
+     * @throws ApiException
      */
     public function userServiceAddIDPLink($userId, $userServiceAddIDPLinkRequest, string $contentType = self::contentTypes['userServiceAddIDPLink'][0])
     {
-        list($response) = $this->userServiceAddIDPLinkWithHttpInfo($userId, $userServiceAddIDPLinkRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceAddIDPLinkWithHttpInfo
-     *
-     * Add link to an identity provider to an user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceAddIDPLinkRequest $userServiceAddIDPLinkRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddIDPLink'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceAddIDPLinkResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceAddIDPLinkWithHttpInfo($userId, $userServiceAddIDPLinkRequest, string $contentType = self::contentTypes['userServiceAddIDPLink'][0])
-    {
         $request = $this->userServiceAddIDPLinkRequest($userId, $userServiceAddIDPLinkRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceAddIDPLinkResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceAddIDPLinkResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceAddIDPLinkResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceAddIDPLinkResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceAddIDPLinkResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceAddIDPLinkAsync
-     *
-     * Add link to an identity provider to an user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceAddIDPLinkRequest $userServiceAddIDPLinkRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddIDPLink'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceAddIDPLinkAsync($userId, $userServiceAddIDPLinkRequest, string $contentType = self::contentTypes['userServiceAddIDPLink'][0])
-    {
-        return $this->userServiceAddIDPLinkAsyncWithHttpInfo($userId, $userServiceAddIDPLinkRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceAddIDPLinkAsyncWithHttpInfo
-     *
-     * Add link to an identity provider to an user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceAddIDPLinkRequest $userServiceAddIDPLinkRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddIDPLink'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceAddIDPLinkAsyncWithHttpInfo($userId, $userServiceAddIDPLinkRequest, string $contentType = self::contentTypes['userServiceAddIDPLink'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceAddIDPLinkResponse';
-        $request = $this->userServiceAddIDPLinkRequest($userId, $userServiceAddIDPLinkRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceAddIDPLinkResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceAddIDPLinkResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -1005,17 +715,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceAddIDPLinkRequest($userId, $userServiceAddIDPLinkRequest, string $contentType = self::contentTypes['userServiceAddIDPLink'][0])
+    private function userServiceAddIDPLinkRequest($userId, $userServiceAddIDPLinkRequest, string $contentType = self::contentTypes['userServiceAddIDPLink'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceAddIDPLink'
             );
         }
 
-        // verify the required parameter 'userServiceAddIDPLinkRequest' is set
         if ($userServiceAddIDPLinkRequest === null || (is_array($userServiceAddIDPLinkRequest) && count($userServiceAddIDPLinkRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceAddIDPLinkRequest when calling userServiceAddIDPLink'
@@ -1032,7 +740,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -1042,13 +749,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceAddIDPLinkRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -1068,19 +773,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -1097,7 +799,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1114,317 +816,21 @@ class UserServiceApi
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddOTPEmail'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceAddOTPEmailResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceAddOTPEmailResponse
+     * @throws ApiException
      */
     public function userServiceAddOTPEmail($userId, string $contentType = self::contentTypes['userServiceAddOTPEmail'][0])
     {
-        list($response) = $this->userServiceAddOTPEmailWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceAddOTPEmailWithHttpInfo
-     *
-     * Add OTP Email for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddOTPEmail'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceAddOTPEmailResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceAddOTPEmailWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceAddOTPEmail'][0])
-    {
         $request = $this->userServiceAddOTPEmailRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceAddOTPEmailResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceAddOTPEmailResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceAddOTPEmailResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceAddOTPEmailResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceAddOTPEmailResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceAddOTPEmailAsync
-     *
-     * Add OTP Email for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddOTPEmail'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceAddOTPEmailAsync($userId, string $contentType = self::contentTypes['userServiceAddOTPEmail'][0])
-    {
-        return $this->userServiceAddOTPEmailAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceAddOTPEmailAsyncWithHttpInfo
-     *
-     * Add OTP Email for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddOTPEmail'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceAddOTPEmailAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceAddOTPEmail'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceAddOTPEmailResponse';
-        $request = $this->userServiceAddOTPEmailRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceAddOTPEmailResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceAddOTPEmailResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -1436,10 +842,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceAddOTPEmailRequest($userId, string $contentType = self::contentTypes['userServiceAddOTPEmail'][0])
+    private function userServiceAddOTPEmailRequest($userId, string $contentType = self::contentTypes['userServiceAddOTPEmail'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceAddOTPEmail'
@@ -1456,7 +861,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -1466,13 +870,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -1485,19 +887,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -1514,7 +913,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1531,317 +930,21 @@ class UserServiceApi
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddOTPSMS'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceAddOTPSMSResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceAddOTPSMSResponse
+     * @throws ApiException
      */
     public function userServiceAddOTPSMS($userId, string $contentType = self::contentTypes['userServiceAddOTPSMS'][0])
     {
-        list($response) = $this->userServiceAddOTPSMSWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceAddOTPSMSWithHttpInfo
-     *
-     * Add OTP SMS for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddOTPSMS'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceAddOTPSMSResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceAddOTPSMSWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceAddOTPSMS'][0])
-    {
         $request = $this->userServiceAddOTPSMSRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceAddOTPSMSResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceAddOTPSMSResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceAddOTPSMSResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceAddOTPSMSResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceAddOTPSMSResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceAddOTPSMSAsync
-     *
-     * Add OTP SMS for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddOTPSMS'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceAddOTPSMSAsync($userId, string $contentType = self::contentTypes['userServiceAddOTPSMS'][0])
-    {
-        return $this->userServiceAddOTPSMSAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceAddOTPSMSAsyncWithHttpInfo
-     *
-     * Add OTP SMS for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceAddOTPSMS'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceAddOTPSMSAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceAddOTPSMS'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceAddOTPSMSResponse';
-        $request = $this->userServiceAddOTPSMSRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceAddOTPSMSResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceAddOTPSMSResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -1853,10 +956,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceAddOTPSMSRequest($userId, string $contentType = self::contentTypes['userServiceAddOTPSMS'][0])
+    private function userServiceAddOTPSMSRequest($userId, string $contentType = self::contentTypes['userServiceAddOTPSMS'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceAddOTPSMS'
@@ -1873,7 +975,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -1883,13 +984,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -1902,19 +1001,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -1931,7 +1027,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1949,320 +1045,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceCreateInviteCodeRequest $userServiceCreateInviteCodeRequest userServiceCreateInviteCodeRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceCreateInviteCode'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceCreateInviteCodeResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceCreateInviteCodeResponse
+     * @throws ApiException
      */
     public function userServiceCreateInviteCode($userId, $userServiceCreateInviteCodeRequest, string $contentType = self::contentTypes['userServiceCreateInviteCode'][0])
     {
-        list($response) = $this->userServiceCreateInviteCodeWithHttpInfo($userId, $userServiceCreateInviteCodeRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceCreateInviteCodeWithHttpInfo
-     *
-     * Create an invite code for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceCreateInviteCodeRequest $userServiceCreateInviteCodeRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceCreateInviteCode'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceCreateInviteCodeResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceCreateInviteCodeWithHttpInfo($userId, $userServiceCreateInviteCodeRequest, string $contentType = self::contentTypes['userServiceCreateInviteCode'][0])
-    {
         $request = $this->userServiceCreateInviteCodeRequest($userId, $userServiceCreateInviteCodeRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceCreateInviteCodeResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceCreateInviteCodeResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceCreateInviteCodeResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceCreateInviteCodeResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceCreateInviteCodeResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceCreateInviteCodeAsync
-     *
-     * Create an invite code for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceCreateInviteCodeRequest $userServiceCreateInviteCodeRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceCreateInviteCode'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceCreateInviteCodeAsync($userId, $userServiceCreateInviteCodeRequest, string $contentType = self::contentTypes['userServiceCreateInviteCode'][0])
-    {
-        return $this->userServiceCreateInviteCodeAsyncWithHttpInfo($userId, $userServiceCreateInviteCodeRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceCreateInviteCodeAsyncWithHttpInfo
-     *
-     * Create an invite code for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceCreateInviteCodeRequest $userServiceCreateInviteCodeRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceCreateInviteCode'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceCreateInviteCodeAsyncWithHttpInfo($userId, $userServiceCreateInviteCodeRequest, string $contentType = self::contentTypes['userServiceCreateInviteCode'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceCreateInviteCodeResponse';
-        $request = $this->userServiceCreateInviteCodeRequest($userId, $userServiceCreateInviteCodeRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceCreateInviteCodeResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceCreateInviteCodeResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -2275,17 +1072,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceCreateInviteCodeRequest($userId, $userServiceCreateInviteCodeRequest, string $contentType = self::contentTypes['userServiceCreateInviteCode'][0])
+    private function userServiceCreateInviteCodeRequest($userId, $userServiceCreateInviteCodeRequest, string $contentType = self::contentTypes['userServiceCreateInviteCode'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceCreateInviteCode'
             );
         }
 
-        // verify the required parameter 'userServiceCreateInviteCodeRequest' is set
         if ($userServiceCreateInviteCodeRequest === null || (is_array($userServiceCreateInviteCodeRequest) && count($userServiceCreateInviteCodeRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceCreateInviteCodeRequest when calling userServiceCreateInviteCode'
@@ -2302,7 +1097,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -2312,13 +1106,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceCreateInviteCodeRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -2338,19 +1130,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -2367,7 +1156,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -2385,320 +1174,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkRequest $userServiceCreatePasskeyRegistrationLinkRequest userServiceCreatePasskeyRegistrationLinkRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceCreatePasskeyRegistrationLink'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkResponse
+     * @throws ApiException
      */
     public function userServiceCreatePasskeyRegistrationLink($userId, $userServiceCreatePasskeyRegistrationLinkRequest, string $contentType = self::contentTypes['userServiceCreatePasskeyRegistrationLink'][0])
     {
-        list($response) = $this->userServiceCreatePasskeyRegistrationLinkWithHttpInfo($userId, $userServiceCreatePasskeyRegistrationLinkRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceCreatePasskeyRegistrationLinkWithHttpInfo
-     *
-     * Create a passkey registration link for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkRequest $userServiceCreatePasskeyRegistrationLinkRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceCreatePasskeyRegistrationLink'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceCreatePasskeyRegistrationLinkWithHttpInfo($userId, $userServiceCreatePasskeyRegistrationLinkRequest, string $contentType = self::contentTypes['userServiceCreatePasskeyRegistrationLink'][0])
-    {
         $request = $this->userServiceCreatePasskeyRegistrationLinkRequest($userId, $userServiceCreatePasskeyRegistrationLinkRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceCreatePasskeyRegistrationLinkAsync
-     *
-     * Create a passkey registration link for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkRequest $userServiceCreatePasskeyRegistrationLinkRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceCreatePasskeyRegistrationLink'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceCreatePasskeyRegistrationLinkAsync($userId, $userServiceCreatePasskeyRegistrationLinkRequest, string $contentType = self::contentTypes['userServiceCreatePasskeyRegistrationLink'][0])
-    {
-        return $this->userServiceCreatePasskeyRegistrationLinkAsyncWithHttpInfo($userId, $userServiceCreatePasskeyRegistrationLinkRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceCreatePasskeyRegistrationLinkAsyncWithHttpInfo
-     *
-     * Create a passkey registration link for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkRequest $userServiceCreatePasskeyRegistrationLinkRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceCreatePasskeyRegistrationLink'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceCreatePasskeyRegistrationLinkAsyncWithHttpInfo($userId, $userServiceCreatePasskeyRegistrationLinkRequest, string $contentType = self::contentTypes['userServiceCreatePasskeyRegistrationLink'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkResponse';
-        $request = $this->userServiceCreatePasskeyRegistrationLinkRequest($userId, $userServiceCreatePasskeyRegistrationLinkRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -2711,17 +1201,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceCreatePasskeyRegistrationLinkRequest($userId, $userServiceCreatePasskeyRegistrationLinkRequest, string $contentType = self::contentTypes['userServiceCreatePasskeyRegistrationLink'][0])
+    private function userServiceCreatePasskeyRegistrationLinkRequest($userId, $userServiceCreatePasskeyRegistrationLinkRequest, string $contentType = self::contentTypes['userServiceCreatePasskeyRegistrationLink'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceCreatePasskeyRegistrationLink'
             );
         }
 
-        // verify the required parameter 'userServiceCreatePasskeyRegistrationLinkRequest' is set
         if ($userServiceCreatePasskeyRegistrationLinkRequest === null || (is_array($userServiceCreatePasskeyRegistrationLinkRequest) && count($userServiceCreatePasskeyRegistrationLinkRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceCreatePasskeyRegistrationLinkRequest when calling userServiceCreatePasskeyRegistrationLink'
@@ -2738,7 +1226,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -2748,13 +1235,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceCreatePasskeyRegistrationLinkRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -2774,19 +1259,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -2803,7 +1285,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -2820,317 +1302,21 @@ class UserServiceApi
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceDeactivateUser'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceDeactivateUserResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceDeactivateUserResponse
+     * @throws ApiException
      */
     public function userServiceDeactivateUser($userId, string $contentType = self::contentTypes['userServiceDeactivateUser'][0])
     {
-        list($response) = $this->userServiceDeactivateUserWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceDeactivateUserWithHttpInfo
-     *
-     * Deactivate user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceDeactivateUser'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceDeactivateUserResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceDeactivateUserWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceDeactivateUser'][0])
-    {
         $request = $this->userServiceDeactivateUserRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceDeactivateUserResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceDeactivateUserResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceDeactivateUserResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceDeactivateUserResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceDeactivateUserResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceDeactivateUserAsync
-     *
-     * Deactivate user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceDeactivateUser'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceDeactivateUserAsync($userId, string $contentType = self::contentTypes['userServiceDeactivateUser'][0])
-    {
-        return $this->userServiceDeactivateUserAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceDeactivateUserAsyncWithHttpInfo
-     *
-     * Deactivate user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceDeactivateUser'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceDeactivateUserAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceDeactivateUser'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceDeactivateUserResponse';
-        $request = $this->userServiceDeactivateUserRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceDeactivateUserResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceDeactivateUserResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -3142,10 +1328,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceDeactivateUserRequest($userId, string $contentType = self::contentTypes['userServiceDeactivateUser'][0])
+    private function userServiceDeactivateUserRequest($userId, string $contentType = self::contentTypes['userServiceDeactivateUser'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceDeactivateUser'
@@ -3162,7 +1347,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -3172,13 +1356,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -3191,19 +1373,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -3220,7 +1399,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -3237,317 +1416,21 @@ class UserServiceApi
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceDeleteUser'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceDeleteUserResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceDeleteUserResponse
+     * @throws ApiException
      */
     public function userServiceDeleteUser($userId, string $contentType = self::contentTypes['userServiceDeleteUser'][0])
     {
-        list($response) = $this->userServiceDeleteUserWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceDeleteUserWithHttpInfo
-     *
-     * Delete user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceDeleteUser'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceDeleteUserResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceDeleteUserWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceDeleteUser'][0])
-    {
         $request = $this->userServiceDeleteUserRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceDeleteUserResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceDeleteUserResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceDeleteUserResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceDeleteUserResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceDeleteUserResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceDeleteUserAsync
-     *
-     * Delete user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceDeleteUser'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceDeleteUserAsync($userId, string $contentType = self::contentTypes['userServiceDeleteUser'][0])
-    {
-        return $this->userServiceDeleteUserAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceDeleteUserAsyncWithHttpInfo
-     *
-     * Delete user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceDeleteUser'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceDeleteUserAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceDeleteUser'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceDeleteUserResponse';
-        $request = $this->userServiceDeleteUserRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceDeleteUserResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceDeleteUserResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -3559,10 +1442,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceDeleteUserRequest($userId, string $contentType = self::contentTypes['userServiceDeleteUser'][0])
+    private function userServiceDeleteUserRequest($userId, string $contentType = self::contentTypes['userServiceDeleteUser'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceDeleteUser'
@@ -3579,7 +1461,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -3589,13 +1470,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -3608,19 +1487,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -3637,7 +1513,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -3654,317 +1530,21 @@ class UserServiceApi
      * @param  string $userId User ID of the user you like to get. (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceGetUserByID'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceGetUserByIDResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceGetUserByIDResponse
+     * @throws ApiException
      */
     public function userServiceGetUserByID($userId, string $contentType = self::contentTypes['userServiceGetUserByID'][0])
     {
-        list($response) = $this->userServiceGetUserByIDWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceGetUserByIDWithHttpInfo
-     *
-     * User by ID
-     *
-     * @param  string $userId User ID of the user you like to get. (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceGetUserByID'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceGetUserByIDResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceGetUserByIDWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceGetUserByID'][0])
-    {
         $request = $this->userServiceGetUserByIDRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceGetUserByIDResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceGetUserByIDResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceGetUserByIDResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceGetUserByIDResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceGetUserByIDResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceGetUserByIDAsync
-     *
-     * User by ID
-     *
-     * @param  string $userId User ID of the user you like to get. (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceGetUserByID'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceGetUserByIDAsync($userId, string $contentType = self::contentTypes['userServiceGetUserByID'][0])
-    {
-        return $this->userServiceGetUserByIDAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceGetUserByIDAsyncWithHttpInfo
-     *
-     * User by ID
-     *
-     * @param  string $userId User ID of the user you like to get. (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceGetUserByID'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceGetUserByIDAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceGetUserByID'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceGetUserByIDResponse';
-        $request = $this->userServiceGetUserByIDRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceGetUserByIDResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceGetUserByIDResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -3976,10 +1556,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceGetUserByIDRequest($userId, string $contentType = self::contentTypes['userServiceGetUserByID'][0])
+    private function userServiceGetUserByIDRequest($userId, string $contentType = self::contentTypes['userServiceGetUserByID'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceGetUserByID'
@@ -3996,7 +1575,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -4006,13 +1584,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -4025,19 +1601,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -4054,7 +1627,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'GET',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -4071,317 +1644,21 @@ class UserServiceApi
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceHumanMFAInitSkipped'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceHumanMFAInitSkippedResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceHumanMFAInitSkippedResponse
+     * @throws ApiException
      */
     public function userServiceHumanMFAInitSkipped($userId, string $contentType = self::contentTypes['userServiceHumanMFAInitSkipped'][0])
     {
-        list($response) = $this->userServiceHumanMFAInitSkippedWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceHumanMFAInitSkippedWithHttpInfo
-     *
-     * MFA Init Skipped
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceHumanMFAInitSkipped'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceHumanMFAInitSkippedResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceHumanMFAInitSkippedWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceHumanMFAInitSkipped'][0])
-    {
         $request = $this->userServiceHumanMFAInitSkippedRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceHumanMFAInitSkippedResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceHumanMFAInitSkippedResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceHumanMFAInitSkippedResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceHumanMFAInitSkippedResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceHumanMFAInitSkippedResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceHumanMFAInitSkippedAsync
-     *
-     * MFA Init Skipped
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceHumanMFAInitSkipped'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceHumanMFAInitSkippedAsync($userId, string $contentType = self::contentTypes['userServiceHumanMFAInitSkipped'][0])
-    {
-        return $this->userServiceHumanMFAInitSkippedAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceHumanMFAInitSkippedAsyncWithHttpInfo
-     *
-     * MFA Init Skipped
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceHumanMFAInitSkipped'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceHumanMFAInitSkippedAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceHumanMFAInitSkipped'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceHumanMFAInitSkippedResponse';
-        $request = $this->userServiceHumanMFAInitSkippedRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceHumanMFAInitSkippedResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceHumanMFAInitSkippedResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -4393,10 +1670,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceHumanMFAInitSkippedRequest($userId, string $contentType = self::contentTypes['userServiceHumanMFAInitSkipped'][0])
+    private function userServiceHumanMFAInitSkippedRequest($userId, string $contentType = self::contentTypes['userServiceHumanMFAInitSkipped'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceHumanMFAInitSkipped'
@@ -4413,7 +1689,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -4423,13 +1698,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -4442,19 +1715,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -4471,7 +1741,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -4488,317 +1758,21 @@ class UserServiceApi
      * @param  string[]|null $states Specify the state of the Auth Factors (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListAuthenticationFactors'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceListAuthenticationFactorsResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceListAuthenticationFactorsResponse
+     * @throws ApiException
      */
     public function userServiceListAuthenticationFactors($userId, $authFactors = null, $states = null, string $contentType = self::contentTypes['userServiceListAuthenticationFactors'][0])
     {
-        list($response) = $this->userServiceListAuthenticationFactorsWithHttpInfo($userId, $authFactors, $states, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceListAuthenticationFactorsWithHttpInfo
-     *
-     * @param  string $userId (required)
-     * @param  string[]|null $authFactors Specify the Auth Factors you are interested in (optional)
-     * @param  string[]|null $states Specify the state of the Auth Factors (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListAuthenticationFactors'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceListAuthenticationFactorsResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceListAuthenticationFactorsWithHttpInfo($userId, $authFactors = null, $states = null, string $contentType = self::contentTypes['userServiceListAuthenticationFactors'][0])
-    {
         $request = $this->userServiceListAuthenticationFactorsRequest($userId, $authFactors, $states, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceListAuthenticationFactorsResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceListAuthenticationFactorsResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceListAuthenticationFactorsResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceListAuthenticationFactorsResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceListAuthenticationFactorsResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceListAuthenticationFactorsAsync
-     *
-     * @param  string $userId (required)
-     * @param  string[]|null $authFactors Specify the Auth Factors you are interested in (optional)
-     * @param  string[]|null $states Specify the state of the Auth Factors (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListAuthenticationFactors'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceListAuthenticationFactorsAsync($userId, $authFactors = null, $states = null, string $contentType = self::contentTypes['userServiceListAuthenticationFactors'][0])
-    {
-        return $this->userServiceListAuthenticationFactorsAsyncWithHttpInfo($userId, $authFactors, $states, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceListAuthenticationFactorsAsyncWithHttpInfo
-     *
-     * @param  string $userId (required)
-     * @param  string[]|null $authFactors Specify the Auth Factors you are interested in (optional)
-     * @param  string[]|null $states Specify the state of the Auth Factors (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListAuthenticationFactors'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceListAuthenticationFactorsAsyncWithHttpInfo($userId, $authFactors = null, $states = null, string $contentType = self::contentTypes['userServiceListAuthenticationFactors'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceListAuthenticationFactorsResponse';
-        $request = $this->userServiceListAuthenticationFactorsRequest($userId, $authFactors, $states, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceListAuthenticationFactorsResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceListAuthenticationFactorsResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -4812,10 +1786,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceListAuthenticationFactorsRequest($userId, $authFactors = null, $states = null, string $contentType = self::contentTypes['userServiceListAuthenticationFactors'][0])
+    private function userServiceListAuthenticationFactorsRequest($userId, $authFactors = null, $states = null, string $contentType = self::contentTypes['userServiceListAuthenticationFactors'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceListAuthenticationFactors'
@@ -4832,19 +1805,19 @@ class UserServiceApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
         $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
             $authFactors,
             'authFactors', // param base name
+            $this->config->getBooleanFormatForQueryString(),
             'array', // openApiType
             '', // style
             true, // explode
             false // required
         ) ?? []);
-        // query params
         $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
             $states,
             'states', // param base name
+            $this->config->getBooleanFormatForQueryString(),
             'array', // openApiType
             '', // style
             true, // explode
@@ -4852,7 +1825,6 @@ class UserServiceApi
         ) ?? []);
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -4862,13 +1834,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -4881,19 +1851,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -4910,7 +1877,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -4929,323 +1896,21 @@ class UserServiceApi
      * @param  string|null $domainQueryDomain List only auth methods with specific domain. (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListAuthenticationMethodTypes'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceListAuthenticationMethodTypesResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceListAuthenticationMethodTypesResponse
+     * @throws ApiException
      */
     public function userServiceListAuthenticationMethodTypes($userId, $domainQueryIncludeWithoutDomain = null, $domainQueryDomain = null, string $contentType = self::contentTypes['userServiceListAuthenticationMethodTypes'][0])
     {
-        list($response) = $this->userServiceListAuthenticationMethodTypesWithHttpInfo($userId, $domainQueryIncludeWithoutDomain, $domainQueryDomain, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceListAuthenticationMethodTypesWithHttpInfo
-     *
-     * List all possible authentication methods of a user
-     *
-     * @param  string $userId (required)
-     * @param  bool|null $domainQueryIncludeWithoutDomain List also auth method types without domain information like passkey and U2F added through V1 APIs / Login UI. (optional)
-     * @param  string|null $domainQueryDomain List only auth methods with specific domain. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListAuthenticationMethodTypes'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceListAuthenticationMethodTypesResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceListAuthenticationMethodTypesWithHttpInfo($userId, $domainQueryIncludeWithoutDomain = null, $domainQueryDomain = null, string $contentType = self::contentTypes['userServiceListAuthenticationMethodTypes'][0])
-    {
         $request = $this->userServiceListAuthenticationMethodTypesRequest($userId, $domainQueryIncludeWithoutDomain, $domainQueryDomain, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceListAuthenticationMethodTypesResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceListAuthenticationMethodTypesResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceListAuthenticationMethodTypesResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceListAuthenticationMethodTypesResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceListAuthenticationMethodTypesResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceListAuthenticationMethodTypesAsync
-     *
-     * List all possible authentication methods of a user
-     *
-     * @param  string $userId (required)
-     * @param  bool|null $domainQueryIncludeWithoutDomain List also auth method types without domain information like passkey and U2F added through V1 APIs / Login UI. (optional)
-     * @param  string|null $domainQueryDomain List only auth methods with specific domain. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListAuthenticationMethodTypes'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceListAuthenticationMethodTypesAsync($userId, $domainQueryIncludeWithoutDomain = null, $domainQueryDomain = null, string $contentType = self::contentTypes['userServiceListAuthenticationMethodTypes'][0])
-    {
-        return $this->userServiceListAuthenticationMethodTypesAsyncWithHttpInfo($userId, $domainQueryIncludeWithoutDomain, $domainQueryDomain, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceListAuthenticationMethodTypesAsyncWithHttpInfo
-     *
-     * List all possible authentication methods of a user
-     *
-     * @param  string $userId (required)
-     * @param  bool|null $domainQueryIncludeWithoutDomain List also auth method types without domain information like passkey and U2F added through V1 APIs / Login UI. (optional)
-     * @param  string|null $domainQueryDomain List only auth methods with specific domain. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListAuthenticationMethodTypes'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceListAuthenticationMethodTypesAsyncWithHttpInfo($userId, $domainQueryIncludeWithoutDomain = null, $domainQueryDomain = null, string $contentType = self::contentTypes['userServiceListAuthenticationMethodTypes'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceListAuthenticationMethodTypesResponse';
-        $request = $this->userServiceListAuthenticationMethodTypesRequest($userId, $domainQueryIncludeWithoutDomain, $domainQueryDomain, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceListAuthenticationMethodTypesResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceListAuthenticationMethodTypesResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -5259,10 +1924,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceListAuthenticationMethodTypesRequest($userId, $domainQueryIncludeWithoutDomain = null, $domainQueryDomain = null, string $contentType = self::contentTypes['userServiceListAuthenticationMethodTypes'][0])
+    private function userServiceListAuthenticationMethodTypesRequest($userId, $domainQueryIncludeWithoutDomain = null, $domainQueryDomain = null, string $contentType = self::contentTypes['userServiceListAuthenticationMethodTypes'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceListAuthenticationMethodTypes'
@@ -5279,19 +1943,19 @@ class UserServiceApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
         $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
             $domainQueryIncludeWithoutDomain,
             'domainQuery.includeWithoutDomain', // param base name
+            $this->config->getBooleanFormatForQueryString(),
             'boolean', // openApiType
             '', // style
             false, // explode
             false // required
         ) ?? []);
-        // query params
         $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
             $domainQueryDomain,
             'domainQuery.domain', // param base name
+            $this->config->getBooleanFormatForQueryString(),
             'string', // openApiType
             '', // style
             false, // explode
@@ -5299,7 +1963,6 @@ class UserServiceApi
         ) ?? []);
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -5309,13 +1972,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -5328,19 +1989,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -5357,7 +2015,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'GET',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -5375,320 +2033,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceListIDPLinksRequest $userServiceListIDPLinksRequest userServiceListIDPLinksRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListIDPLinks'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceListIDPLinksResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceListIDPLinksResponse
+     * @throws ApiException
      */
     public function userServiceListIDPLinks($userId, $userServiceListIDPLinksRequest, string $contentType = self::contentTypes['userServiceListIDPLinks'][0])
     {
-        list($response) = $this->userServiceListIDPLinksWithHttpInfo($userId, $userServiceListIDPLinksRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceListIDPLinksWithHttpInfo
-     *
-     * List links to an identity provider of an user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceListIDPLinksRequest $userServiceListIDPLinksRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListIDPLinks'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceListIDPLinksResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceListIDPLinksWithHttpInfo($userId, $userServiceListIDPLinksRequest, string $contentType = self::contentTypes['userServiceListIDPLinks'][0])
-    {
         $request = $this->userServiceListIDPLinksRequest($userId, $userServiceListIDPLinksRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceListIDPLinksResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceListIDPLinksResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceListIDPLinksResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceListIDPLinksResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceListIDPLinksResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceListIDPLinksAsync
-     *
-     * List links to an identity provider of an user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceListIDPLinksRequest $userServiceListIDPLinksRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListIDPLinks'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceListIDPLinksAsync($userId, $userServiceListIDPLinksRequest, string $contentType = self::contentTypes['userServiceListIDPLinks'][0])
-    {
-        return $this->userServiceListIDPLinksAsyncWithHttpInfo($userId, $userServiceListIDPLinksRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceListIDPLinksAsyncWithHttpInfo
-     *
-     * List links to an identity provider of an user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceListIDPLinksRequest $userServiceListIDPLinksRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListIDPLinks'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceListIDPLinksAsyncWithHttpInfo($userId, $userServiceListIDPLinksRequest, string $contentType = self::contentTypes['userServiceListIDPLinks'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceListIDPLinksResponse';
-        $request = $this->userServiceListIDPLinksRequest($userId, $userServiceListIDPLinksRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceListIDPLinksResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceListIDPLinksResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -5701,17 +2060,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceListIDPLinksRequest($userId, $userServiceListIDPLinksRequest, string $contentType = self::contentTypes['userServiceListIDPLinks'][0])
+    private function userServiceListIDPLinksRequest($userId, $userServiceListIDPLinksRequest, string $contentType = self::contentTypes['userServiceListIDPLinks'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceListIDPLinks'
             );
         }
 
-        // verify the required parameter 'userServiceListIDPLinksRequest' is set
         if ($userServiceListIDPLinksRequest === null || (is_array($userServiceListIDPLinksRequest) && count($userServiceListIDPLinksRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceListIDPLinksRequest when calling userServiceListIDPLinks'
@@ -5728,7 +2085,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -5738,13 +2094,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceListIDPLinksRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -5764,19 +2118,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -5793,7 +2144,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -5810,317 +2161,21 @@ class UserServiceApi
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListPasskeys'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceListPasskeysResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceListPasskeysResponse
+     * @throws ApiException
      */
     public function userServiceListPasskeys($userId, string $contentType = self::contentTypes['userServiceListPasskeys'][0])
     {
-        list($response) = $this->userServiceListPasskeysWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceListPasskeysWithHttpInfo
-     *
-     * List passkeys of an user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListPasskeys'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceListPasskeysResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceListPasskeysWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceListPasskeys'][0])
-    {
         $request = $this->userServiceListPasskeysRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceListPasskeysResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceListPasskeysResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceListPasskeysResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceListPasskeysResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceListPasskeysResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceListPasskeysAsync
-     *
-     * List passkeys of an user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListPasskeys'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceListPasskeysAsync($userId, string $contentType = self::contentTypes['userServiceListPasskeys'][0])
-    {
-        return $this->userServiceListPasskeysAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceListPasskeysAsyncWithHttpInfo
-     *
-     * List passkeys of an user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListPasskeys'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceListPasskeysAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceListPasskeys'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceListPasskeysResponse';
-        $request = $this->userServiceListPasskeysRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceListPasskeysResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceListPasskeysResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -6132,10 +2187,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceListPasskeysRequest($userId, string $contentType = self::contentTypes['userServiceListPasskeys'][0])
+    private function userServiceListPasskeysRequest($userId, string $contentType = self::contentTypes['userServiceListPasskeys'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceListPasskeys'
@@ -6152,7 +2206,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -6162,13 +2215,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -6181,19 +2232,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -6210,7 +2258,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -6227,352 +2275,22 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceListUsersRequest $userServiceListUsersRequest userServiceListUsersRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListUsers'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceListUsersResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceListUsersResponse
+     * @throws ApiException
      */
     public function userServiceListUsers($userServiceListUsersRequest, string $contentType = self::contentTypes['userServiceListUsers'][0])
     {
-        list($response) = $this->userServiceListUsersWithHttpInfo($userServiceListUsersRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceListUsersWithHttpInfo
-     *
-     * Search Users
-     *
-     * @param  \Zitadel\Client\Model\UserServiceListUsersRequest $userServiceListUsersRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListUsers'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceListUsersResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceListUsersWithHttpInfo($userServiceListUsersRequest, string $contentType = self::contentTypes['userServiceListUsers'][0])
-    {
         $request = $this->userServiceListUsersRequest($userServiceListUsersRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceListUsersResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceListUsersResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceListUsersResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 400:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceListUsersResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceListUsersResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 400:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceListUsersAsync
-     *
-     * Search Users
-     *
-     * @param  \Zitadel\Client\Model\UserServiceListUsersRequest $userServiceListUsersRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListUsers'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceListUsersAsync($userServiceListUsersRequest, string $contentType = self::contentTypes['userServiceListUsers'][0])
-    {
-        return $this->userServiceListUsersAsyncWithHttpInfo($userServiceListUsersRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceListUsersAsyncWithHttpInfo
-     *
-     * Search Users
-     *
-     * @param  \Zitadel\Client\Model\UserServiceListUsersRequest $userServiceListUsersRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceListUsers'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceListUsersAsyncWithHttpInfo($userServiceListUsersRequest, string $contentType = self::contentTypes['userServiceListUsers'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceListUsersResponse';
-        $request = $this->userServiceListUsersRequest($userServiceListUsersRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceListUsersResponse',
+            400 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceListUsersResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -6584,10 +2302,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceListUsersRequest($userServiceListUsersRequest, string $contentType = self::contentTypes['userServiceListUsers'][0])
+    private function userServiceListUsersRequest($userServiceListUsersRequest, string $contentType = self::contentTypes['userServiceListUsers'][0])
     {
 
-        // verify the required parameter 'userServiceListUsersRequest' is set
         if ($userServiceListUsersRequest === null || (is_array($userServiceListUsersRequest) && count($userServiceListUsersRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceListUsersRequest when calling userServiceListUsers'
@@ -6606,13 +2323,11 @@ class UserServiceApi
 
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceListUsersRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -6632,19 +2347,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -6661,7 +2373,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -6678,317 +2390,21 @@ class UserServiceApi
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceLockUser'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceLockUserResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceLockUserResponse
+     * @throws ApiException
      */
     public function userServiceLockUser($userId, string $contentType = self::contentTypes['userServiceLockUser'][0])
     {
-        list($response) = $this->userServiceLockUserWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceLockUserWithHttpInfo
-     *
-     * Lock user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceLockUser'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceLockUserResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceLockUserWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceLockUser'][0])
-    {
         $request = $this->userServiceLockUserRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceLockUserResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceLockUserResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceLockUserResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceLockUserResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceLockUserResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceLockUserAsync
-     *
-     * Lock user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceLockUser'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceLockUserAsync($userId, string $contentType = self::contentTypes['userServiceLockUser'][0])
-    {
-        return $this->userServiceLockUserAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceLockUserAsyncWithHttpInfo
-     *
-     * Lock user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceLockUser'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceLockUserAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceLockUser'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceLockUserResponse';
-        $request = $this->userServiceLockUserRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceLockUserResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceLockUserResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -7000,10 +2416,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceLockUserRequest($userId, string $contentType = self::contentTypes['userServiceLockUser'][0])
+    private function userServiceLockUserRequest($userId, string $contentType = self::contentTypes['userServiceLockUser'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceLockUser'
@@ -7020,7 +2435,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -7030,13 +2444,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -7049,19 +2461,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -7078,7 +2487,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -7096,320 +2505,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServicePasswordResetRequest $userServicePasswordResetRequest userServicePasswordResetRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServicePasswordReset'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServicePasswordResetResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServicePasswordResetResponse
+     * @throws ApiException
      */
     public function userServicePasswordReset($userId, $userServicePasswordResetRequest, string $contentType = self::contentTypes['userServicePasswordReset'][0])
     {
-        list($response) = $this->userServicePasswordResetWithHttpInfo($userId, $userServicePasswordResetRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServicePasswordResetWithHttpInfo
-     *
-     * Request a code to reset a password
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServicePasswordResetRequest $userServicePasswordResetRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServicePasswordReset'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServicePasswordResetResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServicePasswordResetWithHttpInfo($userId, $userServicePasswordResetRequest, string $contentType = self::contentTypes['userServicePasswordReset'][0])
-    {
         $request = $this->userServicePasswordResetRequest($userId, $userServicePasswordResetRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServicePasswordResetResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServicePasswordResetResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServicePasswordResetResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServicePasswordResetResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServicePasswordResetResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServicePasswordResetAsync
-     *
-     * Request a code to reset a password
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServicePasswordResetRequest $userServicePasswordResetRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServicePasswordReset'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServicePasswordResetAsync($userId, $userServicePasswordResetRequest, string $contentType = self::contentTypes['userServicePasswordReset'][0])
-    {
-        return $this->userServicePasswordResetAsyncWithHttpInfo($userId, $userServicePasswordResetRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServicePasswordResetAsyncWithHttpInfo
-     *
-     * Request a code to reset a password
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServicePasswordResetRequest $userServicePasswordResetRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServicePasswordReset'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServicePasswordResetAsyncWithHttpInfo($userId, $userServicePasswordResetRequest, string $contentType = self::contentTypes['userServicePasswordReset'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServicePasswordResetResponse';
-        $request = $this->userServicePasswordResetRequest($userId, $userServicePasswordResetRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServicePasswordResetResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServicePasswordResetResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -7422,17 +2532,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServicePasswordResetRequest($userId, $userServicePasswordResetRequest, string $contentType = self::contentTypes['userServicePasswordReset'][0])
+    private function userServicePasswordResetRequest($userId, $userServicePasswordResetRequest, string $contentType = self::contentTypes['userServicePasswordReset'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServicePasswordReset'
             );
         }
 
-        // verify the required parameter 'userServicePasswordResetRequest' is set
         if ($userServicePasswordResetRequest === null || (is_array($userServicePasswordResetRequest) && count($userServicePasswordResetRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServicePasswordResetRequest when calling userServicePasswordReset'
@@ -7449,7 +2557,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -7459,13 +2566,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServicePasswordResetRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -7485,19 +2590,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -7514,7 +2616,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -7531,317 +2633,21 @@ class UserServiceApi
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceReactivateUser'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceReactivateUserResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceReactivateUserResponse
+     * @throws ApiException
      */
     public function userServiceReactivateUser($userId, string $contentType = self::contentTypes['userServiceReactivateUser'][0])
     {
-        list($response) = $this->userServiceReactivateUserWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceReactivateUserWithHttpInfo
-     *
-     * Reactivate user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceReactivateUser'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceReactivateUserResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceReactivateUserWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceReactivateUser'][0])
-    {
         $request = $this->userServiceReactivateUserRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceReactivateUserResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceReactivateUserResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceReactivateUserResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceReactivateUserResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceReactivateUserResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceReactivateUserAsync
-     *
-     * Reactivate user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceReactivateUser'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceReactivateUserAsync($userId, string $contentType = self::contentTypes['userServiceReactivateUser'][0])
-    {
-        return $this->userServiceReactivateUserAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceReactivateUserAsyncWithHttpInfo
-     *
-     * Reactivate user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceReactivateUser'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceReactivateUserAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceReactivateUser'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceReactivateUserResponse';
-        $request = $this->userServiceReactivateUserRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceReactivateUserResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceReactivateUserResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -7853,10 +2659,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceReactivateUserRequest($userId, string $contentType = self::contentTypes['userServiceReactivateUser'][0])
+    private function userServiceReactivateUserRequest($userId, string $contentType = self::contentTypes['userServiceReactivateUser'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceReactivateUser'
@@ -7873,7 +2678,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -7883,13 +2687,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -7902,19 +2704,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -7931,7 +2730,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -7949,320 +2748,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceRegisterPasskeyRequest $userServiceRegisterPasskeyRequest userServiceRegisterPasskeyRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRegisterPasskey'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceRegisterPasskeyResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceRegisterPasskeyResponse
+     * @throws ApiException
      */
     public function userServiceRegisterPasskey($userId, $userServiceRegisterPasskeyRequest, string $contentType = self::contentTypes['userServiceRegisterPasskey'][0])
     {
-        list($response) = $this->userServiceRegisterPasskeyWithHttpInfo($userId, $userServiceRegisterPasskeyRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceRegisterPasskeyWithHttpInfo
-     *
-     * Start the registration of passkey for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceRegisterPasskeyRequest $userServiceRegisterPasskeyRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRegisterPasskey'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceRegisterPasskeyResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceRegisterPasskeyWithHttpInfo($userId, $userServiceRegisterPasskeyRequest, string $contentType = self::contentTypes['userServiceRegisterPasskey'][0])
-    {
         $request = $this->userServiceRegisterPasskeyRequest($userId, $userServiceRegisterPasskeyRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceRegisterPasskeyResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRegisterPasskeyResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRegisterPasskeyResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceRegisterPasskeyResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRegisterPasskeyResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceRegisterPasskeyAsync
-     *
-     * Start the registration of passkey for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceRegisterPasskeyRequest $userServiceRegisterPasskeyRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRegisterPasskey'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRegisterPasskeyAsync($userId, $userServiceRegisterPasskeyRequest, string $contentType = self::contentTypes['userServiceRegisterPasskey'][0])
-    {
-        return $this->userServiceRegisterPasskeyAsyncWithHttpInfo($userId, $userServiceRegisterPasskeyRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceRegisterPasskeyAsyncWithHttpInfo
-     *
-     * Start the registration of passkey for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceRegisterPasskeyRequest $userServiceRegisterPasskeyRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRegisterPasskey'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRegisterPasskeyAsyncWithHttpInfo($userId, $userServiceRegisterPasskeyRequest, string $contentType = self::contentTypes['userServiceRegisterPasskey'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceRegisterPasskeyResponse';
-        $request = $this->userServiceRegisterPasskeyRequest($userId, $userServiceRegisterPasskeyRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceRegisterPasskeyResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceRegisterPasskeyResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -8275,17 +2775,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceRegisterPasskeyRequest($userId, $userServiceRegisterPasskeyRequest, string $contentType = self::contentTypes['userServiceRegisterPasskey'][0])
+    private function userServiceRegisterPasskeyRequest($userId, $userServiceRegisterPasskeyRequest, string $contentType = self::contentTypes['userServiceRegisterPasskey'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceRegisterPasskey'
             );
         }
 
-        // verify the required parameter 'userServiceRegisterPasskeyRequest' is set
         if ($userServiceRegisterPasskeyRequest === null || (is_array($userServiceRegisterPasskeyRequest) && count($userServiceRegisterPasskeyRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceRegisterPasskeyRequest when calling userServiceRegisterPasskey'
@@ -8302,7 +2800,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -8312,13 +2809,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceRegisterPasskeyRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -8338,19 +2833,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -8367,7 +2859,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -8384,317 +2876,21 @@ class UserServiceApi
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRegisterTOTP'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceRegisterTOTPResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceRegisterTOTPResponse
+     * @throws ApiException
      */
     public function userServiceRegisterTOTP($userId, string $contentType = self::contentTypes['userServiceRegisterTOTP'][0])
     {
-        list($response) = $this->userServiceRegisterTOTPWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceRegisterTOTPWithHttpInfo
-     *
-     * Start the registration of a TOTP generator for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRegisterTOTP'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceRegisterTOTPResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceRegisterTOTPWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceRegisterTOTP'][0])
-    {
         $request = $this->userServiceRegisterTOTPRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceRegisterTOTPResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRegisterTOTPResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRegisterTOTPResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceRegisterTOTPResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRegisterTOTPResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceRegisterTOTPAsync
-     *
-     * Start the registration of a TOTP generator for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRegisterTOTP'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRegisterTOTPAsync($userId, string $contentType = self::contentTypes['userServiceRegisterTOTP'][0])
-    {
-        return $this->userServiceRegisterTOTPAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceRegisterTOTPAsyncWithHttpInfo
-     *
-     * Start the registration of a TOTP generator for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRegisterTOTP'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRegisterTOTPAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceRegisterTOTP'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceRegisterTOTPResponse';
-        $request = $this->userServiceRegisterTOTPRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceRegisterTOTPResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceRegisterTOTPResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -8706,10 +2902,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceRegisterTOTPRequest($userId, string $contentType = self::contentTypes['userServiceRegisterTOTP'][0])
+    private function userServiceRegisterTOTPRequest($userId, string $contentType = self::contentTypes['userServiceRegisterTOTP'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceRegisterTOTP'
@@ -8726,7 +2921,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -8736,13 +2930,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -8755,19 +2947,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -8784,7 +2973,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -8802,320 +2991,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceRegisterU2FRequest $userServiceRegisterU2FRequest userServiceRegisterU2FRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRegisterU2F'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceRegisterU2FResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceRegisterU2FResponse
+     * @throws ApiException
      */
     public function userServiceRegisterU2F($userId, $userServiceRegisterU2FRequest, string $contentType = self::contentTypes['userServiceRegisterU2F'][0])
     {
-        list($response) = $this->userServiceRegisterU2FWithHttpInfo($userId, $userServiceRegisterU2FRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceRegisterU2FWithHttpInfo
-     *
-     * Start the registration of a u2f token for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceRegisterU2FRequest $userServiceRegisterU2FRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRegisterU2F'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceRegisterU2FResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceRegisterU2FWithHttpInfo($userId, $userServiceRegisterU2FRequest, string $contentType = self::contentTypes['userServiceRegisterU2F'][0])
-    {
         $request = $this->userServiceRegisterU2FRequest($userId, $userServiceRegisterU2FRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceRegisterU2FResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRegisterU2FResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRegisterU2FResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceRegisterU2FResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRegisterU2FResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceRegisterU2FAsync
-     *
-     * Start the registration of a u2f token for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceRegisterU2FRequest $userServiceRegisterU2FRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRegisterU2F'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRegisterU2FAsync($userId, $userServiceRegisterU2FRequest, string $contentType = self::contentTypes['userServiceRegisterU2F'][0])
-    {
-        return $this->userServiceRegisterU2FAsyncWithHttpInfo($userId, $userServiceRegisterU2FRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceRegisterU2FAsyncWithHttpInfo
-     *
-     * Start the registration of a u2f token for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceRegisterU2FRequest $userServiceRegisterU2FRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRegisterU2F'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRegisterU2FAsyncWithHttpInfo($userId, $userServiceRegisterU2FRequest, string $contentType = self::contentTypes['userServiceRegisterU2F'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceRegisterU2FResponse';
-        $request = $this->userServiceRegisterU2FRequest($userId, $userServiceRegisterU2FRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceRegisterU2FResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceRegisterU2FResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -9128,17 +3018,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceRegisterU2FRequest($userId, $userServiceRegisterU2FRequest, string $contentType = self::contentTypes['userServiceRegisterU2F'][0])
+    private function userServiceRegisterU2FRequest($userId, $userServiceRegisterU2FRequest, string $contentType = self::contentTypes['userServiceRegisterU2F'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceRegisterU2F'
             );
         }
 
-        // verify the required parameter 'userServiceRegisterU2FRequest' is set
         if ($userServiceRegisterU2FRequest === null || (is_array($userServiceRegisterU2FRequest) && count($userServiceRegisterU2FRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceRegisterU2FRequest when calling userServiceRegisterU2F'
@@ -9155,7 +3043,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -9165,13 +3052,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceRegisterU2FRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -9191,19 +3076,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -9220,7 +3102,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -9239,323 +3121,21 @@ class UserServiceApi
      * @param  string $linkedUserId linkedUserId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveIDPLink'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceRemoveIDPLinkResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceRemoveIDPLinkResponse
+     * @throws ApiException
      */
     public function userServiceRemoveIDPLink($userId, $idpId, $linkedUserId, string $contentType = self::contentTypes['userServiceRemoveIDPLink'][0])
     {
-        list($response) = $this->userServiceRemoveIDPLinkWithHttpInfo($userId, $idpId, $linkedUserId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceRemoveIDPLinkWithHttpInfo
-     *
-     * Remove link of an identity provider to an user
-     *
-     * @param  string $userId (required)
-     * @param  string $idpId (required)
-     * @param  string $linkedUserId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveIDPLink'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceRemoveIDPLinkResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceRemoveIDPLinkWithHttpInfo($userId, $idpId, $linkedUserId, string $contentType = self::contentTypes['userServiceRemoveIDPLink'][0])
-    {
         $request = $this->userServiceRemoveIDPLinkRequest($userId, $idpId, $linkedUserId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceRemoveIDPLinkResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRemoveIDPLinkResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemoveIDPLinkResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceRemoveIDPLinkResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRemoveIDPLinkResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceRemoveIDPLinkAsync
-     *
-     * Remove link of an identity provider to an user
-     *
-     * @param  string $userId (required)
-     * @param  string $idpId (required)
-     * @param  string $linkedUserId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveIDPLink'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRemoveIDPLinkAsync($userId, $idpId, $linkedUserId, string $contentType = self::contentTypes['userServiceRemoveIDPLink'][0])
-    {
-        return $this->userServiceRemoveIDPLinkAsyncWithHttpInfo($userId, $idpId, $linkedUserId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceRemoveIDPLinkAsyncWithHttpInfo
-     *
-     * Remove link of an identity provider to an user
-     *
-     * @param  string $userId (required)
-     * @param  string $idpId (required)
-     * @param  string $linkedUserId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveIDPLink'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRemoveIDPLinkAsyncWithHttpInfo($userId, $idpId, $linkedUserId, string $contentType = self::contentTypes['userServiceRemoveIDPLink'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceRemoveIDPLinkResponse';
-        $request = $this->userServiceRemoveIDPLinkRequest($userId, $idpId, $linkedUserId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceRemoveIDPLinkResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceRemoveIDPLinkResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -9569,24 +3149,21 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceRemoveIDPLinkRequest($userId, $idpId, $linkedUserId, string $contentType = self::contentTypes['userServiceRemoveIDPLink'][0])
+    private function userServiceRemoveIDPLinkRequest($userId, $idpId, $linkedUserId, string $contentType = self::contentTypes['userServiceRemoveIDPLink'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceRemoveIDPLink'
             );
         }
 
-        // verify the required parameter 'idpId' is set
         if ($idpId === null || (is_array($idpId) && count($idpId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $idpId when calling userServiceRemoveIDPLink'
             );
         }
 
-        // verify the required parameter 'linkedUserId' is set
         if ($linkedUserId === null || (is_array($linkedUserId) && count($linkedUserId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $linkedUserId when calling userServiceRemoveIDPLink'
@@ -9603,7 +3180,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -9611,7 +3187,6 @@ class UserServiceApi
                 $resourcePath
             );
         }
-        // path params
         if ($idpId !== null) {
             $resourcePath = str_replace(
                 '{' . 'idpId' . '}',
@@ -9619,7 +3194,6 @@ class UserServiceApi
                 $resourcePath
             );
         }
-        // path params
         if ($linkedUserId !== null) {
             $resourcePath = str_replace(
                 '{' . 'linkedUserId' . '}',
@@ -9629,13 +3203,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -9648,19 +3220,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -9677,7 +3246,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -9694,317 +3263,21 @@ class UserServiceApi
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveOTPEmail'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceRemoveOTPEmailResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceRemoveOTPEmailResponse
+     * @throws ApiException
      */
     public function userServiceRemoveOTPEmail($userId, string $contentType = self::contentTypes['userServiceRemoveOTPEmail'][0])
     {
-        list($response) = $this->userServiceRemoveOTPEmailWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceRemoveOTPEmailWithHttpInfo
-     *
-     * Remove One-Time Password (OTP) Email from a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveOTPEmail'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceRemoveOTPEmailResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceRemoveOTPEmailWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceRemoveOTPEmail'][0])
-    {
         $request = $this->userServiceRemoveOTPEmailRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceRemoveOTPEmailResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRemoveOTPEmailResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemoveOTPEmailResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceRemoveOTPEmailResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRemoveOTPEmailResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceRemoveOTPEmailAsync
-     *
-     * Remove One-Time Password (OTP) Email from a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveOTPEmail'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRemoveOTPEmailAsync($userId, string $contentType = self::contentTypes['userServiceRemoveOTPEmail'][0])
-    {
-        return $this->userServiceRemoveOTPEmailAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceRemoveOTPEmailAsyncWithHttpInfo
-     *
-     * Remove One-Time Password (OTP) Email from a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveOTPEmail'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRemoveOTPEmailAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceRemoveOTPEmail'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceRemoveOTPEmailResponse';
-        $request = $this->userServiceRemoveOTPEmailRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceRemoveOTPEmailResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceRemoveOTPEmailResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -10016,10 +3289,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceRemoveOTPEmailRequest($userId, string $contentType = self::contentTypes['userServiceRemoveOTPEmail'][0])
+    private function userServiceRemoveOTPEmailRequest($userId, string $contentType = self::contentTypes['userServiceRemoveOTPEmail'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceRemoveOTPEmail'
@@ -10036,7 +3308,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -10046,13 +3317,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -10065,19 +3334,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -10094,7 +3360,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -10111,317 +3377,21 @@ class UserServiceApi
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveOTPSMS'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceRemoveOTPSMSResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceRemoveOTPSMSResponse
+     * @throws ApiException
      */
     public function userServiceRemoveOTPSMS($userId, string $contentType = self::contentTypes['userServiceRemoveOTPSMS'][0])
     {
-        list($response) = $this->userServiceRemoveOTPSMSWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceRemoveOTPSMSWithHttpInfo
-     *
-     * Remove One-Time Password (OTP) SMS from a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveOTPSMS'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceRemoveOTPSMSResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceRemoveOTPSMSWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceRemoveOTPSMS'][0])
-    {
         $request = $this->userServiceRemoveOTPSMSRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceRemoveOTPSMSResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRemoveOTPSMSResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemoveOTPSMSResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceRemoveOTPSMSResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRemoveOTPSMSResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceRemoveOTPSMSAsync
-     *
-     * Remove One-Time Password (OTP) SMS from a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveOTPSMS'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRemoveOTPSMSAsync($userId, string $contentType = self::contentTypes['userServiceRemoveOTPSMS'][0])
-    {
-        return $this->userServiceRemoveOTPSMSAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceRemoveOTPSMSAsyncWithHttpInfo
-     *
-     * Remove One-Time Password (OTP) SMS from a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveOTPSMS'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRemoveOTPSMSAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceRemoveOTPSMS'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceRemoveOTPSMSResponse';
-        $request = $this->userServiceRemoveOTPSMSRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceRemoveOTPSMSResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceRemoveOTPSMSResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -10433,10 +3403,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceRemoveOTPSMSRequest($userId, string $contentType = self::contentTypes['userServiceRemoveOTPSMS'][0])
+    private function userServiceRemoveOTPSMSRequest($userId, string $contentType = self::contentTypes['userServiceRemoveOTPSMS'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceRemoveOTPSMS'
@@ -10453,7 +3422,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -10463,13 +3431,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -10482,19 +3448,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -10511,7 +3474,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -10529,320 +3492,21 @@ class UserServiceApi
      * @param  string $passkeyId passkeyId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemovePasskey'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceRemovePasskeyResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceRemovePasskeyResponse
+     * @throws ApiException
      */
     public function userServiceRemovePasskey($userId, $passkeyId, string $contentType = self::contentTypes['userServiceRemovePasskey'][0])
     {
-        list($response) = $this->userServiceRemovePasskeyWithHttpInfo($userId, $passkeyId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceRemovePasskeyWithHttpInfo
-     *
-     * Remove passkey from a user
-     *
-     * @param  string $userId (required)
-     * @param  string $passkeyId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemovePasskey'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceRemovePasskeyResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceRemovePasskeyWithHttpInfo($userId, $passkeyId, string $contentType = self::contentTypes['userServiceRemovePasskey'][0])
-    {
         $request = $this->userServiceRemovePasskeyRequest($userId, $passkeyId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceRemovePasskeyResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRemovePasskeyResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemovePasskeyResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceRemovePasskeyResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRemovePasskeyResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceRemovePasskeyAsync
-     *
-     * Remove passkey from a user
-     *
-     * @param  string $userId (required)
-     * @param  string $passkeyId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemovePasskey'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRemovePasskeyAsync($userId, $passkeyId, string $contentType = self::contentTypes['userServiceRemovePasskey'][0])
-    {
-        return $this->userServiceRemovePasskeyAsyncWithHttpInfo($userId, $passkeyId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceRemovePasskeyAsyncWithHttpInfo
-     *
-     * Remove passkey from a user
-     *
-     * @param  string $userId (required)
-     * @param  string $passkeyId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemovePasskey'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRemovePasskeyAsyncWithHttpInfo($userId, $passkeyId, string $contentType = self::contentTypes['userServiceRemovePasskey'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceRemovePasskeyResponse';
-        $request = $this->userServiceRemovePasskeyRequest($userId, $passkeyId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceRemovePasskeyResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceRemovePasskeyResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -10855,17 +3519,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceRemovePasskeyRequest($userId, $passkeyId, string $contentType = self::contentTypes['userServiceRemovePasskey'][0])
+    private function userServiceRemovePasskeyRequest($userId, $passkeyId, string $contentType = self::contentTypes['userServiceRemovePasskey'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceRemovePasskey'
             );
         }
 
-        // verify the required parameter 'passkeyId' is set
         if ($passkeyId === null || (is_array($passkeyId) && count($passkeyId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $passkeyId when calling userServiceRemovePasskey'
@@ -10882,7 +3544,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -10890,7 +3551,6 @@ class UserServiceApi
                 $resourcePath
             );
         }
-        // path params
         if ($passkeyId !== null) {
             $resourcePath = str_replace(
                 '{' . 'passkeyId' . '}',
@@ -10900,13 +3560,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -10919,19 +3577,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -10948,7 +3603,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -10965,317 +3620,21 @@ class UserServiceApi
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemovePhone'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceRemovePhoneResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceRemovePhoneResponse
+     * @throws ApiException
      */
     public function userServiceRemovePhone($userId, string $contentType = self::contentTypes['userServiceRemovePhone'][0])
     {
-        list($response) = $this->userServiceRemovePhoneWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceRemovePhoneWithHttpInfo
-     *
-     * Delete the user phone
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemovePhone'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceRemovePhoneResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceRemovePhoneWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceRemovePhone'][0])
-    {
         $request = $this->userServiceRemovePhoneRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceRemovePhoneResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRemovePhoneResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemovePhoneResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceRemovePhoneResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRemovePhoneResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceRemovePhoneAsync
-     *
-     * Delete the user phone
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemovePhone'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRemovePhoneAsync($userId, string $contentType = self::contentTypes['userServiceRemovePhone'][0])
-    {
-        return $this->userServiceRemovePhoneAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceRemovePhoneAsyncWithHttpInfo
-     *
-     * Delete the user phone
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemovePhone'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRemovePhoneAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceRemovePhone'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceRemovePhoneResponse';
-        $request = $this->userServiceRemovePhoneRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceRemovePhoneResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceRemovePhoneResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -11287,10 +3646,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceRemovePhoneRequest($userId, string $contentType = self::contentTypes['userServiceRemovePhone'][0])
+    private function userServiceRemovePhoneRequest($userId, string $contentType = self::contentTypes['userServiceRemovePhone'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceRemovePhone'
@@ -11307,7 +3665,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -11317,13 +3674,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -11336,19 +3691,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -11365,7 +3717,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -11382,317 +3734,21 @@ class UserServiceApi
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveTOTP'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceRemoveTOTPResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceRemoveTOTPResponse
+     * @throws ApiException
      */
     public function userServiceRemoveTOTP($userId, string $contentType = self::contentTypes['userServiceRemoveTOTP'][0])
     {
-        list($response) = $this->userServiceRemoveTOTPWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceRemoveTOTPWithHttpInfo
-     *
-     * Remove TOTP generator from a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveTOTP'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceRemoveTOTPResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceRemoveTOTPWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceRemoveTOTP'][0])
-    {
         $request = $this->userServiceRemoveTOTPRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceRemoveTOTPResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRemoveTOTPResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemoveTOTPResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceRemoveTOTPResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRemoveTOTPResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceRemoveTOTPAsync
-     *
-     * Remove TOTP generator from a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveTOTP'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRemoveTOTPAsync($userId, string $contentType = self::contentTypes['userServiceRemoveTOTP'][0])
-    {
-        return $this->userServiceRemoveTOTPAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceRemoveTOTPAsyncWithHttpInfo
-     *
-     * Remove TOTP generator from a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveTOTP'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRemoveTOTPAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceRemoveTOTP'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceRemoveTOTPResponse';
-        $request = $this->userServiceRemoveTOTPRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceRemoveTOTPResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceRemoveTOTPResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -11704,10 +3760,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceRemoveTOTPRequest($userId, string $contentType = self::contentTypes['userServiceRemoveTOTP'][0])
+    private function userServiceRemoveTOTPRequest($userId, string $contentType = self::contentTypes['userServiceRemoveTOTP'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceRemoveTOTP'
@@ -11724,7 +3779,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -11734,13 +3788,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -11753,19 +3805,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -11782,7 +3831,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -11800,320 +3849,21 @@ class UserServiceApi
      * @param  string $u2fId u2fId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveU2F'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceRemoveU2FResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceRemoveU2FResponse
+     * @throws ApiException
      */
     public function userServiceRemoveU2F($userId, $u2fId, string $contentType = self::contentTypes['userServiceRemoveU2F'][0])
     {
-        list($response) = $this->userServiceRemoveU2FWithHttpInfo($userId, $u2fId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceRemoveU2FWithHttpInfo
-     *
-     * Remove u2f token from a user
-     *
-     * @param  string $userId (required)
-     * @param  string $u2fId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveU2F'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceRemoveU2FResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceRemoveU2FWithHttpInfo($userId, $u2fId, string $contentType = self::contentTypes['userServiceRemoveU2F'][0])
-    {
         $request = $this->userServiceRemoveU2FRequest($userId, $u2fId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceRemoveU2FResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRemoveU2FResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRemoveU2FResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceRemoveU2FResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRemoveU2FResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceRemoveU2FAsync
-     *
-     * Remove u2f token from a user
-     *
-     * @param  string $userId (required)
-     * @param  string $u2fId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveU2F'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRemoveU2FAsync($userId, $u2fId, string $contentType = self::contentTypes['userServiceRemoveU2F'][0])
-    {
-        return $this->userServiceRemoveU2FAsyncWithHttpInfo($userId, $u2fId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceRemoveU2FAsyncWithHttpInfo
-     *
-     * Remove u2f token from a user
-     *
-     * @param  string $userId (required)
-     * @param  string $u2fId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRemoveU2F'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRemoveU2FAsyncWithHttpInfo($userId, $u2fId, string $contentType = self::contentTypes['userServiceRemoveU2F'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceRemoveU2FResponse';
-        $request = $this->userServiceRemoveU2FRequest($userId, $u2fId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceRemoveU2FResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceRemoveU2FResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -12126,17 +3876,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceRemoveU2FRequest($userId, $u2fId, string $contentType = self::contentTypes['userServiceRemoveU2F'][0])
+    private function userServiceRemoveU2FRequest($userId, $u2fId, string $contentType = self::contentTypes['userServiceRemoveU2F'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceRemoveU2F'
             );
         }
 
-        // verify the required parameter 'u2fId' is set
         if ($u2fId === null || (is_array($u2fId) && count($u2fId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $u2fId when calling userServiceRemoveU2F'
@@ -12153,7 +3901,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -12161,7 +3908,6 @@ class UserServiceApi
                 $resourcePath
             );
         }
-        // path params
         if ($u2fId !== null) {
             $resourcePath = str_replace(
                 '{' . 'u2fId' . '}',
@@ -12171,13 +3917,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -12190,19 +3934,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -12219,7 +3960,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -12237,320 +3978,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceResendEmailCodeRequest $userServiceResendEmailCodeRequest userServiceResendEmailCodeRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceResendEmailCode'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceResendEmailCodeResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceResendEmailCodeResponse
+     * @throws ApiException
      */
     public function userServiceResendEmailCode($userId, $userServiceResendEmailCodeRequest, string $contentType = self::contentTypes['userServiceResendEmailCode'][0])
     {
-        list($response) = $this->userServiceResendEmailCodeWithHttpInfo($userId, $userServiceResendEmailCodeRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceResendEmailCodeWithHttpInfo
-     *
-     * Resend code to verify user email
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceResendEmailCodeRequest $userServiceResendEmailCodeRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceResendEmailCode'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceResendEmailCodeResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceResendEmailCodeWithHttpInfo($userId, $userServiceResendEmailCodeRequest, string $contentType = self::contentTypes['userServiceResendEmailCode'][0])
-    {
         $request = $this->userServiceResendEmailCodeRequest($userId, $userServiceResendEmailCodeRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceResendEmailCodeResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceResendEmailCodeResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceResendEmailCodeResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceResendEmailCodeResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceResendEmailCodeResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceResendEmailCodeAsync
-     *
-     * Resend code to verify user email
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceResendEmailCodeRequest $userServiceResendEmailCodeRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceResendEmailCode'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceResendEmailCodeAsync($userId, $userServiceResendEmailCodeRequest, string $contentType = self::contentTypes['userServiceResendEmailCode'][0])
-    {
-        return $this->userServiceResendEmailCodeAsyncWithHttpInfo($userId, $userServiceResendEmailCodeRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceResendEmailCodeAsyncWithHttpInfo
-     *
-     * Resend code to verify user email
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceResendEmailCodeRequest $userServiceResendEmailCodeRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceResendEmailCode'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceResendEmailCodeAsyncWithHttpInfo($userId, $userServiceResendEmailCodeRequest, string $contentType = self::contentTypes['userServiceResendEmailCode'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceResendEmailCodeResponse';
-        $request = $this->userServiceResendEmailCodeRequest($userId, $userServiceResendEmailCodeRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceResendEmailCodeResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceResendEmailCodeResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -12563,17 +4005,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceResendEmailCodeRequest($userId, $userServiceResendEmailCodeRequest, string $contentType = self::contentTypes['userServiceResendEmailCode'][0])
+    private function userServiceResendEmailCodeRequest($userId, $userServiceResendEmailCodeRequest, string $contentType = self::contentTypes['userServiceResendEmailCode'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceResendEmailCode'
             );
         }
 
-        // verify the required parameter 'userServiceResendEmailCodeRequest' is set
         if ($userServiceResendEmailCodeRequest === null || (is_array($userServiceResendEmailCodeRequest) && count($userServiceResendEmailCodeRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceResendEmailCodeRequest when calling userServiceResendEmailCode'
@@ -12590,7 +4030,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -12600,13 +4039,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceResendEmailCodeRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -12626,19 +4063,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -12655,7 +4089,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -12672,317 +4106,21 @@ class UserServiceApi
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceResendInviteCode'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceResendInviteCodeResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceResendInviteCodeResponse
+     * @throws ApiException
      */
     public function userServiceResendInviteCode($userId, string $contentType = self::contentTypes['userServiceResendInviteCode'][0])
     {
-        list($response) = $this->userServiceResendInviteCodeWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceResendInviteCodeWithHttpInfo
-     *
-     * Resend an invite code for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceResendInviteCode'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceResendInviteCodeResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceResendInviteCodeWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceResendInviteCode'][0])
-    {
         $request = $this->userServiceResendInviteCodeRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceResendInviteCodeResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceResendInviteCodeResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceResendInviteCodeResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceResendInviteCodeResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceResendInviteCodeResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceResendInviteCodeAsync
-     *
-     * Resend an invite code for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceResendInviteCode'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceResendInviteCodeAsync($userId, string $contentType = self::contentTypes['userServiceResendInviteCode'][0])
-    {
-        return $this->userServiceResendInviteCodeAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceResendInviteCodeAsyncWithHttpInfo
-     *
-     * Resend an invite code for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceResendInviteCode'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceResendInviteCodeAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceResendInviteCode'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceResendInviteCodeResponse';
-        $request = $this->userServiceResendInviteCodeRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceResendInviteCodeResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceResendInviteCodeResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -12994,10 +4132,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceResendInviteCodeRequest($userId, string $contentType = self::contentTypes['userServiceResendInviteCode'][0])
+    private function userServiceResendInviteCodeRequest($userId, string $contentType = self::contentTypes['userServiceResendInviteCode'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceResendInviteCode'
@@ -13014,7 +4151,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -13024,13 +4160,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -13043,19 +4177,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -13072,7 +4203,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -13090,320 +4221,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceResendPhoneCodeRequest $userServiceResendPhoneCodeRequest userServiceResendPhoneCodeRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceResendPhoneCode'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceResendPhoneCodeResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceResendPhoneCodeResponse
+     * @throws ApiException
      */
     public function userServiceResendPhoneCode($userId, $userServiceResendPhoneCodeRequest, string $contentType = self::contentTypes['userServiceResendPhoneCode'][0])
     {
-        list($response) = $this->userServiceResendPhoneCodeWithHttpInfo($userId, $userServiceResendPhoneCodeRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceResendPhoneCodeWithHttpInfo
-     *
-     * Resend code to verify user phone
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceResendPhoneCodeRequest $userServiceResendPhoneCodeRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceResendPhoneCode'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceResendPhoneCodeResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceResendPhoneCodeWithHttpInfo($userId, $userServiceResendPhoneCodeRequest, string $contentType = self::contentTypes['userServiceResendPhoneCode'][0])
-    {
         $request = $this->userServiceResendPhoneCodeRequest($userId, $userServiceResendPhoneCodeRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceResendPhoneCodeResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceResendPhoneCodeResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceResendPhoneCodeResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceResendPhoneCodeResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceResendPhoneCodeResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceResendPhoneCodeAsync
-     *
-     * Resend code to verify user phone
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceResendPhoneCodeRequest $userServiceResendPhoneCodeRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceResendPhoneCode'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceResendPhoneCodeAsync($userId, $userServiceResendPhoneCodeRequest, string $contentType = self::contentTypes['userServiceResendPhoneCode'][0])
-    {
-        return $this->userServiceResendPhoneCodeAsyncWithHttpInfo($userId, $userServiceResendPhoneCodeRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceResendPhoneCodeAsyncWithHttpInfo
-     *
-     * Resend code to verify user phone
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceResendPhoneCodeRequest $userServiceResendPhoneCodeRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceResendPhoneCode'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceResendPhoneCodeAsyncWithHttpInfo($userId, $userServiceResendPhoneCodeRequest, string $contentType = self::contentTypes['userServiceResendPhoneCode'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceResendPhoneCodeResponse';
-        $request = $this->userServiceResendPhoneCodeRequest($userId, $userServiceResendPhoneCodeRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceResendPhoneCodeResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceResendPhoneCodeResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -13416,17 +4248,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceResendPhoneCodeRequest($userId, $userServiceResendPhoneCodeRequest, string $contentType = self::contentTypes['userServiceResendPhoneCode'][0])
+    private function userServiceResendPhoneCodeRequest($userId, $userServiceResendPhoneCodeRequest, string $contentType = self::contentTypes['userServiceResendPhoneCode'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceResendPhoneCode'
             );
         }
 
-        // verify the required parameter 'userServiceResendPhoneCodeRequest' is set
         if ($userServiceResendPhoneCodeRequest === null || (is_array($userServiceResendPhoneCodeRequest) && count($userServiceResendPhoneCodeRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceResendPhoneCodeRequest when calling userServiceResendPhoneCode'
@@ -13443,7 +4273,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -13453,13 +4282,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceResendPhoneCodeRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -13479,19 +4306,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -13508,7 +4332,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -13526,320 +4350,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentRequest $userServiceRetrieveIdentityProviderIntentRequest userServiceRetrieveIdentityProviderIntentRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRetrieveIdentityProviderIntent'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentResponse
+     * @throws ApiException
      */
     public function userServiceRetrieveIdentityProviderIntent($idpIntentId, $userServiceRetrieveIdentityProviderIntentRequest, string $contentType = self::contentTypes['userServiceRetrieveIdentityProviderIntent'][0])
     {
-        list($response) = $this->userServiceRetrieveIdentityProviderIntentWithHttpInfo($idpIntentId, $userServiceRetrieveIdentityProviderIntentRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceRetrieveIdentityProviderIntentWithHttpInfo
-     *
-     * Retrieve the information returned by the identity provider
-     *
-     * @param  string $idpIntentId ID of the idp intent, previously returned on the success response of the IDP callback (required)
-     * @param  \Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentRequest $userServiceRetrieveIdentityProviderIntentRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRetrieveIdentityProviderIntent'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceRetrieveIdentityProviderIntentWithHttpInfo($idpIntentId, $userServiceRetrieveIdentityProviderIntentRequest, string $contentType = self::contentTypes['userServiceRetrieveIdentityProviderIntent'][0])
-    {
         $request = $this->userServiceRetrieveIdentityProviderIntentRequest($idpIntentId, $userServiceRetrieveIdentityProviderIntentRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceRetrieveIdentityProviderIntentAsync
-     *
-     * Retrieve the information returned by the identity provider
-     *
-     * @param  string $idpIntentId ID of the idp intent, previously returned on the success response of the IDP callback (required)
-     * @param  \Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentRequest $userServiceRetrieveIdentityProviderIntentRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRetrieveIdentityProviderIntent'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRetrieveIdentityProviderIntentAsync($idpIntentId, $userServiceRetrieveIdentityProviderIntentRequest, string $contentType = self::contentTypes['userServiceRetrieveIdentityProviderIntent'][0])
-    {
-        return $this->userServiceRetrieveIdentityProviderIntentAsyncWithHttpInfo($idpIntentId, $userServiceRetrieveIdentityProviderIntentRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceRetrieveIdentityProviderIntentAsyncWithHttpInfo
-     *
-     * Retrieve the information returned by the identity provider
-     *
-     * @param  string $idpIntentId ID of the idp intent, previously returned on the success response of the IDP callback (required)
-     * @param  \Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentRequest $userServiceRetrieveIdentityProviderIntentRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceRetrieveIdentityProviderIntent'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceRetrieveIdentityProviderIntentAsyncWithHttpInfo($idpIntentId, $userServiceRetrieveIdentityProviderIntentRequest, string $contentType = self::contentTypes['userServiceRetrieveIdentityProviderIntent'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentResponse';
-        $request = $this->userServiceRetrieveIdentityProviderIntentRequest($idpIntentId, $userServiceRetrieveIdentityProviderIntentRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -13852,17 +4377,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceRetrieveIdentityProviderIntentRequest($idpIntentId, $userServiceRetrieveIdentityProviderIntentRequest, string $contentType = self::contentTypes['userServiceRetrieveIdentityProviderIntent'][0])
+    private function userServiceRetrieveIdentityProviderIntentRequest($idpIntentId, $userServiceRetrieveIdentityProviderIntentRequest, string $contentType = self::contentTypes['userServiceRetrieveIdentityProviderIntent'][0])
     {
 
-        // verify the required parameter 'idpIntentId' is set
         if ($idpIntentId === null || (is_array($idpIntentId) && count($idpIntentId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $idpIntentId when calling userServiceRetrieveIdentityProviderIntent'
             );
         }
 
-        // verify the required parameter 'userServiceRetrieveIdentityProviderIntentRequest' is set
         if ($userServiceRetrieveIdentityProviderIntentRequest === null || (is_array($userServiceRetrieveIdentityProviderIntentRequest) && count($userServiceRetrieveIdentityProviderIntentRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceRetrieveIdentityProviderIntentRequest when calling userServiceRetrieveIdentityProviderIntent'
@@ -13879,7 +4402,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($idpIntentId !== null) {
             $resourcePath = str_replace(
                 '{' . 'idpIntentId' . '}',
@@ -13889,13 +4411,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceRetrieveIdentityProviderIntentRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -13915,19 +4435,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -13944,7 +4461,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -13962,320 +4479,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceSendEmailCodeRequest $userServiceSendEmailCodeRequest userServiceSendEmailCodeRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSendEmailCode'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceSendEmailCodeResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceSendEmailCodeResponse
+     * @throws ApiException
      */
     public function userServiceSendEmailCode($userId, $userServiceSendEmailCodeRequest, string $contentType = self::contentTypes['userServiceSendEmailCode'][0])
     {
-        list($response) = $this->userServiceSendEmailCodeWithHttpInfo($userId, $userServiceSendEmailCodeRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceSendEmailCodeWithHttpInfo
-     *
-     * Send code to verify user email
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceSendEmailCodeRequest $userServiceSendEmailCodeRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSendEmailCode'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceSendEmailCodeResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceSendEmailCodeWithHttpInfo($userId, $userServiceSendEmailCodeRequest, string $contentType = self::contentTypes['userServiceSendEmailCode'][0])
-    {
         $request = $this->userServiceSendEmailCodeRequest($userId, $userServiceSendEmailCodeRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceSendEmailCodeResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceSendEmailCodeResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceSendEmailCodeResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceSendEmailCodeResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceSendEmailCodeResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceSendEmailCodeAsync
-     *
-     * Send code to verify user email
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceSendEmailCodeRequest $userServiceSendEmailCodeRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSendEmailCode'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceSendEmailCodeAsync($userId, $userServiceSendEmailCodeRequest, string $contentType = self::contentTypes['userServiceSendEmailCode'][0])
-    {
-        return $this->userServiceSendEmailCodeAsyncWithHttpInfo($userId, $userServiceSendEmailCodeRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceSendEmailCodeAsyncWithHttpInfo
-     *
-     * Send code to verify user email
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceSendEmailCodeRequest $userServiceSendEmailCodeRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSendEmailCode'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceSendEmailCodeAsyncWithHttpInfo($userId, $userServiceSendEmailCodeRequest, string $contentType = self::contentTypes['userServiceSendEmailCode'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceSendEmailCodeResponse';
-        $request = $this->userServiceSendEmailCodeRequest($userId, $userServiceSendEmailCodeRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceSendEmailCodeResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceSendEmailCodeResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -14288,17 +4506,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceSendEmailCodeRequest($userId, $userServiceSendEmailCodeRequest, string $contentType = self::contentTypes['userServiceSendEmailCode'][0])
+    private function userServiceSendEmailCodeRequest($userId, $userServiceSendEmailCodeRequest, string $contentType = self::contentTypes['userServiceSendEmailCode'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceSendEmailCode'
             );
         }
 
-        // verify the required parameter 'userServiceSendEmailCodeRequest' is set
         if ($userServiceSendEmailCodeRequest === null || (is_array($userServiceSendEmailCodeRequest) && count($userServiceSendEmailCodeRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceSendEmailCodeRequest when calling userServiceSendEmailCode'
@@ -14315,7 +4531,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -14325,13 +4540,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceSendEmailCodeRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -14351,19 +4564,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -14380,7 +4590,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -14398,320 +4608,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceSetEmailRequest $userServiceSetEmailRequest userServiceSetEmailRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSetEmail'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceSetEmailResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceSetEmailResponse
+     * @throws ApiException
      */
     public function userServiceSetEmail($userId, $userServiceSetEmailRequest, string $contentType = self::contentTypes['userServiceSetEmail'][0])
     {
-        list($response) = $this->userServiceSetEmailWithHttpInfo($userId, $userServiceSetEmailRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceSetEmailWithHttpInfo
-     *
-     * Change the user email
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceSetEmailRequest $userServiceSetEmailRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSetEmail'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceSetEmailResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceSetEmailWithHttpInfo($userId, $userServiceSetEmailRequest, string $contentType = self::contentTypes['userServiceSetEmail'][0])
-    {
         $request = $this->userServiceSetEmailRequest($userId, $userServiceSetEmailRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceSetEmailResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceSetEmailResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceSetEmailResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceSetEmailResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceSetEmailResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceSetEmailAsync
-     *
-     * Change the user email
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceSetEmailRequest $userServiceSetEmailRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSetEmail'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceSetEmailAsync($userId, $userServiceSetEmailRequest, string $contentType = self::contentTypes['userServiceSetEmail'][0])
-    {
-        return $this->userServiceSetEmailAsyncWithHttpInfo($userId, $userServiceSetEmailRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceSetEmailAsyncWithHttpInfo
-     *
-     * Change the user email
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceSetEmailRequest $userServiceSetEmailRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSetEmail'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceSetEmailAsyncWithHttpInfo($userId, $userServiceSetEmailRequest, string $contentType = self::contentTypes['userServiceSetEmail'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceSetEmailResponse';
-        $request = $this->userServiceSetEmailRequest($userId, $userServiceSetEmailRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceSetEmailResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceSetEmailResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -14724,17 +4635,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceSetEmailRequest($userId, $userServiceSetEmailRequest, string $contentType = self::contentTypes['userServiceSetEmail'][0])
+    private function userServiceSetEmailRequest($userId, $userServiceSetEmailRequest, string $contentType = self::contentTypes['userServiceSetEmail'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceSetEmail'
             );
         }
 
-        // verify the required parameter 'userServiceSetEmailRequest' is set
         if ($userServiceSetEmailRequest === null || (is_array($userServiceSetEmailRequest) && count($userServiceSetEmailRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceSetEmailRequest when calling userServiceSetEmail'
@@ -14751,7 +4660,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -14761,13 +4669,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceSetEmailRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -14787,19 +4693,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -14816,7 +4719,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -14834,320 +4737,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceSetPasswordRequest $userServiceSetPasswordRequest userServiceSetPasswordRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSetPassword'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceSetPasswordResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceSetPasswordResponse
+     * @throws ApiException
      */
     public function userServiceSetPassword($userId, $userServiceSetPasswordRequest, string $contentType = self::contentTypes['userServiceSetPassword'][0])
     {
-        list($response) = $this->userServiceSetPasswordWithHttpInfo($userId, $userServiceSetPasswordRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceSetPasswordWithHttpInfo
-     *
-     * Change password
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceSetPasswordRequest $userServiceSetPasswordRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSetPassword'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceSetPasswordResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceSetPasswordWithHttpInfo($userId, $userServiceSetPasswordRequest, string $contentType = self::contentTypes['userServiceSetPassword'][0])
-    {
         $request = $this->userServiceSetPasswordRequest($userId, $userServiceSetPasswordRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceSetPasswordResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceSetPasswordResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceSetPasswordResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceSetPasswordResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceSetPasswordResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceSetPasswordAsync
-     *
-     * Change password
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceSetPasswordRequest $userServiceSetPasswordRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSetPassword'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceSetPasswordAsync($userId, $userServiceSetPasswordRequest, string $contentType = self::contentTypes['userServiceSetPassword'][0])
-    {
-        return $this->userServiceSetPasswordAsyncWithHttpInfo($userId, $userServiceSetPasswordRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceSetPasswordAsyncWithHttpInfo
-     *
-     * Change password
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceSetPasswordRequest $userServiceSetPasswordRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSetPassword'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceSetPasswordAsyncWithHttpInfo($userId, $userServiceSetPasswordRequest, string $contentType = self::contentTypes['userServiceSetPassword'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceSetPasswordResponse';
-        $request = $this->userServiceSetPasswordRequest($userId, $userServiceSetPasswordRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceSetPasswordResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceSetPasswordResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -15160,17 +4764,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceSetPasswordRequest($userId, $userServiceSetPasswordRequest, string $contentType = self::contentTypes['userServiceSetPassword'][0])
+    private function userServiceSetPasswordRequest($userId, $userServiceSetPasswordRequest, string $contentType = self::contentTypes['userServiceSetPassword'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceSetPassword'
             );
         }
 
-        // verify the required parameter 'userServiceSetPasswordRequest' is set
         if ($userServiceSetPasswordRequest === null || (is_array($userServiceSetPasswordRequest) && count($userServiceSetPasswordRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceSetPasswordRequest when calling userServiceSetPassword'
@@ -15187,7 +4789,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -15197,13 +4798,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceSetPasswordRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -15223,19 +4822,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -15252,7 +4848,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -15270,320 +4866,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceSetPhoneRequest $userServiceSetPhoneRequest userServiceSetPhoneRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSetPhone'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceSetPhoneResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceSetPhoneResponse
+     * @throws ApiException
      */
     public function userServiceSetPhone($userId, $userServiceSetPhoneRequest, string $contentType = self::contentTypes['userServiceSetPhone'][0])
     {
-        list($response) = $this->userServiceSetPhoneWithHttpInfo($userId, $userServiceSetPhoneRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceSetPhoneWithHttpInfo
-     *
-     * Set the user phone
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceSetPhoneRequest $userServiceSetPhoneRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSetPhone'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceSetPhoneResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceSetPhoneWithHttpInfo($userId, $userServiceSetPhoneRequest, string $contentType = self::contentTypes['userServiceSetPhone'][0])
-    {
         $request = $this->userServiceSetPhoneRequest($userId, $userServiceSetPhoneRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceSetPhoneResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceSetPhoneResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceSetPhoneResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceSetPhoneResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceSetPhoneResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceSetPhoneAsync
-     *
-     * Set the user phone
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceSetPhoneRequest $userServiceSetPhoneRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSetPhone'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceSetPhoneAsync($userId, $userServiceSetPhoneRequest, string $contentType = self::contentTypes['userServiceSetPhone'][0])
-    {
-        return $this->userServiceSetPhoneAsyncWithHttpInfo($userId, $userServiceSetPhoneRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceSetPhoneAsyncWithHttpInfo
-     *
-     * Set the user phone
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceSetPhoneRequest $userServiceSetPhoneRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceSetPhone'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceSetPhoneAsyncWithHttpInfo($userId, $userServiceSetPhoneRequest, string $contentType = self::contentTypes['userServiceSetPhone'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceSetPhoneResponse';
-        $request = $this->userServiceSetPhoneRequest($userId, $userServiceSetPhoneRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceSetPhoneResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceSetPhoneResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -15596,17 +4893,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceSetPhoneRequest($userId, $userServiceSetPhoneRequest, string $contentType = self::contentTypes['userServiceSetPhone'][0])
+    private function userServiceSetPhoneRequest($userId, $userServiceSetPhoneRequest, string $contentType = self::contentTypes['userServiceSetPhone'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceSetPhone'
             );
         }
 
-        // verify the required parameter 'userServiceSetPhoneRequest' is set
         if ($userServiceSetPhoneRequest === null || (is_array($userServiceSetPhoneRequest) && count($userServiceSetPhoneRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceSetPhoneRequest when calling userServiceSetPhone'
@@ -15623,7 +4918,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -15633,13 +4927,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceSetPhoneRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -15659,19 +4951,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -15688,7 +4977,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -15705,317 +4994,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceStartIdentityProviderIntentRequest $userServiceStartIdentityProviderIntentRequest userServiceStartIdentityProviderIntentRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceStartIdentityProviderIntent'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceStartIdentityProviderIntentResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceStartIdentityProviderIntentResponse
+     * @throws ApiException
      */
     public function userServiceStartIdentityProviderIntent($userServiceStartIdentityProviderIntentRequest, string $contentType = self::contentTypes['userServiceStartIdentityProviderIntent'][0])
     {
-        list($response) = $this->userServiceStartIdentityProviderIntentWithHttpInfo($userServiceStartIdentityProviderIntentRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceStartIdentityProviderIntentWithHttpInfo
-     *
-     * Start flow with an identity provider
-     *
-     * @param  \Zitadel\Client\Model\UserServiceStartIdentityProviderIntentRequest $userServiceStartIdentityProviderIntentRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceStartIdentityProviderIntent'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceStartIdentityProviderIntentResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceStartIdentityProviderIntentWithHttpInfo($userServiceStartIdentityProviderIntentRequest, string $contentType = self::contentTypes['userServiceStartIdentityProviderIntent'][0])
-    {
         $request = $this->userServiceStartIdentityProviderIntentRequest($userServiceStartIdentityProviderIntentRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceStartIdentityProviderIntentResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceStartIdentityProviderIntentResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceStartIdentityProviderIntentResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceStartIdentityProviderIntentResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceStartIdentityProviderIntentResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceStartIdentityProviderIntentAsync
-     *
-     * Start flow with an identity provider
-     *
-     * @param  \Zitadel\Client\Model\UserServiceStartIdentityProviderIntentRequest $userServiceStartIdentityProviderIntentRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceStartIdentityProviderIntent'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceStartIdentityProviderIntentAsync($userServiceStartIdentityProviderIntentRequest, string $contentType = self::contentTypes['userServiceStartIdentityProviderIntent'][0])
-    {
-        return $this->userServiceStartIdentityProviderIntentAsyncWithHttpInfo($userServiceStartIdentityProviderIntentRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceStartIdentityProviderIntentAsyncWithHttpInfo
-     *
-     * Start flow with an identity provider
-     *
-     * @param  \Zitadel\Client\Model\UserServiceStartIdentityProviderIntentRequest $userServiceStartIdentityProviderIntentRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceStartIdentityProviderIntent'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceStartIdentityProviderIntentAsyncWithHttpInfo($userServiceStartIdentityProviderIntentRequest, string $contentType = self::contentTypes['userServiceStartIdentityProviderIntent'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceStartIdentityProviderIntentResponse';
-        $request = $this->userServiceStartIdentityProviderIntentRequest($userServiceStartIdentityProviderIntentRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceStartIdentityProviderIntentResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceStartIdentityProviderIntentResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -16027,10 +5020,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceStartIdentityProviderIntentRequest($userServiceStartIdentityProviderIntentRequest, string $contentType = self::contentTypes['userServiceStartIdentityProviderIntent'][0])
+    private function userServiceStartIdentityProviderIntentRequest($userServiceStartIdentityProviderIntentRequest, string $contentType = self::contentTypes['userServiceStartIdentityProviderIntent'][0])
     {
 
-        // verify the required parameter 'userServiceStartIdentityProviderIntentRequest' is set
         if ($userServiceStartIdentityProviderIntentRequest === null || (is_array($userServiceStartIdentityProviderIntentRequest) && count($userServiceStartIdentityProviderIntentRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceStartIdentityProviderIntentRequest when calling userServiceStartIdentityProviderIntent'
@@ -16049,13 +5041,11 @@ class UserServiceApi
 
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceStartIdentityProviderIntentRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -16075,19 +5065,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -16104,7 +5091,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -16121,317 +5108,21 @@ class UserServiceApi
      * @param  string $userId userId (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceUnlockUser'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceUnlockUserResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceUnlockUserResponse
+     * @throws ApiException
      */
     public function userServiceUnlockUser($userId, string $contentType = self::contentTypes['userServiceUnlockUser'][0])
     {
-        list($response) = $this->userServiceUnlockUserWithHttpInfo($userId, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceUnlockUserWithHttpInfo
-     *
-     * Unlock user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceUnlockUser'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceUnlockUserResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceUnlockUserWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceUnlockUser'][0])
-    {
         $request = $this->userServiceUnlockUserRequest($userId, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceUnlockUserResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceUnlockUserResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceUnlockUserResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceUnlockUserResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceUnlockUserResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceUnlockUserAsync
-     *
-     * Unlock user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceUnlockUser'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceUnlockUserAsync($userId, string $contentType = self::contentTypes['userServiceUnlockUser'][0])
-    {
-        return $this->userServiceUnlockUserAsyncWithHttpInfo($userId, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceUnlockUserAsyncWithHttpInfo
-     *
-     * Unlock user
-     *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceUnlockUser'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceUnlockUserAsyncWithHttpInfo($userId, string $contentType = self::contentTypes['userServiceUnlockUser'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceUnlockUserResponse';
-        $request = $this->userServiceUnlockUserRequest($userId, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceUnlockUserResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceUnlockUserResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -16443,10 +5134,9 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceUnlockUserRequest($userId, string $contentType = self::contentTypes['userServiceUnlockUser'][0])
+    private function userServiceUnlockUserRequest($userId, string $contentType = self::contentTypes['userServiceUnlockUser'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceUnlockUser'
@@ -16463,7 +5153,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -16473,13 +5162,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
@@ -16492,19 +5179,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -16521,7 +5205,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -16539,320 +5223,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceUpdateHumanUserRequest $userServiceUpdateHumanUserRequest userServiceUpdateHumanUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceUpdateHumanUser'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceUpdateHumanUserResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceUpdateHumanUserResponse
+     * @throws ApiException
      */
     public function userServiceUpdateHumanUser($userId, $userServiceUpdateHumanUserRequest, string $contentType = self::contentTypes['userServiceUpdateHumanUser'][0])
     {
-        list($response) = $this->userServiceUpdateHumanUserWithHttpInfo($userId, $userServiceUpdateHumanUserRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceUpdateHumanUserWithHttpInfo
-     *
-     * Update User
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceUpdateHumanUserRequest $userServiceUpdateHumanUserRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceUpdateHumanUser'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceUpdateHumanUserResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceUpdateHumanUserWithHttpInfo($userId, $userServiceUpdateHumanUserRequest, string $contentType = self::contentTypes['userServiceUpdateHumanUser'][0])
-    {
         $request = $this->userServiceUpdateHumanUserRequest($userId, $userServiceUpdateHumanUserRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceUpdateHumanUserResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceUpdateHumanUserResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceUpdateHumanUserResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceUpdateHumanUserResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceUpdateHumanUserResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceUpdateHumanUserAsync
-     *
-     * Update User
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceUpdateHumanUserRequest $userServiceUpdateHumanUserRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceUpdateHumanUser'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceUpdateHumanUserAsync($userId, $userServiceUpdateHumanUserRequest, string $contentType = self::contentTypes['userServiceUpdateHumanUser'][0])
-    {
-        return $this->userServiceUpdateHumanUserAsyncWithHttpInfo($userId, $userServiceUpdateHumanUserRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceUpdateHumanUserAsyncWithHttpInfo
-     *
-     * Update User
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceUpdateHumanUserRequest $userServiceUpdateHumanUserRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceUpdateHumanUser'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceUpdateHumanUserAsyncWithHttpInfo($userId, $userServiceUpdateHumanUserRequest, string $contentType = self::contentTypes['userServiceUpdateHumanUser'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceUpdateHumanUserResponse';
-        $request = $this->userServiceUpdateHumanUserRequest($userId, $userServiceUpdateHumanUserRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceUpdateHumanUserResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceUpdateHumanUserResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -16865,17 +5250,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceUpdateHumanUserRequest($userId, $userServiceUpdateHumanUserRequest, string $contentType = self::contentTypes['userServiceUpdateHumanUser'][0])
+    private function userServiceUpdateHumanUserRequest($userId, $userServiceUpdateHumanUserRequest, string $contentType = self::contentTypes['userServiceUpdateHumanUser'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceUpdateHumanUser'
             );
         }
 
-        // verify the required parameter 'userServiceUpdateHumanUserRequest' is set
         if ($userServiceUpdateHumanUserRequest === null || (is_array($userServiceUpdateHumanUserRequest) && count($userServiceUpdateHumanUserRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceUpdateHumanUserRequest when calling userServiceUpdateHumanUser'
@@ -16892,7 +5275,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -16902,13 +5284,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceUpdateHumanUserRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -16928,19 +5308,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -16957,7 +5334,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'PUT',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -16975,320 +5352,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceVerifyEmailRequest $userServiceVerifyEmailRequest userServiceVerifyEmailRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyEmail'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceVerifyEmailResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceVerifyEmailResponse
+     * @throws ApiException
      */
     public function userServiceVerifyEmail($userId, $userServiceVerifyEmailRequest, string $contentType = self::contentTypes['userServiceVerifyEmail'][0])
     {
-        list($response) = $this->userServiceVerifyEmailWithHttpInfo($userId, $userServiceVerifyEmailRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceVerifyEmailWithHttpInfo
-     *
-     * Verify the email
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyEmailRequest $userServiceVerifyEmailRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyEmail'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceVerifyEmailResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceVerifyEmailWithHttpInfo($userId, $userServiceVerifyEmailRequest, string $contentType = self::contentTypes['userServiceVerifyEmail'][0])
-    {
         $request = $this->userServiceVerifyEmailRequest($userId, $userServiceVerifyEmailRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceVerifyEmailResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceVerifyEmailResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyEmailResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceVerifyEmailResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceVerifyEmailResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceVerifyEmailAsync
-     *
-     * Verify the email
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyEmailRequest $userServiceVerifyEmailRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyEmail'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceVerifyEmailAsync($userId, $userServiceVerifyEmailRequest, string $contentType = self::contentTypes['userServiceVerifyEmail'][0])
-    {
-        return $this->userServiceVerifyEmailAsyncWithHttpInfo($userId, $userServiceVerifyEmailRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceVerifyEmailAsyncWithHttpInfo
-     *
-     * Verify the email
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyEmailRequest $userServiceVerifyEmailRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyEmail'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceVerifyEmailAsyncWithHttpInfo($userId, $userServiceVerifyEmailRequest, string $contentType = self::contentTypes['userServiceVerifyEmail'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceVerifyEmailResponse';
-        $request = $this->userServiceVerifyEmailRequest($userId, $userServiceVerifyEmailRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceVerifyEmailResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceVerifyEmailResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -17301,17 +5379,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceVerifyEmailRequest($userId, $userServiceVerifyEmailRequest, string $contentType = self::contentTypes['userServiceVerifyEmail'][0])
+    private function userServiceVerifyEmailRequest($userId, $userServiceVerifyEmailRequest, string $contentType = self::contentTypes['userServiceVerifyEmail'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceVerifyEmail'
             );
         }
 
-        // verify the required parameter 'userServiceVerifyEmailRequest' is set
         if ($userServiceVerifyEmailRequest === null || (is_array($userServiceVerifyEmailRequest) && count($userServiceVerifyEmailRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceVerifyEmailRequest when calling userServiceVerifyEmail'
@@ -17328,7 +5404,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -17338,13 +5413,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceVerifyEmailRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -17364,19 +5437,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -17393,7 +5463,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -17411,320 +5481,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceVerifyInviteCodeRequest $userServiceVerifyInviteCodeRequest userServiceVerifyInviteCodeRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyInviteCode'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceVerifyInviteCodeResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceVerifyInviteCodeResponse
+     * @throws ApiException
      */
     public function userServiceVerifyInviteCode($userId, $userServiceVerifyInviteCodeRequest, string $contentType = self::contentTypes['userServiceVerifyInviteCode'][0])
     {
-        list($response) = $this->userServiceVerifyInviteCodeWithHttpInfo($userId, $userServiceVerifyInviteCodeRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceVerifyInviteCodeWithHttpInfo
-     *
-     * Verify an invite code for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyInviteCodeRequest $userServiceVerifyInviteCodeRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyInviteCode'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceVerifyInviteCodeResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceVerifyInviteCodeWithHttpInfo($userId, $userServiceVerifyInviteCodeRequest, string $contentType = self::contentTypes['userServiceVerifyInviteCode'][0])
-    {
         $request = $this->userServiceVerifyInviteCodeRequest($userId, $userServiceVerifyInviteCodeRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceVerifyInviteCodeResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceVerifyInviteCodeResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyInviteCodeResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceVerifyInviteCodeResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceVerifyInviteCodeResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceVerifyInviteCodeAsync
-     *
-     * Verify an invite code for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyInviteCodeRequest $userServiceVerifyInviteCodeRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyInviteCode'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceVerifyInviteCodeAsync($userId, $userServiceVerifyInviteCodeRequest, string $contentType = self::contentTypes['userServiceVerifyInviteCode'][0])
-    {
-        return $this->userServiceVerifyInviteCodeAsyncWithHttpInfo($userId, $userServiceVerifyInviteCodeRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceVerifyInviteCodeAsyncWithHttpInfo
-     *
-     * Verify an invite code for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyInviteCodeRequest $userServiceVerifyInviteCodeRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyInviteCode'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceVerifyInviteCodeAsyncWithHttpInfo($userId, $userServiceVerifyInviteCodeRequest, string $contentType = self::contentTypes['userServiceVerifyInviteCode'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceVerifyInviteCodeResponse';
-        $request = $this->userServiceVerifyInviteCodeRequest($userId, $userServiceVerifyInviteCodeRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceVerifyInviteCodeResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceVerifyInviteCodeResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -17737,17 +5508,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceVerifyInviteCodeRequest($userId, $userServiceVerifyInviteCodeRequest, string $contentType = self::contentTypes['userServiceVerifyInviteCode'][0])
+    private function userServiceVerifyInviteCodeRequest($userId, $userServiceVerifyInviteCodeRequest, string $contentType = self::contentTypes['userServiceVerifyInviteCode'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceVerifyInviteCode'
             );
         }
 
-        // verify the required parameter 'userServiceVerifyInviteCodeRequest' is set
         if ($userServiceVerifyInviteCodeRequest === null || (is_array($userServiceVerifyInviteCodeRequest) && count($userServiceVerifyInviteCodeRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceVerifyInviteCodeRequest when calling userServiceVerifyInviteCode'
@@ -17764,7 +5533,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -17774,13 +5542,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceVerifyInviteCodeRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -17800,19 +5566,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -17829,7 +5592,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -17848,323 +5611,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationRequest $userServiceVerifyPasskeyRegistrationRequest userServiceVerifyPasskeyRegistrationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyPasskeyRegistration'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationResponse
+     * @throws ApiException
      */
     public function userServiceVerifyPasskeyRegistration($userId, $passkeyId, $userServiceVerifyPasskeyRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyPasskeyRegistration'][0])
     {
-        list($response) = $this->userServiceVerifyPasskeyRegistrationWithHttpInfo($userId, $passkeyId, $userServiceVerifyPasskeyRegistrationRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceVerifyPasskeyRegistrationWithHttpInfo
-     *
-     * Verify a passkey for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $passkeyId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationRequest $userServiceVerifyPasskeyRegistrationRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyPasskeyRegistration'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceVerifyPasskeyRegistrationWithHttpInfo($userId, $passkeyId, $userServiceVerifyPasskeyRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyPasskeyRegistration'][0])
-    {
         $request = $this->userServiceVerifyPasskeyRegistrationRequest($userId, $passkeyId, $userServiceVerifyPasskeyRegistrationRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceVerifyPasskeyRegistrationAsync
-     *
-     * Verify a passkey for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $passkeyId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationRequest $userServiceVerifyPasskeyRegistrationRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyPasskeyRegistration'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceVerifyPasskeyRegistrationAsync($userId, $passkeyId, $userServiceVerifyPasskeyRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyPasskeyRegistration'][0])
-    {
-        return $this->userServiceVerifyPasskeyRegistrationAsyncWithHttpInfo($userId, $passkeyId, $userServiceVerifyPasskeyRegistrationRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceVerifyPasskeyRegistrationAsyncWithHttpInfo
-     *
-     * Verify a passkey for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $passkeyId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationRequest $userServiceVerifyPasskeyRegistrationRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyPasskeyRegistration'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceVerifyPasskeyRegistrationAsyncWithHttpInfo($userId, $passkeyId, $userServiceVerifyPasskeyRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyPasskeyRegistration'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationResponse';
-        $request = $this->userServiceVerifyPasskeyRegistrationRequest($userId, $passkeyId, $userServiceVerifyPasskeyRegistrationRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -18178,24 +5639,21 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceVerifyPasskeyRegistrationRequest($userId, $passkeyId, $userServiceVerifyPasskeyRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyPasskeyRegistration'][0])
+    private function userServiceVerifyPasskeyRegistrationRequest($userId, $passkeyId, $userServiceVerifyPasskeyRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyPasskeyRegistration'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceVerifyPasskeyRegistration'
             );
         }
 
-        // verify the required parameter 'passkeyId' is set
         if ($passkeyId === null || (is_array($passkeyId) && count($passkeyId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $passkeyId when calling userServiceVerifyPasskeyRegistration'
             );
         }
 
-        // verify the required parameter 'userServiceVerifyPasskeyRegistrationRequest' is set
         if ($userServiceVerifyPasskeyRegistrationRequest === null || (is_array($userServiceVerifyPasskeyRegistrationRequest) && count($userServiceVerifyPasskeyRegistrationRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceVerifyPasskeyRegistrationRequest when calling userServiceVerifyPasskeyRegistration'
@@ -18212,7 +5670,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -18220,7 +5677,6 @@ class UserServiceApi
                 $resourcePath
             );
         }
-        // path params
         if ($passkeyId !== null) {
             $resourcePath = str_replace(
                 '{' . 'passkeyId' . '}',
@@ -18230,13 +5686,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceVerifyPasskeyRegistrationRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -18256,19 +5710,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -18285,7 +5736,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -18303,320 +5754,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceVerifyPhoneRequest $userServiceVerifyPhoneRequest userServiceVerifyPhoneRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyPhone'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceVerifyPhoneResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceVerifyPhoneResponse
+     * @throws ApiException
      */
     public function userServiceVerifyPhone($userId, $userServiceVerifyPhoneRequest, string $contentType = self::contentTypes['userServiceVerifyPhone'][0])
     {
-        list($response) = $this->userServiceVerifyPhoneWithHttpInfo($userId, $userServiceVerifyPhoneRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceVerifyPhoneWithHttpInfo
-     *
-     * Verify the phone
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyPhoneRequest $userServiceVerifyPhoneRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyPhone'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceVerifyPhoneResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceVerifyPhoneWithHttpInfo($userId, $userServiceVerifyPhoneRequest, string $contentType = self::contentTypes['userServiceVerifyPhone'][0])
-    {
         $request = $this->userServiceVerifyPhoneRequest($userId, $userServiceVerifyPhoneRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceVerifyPhoneResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceVerifyPhoneResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyPhoneResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceVerifyPhoneResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceVerifyPhoneResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceVerifyPhoneAsync
-     *
-     * Verify the phone
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyPhoneRequest $userServiceVerifyPhoneRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyPhone'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceVerifyPhoneAsync($userId, $userServiceVerifyPhoneRequest, string $contentType = self::contentTypes['userServiceVerifyPhone'][0])
-    {
-        return $this->userServiceVerifyPhoneAsyncWithHttpInfo($userId, $userServiceVerifyPhoneRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceVerifyPhoneAsyncWithHttpInfo
-     *
-     * Verify the phone
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyPhoneRequest $userServiceVerifyPhoneRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyPhone'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceVerifyPhoneAsyncWithHttpInfo($userId, $userServiceVerifyPhoneRequest, string $contentType = self::contentTypes['userServiceVerifyPhone'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceVerifyPhoneResponse';
-        $request = $this->userServiceVerifyPhoneRequest($userId, $userServiceVerifyPhoneRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceVerifyPhoneResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceVerifyPhoneResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -18629,17 +5781,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceVerifyPhoneRequest($userId, $userServiceVerifyPhoneRequest, string $contentType = self::contentTypes['userServiceVerifyPhone'][0])
+    private function userServiceVerifyPhoneRequest($userId, $userServiceVerifyPhoneRequest, string $contentType = self::contentTypes['userServiceVerifyPhone'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceVerifyPhone'
             );
         }
 
-        // verify the required parameter 'userServiceVerifyPhoneRequest' is set
         if ($userServiceVerifyPhoneRequest === null || (is_array($userServiceVerifyPhoneRequest) && count($userServiceVerifyPhoneRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceVerifyPhoneRequest when calling userServiceVerifyPhone'
@@ -18656,7 +5806,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -18666,13 +5815,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceVerifyPhoneRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -18692,19 +5839,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -18721,7 +5865,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -18739,320 +5883,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationRequest $userServiceVerifyTOTPRegistrationRequest userServiceVerifyTOTPRegistrationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyTOTPRegistration'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationResponse
+     * @throws ApiException
      */
     public function userServiceVerifyTOTPRegistration($userId, $userServiceVerifyTOTPRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyTOTPRegistration'][0])
     {
-        list($response) = $this->userServiceVerifyTOTPRegistrationWithHttpInfo($userId, $userServiceVerifyTOTPRegistrationRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceVerifyTOTPRegistrationWithHttpInfo
-     *
-     * Verify a TOTP generator for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationRequest $userServiceVerifyTOTPRegistrationRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyTOTPRegistration'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceVerifyTOTPRegistrationWithHttpInfo($userId, $userServiceVerifyTOTPRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyTOTPRegistration'][0])
-    {
         $request = $this->userServiceVerifyTOTPRegistrationRequest($userId, $userServiceVerifyTOTPRegistrationRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceVerifyTOTPRegistrationAsync
-     *
-     * Verify a TOTP generator for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationRequest $userServiceVerifyTOTPRegistrationRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyTOTPRegistration'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceVerifyTOTPRegistrationAsync($userId, $userServiceVerifyTOTPRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyTOTPRegistration'][0])
-    {
-        return $this->userServiceVerifyTOTPRegistrationAsyncWithHttpInfo($userId, $userServiceVerifyTOTPRegistrationRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceVerifyTOTPRegistrationAsyncWithHttpInfo
-     *
-     * Verify a TOTP generator for a user
-     *
-     * @param  string $userId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationRequest $userServiceVerifyTOTPRegistrationRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyTOTPRegistration'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceVerifyTOTPRegistrationAsyncWithHttpInfo($userId, $userServiceVerifyTOTPRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyTOTPRegistration'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationResponse';
-        $request = $this->userServiceVerifyTOTPRegistrationRequest($userId, $userServiceVerifyTOTPRegistrationRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -19065,17 +5910,15 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceVerifyTOTPRegistrationRequest($userId, $userServiceVerifyTOTPRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyTOTPRegistration'][0])
+    private function userServiceVerifyTOTPRegistrationRequest($userId, $userServiceVerifyTOTPRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyTOTPRegistration'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceVerifyTOTPRegistration'
             );
         }
 
-        // verify the required parameter 'userServiceVerifyTOTPRegistrationRequest' is set
         if ($userServiceVerifyTOTPRegistrationRequest === null || (is_array($userServiceVerifyTOTPRegistrationRequest) && count($userServiceVerifyTOTPRegistrationRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceVerifyTOTPRegistrationRequest when calling userServiceVerifyTOTPRegistration'
@@ -19092,7 +5935,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -19102,13 +5944,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceVerifyTOTPRegistrationRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -19128,19 +5968,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -19157,7 +5994,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
@@ -19176,323 +6013,21 @@ class UserServiceApi
      * @param  \Zitadel\Client\Model\UserServiceVerifyU2FRegistrationRequest $userServiceVerifyU2FRegistrationRequest userServiceVerifyU2FRegistrationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyU2FRegistration'] to see the possible values for this operation
      *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return \Zitadel\Client\Model\UserServiceVerifyU2FRegistrationResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus
+     * @return \Zitadel\Client\Model\UserServiceVerifyU2FRegistrationResponse
+     * @throws ApiException
      */
     public function userServiceVerifyU2FRegistration($userId, $u2fId, $userServiceVerifyU2FRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyU2FRegistration'][0])
     {
-        list($response) = $this->userServiceVerifyU2FRegistrationWithHttpInfo($userId, $u2fId, $userServiceVerifyU2FRegistrationRequest, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation userServiceVerifyU2FRegistrationWithHttpInfo
-     *
-     * Verify a u2f token for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $u2fId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyU2FRegistrationRequest $userServiceVerifyU2FRegistrationRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyU2FRegistration'] to see the possible values for this operation
-     *
-     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
-     * @throws \InvalidArgumentException
-     * @return array of \Zitadel\Client\Model\UserServiceVerifyU2FRegistrationResponse|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus|\Zitadel\Client\Model\UserServiceRpcStatus, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function userServiceVerifyU2FRegistrationWithHttpInfo($userId, $u2fId, $userServiceVerifyU2FRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyU2FRegistration'][0])
-    {
         $request = $this->userServiceVerifyU2FRegistrationRequest($userId, $u2fId, $userServiceVerifyU2FRegistrationRequest, $contentType);
 
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Zitadel\Client\Model\UserServiceVerifyU2FRegistrationResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceVerifyU2FRegistrationResponse' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceVerifyU2FRegistrationResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 403:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                default:
-                    if ('\Zitadel\Client\Model\UserServiceRpcStatus' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Zitadel\Client\Model\UserServiceRpcStatus' !== 'string') {
-                            try {
-                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                            } catch (\JsonException $exception) {
-                                throw new ApiException(
-                                    sprintf(
-                                        'Error JSON decoding server response (%s)',
-                                        $request->getUri()
-                                    ),
-                                    $statusCode,
-                                    $response->getHeaders(),
-                                    $content
-                                );
-                            }
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\UserServiceRpcStatus', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            $returnType = '\Zitadel\Client\Model\UserServiceVerifyU2FRegistrationResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    try {
-                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException $exception) {
-                        throw new ApiException(
-                            sprintf(
-                                'Error JSON decoding server response (%s)',
-                                $request->getUri()
-                            ),
-                            $statusCode,
-                            $response->getHeaders(),
-                            $content
-                        );
-                    }
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceVerifyU2FRegistrationResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                default:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Zitadel\Client\Model\UserServiceRpcStatus',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation userServiceVerifyU2FRegistrationAsync
-     *
-     * Verify a u2f token for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $u2fId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyU2FRegistrationRequest $userServiceVerifyU2FRegistrationRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyU2FRegistration'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceVerifyU2FRegistrationAsync($userId, $u2fId, $userServiceVerifyU2FRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyU2FRegistration'][0])
-    {
-        return $this->userServiceVerifyU2FRegistrationAsyncWithHttpInfo($userId, $u2fId, $userServiceVerifyU2FRegistrationRequest, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation userServiceVerifyU2FRegistrationAsyncWithHttpInfo
-     *
-     * Verify a u2f token for a user
-     *
-     * @param  string $userId (required)
-     * @param  string $u2fId (required)
-     * @param  \Zitadel\Client\Model\UserServiceVerifyU2FRegistrationRequest $userServiceVerifyU2FRegistrationRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['userServiceVerifyU2FRegistration'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function userServiceVerifyU2FRegistrationAsyncWithHttpInfo($userId, $u2fId, $userServiceVerifyU2FRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyU2FRegistration'][0])
-    {
-        $returnType = '\Zitadel\Client\Model\UserServiceVerifyU2FRegistrationResponse';
-        $request = $this->userServiceVerifyU2FRegistrationRequest($userId, $u2fId, $userServiceVerifyU2FRegistrationRequest, $contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceVerifyU2FRegistrationResponse',
+            403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceVerifyU2FRegistrationResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
@@ -19506,24 +6041,21 @@ class UserServiceApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function userServiceVerifyU2FRegistrationRequest($userId, $u2fId, $userServiceVerifyU2FRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyU2FRegistration'][0])
+    private function userServiceVerifyU2FRegistrationRequest($userId, $u2fId, $userServiceVerifyU2FRegistrationRequest, string $contentType = self::contentTypes['userServiceVerifyU2FRegistration'][0])
     {
 
-        // verify the required parameter 'userId' is set
         if ($userId === null || (is_array($userId) && count($userId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userId when calling userServiceVerifyU2FRegistration'
             );
         }
 
-        // verify the required parameter 'u2fId' is set
         if ($u2fId === null || (is_array($u2fId) && count($u2fId) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $u2fId when calling userServiceVerifyU2FRegistration'
             );
         }
 
-        // verify the required parameter 'userServiceVerifyU2FRegistrationRequest' is set
         if ($userServiceVerifyU2FRegistrationRequest === null || (is_array($userServiceVerifyU2FRegistrationRequest) && count($userServiceVerifyU2FRegistrationRequest) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $userServiceVerifyU2FRegistrationRequest when calling userServiceVerifyU2FRegistration'
@@ -19540,7 +6072,6 @@ class UserServiceApi
 
 
 
-        // path params
         if ($userId !== null) {
             $resourcePath = str_replace(
                 '{' . 'userId' . '}',
@@ -19548,7 +6079,6 @@ class UserServiceApi
                 $resourcePath
             );
         }
-        // path params
         if ($u2fId !== null) {
             $resourcePath = str_replace(
                 '{' . 'u2fId' . '}',
@@ -19558,13 +6088,11 @@ class UserServiceApi
         }
 
 
-        $headers = $this->headerSelector->selectHeaders(
+        $headers = $this->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-
-        // for model (json/xml)
         if (isset($userServiceVerifyU2FRegistrationRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -19584,19 +6112,16 @@ class UserServiceApi
                         ];
                     }
                 }
-                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
         }
 
-        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -19613,7 +6138,7 @@ class UserServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
