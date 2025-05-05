@@ -29,11 +29,11 @@ class ClientCredentialsAuthenticator extends OAuthAuthenticator
         string $scope = 'openid urn:zitadel:iam:org:project:id:zitadel:aud'
     ) {
         parent::__construct($hostName, $clientId, $scope, new GenericProvider([
-          'clientId' => $clientId,
-          'clientSecret' => $clientSecret,
-          'urlAccessToken' => $hostName->getTokenEndpoint()->toString(),
-          'urlAuthorize' => $hostName->getAuthorizationEndpoint()->toString(),
-          'urlResourceOwnerDetails' => $hostName->getUserinfoEndpoint()->toString(),
+            'clientId' => $clientId,
+            'clientSecret' => $clientSecret,
+            'urlAccessToken' => $hostName->getTokenEndpoint()->toString(),
+            'urlAuthorize' => $hostName->getAuthorizationEndpoint()->toString(),
+            'urlResourceOwnerDetails' => $hostName->getUserinfoEndpoint()->toString(),
         ]));
     }
 
@@ -59,7 +59,7 @@ class ClientCredentialsAuthenticator extends OAuthAuthenticator
     protected function getAccessTokenOptions(): array
     {
         return [
-          'scope' => $this->scope,
+            'scope' => $this->scope,
         ];
     }
 }

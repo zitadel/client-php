@@ -21,8 +21,8 @@ class ClientCredentialsAuthenticatorTest extends OAuthAuthenticatorTest
         sleep(20);
 
         $authenticator = ClientCredentialsAuthenticator::builder(static::$oauthHost, "dummy-client", "dummy-secret")
-          ->scopes(["openid", "foo"])
-          ->build();
+            ->scopes(["openid", "foo"])
+            ->build();
 
         $this->assertNotEmpty($authenticator->getAuthToken(), "Access token should not be empty");
         $token = $authenticator->refreshToken();

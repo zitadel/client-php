@@ -38,11 +38,11 @@ abstract class OAuthAuthenticator extends Authenticator
      * @param GenericProvider $provider
      */
     public function __construct(OpenId           $openId, /**
-   * The OAuth2 client identifier.
-   */
-        protected string $clientId, /**
-     * The scope for the token request.
+     * The OAuth2 client identifier.
      */
+        protected string $clientId, /**
+         * The scope for the token request.
+         */
         protected string $scope, protected GenericProvider $provider)
     {
         parent::__construct($openId->getHostEndpoint()->toString());

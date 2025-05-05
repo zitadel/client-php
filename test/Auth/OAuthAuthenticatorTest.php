@@ -39,13 +39,13 @@ abstract class OAuthAuthenticatorTest extends TestCase
         parent::setUpBeforeClass();
         /** @noinspection SpellCheckingInspection */
         self::$mockOAuth2Server = (new GenericContainer("ghcr.io/navikt/mock-oauth2-server:2.1.10"))
-          ->withExposedPorts(8080)
-          ->start();
+            ->withExposedPorts(8080)
+            ->start();
 
         (new WaitForHttp(self::$mockOAuth2Server->getMappedPort(8080)))
-          ->withPath("/")
-          ->withExpectedStatusCode(405)
-          ->wait(self::$mockOAuth2Server);
+            ->withPath("/")
+            ->withExpectedStatusCode(405)
+            ->wait(self::$mockOAuth2Server);
 
         /** @noinspection HttpUrlsUsage */
         self::$oauthHost = "http://" . self::$mockOAuth2Server->getHost() . ":" . self::$mockOAuth2Server->getMappedPort(8080);

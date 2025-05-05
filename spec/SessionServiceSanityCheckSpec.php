@@ -34,14 +34,6 @@ class SessionServiceSanityCheckSpec extends TestCase
     private static Zitadel $client;
     private string $sessionId;
 
-    /**
-     * Retrieve a configuration variable from the environment, falling back to $_ENV.
-     */
-    private static function env(string $key): string
-    {
-        return getenv($key) ?: ($_ENV[$key] ?? '');
-    }
-
     public static function setUpBeforeClass(): void
     {
         self::$validToken = self::env('AUTH_TOKEN');
@@ -50,35 +42,11 @@ class SessionServiceSanityCheckSpec extends TestCase
     }
 
     /**
-     * @throws ApiException
+     * Retrieve a configuration variable from the environment, falling back to $_ENV.
      */
-    protected function setUp(): void
+    private static function env(string $key): string
     {
-        $request = new SessionServiceCreateSessionRequest();
-        $request->setChecks(
-            (new SessionServiceChecks())
-                ->setUser(
-                    (new SessionServiceCheckUser())
-                        ->setLoginName('johndoe')
-                )
-        );
-        $request->setLifetime('18000s');
-
-        $response = self::$client->sessions->sessionServiceCreateSession($request);
-        $this->sessionId = $response->getSessionId();
-    }
-
-    protected function tearDown(): void
-    {
-        $request = new SessionServiceDeleteSessionRequest();
-        try {
-            self::$client->sessions->sessionServiceDeleteSession(
-                $this->sessionId,
-                $request
-            );
-        } catch (ApiException) {
-            // Ignore cleanup errors
-        }
+        return getenv($key) ?: ($_ENV[$key] ?? '');
     }
 
     /**
@@ -133,5 +101,37 @@ class SessionServiceSanityCheckSpec extends TestCase
         self::$client->sessions->sessionServiceGetSession(
             uniqid()
         );
+    }
+
+    /**
+     * @throws ApiException
+     */
+    protected function setUp(): void
+    {
+        $request = new SessionServiceCreateSessionRequest();
+        $request->setChecks(
+            (new SessionServiceChecks())
+                ->setUser(
+                    (new SessionServiceCheckUser())
+                        ->setLoginName('johndoe')
+                )
+        );
+        $request->setLifetime('18000s');
+
+        $response = self::$client->sessions->sessionServiceCreateSession($request);
+        $this->sessionId = $response->getSessionId();
+    }
+
+    protected function tearDown(): void
+    {
+        $request = new SessionServiceDeleteSessionRequest();
+        try {
+            self::$client->sessions->sessionServiceDeleteSession(
+                $this->sessionId,
+                $request
+            );
+        } catch (ApiException) {
+            // Ignore cleanup errors
+        }
     }
 }

@@ -19,14 +19,6 @@ use Zitadel\Client\ZitadelException;
 class UseAccessTokenSpec extends TestCase
 {
     /**
-     * Retrieve a configuration variable from the environment, falling back to $_ENV.
-     */
-    private static function env(string $key): string
-    {
-        return getenv($key) ?: ($_ENV[$key] ?? '');
-    }
-
-    /**
      * Validate retrieval of general settings with a valid PAT.
      *
      * @throws ApiException on API error
@@ -40,6 +32,14 @@ class UseAccessTokenSpec extends TestCase
         );
 
         $client->settings->settingsServiceGetGeneralSettings();
+    }
+
+    /**
+     * Retrieve a configuration variable from the environment, falling back to $_ENV.
+     */
+    private static function env(string $key): string
+    {
+        return getenv($key) ?: ($_ENV[$key] ?? '');
     }
 
     /**
