@@ -7,47 +7,36 @@ use Zitadel\Client\Auth\NoAuthAuthenticator;
 
 class Configuration
 {
-    public static function myUserAgent(): string
-    {
-        return sprintf('zitadel-client/%s (lang=php; lang_version=%s; os=%s; arch=%s)', Version::VERSION, PHP_VERSION, strtolower(PHP_OS_FAMILY), strtolower(php_uname('m')));
-    }
-
     public const BOOLEAN_FORMAT_INT = 'int';
     public const BOOLEAN_FORMAT_STRING = 'string';
-
     /**
      * @var Configuration
      */
     private static Configuration $defaultConfiguration;
-
     /**
      * Boolean format for query string
      *
      * @var string
      */
     protected string $booleanFormatForQueryString = self::BOOLEAN_FORMAT_INT;
-
     /**
      * User agent of the HTTP request, set to "OpenAPI-Generator/{version}/PHP" by default
      *
      * @var string
      */
     protected string $userAgent;
-
     /**
      * Debug switch (default set to false)
      *
      * @var bool
      */
     protected bool $debug = false;
-
     /**
      * Debug file location (log to STDOUT by default)
      *
      * @var string
      */
     protected string $debugFile = 'php://output';
-
     /**
      * Debug file location (log to STDOUT by default)
      *
@@ -62,6 +51,11 @@ class Configuration
     {
         $this->tempFolderPath = sys_get_temp_dir();
         $this->userAgent = self::myUserAgent();
+    }
+
+    public static function myUserAgent(): string
+    {
+        return sprintf('zitadel-client/%s (lang=php; lang_version=%s; os=%s; arch=%s)', Version::VERSION, PHP_VERSION, strtolower(PHP_OS_FAMILY), strtolower(php_uname('m')));
     }
 
     /**

@@ -72,7 +72,7 @@ class Zitadel
     {
         return new self(
             ClientCredentialsAuthenticator::builder($host, $clientId, $clientSecret)
-            ->build()
+                ->build()
         );
     }
 

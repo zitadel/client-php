@@ -12,14 +12,6 @@ use Psr\Http\Message\StreamInterface;
 use SplFileObject;
 use Zitadel\Client\Model\ModelInterface;
 
-/**
- * ObjectSerializer Class Doc Comment
- *
- * @category Class
- * @package  Zitadel\Client
- * @author   OpenAPI Generator team
- * @link     https://openapi-generator.tech
- */
 class ObjectSerializer
 {
     /** @var string
@@ -556,8 +548,8 @@ class ObjectSerializer
         }
 
         $castBool = Configuration::BOOLEAN_FORMAT_INT == Configuration::getDefaultConfiguration()->getBooleanFormatForQueryString()
-          ? fn ($v) => (int)$v
-          : (fn ($v) => $v ? 'true' : 'false');
+            ? fn ($v) => (int)$v
+            : (fn ($v) => $v ? 'true' : 'false');
 
         $qs = '';
         foreach ($params as $k => $v) {

@@ -8,4 +8,3 @@ parameters:
     - lib/Model/*
     - lib/Api/*
     - lib/ObjectSerializer.php
-    - lib/HeaderSelector.php
