@@ -6,6 +6,7 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use Zitadel\Client\ApiException;
 use Zitadel\Client\Zitadel;
+use Zitadel\Client\ZitadelException;
 
 /**
  * SettingsService Integration Tests (Private Key Assertion)
@@ -62,7 +63,7 @@ class UsePrivateKeySpec extends TestCase
             self::createTempJwtFile()
         );
 
-        $this->expectException(ApiException::class);
+        $this->expectException(ZitadelException::class);
         $invalid->settings->settingsServiceGetGeneralSettings();
     }
 }

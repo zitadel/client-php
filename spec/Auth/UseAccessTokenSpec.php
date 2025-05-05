@@ -5,6 +5,7 @@ namespace Zitadel\Client\Spec\Auth;
 use PHPUnit\Framework\TestCase;
 use Zitadel\Client\ApiException;
 use Zitadel\Client\Zitadel;
+use Zitadel\Client\ZitadelException;
 
 /**
  * SettingsService Integration Tests (Personal Access Token)
@@ -51,7 +52,7 @@ class UseAccessTokenSpec extends TestCase
             'invalid'
         );
 
-        $this->expectException(ApiException::class);
+        $this->expectException(ZitadelException::class);
         $invalid->settings->settingsServiceGetGeneralSettings();
     }
 }

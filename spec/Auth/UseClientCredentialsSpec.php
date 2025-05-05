@@ -6,6 +6,7 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use Zitadel\Client\ApiException;
 use Zitadel\Client\Zitadel;
+use Zitadel\Client\ZitadelException;
 
 /**
  * SettingsService Integration Tests (Client Credentials)
@@ -56,7 +57,7 @@ class UseClientCredentialsSpec extends TestCase
             'invalid'
         );
 
-        $this->expectException(ApiException::class);
+        $this->expectException(ZitadelException::class);
         $invalid->settings->settingsServiceGetGeneralSettings();
     }
 }

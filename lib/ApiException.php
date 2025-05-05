@@ -2,97 +2,71 @@
 
 namespace Zitadel\Client;
 
-use Exception;
 use stdClass;
 
-class ApiException extends Exception
+/**
+ * Represents an HTTP error returned from the Zitadel API.
+ *
+ * Exposes the HTTP status code, response headers, and response body.
+ */
+class ApiException extends ZitadelException
 {
     /**
-     * The HTTP body of the server response either as Json or string.
+     * The HTTP body of the server response (string, decoded JSON, or object).
      *
      * @var stdClass|string|null
-     * @noinspection PhpMissingFieldTypeInspection
      */
-    protected $responseBody;
+    protected stdClass|string|null $responseBody;
 
     /**
-     * The HTTP header of the server response.
+     * The HTTP headers of the server response.
      *
-     * @var string[][]|null
-     * @noinspection PhpMissingFieldTypeInspection
+     * @var string[][]
      */
-    protected $responseHeaders;
+    protected array $responseHeaders;
 
     /**
-     * The deserialized response object
+     * Constructor.
      *
-     * @var stdClass|string|null
-     * @noinspection PhpMissingFieldTypeInspection
+     * @param string $message         Error message
+     * @param int $code            HTTP status code
+     * @param string[][]           $responseHeaders HTTP response headers
+     * @param string|stdClass|null $responseBody    HTTP response body (string, decoded JSON, or object)
      */
-    protected $responseObject;
-
-    /**
-     * Constructor
-     *
-     * @param string $message Error message
-     * @param int $code HTTP status code
-     * @param string[][]|null $responseHeaders HTTP response header
-     * @param stdClass|string|null $responseBody HTTP decoded body of the server response either as \stdClass or string
-     * @noinspection PhpMissingParamTypeInspection
-     */
-    public function __construct($message = "", $code = 0, $responseHeaders = [], $responseBody = null)
+    public function __construct(string $message, int $code, $responseHeaders = [], stdClass|string|null $responseBody = null)
     {
         parent::__construct($message, $code);
         $this->responseHeaders = $responseHeaders;
-        $this->responseBody = $responseBody;
+        $this->responseBody  = $responseBody;
     }
 
     /**
-     * Gets the HTTP response header
+     * Gets the HTTP status code.
      *
-     * @return string[][]|null HTTP response header
-     * @noinspection PhpMissingReturnTypeInspection
+     * @return int HTTP status code
      */
-    public function getResponseHeaders()
+    public function getStatusCode(): int
+    {
+        return parent::getCode();
+    }
+
+    /**
+     * Gets the HTTP response headers.
+     *
+     * @return string[][] HTTP response headers
+     */
+    public function getResponseHeaders(): array
     {
         return $this->responseHeaders;
     }
 
     /**
-     * Gets the HTTP body of the server response either as Json or string
+     * Gets the HTTP response body (string, decoded JSON, or object).
      *
-     * @return stdClass|string|null HTTP body of the server response either as \stdClass or string
-     * @noinspection PhpMissingReturnTypeInspection
+     * @return stdClass|string|null HTTP response body
      */
-    public function getResponseBody()
+    public function getResponseBody(): string|stdClass|null
     {
         return $this->responseBody;
-    }
-
-    /**
-     * Gets the deserialized response object (during deserialization)
-     *
-     * @return mixed the deserialized response object
-     * @noinspection PhpReturnDocTypeMismatchInspection
-     * @noinspection PhpMissingReturnTypeInspection
-     * @noinspection PhpUnused
-     */
-    public function getResponseObject()
-    {
-        return $this->responseObject;
-    }
-
-    /**
-     * Sets the deserialized response object (during deserialization)
-     *
-     * @param mixed $obj Deserialized response object
-     *
-     * @return void
-     * @noinspection PhpMissingReturnTypeInspection
-     * @noinspection PhpMissingParamTypeInspection
-     */
-    public function setResponseObject($obj)
-    {
-        $this->responseObject = $obj;
     }
 }

@@ -12,6 +12,6 @@ exclude:
       - lib/HeaderSelector.php
 
 php:
-  version: 8.0
+  version: '8.0'
 
 linter: jetbrains/qodana-php:2025.1

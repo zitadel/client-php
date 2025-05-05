@@ -6,7 +6,7 @@ use Exception;
 use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 use Throwable;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\ZitadelException;
 
 /**
  * Abstract base class for OAuth-based authenticators.
@@ -87,7 +87,7 @@ abstract class OAuthAuthenticator extends Authenticator
 
             return $this->token;
         } catch (Throwable $e) {
-            throw new ApiException('Token refresh failed: ' . $e->getMessage());
+            throw new ZitadelException('Token refresh failed: ' . $e->getMessage());
         }
     }
 
