@@ -20,14 +20,6 @@ use Zitadel\Client\ZitadelException;
 class UseClientCredentialsSpec extends TestCase
 {
     /**
-     * Retrieve a configuration variable from the environment, falling back to $_ENV.
-     */
-    private static function env(string $key): string
-    {
-        return getenv($key) ?: ($_ENV[$key] ?? '');
-    }
-
-    /**
      * Validate retrieval of general settings with valid client credentials.
      *
      * @throws ApiException on API error
@@ -43,6 +35,14 @@ class UseClientCredentialsSpec extends TestCase
         );
 
         $client->settings->settingsServiceGetGeneralSettings();
+    }
+
+    /**
+     * Retrieve a configuration variable from the environment, falling back to $_ENV.
+     */
+    private static function env(string $key): string
+    {
+        return getenv($key) ?: ($_ENV[$key] ?? '');
     }
 
     /**

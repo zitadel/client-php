@@ -2,6 +2,7 @@
 
 namespace Zitadel\Client\Spec\Auth;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Zitadel\Client\ApiException;
 use Zitadel\Client\Zitadel;
@@ -19,14 +20,6 @@ use Zitadel\Client\ZitadelException;
 class UseAccessTokenSpec extends TestCase
 {
     /**
-     * Retrieve a configuration variable from the environment, falling back to $_ENV.
-     */
-    private static function env(string $key): string
-    {
-        return getenv($key) ?: ($_ENV[$key] ?? '');
-    }
-
-    /**
      * Validate retrieval of general settings with a valid PAT.
      *
      * @throws ApiException on API error
@@ -43,7 +36,16 @@ class UseAccessTokenSpec extends TestCase
     }
 
     /**
+     * Retrieve a configuration variable from the environment, falling back to $_ENV.
+     */
+    private static function env(string $key): string
+    {
+        return getenv($key) ?: ($_ENV[$key] ?? '');
+    }
+
+    /**
      * Expect an ApiException when using an invalid PAT.
+     * @throws Exception
      */
     public function testRaisesApiExceptionWithInvalidAuth(): void
     {

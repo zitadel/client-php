@@ -35,14 +35,6 @@ class UserServiceSanityCheckSpec extends TestCase
     protected static Zitadel $client;
     protected UserServiceAddHumanUserResponse $user;
 
-    /**
-     * Retrieve a configuration variable from the environment, falling back to $_ENV.
-     */
-    private static function env(string $key): string
-    {
-        return getenv($key) ?: ($_ENV[$key] ?? '');
-    }
-
     public static function setUpBeforeClass(): void
     {
         self::$validToken = self::env('AUTH_TOKEN');
@@ -51,39 +43,11 @@ class UserServiceSanityCheckSpec extends TestCase
     }
 
     /**
-     * Create a new human user before each test.
-     *
-     * @throws ApiException on API error
+     * Retrieve a configuration variable from the environment, falling back to $_ENV.
      */
-    protected function setUp(): void
+    private static function env(string $key): string
     {
-        $request = (new UserServiceAddHumanUserRequest())
-            ->setUsername(uniqid('user_'))
-            ->setProfile(
-                (new UserServiceSetHumanProfile())
-                    ->setGivenName('John')
-                    ->setFamilyName('Doe')
-            )
-            ->setEmail(
-                (new UserServiceSetHumanEmail())
-                    ->setEmail('johndoe' . uniqid() . '@example.com')
-            );
-
-        $this->user = self::$client->users->userServiceAddHumanUser($request);
-    }
-
-    /**
-     * Remove the created human user after each test.
-     */
-    protected function tearDown(): void
-    {
-        try {
-            self::$client->users->userServiceDeleteUser(
-                $this->user->getUserId()
-            );
-        } catch (ApiException) {
-            // cleanup errors ignored
-        }
+        return getenv($key) ?: ($_ENV[$key] ?? '');
     }
 
     /**
@@ -154,5 +118,41 @@ class UserServiceSanityCheckSpec extends TestCase
     {
         $this->expectException(ApiException::class);
         self::$client->users->userServiceGetUserByID(uniqid());
+    }
+
+    /**
+     * Create a new human user before each test.
+     *
+     * @throws ApiException on API error
+     */
+    protected function setUp(): void
+    {
+        $request = (new UserServiceAddHumanUserRequest())
+            ->setUsername(uniqid('user_'))
+            ->setProfile(
+                (new UserServiceSetHumanProfile())
+                    ->setGivenName('John')
+                    ->setFamilyName('Doe')
+            )
+            ->setEmail(
+                (new UserServiceSetHumanEmail())
+                    ->setEmail('johndoe' . uniqid() . '@example.com')
+            );
+
+        $this->user = self::$client->users->userServiceAddHumanUser($request);
+    }
+
+    /**
+     * Remove the created human user after each test.
+     */
+    protected function tearDown(): void
+    {
+        try {
+            self::$client->users->userServiceDeleteUser(
+                $this->user->getUserId()
+            );
+        } catch (ApiException) {
+            // cleanup errors ignored
+        }
     }
 }

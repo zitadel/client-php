@@ -129,6 +129,14 @@ class Setup extends Printer implements TestListener
     }
 
     /**
+     * Returns the XML as a string.
+     */
+    public function getXML(): string
+    {
+        return $this->document->saveXML();
+    }
+
+    /**
      * An error occurred.
      * @throws DOMException
      */
@@ -136,6 +144,40 @@ class Setup extends Printer implements TestListener
     {
         $this->doAddFault($test, $t, 'error');
         $this->testSuiteErrors[$this->testSuiteLevel]++;
+    }
+
+    /**
+     * @throws DOMException
+     */
+    private function doAddFault(Test $test, Throwable $t, string $type): void
+    {
+        if ($this->currentTestCase === null) {
+            return;
+        }
+
+        if ($test instanceof SelfDescribing) {
+            $buffer = $test->toString() . "\n";
+        } else {
+            $buffer = '';
+        }
+
+        $buffer .= trim(
+            TestFailure::exceptionToString($t) . "\n" .
+            Filter::getFilteredStacktrace($t),
+        );
+
+        $fault = $this->document->createElement(
+            $type,
+            Xml::prepareString($buffer),
+        );
+
+        if ($t instanceof ExceptionWrapper) {
+            $fault->setAttribute('type', $t->getClassName());
+        } else {
+            $fault->setAttribute('type', $t::class);
+        }
+
+        $this->currentTestCase->appendChild($fault);
     }
 
     /**
@@ -165,6 +207,22 @@ class Setup extends Printer implements TestListener
     public function addIncompleteTest(Test $test, Throwable $t, float $time): void
     {
         $this->doAddSkipped();
+    }
+
+    /**
+     * @throws DOMException
+     */
+    private function doAddSkipped(): void
+    {
+        if ($this->currentTestCase === null) {
+            return;
+        }
+
+        $skipped = $this->document->createElement('skipped');
+
+        $this->currentTestCase->appendChild($skipped);
+
+        $this->testSuiteSkipped[$this->testSuiteLevel]++;
     }
 
     /**
@@ -233,6 +291,18 @@ class Setup extends Printer implements TestListener
         $this->testSuiteFailures[$this->testSuiteLevel] = 0;
         $this->testSuiteSkipped[$this->testSuiteLevel] = 0;
         $this->testSuiteTimes[$this->testSuiteLevel] = 0;
+    }
+
+    private static function toRelativePath(string $absolutePath): string
+    {
+        $cwd = getcwd();
+
+        if (str_starts_with($absolutePath, $cwd)) {
+            $relative = substr($absolutePath, strlen($cwd));
+            return ltrim($relative, DIRECTORY_SEPARATOR);
+        }
+
+        return $absolutePath;
     }
 
     /**
@@ -372,75 +442,5 @@ class Setup extends Printer implements TestListener
         }
 
         $this->currentTestCase = null;
-    }
-
-    /**
-     * Returns the XML as a string.
-     */
-    public function getXML(): string
-    {
-        return $this->document->saveXML();
-    }
-
-    /**
-     * @throws DOMException
-     */
-    private function doAddFault(Test $test, Throwable $t, string $type): void
-    {
-        if ($this->currentTestCase === null) {
-            return;
-        }
-
-        if ($test instanceof SelfDescribing) {
-            $buffer = $test->toString() . "\n";
-        } else {
-            $buffer = '';
-        }
-
-        $buffer .= trim(
-            TestFailure::exceptionToString($t) . "\n" .
-      Filter::getFilteredStacktrace($t),
-        );
-
-        $fault = $this->document->createElement(
-            $type,
-            Xml::prepareString($buffer),
-        );
-
-        if ($t instanceof ExceptionWrapper) {
-            $fault->setAttribute('type', $t->getClassName());
-        } else {
-            $fault->setAttribute('type', $t::class);
-        }
-
-        $this->currentTestCase->appendChild($fault);
-    }
-
-    /**
-     * @throws DOMException
-     */
-    private function doAddSkipped(): void
-    {
-        if ($this->currentTestCase === null) {
-            return;
-        }
-
-        $skipped = $this->document->createElement('skipped');
-
-        $this->currentTestCase->appendChild($skipped);
-
-        $this->testSuiteSkipped[$this->testSuiteLevel]++;
-    }
-
-    private static function toRelativePath(string $absolutePath): string
-    {
-        $cwd = getcwd();
-
-        if (str_starts_with($absolutePath, $cwd)) {
-            $relative = substr($absolutePath, strlen($cwd));
-            return ltrim($relative, DIRECTORY_SEPARATOR);
-        }
-
-        return $absolutePath;
     }
 }

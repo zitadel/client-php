@@ -16,8 +16,8 @@ class PersonalAccessAuthenticator extends Authenticator
      * @param string $token The personal access token.
      */
     public function __construct(string         $host, /**
-   * The personal access token.
-   */
+     * The personal access token.
+     */
         private string $token)
     {
         parent::__construct($host);

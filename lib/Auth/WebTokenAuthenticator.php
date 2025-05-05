@@ -62,10 +62,10 @@ class WebTokenAuthenticator extends OAuthAuthenticator
         private ?string      $keyId = null
     ) {
         parent::__construct($hostName, $clientId, $scope, new GenericProvider([
-          'clientId' => $clientId,
-          'urlAccessToken' => $hostName->getTokenEndpoint()->toString(),
-          'urlAuthorize' => $hostName->getAuthorizationEndpoint()->toString(),
-          'urlResourceOwnerDetails' => $hostName->getUserinfoEndpoint()->toString(),
+            'clientId' => $clientId,
+            'urlAccessToken' => $hostName->getTokenEndpoint()->toString(),
+            'urlAuthorize' => $hostName->getAuthorizationEndpoint()->toString(),
+            'urlResourceOwnerDetails' => $hostName->getUserinfoEndpoint()->toString(),
         ]));
         $this->provider->getGrantFactory()->setGrant(WebTokenAuthenticator::GRANT_TYPE, new JwtBearer());
     }
@@ -134,15 +134,15 @@ class WebTokenAuthenticator extends OAuthAuthenticator
     {
         $now = new DateTimeImmutable();
         $payload = [
-          'iss' => $this->jwtIssuer,
-          'sub' => $this->jwtSubject,
-          'aud' => $this->jwtAudience,
-          'iat' => $now->getTimestamp(),
-          'exp' => $now->add($this->jwtLifetime)->getTimestamp(),
+            'iss' => $this->jwtIssuer,
+            'sub' => $this->jwtSubject,
+            'aud' => $this->jwtAudience,
+            'iat' => $now->getTimestamp(),
+            'exp' => $now->add($this->jwtLifetime)->getTimestamp(),
         ];
         return [
-          'scope' => $this->scope,
-          'assertion' => JWT::encode($payload, $this->privateKey, $this->jwtAlgorithm, $this->keyId),
+            'scope' => $this->scope,
+            'assertion' => JWT::encode($payload, $this->privateKey, $this->jwtAlgorithm, $this->keyId),
         ];
     }
 
