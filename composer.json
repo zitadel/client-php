@@ -1,73 +1,73 @@
 {
-  "name": "zitadel/client",
-  "version": "0.0.1",
-  "description": "Official Zitadel SDK for PHP. Authenticate and access Zitadel's authentication and management APIs in PHP.",
-  "keywords": [
-    "api",
-    "iam",
-    "client-lib",
-    "client-library",
-    "sdk-python",
-    "zitadel",
-    "zitadel-sdk"
-  ],
-  "homepage": "https://github.com/zitadel/client-php",
-  "license": "Apache-2.0",
-  "authors": [
-    {
-      "name": "Zitadel",
-      "homepage": "https://zitadel.com"
+    "name": "zitadel/client",
+    "version": "1.4.0",
+    "description": "Official Zitadel SDK for PHP. Authenticate and access Zitadel's authentication and management APIs in PHP.",
+    "keywords": [
+        "api",
+        "iam",
+        "client-lib",
+        "client-library",
+        "sdk-python",
+        "zitadel",
+        "zitadel-sdk"
+    ],
+    "homepage": "https://github.com/zitadel/client-php",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Zitadel",
+            "homepage": "https://zitadel.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "guzzlehttp/guzzle": "^7.3",
+        "guzzlehttp/psr7": "^1.7 || ^2.0",
+        "firebase/php-jwt": "6.10.0",
+        "league/oauth2-client": "^2.8",
+        "league/uri": "^7.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.0 || ^9.0",
+        "friendsofphp/php-cs-fixer": "^3.75",
+        "haydenpierce/class-finder": "^0.5.3",
+        "testcontainers/testcontainers": "^1.0",
+        "ext-openssl": "*",
+        "ext-dom": "*",
+        "vlucas/phpdotenv": "^5.6",
+        "rector/rector": "^2.0",
+        "phpstan/phpstan": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Zitadel\\Client\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Zitadel\\Client\\Test\\": "test/",
+            "Zitadel\\Client\\Spec\\": "spec/"
+        }
+    },
+    "support": {
+        "email": "support@zitadel.com",
+        "issues": "https://github.com/zitadel/client-php/issues",
+        "source": "https://github.com/zitadel/client-php",
+        "security": "https://github.com/zitadel/client-php/security",
+        "chat": "https://discord.com/servers/zitadel-927474939156643850"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --coverage-html=build/coverage/html --coverage-clover=build/coverage/clover.xml",
+        "rector": "rector process",
+        "phpstan": "phpstan analyse --memory-limit=-1",
+        "format": "php-cs-fixer fix "
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
-  ],
-  "require": {
-    "php": "^8.0",
-    "ext-curl": "*",
-    "ext-json": "*",
-    "ext-mbstring": "*",
-    "guzzlehttp/guzzle": "^7.3",
-    "guzzlehttp/psr7": "^1.7 || ^2.0",
-    "firebase/php-jwt": "6.10.0",
-    "league/oauth2-client": "^2.8",
-    "league/uri": "^7.5"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^8.0 || ^9.0",
-    "friendsofphp/php-cs-fixer": "^3.75",
-    "haydenpierce/class-finder": "^0.5.3",
-    "testcontainers/testcontainers": "^1.0",
-    "ext-openssl": "*",
-    "ext-dom": "*",
-    "vlucas/phpdotenv": "^5.6",
-    "rector/rector": "^2.0",
-    "phpstan/phpstan": "^2.1"
-  },
-  "autoload": {
-    "psr-4": {
-      "Zitadel\\Client\\": "lib/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Zitadel\\Client\\Test\\": "test/",
-      "Zitadel\\Client\\Spec\\": "spec/"
-    }
-  },
-  "support": {
-    "email": "support@zitadel.com",
-    "issues": "https://github.com/zitadel/client-php/issues",
-    "source": "https://github.com/zitadel/client-php",
-    "security": "https://github.com/zitadel/client-php/security",
-    "chat": "https://discord.com/servers/zitadel-927474939156643850"
-  },
-  "scripts": {
-    "test": "vendor/bin/phpunit --coverage-html=build/coverage/html --coverage-clover=build/coverage/clover.xml",
-    "rector": "rector process",
-    "phpstan": "phpstan analyse --memory-limit=-1",
-    "format": "php-cs-fixer fix "
-  },
-  "config": {
-    "allow-plugins": {
-      "php-http/discovery": true
-    }
-  }
 }
