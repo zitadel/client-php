@@ -12,6 +12,9 @@ use Psr\Http\Message\StreamInterface;
 use SplFileObject;
 use Zitadel\Client\Model\ModelInterface;
 
+/**
+ * @internal
+ */
 class ObjectSerializer
 {
     /** @var string

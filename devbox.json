@@ -27,6 +27,9 @@
       "replit": [
         "docker build --tag php-repl --file Dockerfile .",
         "docker run --rm --interactive --tty php-repl"
+      ],
+      "docgen": [
+        "composer docgen"
       ]
     }
   }
