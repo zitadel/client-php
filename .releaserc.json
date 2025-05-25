@@ -42,7 +42,7 @@
         "assets": []
       }
     ],
-    "@iwavesmedia/semantic-release-composer",
+    "@mridang/semantic-release-packagist",
     [
       "@semantic-release/git",
       {
