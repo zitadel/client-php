@@ -3,6 +3,7 @@
 namespace Zitadel\Client;
 
 use Exception;
+use Zitadel\Client\Api\ActionServiceApi;
 use Zitadel\Client\Api\FeatureServiceApi;
 use Zitadel\Client\Api\IdentityProviderServiceApi;
 use Zitadel\Client\Api\OIDCServiceApi;
@@ -11,6 +12,7 @@ use Zitadel\Client\Api\SAMLServiceApi;
 use Zitadel\Client\Api\SessionServiceApi;
 use Zitadel\Client\Api\SettingsServiceApi;
 use Zitadel\Client\Api\UserServiceApi;
+use Zitadel\Client\Api\WebKeyServiceApi;
 use Zitadel\Client\Auth\Authenticator;
 use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
 use Zitadel\Client\Auth\PersonalAccessAuthenticator;
@@ -18,14 +20,16 @@ use Zitadel\Client\Auth\WebTokenAuthenticator;
 
 class Zitadel
 {
+    public ActionServiceApi $actions;
     public FeatureServiceApi $features;
     public IdentityProviderServiceApi $idps;
     public OidcServiceApi $oidc;
     public OrganizationServiceApi $organizations;
+    public SAMLServiceApi $saml;
     public SessionServiceApi $sessions;
     public SettingsServiceApi $settings;
     public UserServiceApi $users;
-    public SAMLServiceApi $saml;
+    public WebKeyServiceApi $webkeys;
 
     public function __construct(Authenticator $authenticator, ?callable $mutateConfig = null)
     {
@@ -35,14 +39,16 @@ class Zitadel
         };
         $mutateConfig($config);
 
+        $this->actions = new ActionServiceApi(null, $config);
         $this->features = new FeatureServiceApi(null, $config);
         $this->idps = new IdentityProviderServiceApi(null, $config);
         $this->oidc = new OidcServiceApi(null, $config);
         $this->organizations = new OrganizationServiceApi(null, $config);
+        $this->saml = new SAMLServiceApi(null, $config);
         $this->sessions = new SessionServiceApi(null, $config);
         $this->settings = new SettingsServiceApi(null, $config);
         $this->users = new UserServiceApi(null, $config);
-        $this->saml = new SAMLServiceApi(null, $config);
+        $this->webkeys = new WebKeyServiceApi(null, $config);
     }
 
     /**
