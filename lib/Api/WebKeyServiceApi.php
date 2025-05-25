@@ -1,6 +1,6 @@
 <?php
 /**
- * SettingsApi
+ * WebKeyServiceApi
  * PHP version 7.4
  *
  * @category Class
@@ -40,14 +40,14 @@ use RuntimeException;
 use Exception;
 
 /**
- * SettingsApi Class Doc Comment
+ * WebKeyServiceApi Class Doc Comment
  *
  * @category Class
  * @package  Zitadel\Client
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
-class SettingsApi
+class WebKeyServiceApi
 {
     /**
      * @var ClientInterface
@@ -66,10 +66,16 @@ class SettingsApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'settingsServiceGetSecuritySettings' => [
+        'webKeyServiceActivateWebKey' => [
             'application/json',
         ],
-        'settingsServiceSetSecuritySettings' => [
+        'webKeyServiceCreateWebKey' => [
+            'application/json',
+        ],
+        'webKeyServiceDeleteWebKey' => [
+            'application/json',
+        ],
+        'webKeyServiceListWebKeys' => [
             'application/json',
         ],
     ];
@@ -437,42 +443,388 @@ class SettingsApi
     }
 
     /**
-     * Operation settingsServiceGetSecuritySettings
+     * Operation webKeyServiceActivateWebKey
      *
-     * Get Security Settings
+     * Activate Web Key
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetSecuritySettings'] to see the possible values for this operation
+     * @param  string $id id (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceActivateWebKey'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\SettingsServiceGetSecuritySettingsResponse
+     * @return \Zitadel\Client\Model\WebKeyServiceBetaActivateWebKeyResponse
      * @throws ApiException
      */
-    public function settingsServiceGetSecuritySettings(string $contentType = self::contentTypes['settingsServiceGetSecuritySettings'][0])
+    public function webKeyServiceActivateWebKey($id, string $contentType = self::contentTypes['webKeyServiceActivateWebKey'][0])
     {
-        $request = $this->settingsServiceGetSecuritySettingsRequest($contentType);
+        $request = $this->webKeyServiceActivateWebKeyRequest($id, $contentType);
 
         $responseTypes = [
-            200 => '\Zitadel\Client\Model\SettingsServiceGetSecuritySettingsResponse',
-            403 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
+            200 => '\Zitadel\Client\Model\WebKeyServiceBetaActivateWebKeyResponse',
+            400 => 'object',
+            403 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            404 => 'object',
+            'default' => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
         ];
-        $defaultSignatureType = '\Zitadel\Client\Model\SettingsServiceGetSecuritySettingsResponse';
+        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceBetaActivateWebKeyResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'settingsServiceGetSecuritySettings'
+     * Create request for operation 'webKeyServiceActivateWebKey'
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetSecuritySettings'] to see the possible values for this operation
+     * @param  string $id (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceActivateWebKey'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function settingsServiceGetSecuritySettingsRequest(string $contentType = self::contentTypes['settingsServiceGetSecuritySettings'][0])
+    private function webKeyServiceActivateWebKeyRequest($id, string $contentType = self::contentTypes['webKeyServiceActivateWebKey'][0])
+    {
+
+        if ($id === null || (is_array($id) && count($id) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $id when calling webKeyServiceActivateWebKey'
+            );
+        }
+
+
+        $resourcePath = '/v2beta/web_keys/{id}/activate';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        if ($id !== null) {
+            $resourcePath = str_replace(
+                '{' . 'id' . '}',
+                ObjectSerializer::toPathValue($id),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation webKeyServiceCreateWebKey
+     *
+     * Create Web Key
+     *
+     * @param  \Zitadel\Client\Model\WebKeyServiceCreateWebKeyRequest $webKeyServiceCreateWebKeyRequest webKeyServiceCreateWebKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceCreateWebKey'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\WebKeyServiceBetaCreateWebKeyResponse
+     * @throws ApiException
+     */
+    public function webKeyServiceCreateWebKey($webKeyServiceCreateWebKeyRequest, string $contentType = self::contentTypes['webKeyServiceCreateWebKey'][0])
+    {
+        $request = $this->webKeyServiceCreateWebKeyRequest($webKeyServiceCreateWebKeyRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\WebKeyServiceBetaCreateWebKeyResponse',
+            400 => 'object',
+            403 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceBetaCreateWebKeyResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'webKeyServiceCreateWebKey'
+     *
+     * @param  \Zitadel\Client\Model\WebKeyServiceCreateWebKeyRequest $webKeyServiceCreateWebKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceCreateWebKey'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function webKeyServiceCreateWebKeyRequest($webKeyServiceCreateWebKeyRequest, string $contentType = self::contentTypes['webKeyServiceCreateWebKey'][0])
+    {
+
+        if ($webKeyServiceCreateWebKeyRequest === null || (is_array($webKeyServiceCreateWebKeyRequest) && count($webKeyServiceCreateWebKeyRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $webKeyServiceCreateWebKeyRequest when calling webKeyServiceCreateWebKey'
+            );
+        }
+
+
+        $resourcePath = '/v2beta/web_keys';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($webKeyServiceCreateWebKeyRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($webKeyServiceCreateWebKeyRequest));
+            } else {
+                $httpBody = $webKeyServiceCreateWebKeyRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation webKeyServiceDeleteWebKey
+     *
+     * Delete Web Key
+     *
+     * @param  string $id id (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceDeleteWebKey'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\WebKeyServiceBetaDeleteWebKeyResponse
+     * @throws ApiException
+     */
+    public function webKeyServiceDeleteWebKey($id, string $contentType = self::contentTypes['webKeyServiceDeleteWebKey'][0])
+    {
+        $request = $this->webKeyServiceDeleteWebKeyRequest($id, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\WebKeyServiceBetaDeleteWebKeyResponse',
+            400 => 'object',
+            403 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceBetaDeleteWebKeyResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'webKeyServiceDeleteWebKey'
+     *
+     * @param  string $id (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceDeleteWebKey'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function webKeyServiceDeleteWebKeyRequest($id, string $contentType = self::contentTypes['webKeyServiceDeleteWebKey'][0])
+    {
+
+        if ($id === null || (is_array($id) && count($id) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $id when calling webKeyServiceDeleteWebKey'
+            );
+        }
+
+
+        $resourcePath = '/v2beta/web_keys/{id}';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        if ($id !== null) {
+            $resourcePath = str_replace(
+                '{' . 'id' . '}',
+                ObjectSerializer::toPathValue($id),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'DELETE',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation webKeyServiceListWebKeys
+     *
+     * List Web Keys
+     *
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceListWebKeys'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\WebKeyServiceBetaListWebKeysResponse
+     * @throws ApiException
+     */
+    public function webKeyServiceListWebKeys(string $contentType = self::contentTypes['webKeyServiceListWebKeys'][0])
+    {
+        $request = $this->webKeyServiceListWebKeysRequest($contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\WebKeyServiceBetaListWebKeysResponse',
+            400 => 'object',
+            403 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceBetaListWebKeysResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'webKeyServiceListWebKeys'
+     *
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceListWebKeys'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function webKeyServiceListWebKeysRequest(string $contentType = self::contentTypes['webKeyServiceListWebKeys'][0])
     {
 
 
-        $resourcePath = '/v2/settings/security';
+        $resourcePath = '/v2beta/web_keys';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -529,120 +881,6 @@ class SettingsApi
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
             'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
-    }
-
-    /**
-     * Operation settingsServiceSetSecuritySettings
-     *
-     * Set Security Settings
-     *
-     * @param  \Zitadel\Client\Model\SettingsServiceSetSecuritySettingsRequest $settingsServiceSetSecuritySettingsRequest settingsServiceSetSecuritySettingsRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceSetSecuritySettings'] to see the possible values for this operation
-     *
-     * @return \Zitadel\Client\Model\SettingsServiceSetSecuritySettingsResponse
-     * @throws ApiException
-     */
-    public function settingsServiceSetSecuritySettings($settingsServiceSetSecuritySettingsRequest, string $contentType = self::contentTypes['settingsServiceSetSecuritySettings'][0])
-    {
-        $request = $this->settingsServiceSetSecuritySettingsRequest($settingsServiceSetSecuritySettingsRequest, $contentType);
-
-        $responseTypes = [
-            200 => '\Zitadel\Client\Model\SettingsServiceSetSecuritySettingsResponse',
-            403 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-        ];
-        $defaultSignatureType = '\Zitadel\Client\Model\SettingsServiceSetSecuritySettingsResponse';
-        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
-    }
-
-    /**
-     * Create request for operation 'settingsServiceSetSecuritySettings'
-     *
-     * @param  \Zitadel\Client\Model\SettingsServiceSetSecuritySettingsRequest $settingsServiceSetSecuritySettingsRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceSetSecuritySettings'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    private function settingsServiceSetSecuritySettingsRequest($settingsServiceSetSecuritySettingsRequest, string $contentType = self::contentTypes['settingsServiceSetSecuritySettings'][0])
-    {
-
-        if ($settingsServiceSetSecuritySettingsRequest === null || (is_array($settingsServiceSetSecuritySettingsRequest) && count($settingsServiceSetSecuritySettingsRequest) === 0)) {
-            throw new \InvalidArgumentException(
-                'Missing the required parameter $settingsServiceSetSecuritySettingsRequest when calling settingsServiceSetSecuritySettings'
-            );
-        }
-
-
-        $resourcePath = '/v2/policies/security';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-
-
-
-
-        $headers = $this->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-        if (isset($settingsServiceSetSecuritySettingsRequest)) {
-            if (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($settingsServiceSetSecuritySettingsRequest));
-            } else {
-                $httpBody = $settingsServiceSetSecuritySettingsRequest;
-            }
-        } elseif (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
-            } else {
-                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
-            }
-        }
-
-        if (!empty($this->config->getAccessToken())) {
-            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
-        return new Request(
-            'PUT',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
