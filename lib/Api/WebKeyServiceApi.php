@@ -1,6 +1,6 @@
 <?php
 /**
- * SessionServiceApi
+ * WebKeyServiceApi
  * PHP version 7.4
  *
  * @category Class
@@ -40,14 +40,14 @@ use RuntimeException;
 use Exception;
 
 /**
- * SessionServiceApi Class Doc Comment
+ * WebKeyServiceApi Class Doc Comment
  *
  * @category Class
  * @package  Zitadel\Client
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
-class SessionServiceApi
+class WebKeyServiceApi
 {
     /**
      * @var ClientInterface
@@ -66,19 +66,16 @@ class SessionServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'sessionServiceCreateSession' => [
+        'webKeyServiceActivateWebKey' => [
             'application/json',
         ],
-        'sessionServiceDeleteSession' => [
+        'webKeyServiceCreateWebKey' => [
             'application/json',
         ],
-        'sessionServiceGetSession' => [
+        'webKeyServiceDeleteWebKey' => [
             'application/json',
         ],
-        'sessionServiceListSessions' => [
-            'application/json',
-        ],
-        'sessionServiceSetSession' => [
+        'webKeyServiceListWebKeys' => [
             'application/json',
         ],
     ];
@@ -446,50 +443,51 @@ class SessionServiceApi
     }
 
     /**
-     * Operation sessionServiceCreateSession
+     * Operation webKeyServiceActivateWebKey
      *
-     * Create a new session
+     * Activate Web Key
      *
-     * @param  \Zitadel\Client\Model\SessionServiceCreateSessionRequest $sessionServiceCreateSessionRequest sessionServiceCreateSessionRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceCreateSession'] to see the possible values for this operation
+     * @param  string $id id (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceActivateWebKey'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\SessionServiceCreateSessionResponse
+     * @return \Zitadel\Client\Model\WebKeyServiceBetaActivateWebKeyResponse
      * @throws ApiException
      */
-    public function sessionServiceCreateSession($sessionServiceCreateSessionRequest, string $contentType = self::contentTypes['sessionServiceCreateSession'][0])
+    public function webKeyServiceActivateWebKey($id, string $contentType = self::contentTypes['webKeyServiceActivateWebKey'][0])
     {
-        $request = $this->sessionServiceCreateSessionRequest($sessionServiceCreateSessionRequest, $contentType);
+        $request = $this->webKeyServiceActivateWebKeyRequest($id, $contentType);
 
         $responseTypes = [
-            200 => '\Zitadel\Client\Model\SessionServiceCreateSessionResponse',
-            403 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SessionServiceRpcStatus',
+            200 => '\Zitadel\Client\Model\WebKeyServiceBetaActivateWebKeyResponse',
+            400 => 'object',
+            403 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            404 => 'object',
+            'default' => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
         ];
-        $defaultSignatureType = '\Zitadel\Client\Model\SessionServiceCreateSessionResponse';
+        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceBetaActivateWebKeyResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'sessionServiceCreateSession'
+     * Create request for operation 'webKeyServiceActivateWebKey'
      *
-     * @param  \Zitadel\Client\Model\SessionServiceCreateSessionRequest $sessionServiceCreateSessionRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceCreateSession'] to see the possible values for this operation
+     * @param  string $id (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceActivateWebKey'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function sessionServiceCreateSessionRequest($sessionServiceCreateSessionRequest, string $contentType = self::contentTypes['sessionServiceCreateSession'][0])
+    private function webKeyServiceActivateWebKeyRequest($id, string $contentType = self::contentTypes['webKeyServiceActivateWebKey'][0])
     {
 
-        if ($sessionServiceCreateSessionRequest === null || (is_array($sessionServiceCreateSessionRequest) && count($sessionServiceCreateSessionRequest) === 0)) {
+        if ($id === null || (is_array($id) && count($id) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionServiceCreateSessionRequest when calling sessionServiceCreateSession'
+                'Missing the required parameter $id when calling webKeyServiceActivateWebKey'
             );
         }
 
 
-        $resourcePath = '/v2/sessions';
+        $resourcePath = '/v2beta/web_keys/{id}/activate';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -498,265 +496,10 @@ class SessionServiceApi
 
 
 
-
-
-        $headers = $this->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-        if (isset($sessionServiceCreateSessionRequest)) {
-            if (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($sessionServiceCreateSessionRequest));
-            } else {
-                $httpBody = $sessionServiceCreateSessionRequest;
-            }
-        } elseif (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
-            } else {
-                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
-            }
-        }
-
-        if (!empty($this->config->getAccessToken())) {
-            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
-    }
-
-    /**
-     * Operation sessionServiceDeleteSession
-     *
-     * Terminate an existing session
-     *
-     * @param  string $sessionId \&quot;id of the session to terminate\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionRequest $sessionServiceDeleteSessionRequest sessionServiceDeleteSessionRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceDeleteSession'] to see the possible values for this operation
-     *
-     * @return \Zitadel\Client\Model\SessionServiceDeleteSessionResponse
-     * @throws ApiException
-     */
-    public function sessionServiceDeleteSession($sessionId, $sessionServiceDeleteSessionRequest, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
-    {
-        $request = $this->sessionServiceDeleteSessionRequest($sessionId, $sessionServiceDeleteSessionRequest, $contentType);
-
-        $responseTypes = [
-            200 => '\Zitadel\Client\Model\SessionServiceDeleteSessionResponse',
-            403 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-        ];
-        $defaultSignatureType = '\Zitadel\Client\Model\SessionServiceDeleteSessionResponse';
-        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
-    }
-
-    /**
-     * Create request for operation 'sessionServiceDeleteSession'
-     *
-     * @param  string $sessionId \&quot;id of the session to terminate\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionRequest $sessionServiceDeleteSessionRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceDeleteSession'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    private function sessionServiceDeleteSessionRequest($sessionId, $sessionServiceDeleteSessionRequest, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
-    {
-
-        if ($sessionId === null || (is_array($sessionId) && count($sessionId) === 0)) {
-            throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionId when calling sessionServiceDeleteSession'
-            );
-        }
-
-        if ($sessionServiceDeleteSessionRequest === null || (is_array($sessionServiceDeleteSessionRequest) && count($sessionServiceDeleteSessionRequest) === 0)) {
-            throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionServiceDeleteSessionRequest when calling sessionServiceDeleteSession'
-            );
-        }
-
-
-        $resourcePath = '/v2/sessions/{sessionId}';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-
-
-        if ($sessionId !== null) {
+        if ($id !== null) {
             $resourcePath = str_replace(
-                '{' . 'sessionId' . '}',
-                ObjectSerializer::toPathValue($sessionId),
-                $resourcePath
-            );
-        }
-
-
-        $headers = $this->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-        if (isset($sessionServiceDeleteSessionRequest)) {
-            if (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($sessionServiceDeleteSessionRequest));
-            } else {
-                $httpBody = $sessionServiceDeleteSessionRequest;
-            }
-        } elseif (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
-            } else {
-                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
-            }
-        }
-
-        if (!empty($this->config->getAccessToken())) {
-            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
-        return new Request(
-            'DELETE',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
-    }
-
-    /**
-     * Operation sessionServiceGetSession
-     *
-     * Get a session
-     *
-     * @param  string $sessionId sessionId (required)
-     * @param  string|null $sessionToken sessionToken (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceGetSession'] to see the possible values for this operation
-     *
-     * @return \Zitadel\Client\Model\SessionServiceGetSessionResponse
-     * @throws ApiException
-     */
-    public function sessionServiceGetSession($sessionId, $sessionToken = null, string $contentType = self::contentTypes['sessionServiceGetSession'][0])
-    {
-        $request = $this->sessionServiceGetSessionRequest($sessionId, $sessionToken, $contentType);
-
-        $responseTypes = [
-            200 => '\Zitadel\Client\Model\SessionServiceGetSessionResponse',
-            403 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-        ];
-        $defaultSignatureType = '\Zitadel\Client\Model\SessionServiceGetSessionResponse';
-        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
-    }
-
-    /**
-     * Create request for operation 'sessionServiceGetSession'
-     *
-     * @param  string $sessionId (required)
-     * @param  string|null $sessionToken (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceGetSession'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    private function sessionServiceGetSessionRequest($sessionId, $sessionToken = null, string $contentType = self::contentTypes['sessionServiceGetSession'][0])
-    {
-
-        if ($sessionId === null || (is_array($sessionId) && count($sessionId) === 0)) {
-            throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionId when calling sessionServiceGetSession'
-            );
-        }
-
-
-
-        $resourcePath = '/v2/sessions/{sessionId}';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $sessionToken,
-            'sessionToken', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'string', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
-
-
-        if ($sessionId !== null) {
-            $resourcePath = str_replace(
-                '{' . 'sessionId' . '}',
-                ObjectSerializer::toPathValue($sessionId),
+                '{' . 'id' . '}',
+                ObjectSerializer::toPathValue($id),
                 $resourcePath
             );
         }
@@ -807,7 +550,7 @@ class SessionServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -815,51 +558,51 @@ class SessionServiceApi
     }
 
     /**
-     * Operation sessionServiceListSessions
+     * Operation webKeyServiceCreateWebKey
      *
-     * Search sessions
+     * Create Web Key
      *
-     * @param  \Zitadel\Client\Model\SessionServiceListSessionsRequest $sessionServiceListSessionsRequest sessionServiceListSessionsRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceListSessions'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\WebKeyServiceCreateWebKeyRequest $webKeyServiceCreateWebKeyRequest webKeyServiceCreateWebKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceCreateWebKey'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\SessionServiceListSessionsResponse
+     * @return \Zitadel\Client\Model\WebKeyServiceBetaCreateWebKeyResponse
      * @throws ApiException
      */
-    public function sessionServiceListSessions($sessionServiceListSessionsRequest, string $contentType = self::contentTypes['sessionServiceListSessions'][0])
+    public function webKeyServiceCreateWebKey($webKeyServiceCreateWebKeyRequest, string $contentType = self::contentTypes['webKeyServiceCreateWebKey'][0])
     {
-        $request = $this->sessionServiceListSessionsRequest($sessionServiceListSessionsRequest, $contentType);
+        $request = $this->webKeyServiceCreateWebKeyRequest($webKeyServiceCreateWebKeyRequest, $contentType);
 
         $responseTypes = [
-            200 => '\Zitadel\Client\Model\SessionServiceListSessionsResponse',
-            400 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            403 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SessionServiceRpcStatus',
+            200 => '\Zitadel\Client\Model\WebKeyServiceBetaCreateWebKeyResponse',
+            400 => 'object',
+            403 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
         ];
-        $defaultSignatureType = '\Zitadel\Client\Model\SessionServiceListSessionsResponse';
+        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceBetaCreateWebKeyResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'sessionServiceListSessions'
+     * Create request for operation 'webKeyServiceCreateWebKey'
      *
-     * @param  \Zitadel\Client\Model\SessionServiceListSessionsRequest $sessionServiceListSessionsRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceListSessions'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\WebKeyServiceCreateWebKeyRequest $webKeyServiceCreateWebKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceCreateWebKey'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function sessionServiceListSessionsRequest($sessionServiceListSessionsRequest, string $contentType = self::contentTypes['sessionServiceListSessions'][0])
+    private function webKeyServiceCreateWebKeyRequest($webKeyServiceCreateWebKeyRequest, string $contentType = self::contentTypes['webKeyServiceCreateWebKey'][0])
     {
 
-        if ($sessionServiceListSessionsRequest === null || (is_array($sessionServiceListSessionsRequest) && count($sessionServiceListSessionsRequest) === 0)) {
+        if ($webKeyServiceCreateWebKeyRequest === null || (is_array($webKeyServiceCreateWebKeyRequest) && count($webKeyServiceCreateWebKeyRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionServiceListSessionsRequest when calling sessionServiceListSessions'
+                'Missing the required parameter $webKeyServiceCreateWebKeyRequest when calling webKeyServiceCreateWebKey'
             );
         }
 
 
-        $resourcePath = '/v2/sessions/search';
+        $resourcePath = '/v2beta/web_keys';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -875,12 +618,12 @@ class SessionServiceApi
             $contentType,
             $multipart
         );
-        if (isset($sessionServiceListSessionsRequest)) {
+        if (isset($webKeyServiceCreateWebKeyRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($sessionServiceListSessionsRequest));
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($webKeyServiceCreateWebKeyRequest));
             } else {
-                $httpBody = $sessionServiceListSessionsRequest;
+                $httpBody = $webKeyServiceCreateWebKeyRequest;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -930,58 +673,51 @@ class SessionServiceApi
     }
 
     /**
-     * Operation sessionServiceSetSession
+     * Operation webKeyServiceDeleteWebKey
      *
-     * Update an existing session
+     * Delete Web Key
      *
-     * @param  string $sessionId \&quot;id of the session to update\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceSetSessionRequest $sessionServiceSetSessionRequest sessionServiceSetSessionRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceSetSession'] to see the possible values for this operation
+     * @param  string $id id (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceDeleteWebKey'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\SessionServiceSetSessionResponse
+     * @return \Zitadel\Client\Model\WebKeyServiceBetaDeleteWebKeyResponse
      * @throws ApiException
      */
-    public function sessionServiceSetSession($sessionId, $sessionServiceSetSessionRequest, string $contentType = self::contentTypes['sessionServiceSetSession'][0])
+    public function webKeyServiceDeleteWebKey($id, string $contentType = self::contentTypes['webKeyServiceDeleteWebKey'][0])
     {
-        $request = $this->sessionServiceSetSessionRequest($sessionId, $sessionServiceSetSessionRequest, $contentType);
+        $request = $this->webKeyServiceDeleteWebKeyRequest($id, $contentType);
 
         $responseTypes = [
-            200 => '\Zitadel\Client\Model\SessionServiceSetSessionResponse',
-            403 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SessionServiceRpcStatus',
+            200 => '\Zitadel\Client\Model\WebKeyServiceBetaDeleteWebKeyResponse',
+            400 => 'object',
+            403 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
         ];
-        $defaultSignatureType = '\Zitadel\Client\Model\SessionServiceSetSessionResponse';
+        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceBetaDeleteWebKeyResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'sessionServiceSetSession'
+     * Create request for operation 'webKeyServiceDeleteWebKey'
      *
-     * @param  string $sessionId \&quot;id of the session to update\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceSetSessionRequest $sessionServiceSetSessionRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceSetSession'] to see the possible values for this operation
+     * @param  string $id (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceDeleteWebKey'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function sessionServiceSetSessionRequest($sessionId, $sessionServiceSetSessionRequest, string $contentType = self::contentTypes['sessionServiceSetSession'][0])
+    private function webKeyServiceDeleteWebKeyRequest($id, string $contentType = self::contentTypes['webKeyServiceDeleteWebKey'][0])
     {
 
-        if ($sessionId === null || (is_array($sessionId) && count($sessionId) === 0)) {
+        if ($id === null || (is_array($id) && count($id) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionId when calling sessionServiceSetSession'
-            );
-        }
-
-        if ($sessionServiceSetSessionRequest === null || (is_array($sessionServiceSetSessionRequest) && count($sessionServiceSetSessionRequest) === 0)) {
-            throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionServiceSetSessionRequest when calling sessionServiceSetSession'
+                'Missing the required parameter $id when calling webKeyServiceDeleteWebKey'
             );
         }
 
 
-        $resourcePath = '/v2/sessions/{sessionId}';
+        $resourcePath = '/v2beta/web_keys/{id}';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -990,10 +726,10 @@ class SessionServiceApi
 
 
 
-        if ($sessionId !== null) {
+        if ($id !== null) {
             $resourcePath = str_replace(
-                '{' . 'sessionId' . '}',
-                ObjectSerializer::toPathValue($sessionId),
+                '{' . 'id' . '}',
+                ObjectSerializer::toPathValue($id),
                 $resourcePath
             );
         }
@@ -1004,14 +740,7 @@ class SessionServiceApi
             $contentType,
             $multipart
         );
-        if (isset($sessionServiceSetSessionRequest)) {
-            if (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($sessionServiceSetSessionRequest));
-            } else {
-                $httpBody = $sessionServiceSetSessionRequest;
-            }
-        } elseif (count($formParams) > 0) {
+        if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -1051,7 +780,107 @@ class SessionServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'PATCH',
+            'DELETE',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation webKeyServiceListWebKeys
+     *
+     * List Web Keys
+     *
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceListWebKeys'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\WebKeyServiceBetaListWebKeysResponse
+     * @throws ApiException
+     */
+    public function webKeyServiceListWebKeys(string $contentType = self::contentTypes['webKeyServiceListWebKeys'][0])
+    {
+        $request = $this->webKeyServiceListWebKeysRequest($contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\WebKeyServiceBetaListWebKeysResponse',
+            400 => 'object',
+            403 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            404 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceBetaListWebKeysResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'webKeyServiceListWebKeys'
+     *
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceListWebKeys'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function webKeyServiceListWebKeysRequest(string $contentType = self::contentTypes['webKeyServiceListWebKeys'][0])
+    {
+
+
+        $resourcePath = '/v2beta/web_keys';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'GET',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody

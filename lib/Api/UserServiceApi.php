@@ -581,7 +581,7 @@ class UserServiceApi
         $request = $this->userServiceAddHumanUserRequest($userServiceAddHumanUserRequest, $contentType);
 
         $responseTypes = [
-            201 => '\Zitadel\Client\Model\UserServiceAddHumanUserResponse',
+            200 => '\Zitadel\Client\Model\UserServiceAddHumanUserResponse',
             403 => '\Zitadel\Client\Model\UserServiceRpcStatus',
             404 => '\Zitadel\Client\Model\UserServiceRpcStatus',
             'default' => '\Zitadel\Client\Model\UserServiceRpcStatus',
