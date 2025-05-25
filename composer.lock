@@ -4,30 +4,30 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a975fb07a432a4c36f4f05c21634546f",
+    "content-hash": "6f5b0d05b6b9e4f703b4286ccc1a8f44",
     "packages": [
         {
             "name": "firebase/php-jwt",
-            "version": "v6.10.0",
+            "version": "v6.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "a49db6f0a5033aef5143295342f1c95521b075ff"
+                "reference": "d1e91ecf8c598d073d0995afa8cd5c75c6e19e66"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/a49db6f0a5033aef5143295342f1c95521b075ff",
-                "reference": "a49db6f0a5033aef5143295342f1c95521b075ff",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/d1e91ecf8c598d073d0995afa8cd5c75c6e19e66",
+                "reference": "d1e91ecf8c598d073d0995afa8cd5c75c6e19e66",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.4||^8.0"
+                "php": "^8.0"
             },
             "require-dev": {
-                "guzzlehttp/guzzle": "^6.5||^7.4",
+                "guzzlehttp/guzzle": "^7.4",
                 "phpspec/prophecy-phpunit": "^2.0",
                 "phpunit/phpunit": "^9.5",
-                "psr/cache": "^1.0||^2.0",
+                "psr/cache": "^2.0||^3.0",
                 "psr/http-client": "^1.0",
                 "psr/http-factory": "^1.0"
             },
@@ -65,9 +65,9 @@
             ],
             "support": {
                 "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v6.10.0"
+                "source": "https://github.com/firebase/php-jwt/tree/v6.11.1"
             },
-            "time": "2023-12-01T16:26:39+00:00"
+            "time": "2025-04-09T20:32:01+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1088,16 +1088,16 @@
     "packages-dev": [
         {
             "name": "beluga-php/docker-php",
-            "version": "v1.45.3",
+            "version": "v1.45.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/beluga-php/docker-php.git",
-                "reference": "524a3058efa125cee1c84bb9b3e959f293f567e7"
+                "reference": "c81738c945052b3a80b80c4532ce4f10df459242"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/beluga-php/docker-php/zipball/524a3058efa125cee1c84bb9b3e959f293f567e7",
-                "reference": "524a3058efa125cee1c84bb9b3e959f293f567e7",
+                "url": "https://api.github.com/repos/beluga-php/docker-php/zipball/c81738c945052b3a80b80c4532ce4f10df459242",
+                "reference": "c81738c945052b3a80b80c4532ce4f10df459242",
                 "shasum": ""
             },
             "require": {
@@ -1106,7 +1106,7 @@
                 "php": ">=8.1",
                 "php-http/client-common": "^2.7",
                 "php-http/discovery": "^1.19",
-                "php-http/socket-client": "^2.1",
+                "php-http/socket-client": "^2.3",
                 "psr/http-message": "^2.0",
                 "symfony/filesystem": "^6.3 || ^7.0",
                 "symfony/process": "^6.3 || ^7.0",
@@ -1122,8 +1122,8 @@
                 "friendsofphp/php-cs-fixer": "^3.8",
                 "php-parallel-lint/php-parallel-lint": "^1.2",
                 "phpstan/phpstan": "^1.10",
-                "phpunit/phpunit": "^9.5",
-                "psy/psysh": "^0.12",
+                "phpunit/phpunit": "^10.5.46",
+                "psy/psysh": "^0.12.8",
                 "roave/security-advisories": "dev-latest"
             },
             "type": "library",
@@ -1149,7 +1149,7 @@
             "description": "A Docker PHP client",
             "support": {
                 "issues": "https://github.com/beluga-php/docker-php/issues",
-                "source": "https://github.com/beluga-php/docker-php/tree/v1.45.3"
+                "source": "https://github.com/beluga-php/docker-php/tree/v1.45.4"
             },
             "funding": [
                 {
@@ -1157,7 +1157,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-28T11:31:39+00:00"
+            "time": "2025-05-25T15:03:33+00:00"
         },
         {
             "name": "beluga-php/docker-php-api",

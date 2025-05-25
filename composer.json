@@ -26,7 +26,7 @@
         "ext-mbstring": "*",
         "guzzlehttp/guzzle": "^7.3",
         "guzzlehttp/psr7": "^1.7 || ^2.0",
-        "firebase/php-jwt": "6.10.0",
+        "firebase/php-jwt": "^6.10.0",
         "league/oauth2-client": "^2.8",
         "league/uri": "^7.5"
     },
