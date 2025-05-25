@@ -4,5 +4,5 @@ namespace Zitadel\Client;
 
 class Version
 {
-    public const VERSION = '1.6.1';
+    public const VERSION = '1.6.2';
 }

@@ -1,6 +1,6 @@
 {
     "name": "zitadel/client",
-    "version": "1.6.1",
+    "version": "1.6.2",
     "description": "Official Zitadel SDK for PHP. Authenticate and access Zitadel's authentication and management APIs in PHP.",
     "keywords": [
         "api",
