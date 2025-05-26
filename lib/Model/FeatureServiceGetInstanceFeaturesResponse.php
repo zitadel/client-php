@@ -63,7 +63,6 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
         'oidcLegacyIntrospection' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'userSchema' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'oidcTokenExchange' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
-        'actions' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'improvedPerformance' => '\Zitadel\Client\Model\FeatureServiceImprovedPerformanceFeatureFlag',
         'webKey' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'debugOidcParentError' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
@@ -89,7 +88,6 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
         'oidcLegacyIntrospection' => null,
         'userSchema' => null,
         'oidcTokenExchange' => null,
-        'actions' => null,
         'improvedPerformance' => null,
         'webKey' => null,
         'debugOidcParentError' => null,
@@ -113,7 +111,6 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
         'oidcLegacyIntrospection' => false,
         'userSchema' => false,
         'oidcTokenExchange' => false,
-        'actions' => false,
         'improvedPerformance' => false,
         'webKey' => false,
         'debugOidcParentError' => false,
@@ -217,7 +214,6 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
         'oidcLegacyIntrospection' => 'oidcLegacyIntrospection',
         'userSchema' => 'userSchema',
         'oidcTokenExchange' => 'oidcTokenExchange',
-        'actions' => 'actions',
         'improvedPerformance' => 'improvedPerformance',
         'webKey' => 'webKey',
         'debugOidcParentError' => 'debugOidcParentError',
@@ -241,7 +237,6 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
         'oidcLegacyIntrospection' => 'setOidcLegacyIntrospection',
         'userSchema' => 'setUserSchema',
         'oidcTokenExchange' => 'setOidcTokenExchange',
-        'actions' => 'setActions',
         'improvedPerformance' => 'setImprovedPerformance',
         'webKey' => 'setWebKey',
         'debugOidcParentError' => 'setDebugOidcParentError',
@@ -265,7 +260,6 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
         'oidcLegacyIntrospection' => 'getOidcLegacyIntrospection',
         'userSchema' => 'getUserSchema',
         'oidcTokenExchange' => 'getOidcTokenExchange',
-        'actions' => 'getActions',
         'improvedPerformance' => 'getImprovedPerformance',
         'webKey' => 'getWebKey',
         'debugOidcParentError' => 'getDebugOidcParentError',
@@ -340,7 +334,6 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
         $this->setIfExists('oidcLegacyIntrospection', $data ?? [], null);
         $this->setIfExists('userSchema', $data ?? [], null);
         $this->setIfExists('oidcTokenExchange', $data ?? [], null);
-        $this->setIfExists('actions', $data ?? [], null);
         $this->setIfExists('improvedPerformance', $data ?? [], null);
         $this->setIfExists('webKey', $data ?? [], null);
         $this->setIfExists('debugOidcParentError', $data ?? [], null);
@@ -552,33 +545,6 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
             throw new \InvalidArgumentException('non-nullable oidcTokenExchange cannot be null');
         }
         $this->container['oidcTokenExchange'] = $oidcTokenExchange;
-
-        return $this;
-    }
-
-    /**
-     * Gets actions
-     *
-     * @return \Zitadel\Client\Model\FeatureServiceFeatureFlag|null
-     */
-    public function getActions()
-    {
-        return $this->container['actions'];
-    }
-
-    /**
-     * Sets actions
-     *
-     * @param \Zitadel\Client\Model\FeatureServiceFeatureFlag|null $actions actions
-     *
-     * @return self
-     */
-    public function setActions($actions)
-    {
-        if (is_null($actions)) {
-            throw new \InvalidArgumentException('non-nullable actions cannot be null');
-        }
-        $this->container['actions'] = $actions;
 
         return $this;
     }

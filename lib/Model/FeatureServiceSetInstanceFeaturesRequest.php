@@ -62,7 +62,6 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
         'oidcLegacyIntrospection' => 'bool',
         'userSchema' => 'bool',
         'oidcTokenExchange' => 'bool',
-        'actions' => 'bool',
         'improvedPerformance' => '\Zitadel\Client\Model\FeatureServiceImprovedPerformance[]',
         'webKey' => 'bool',
         'debugOidcParentError' => 'bool',
@@ -87,7 +86,6 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
         'oidcLegacyIntrospection' => null,
         'userSchema' => null,
         'oidcTokenExchange' => null,
-        'actions' => null,
         'improvedPerformance' => null,
         'webKey' => null,
         'debugOidcParentError' => null,
@@ -110,7 +108,6 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
         'oidcLegacyIntrospection' => false,
         'userSchema' => false,
         'oidcTokenExchange' => false,
-        'actions' => false,
         'improvedPerformance' => false,
         'webKey' => false,
         'debugOidcParentError' => false,
@@ -213,7 +210,6 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
         'oidcLegacyIntrospection' => 'oidcLegacyIntrospection',
         'userSchema' => 'userSchema',
         'oidcTokenExchange' => 'oidcTokenExchange',
-        'actions' => 'actions',
         'improvedPerformance' => 'improvedPerformance',
         'webKey' => 'webKey',
         'debugOidcParentError' => 'debugOidcParentError',
@@ -236,7 +232,6 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
         'oidcLegacyIntrospection' => 'setOidcLegacyIntrospection',
         'userSchema' => 'setUserSchema',
         'oidcTokenExchange' => 'setOidcTokenExchange',
-        'actions' => 'setActions',
         'improvedPerformance' => 'setImprovedPerformance',
         'webKey' => 'setWebKey',
         'debugOidcParentError' => 'setDebugOidcParentError',
@@ -259,7 +254,6 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
         'oidcLegacyIntrospection' => 'getOidcLegacyIntrospection',
         'userSchema' => 'getUserSchema',
         'oidcTokenExchange' => 'getOidcTokenExchange',
-        'actions' => 'getActions',
         'improvedPerformance' => 'getImprovedPerformance',
         'webKey' => 'getWebKey',
         'debugOidcParentError' => 'getDebugOidcParentError',
@@ -333,7 +327,6 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
         $this->setIfExists('oidcLegacyIntrospection', $data ?? [], null);
         $this->setIfExists('userSchema', $data ?? [], null);
         $this->setIfExists('oidcTokenExchange', $data ?? [], null);
-        $this->setIfExists('actions', $data ?? [], null);
         $this->setIfExists('improvedPerformance', $data ?? [], null);
         $this->setIfExists('webKey', $data ?? [], null);
         $this->setIfExists('debugOidcParentError', $data ?? [], null);
@@ -518,33 +511,6 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
             throw new \InvalidArgumentException('non-nullable oidcTokenExchange cannot be null');
         }
         $this->container['oidcTokenExchange'] = $oidcTokenExchange;
-
-        return $this;
-    }
-
-    /**
-     * Gets actions
-     *
-     * @return bool|null
-     */
-    public function getActions()
-    {
-        return $this->container['actions'];
-    }
-
-    /**
-     * Sets actions
-     *
-     * @param bool|null $actions Actions allow to manage data executions and targets. If the flag is enabled, you'll be able to use the new API and its features. Note that it is still in an early stage.
-     *
-     * @return self
-     */
-    public function setActions($actions)
-    {
-        if (is_null($actions)) {
-            throw new \InvalidArgumentException('non-nullable actions cannot be null');
-        }
-        $this->container['actions'] = $actions;
 
         return $this;
     }

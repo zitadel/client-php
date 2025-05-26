@@ -62,7 +62,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
         'oidcLegacyIntrospection' => 'bool',
         'userSchema' => 'bool',
         'oidcTokenExchange' => 'bool',
-        'actions' => 'bool',
         'improvedPerformance' => '\Zitadel\Client\Model\FeatureServiceImprovedPerformance[]',
         'oidcSingleV1SessionTermination' => 'bool',
         'disableUserTokenEvent' => 'bool',
@@ -84,7 +83,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
         'oidcLegacyIntrospection' => null,
         'userSchema' => null,
         'oidcTokenExchange' => null,
-        'actions' => null,
         'improvedPerformance' => null,
         'oidcSingleV1SessionTermination' => null,
         'disableUserTokenEvent' => null,
@@ -104,7 +102,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
         'oidcLegacyIntrospection' => false,
         'userSchema' => false,
         'oidcTokenExchange' => false,
-        'actions' => false,
         'improvedPerformance' => false,
         'oidcSingleV1SessionTermination' => false,
         'disableUserTokenEvent' => false,
@@ -204,7 +201,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
         'oidcLegacyIntrospection' => 'oidcLegacyIntrospection',
         'userSchema' => 'userSchema',
         'oidcTokenExchange' => 'oidcTokenExchange',
-        'actions' => 'actions',
         'improvedPerformance' => 'improvedPerformance',
         'oidcSingleV1SessionTermination' => 'oidcSingleV1SessionTermination',
         'disableUserTokenEvent' => 'disableUserTokenEvent',
@@ -224,7 +220,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
         'oidcLegacyIntrospection' => 'setOidcLegacyIntrospection',
         'userSchema' => 'setUserSchema',
         'oidcTokenExchange' => 'setOidcTokenExchange',
-        'actions' => 'setActions',
         'improvedPerformance' => 'setImprovedPerformance',
         'oidcSingleV1SessionTermination' => 'setOidcSingleV1SessionTermination',
         'disableUserTokenEvent' => 'setDisableUserTokenEvent',
@@ -244,7 +239,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
         'oidcLegacyIntrospection' => 'getOidcLegacyIntrospection',
         'userSchema' => 'getUserSchema',
         'oidcTokenExchange' => 'getOidcTokenExchange',
-        'actions' => 'getActions',
         'improvedPerformance' => 'getImprovedPerformance',
         'oidcSingleV1SessionTermination' => 'getOidcSingleV1SessionTermination',
         'disableUserTokenEvent' => 'getDisableUserTokenEvent',
@@ -315,7 +309,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
         $this->setIfExists('oidcLegacyIntrospection', $data ?? [], null);
         $this->setIfExists('userSchema', $data ?? [], null);
         $this->setIfExists('oidcTokenExchange', $data ?? [], null);
-        $this->setIfExists('actions', $data ?? [], null);
         $this->setIfExists('improvedPerformance', $data ?? [], null);
         $this->setIfExists('oidcSingleV1SessionTermination', $data ?? [], null);
         $this->setIfExists('disableUserTokenEvent', $data ?? [], null);
@@ -497,33 +490,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
             throw new \InvalidArgumentException('non-nullable oidcTokenExchange cannot be null');
         }
         $this->container['oidcTokenExchange'] = $oidcTokenExchange;
-
-        return $this;
-    }
-
-    /**
-     * Gets actions
-     *
-     * @return bool|null
-     */
-    public function getActions()
-    {
-        return $this->container['actions'];
-    }
-
-    /**
-     * Sets actions
-     *
-     * @param bool|null $actions Actions allow to manage data executions and targets. If the flag is enabled, you'll be able to use the new API and its features. Note that it is still in an early stage.
-     *
-     * @return self
-     */
-    public function setActions($actions)
-    {
-        if (is_null($actions)) {
-            throw new \InvalidArgumentException('non-nullable actions cannot be null');
-        }
-        $this->container['actions'] = $actions;
 
         return $this;
     }

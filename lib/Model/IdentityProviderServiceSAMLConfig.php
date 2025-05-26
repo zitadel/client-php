@@ -61,7 +61,8 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
         'binding' => '\Zitadel\Client\Model\IdentityProviderServiceSAMLBinding',
         'withSignedRequest' => 'bool',
         'nameIdFormat' => '\Zitadel\Client\Model\IdentityProviderServiceSAMLNameIDFormat',
-        'transientMappingAttributeName' => 'string'
+        'transientMappingAttributeName' => 'string',
+        'federatedLogoutEnabled' => 'bool'
     ];
 
     /**
@@ -76,7 +77,8 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
         'binding' => null,
         'withSignedRequest' => null,
         'nameIdFormat' => null,
-        'transientMappingAttributeName' => null
+        'transientMappingAttributeName' => null,
+        'federatedLogoutEnabled' => null
     ];
 
     /**
@@ -89,7 +91,8 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
         'binding' => false,
         'withSignedRequest' => false,
         'nameIdFormat' => false,
-        'transientMappingAttributeName' => false
+        'transientMappingAttributeName' => false,
+        'federatedLogoutEnabled' => false
     ];
 
     /**
@@ -182,7 +185,8 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
         'binding' => 'binding',
         'withSignedRequest' => 'withSignedRequest',
         'nameIdFormat' => 'nameIdFormat',
-        'transientMappingAttributeName' => 'transientMappingAttributeName'
+        'transientMappingAttributeName' => 'transientMappingAttributeName',
+        'federatedLogoutEnabled' => 'federatedLogoutEnabled'
     ];
 
     /**
@@ -195,7 +199,8 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
         'binding' => 'setBinding',
         'withSignedRequest' => 'setWithSignedRequest',
         'nameIdFormat' => 'setNameIdFormat',
-        'transientMappingAttributeName' => 'setTransientMappingAttributeName'
+        'transientMappingAttributeName' => 'setTransientMappingAttributeName',
+        'federatedLogoutEnabled' => 'setFederatedLogoutEnabled'
     ];
 
     /**
@@ -208,7 +213,8 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
         'binding' => 'getBinding',
         'withSignedRequest' => 'getWithSignedRequest',
         'nameIdFormat' => 'getNameIdFormat',
-        'transientMappingAttributeName' => 'getTransientMappingAttributeName'
+        'transientMappingAttributeName' => 'getTransientMappingAttributeName',
+        'federatedLogoutEnabled' => 'getFederatedLogoutEnabled'
     ];
 
     /**
@@ -273,6 +279,7 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
         $this->setIfExists('withSignedRequest', $data ?? [], null);
         $this->setIfExists('nameIdFormat', $data ?? [], null);
         $this->setIfExists('transientMappingAttributeName', $data ?? [], null);
+        $this->setIfExists('federatedLogoutEnabled', $data ?? [], null);
     }
 
     /**
@@ -448,6 +455,33 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
             throw new \InvalidArgumentException('non-nullable transientMappingAttributeName cannot be null');
         }
         $this->container['transientMappingAttributeName'] = $transientMappingAttributeName;
+
+        return $this;
+    }
+
+    /**
+     * Gets federatedLogoutEnabled
+     *
+     * @return bool|null
+     */
+    public function getFederatedLogoutEnabled()
+    {
+        return $this->container['federatedLogoutEnabled'];
+    }
+
+    /**
+     * Sets federatedLogoutEnabled
+     *
+     * @param bool|null $federatedLogoutEnabled Boolean weather federated logout is enabled. If enabled, ZITADEL will send a logout request to the identity provider, if the user terminates the session in ZITADEL. Be sure to provide a SLO endpoint as part of the metadata.
+     *
+     * @return self
+     */
+    public function setFederatedLogoutEnabled($federatedLogoutEnabled)
+    {
+        if (is_null($federatedLogoutEnabled)) {
+            throw new \InvalidArgumentException('non-nullable federatedLogoutEnabled cannot be null');
+        }
+        $this->container['federatedLogoutEnabled'] = $federatedLogoutEnabled;
 
         return $this;
     }
