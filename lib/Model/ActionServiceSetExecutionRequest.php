@@ -58,7 +58,7 @@ class ActionServiceSetExecutionRequest implements ModelInterface, ArrayAccess, \
       */
     protected static $openAPITypes = [
         'condition' => '\Zitadel\Client\Model\ActionServiceBetaCondition',
-        'targets' => '\Zitadel\Client\Model\ActionServiceBetaExecutionTargetType[]'
+        'targets' => 'string[]'
     ];
 
     /**
@@ -326,7 +326,7 @@ class ActionServiceSetExecutionRequest implements ModelInterface, ArrayAccess, \
     /**
      * Gets targets
      *
-     * @return \Zitadel\Client\Model\ActionServiceBetaExecutionTargetType[]|null
+     * @return string[]|null
      */
     public function getTargets()
     {
@@ -336,7 +336,7 @@ class ActionServiceSetExecutionRequest implements ModelInterface, ArrayAccess, \
     /**
      * Sets targets
      *
-     * @param \Zitadel\Client\Model\ActionServiceBetaExecutionTargetType[]|null $targets Ordered list of targets/includes called during the execution.
+     * @param string[]|null $targets Ordered list of targets called during the execution.
      *
      * @return self
      */

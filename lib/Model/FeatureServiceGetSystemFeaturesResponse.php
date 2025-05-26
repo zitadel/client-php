@@ -63,7 +63,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
         'oidcLegacyIntrospection' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'userSchema' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'oidcTokenExchange' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
-        'actions' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'improvedPerformance' => '\Zitadel\Client\Model\FeatureServiceImprovedPerformanceFeatureFlag',
         'oidcSingleV1SessionTermination' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'disableUserTokenEvent' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
@@ -86,7 +85,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
         'oidcLegacyIntrospection' => null,
         'userSchema' => null,
         'oidcTokenExchange' => null,
-        'actions' => null,
         'improvedPerformance' => null,
         'oidcSingleV1SessionTermination' => null,
         'disableUserTokenEvent' => null,
@@ -107,7 +105,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
         'oidcLegacyIntrospection' => false,
         'userSchema' => false,
         'oidcTokenExchange' => false,
-        'actions' => false,
         'improvedPerformance' => false,
         'oidcSingleV1SessionTermination' => false,
         'disableUserTokenEvent' => false,
@@ -208,7 +205,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
         'oidcLegacyIntrospection' => 'oidcLegacyIntrospection',
         'userSchema' => 'userSchema',
         'oidcTokenExchange' => 'oidcTokenExchange',
-        'actions' => 'actions',
         'improvedPerformance' => 'improvedPerformance',
         'oidcSingleV1SessionTermination' => 'oidcSingleV1SessionTermination',
         'disableUserTokenEvent' => 'disableUserTokenEvent',
@@ -229,7 +225,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
         'oidcLegacyIntrospection' => 'setOidcLegacyIntrospection',
         'userSchema' => 'setUserSchema',
         'oidcTokenExchange' => 'setOidcTokenExchange',
-        'actions' => 'setActions',
         'improvedPerformance' => 'setImprovedPerformance',
         'oidcSingleV1SessionTermination' => 'setOidcSingleV1SessionTermination',
         'disableUserTokenEvent' => 'setDisableUserTokenEvent',
@@ -250,7 +245,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
         'oidcLegacyIntrospection' => 'getOidcLegacyIntrospection',
         'userSchema' => 'getUserSchema',
         'oidcTokenExchange' => 'getOidcTokenExchange',
-        'actions' => 'getActions',
         'improvedPerformance' => 'getImprovedPerformance',
         'oidcSingleV1SessionTermination' => 'getOidcSingleV1SessionTermination',
         'disableUserTokenEvent' => 'getDisableUserTokenEvent',
@@ -322,7 +316,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
         $this->setIfExists('oidcLegacyIntrospection', $data ?? [], null);
         $this->setIfExists('userSchema', $data ?? [], null);
         $this->setIfExists('oidcTokenExchange', $data ?? [], null);
-        $this->setIfExists('actions', $data ?? [], null);
         $this->setIfExists('improvedPerformance', $data ?? [], null);
         $this->setIfExists('oidcSingleV1SessionTermination', $data ?? [], null);
         $this->setIfExists('disableUserTokenEvent', $data ?? [], null);
@@ -531,33 +524,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
             throw new \InvalidArgumentException('non-nullable oidcTokenExchange cannot be null');
         }
         $this->container['oidcTokenExchange'] = $oidcTokenExchange;
-
-        return $this;
-    }
-
-    /**
-     * Gets actions
-     *
-     * @return \Zitadel\Client\Model\FeatureServiceFeatureFlag|null
-     */
-    public function getActions()
-    {
-        return $this->container['actions'];
-    }
-
-    /**
-     * Sets actions
-     *
-     * @param \Zitadel\Client\Model\FeatureServiceFeatureFlag|null $actions actions
-     *
-     * @return self
-     */
-    public function setActions($actions)
-    {
-        if (is_null($actions)) {
-            throw new \InvalidArgumentException('non-nullable actions cannot be null');
-        }
-        $this->container['actions'] = $actions;
 
         return $this;
     }
