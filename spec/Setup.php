@@ -372,7 +372,7 @@ class Setup extends Printer implements TestListener
         if (!$test instanceof TestCase) {
             return;
         }
-        $usesDataprovider = $test->usesDataProvider();
+        $usesDataProvider = $test->usesDataProvider();
 
         $testCase = $this->document->createElement('testcase');
         $testCase->setAttribute('name', $test->getName());
@@ -380,7 +380,7 @@ class Setup extends Printer implements TestListener
         $class = new ReflectionClass($test);
         // @codeCoverageIgnoreEnd
 
-        $methodName = $test->getName(!$usesDataprovider);
+        $methodName = $test->getName(!$usesDataProvider);
 
         if ($class->hasMethod($methodName)) {
             $method = $class->getMethod($methodName);

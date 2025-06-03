@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 use Zitadel\Client\ApiException;
 use Zitadel\Client\Model\UserServiceAddHumanUserRequest;
 use Zitadel\Client\Model\UserServiceAddHumanUserResponse;
+use Zitadel\Client\Model\UserServiceDeleteUserRequest;
+use Zitadel\Client\Model\UserServiceGetUserByIDRequest;
 use Zitadel\Client\Model\UserServiceListUsersRequest;
 use Zitadel\Client\Model\UserServiceSetHumanEmail;
 use Zitadel\Client\Model\UserServiceSetHumanProfile;
@@ -22,7 +24,7 @@ use Zitadel\Client\Zitadel;
  *  1. Create a human user
  *  2. Retrieve the user by ID
  *  3. List users and ensure the created user appears
- *  4. Update the user's email and confirm the change
+ *  4. Update the user's email and confirm change
  *  5. Error when retrieving a non-existent user
  *
  * Each test runs in isolation: a new user is created in setUp() and removed in
@@ -57,8 +59,8 @@ class UserServiceSanityCheckSpec extends TestCase
      */
     public function testRetrievesTheUserDetailsById(): void
     {
-        $response = self::$client->users->userServiceGetUserByID(
-            $this->user->getUserId()
+        $response = self::$client->users->getUserByID(
+            (new UserServiceGetUserByIDRequest())->setUserID($this->user->getUserId())
         );
         $this->assertSame(
             $this->user->getUserId(),
@@ -76,7 +78,7 @@ class UserServiceSanityCheckSpec extends TestCase
         $request = (new UserServiceListUsersRequest())
             ->setQueries([]);
 
-        $response = self::$client->users->userServiceListUsers($request);
+        $response = self::$client->users->listUsers($request);
         $this->assertContains(
             $this->user->getUserId(),
             array_map(
@@ -93,21 +95,21 @@ class UserServiceSanityCheckSpec extends TestCase
      */
     public function testUpdatesTheUserEmailAndReflectsInGet(): void
     {
-        self::$client->users->userServiceUpdateHumanUser(
-            $this->user->getUserId(),
+        self::$client->users->updateHumanUser(
             (new UserServiceUpdateHumanUserRequest())
+                ->setUserId($this->user->getUserId())
                 ->setEmail(
                     (new UserServiceSetHumanEmail())
                         ->setEmail('updated' . uniqid() . '@example.com')
                 )
         );
 
-        $response = self::$client->users->userServiceGetUserByID(
-            $this->user->getUserId()
+        $response = self::$client->users->getUserByID(
+            (new UserServiceGetUserByIDRequest())->setUserID($this->user->getUserId())
         );
         $this->assertStringContainsString(
             'updated',
-            $response->getUser()->getHuman()->getEmail()
+            $response->getUser()->getHuman()->getEmail()->getEmail()
         );
     }
 
@@ -117,7 +119,9 @@ class UserServiceSanityCheckSpec extends TestCase
     public function testRaisesAnApiExceptionWhenRetrievingNonExistentUser(): void
     {
         $this->expectException(ApiException::class);
-        self::$client->users->userServiceGetUserByID(uniqid());
+        self::$client->users->getUserByID(
+            (new UserServiceGetUserByIDRequest())->setUserID(uniqid())
+        );
     }
 
     /**
@@ -139,7 +143,7 @@ class UserServiceSanityCheckSpec extends TestCase
                     ->setEmail('johndoe' . uniqid() . '@example.com')
             );
 
-        $this->user = self::$client->users->userServiceAddHumanUser($request);
+        $this->user = self::$client->users->addHumanUser($request);
     }
 
     /**
@@ -148,8 +152,8 @@ class UserServiceSanityCheckSpec extends TestCase
     protected function tearDown(): void
     {
         try {
-            self::$client->users->userServiceDeleteUser(
-                $this->user->getUserId()
+            self::$client->users->deleteUser(
+                (new UserServiceDeleteUserRequest())->setUserId($this->user->getUserId())
             );
         } catch (ApiException) {
             // cleanup errors ignored

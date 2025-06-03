@@ -6,7 +6,8 @@
     "lefthook@latest"
   ],
   "env": {
-    "XDEBUG_MODE": "coverage"
+    "XDEBUG_MODE": "coverage",
+    "COMPOSER_FUND": "0"
   },
   "shell": {
     "init_hook": [

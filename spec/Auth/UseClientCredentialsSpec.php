@@ -4,6 +4,7 @@ namespace Zitadel\Client\Spec\Auth;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Zitadel\Client\ApiException;
 use Zitadel\Client\Zitadel;
 use Zitadel\Client\ZitadelException;
@@ -34,7 +35,7 @@ class UseClientCredentialsSpec extends TestCase
             self::env('CLIENT_SECRET')
         );
 
-        $client->settings->settingsServiceGetGeneralSettings();
+        $client->settings->getGeneralSettings(new stdClass());
     }
 
     /**
@@ -58,6 +59,6 @@ class UseClientCredentialsSpec extends TestCase
         );
 
         $this->expectException(ZitadelException::class);
-        $invalid->settings->settingsServiceGetGeneralSettings();
+        $invalid->settings->getGeneralSettings(new stdClass());
     }
 }

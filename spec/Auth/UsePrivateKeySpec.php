@@ -4,6 +4,7 @@ namespace Zitadel\Client\Spec\Auth;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Zitadel\Client\ApiException;
 use Zitadel\Client\Zitadel;
 use Zitadel\Client\ZitadelException;
@@ -33,7 +34,7 @@ class UsePrivateKeySpec extends TestCase
             self::createTempJwtFile()
         );
 
-        $client->settings->settingsServiceGetGeneralSettings();
+        $client->settings->getGeneralSettings(new stdClass());
     }
 
     /**
@@ -64,6 +65,6 @@ class UsePrivateKeySpec extends TestCase
         );
 
         $this->expectException(ZitadelException::class);
-        $invalid->settings->settingsServiceGetGeneralSettings();
+        $invalid->settings->getGeneralSettings(new stdClass());
     }
 }
