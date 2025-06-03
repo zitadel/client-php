@@ -398,7 +398,7 @@ class SettingsServiceBrandingSettings implements ModelInterface, ArrayAccess, \J
     /**
      * Sets fontUrl
      *
-     * @param string|null $fontUrl url to the font used
+     * @param string|null $fontUrl fontUrl
      *
      * @return self
      */
@@ -425,7 +425,7 @@ class SettingsServiceBrandingSettings implements ModelInterface, ArrayAccess, \J
     /**
      * Sets hideLoginNameSuffix
      *
-     * @param bool|null $hideLoginNameSuffix hides the org suffix on the login form if the scope \"urn:zitadel:iam:org:domain:primary:{domainname}\" is set
+     * @param bool|null $hideLoginNameSuffix hides the org suffix on the login form if the scope \\\"urn:zitadel:iam:org:domain:primary:{domainname}\\\" is set
      *
      * @return self
      */
@@ -452,7 +452,7 @@ class SettingsServiceBrandingSettings implements ModelInterface, ArrayAccess, \J
     /**
      * Sets disableWatermark
      *
-     * @param bool|null $disableWatermark boolean to disable the watermark
+     * @param bool|null $disableWatermark disableWatermark
      *
      * @return self
      */

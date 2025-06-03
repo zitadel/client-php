@@ -80,7 +80,7 @@ class FeatureServiceLoginV2 implements ModelInterface, ArrayAccess, \JsonSeriali
       */
     protected static array $openAPINullables = [
         'required' => false,
-        'baseUri' => false
+        'baseUri' => true
     ];
 
     /**
@@ -343,7 +343,14 @@ class FeatureServiceLoginV2 implements ModelInterface, ArrayAccess, \JsonSeriali
     public function setBaseUri($baseUri)
     {
         if (is_null($baseUri)) {
-            throw new \InvalidArgumentException('non-nullable baseUri cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'baseUri');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('baseUri', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['baseUri'] = $baseUri;
 

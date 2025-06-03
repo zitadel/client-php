@@ -295,6 +295,15 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     {
         $invalidProperties = [];
 
+        if ($this->container['authUrl'] === null) {
+            $invalidProperties[] = "'authUrl' can't be null";
+        }
+        if ($this->container['idpIntent'] === null) {
+            $invalidProperties[] = "'idpIntent' can't be null";
+        }
+        if ($this->container['postForm'] === null) {
+            $invalidProperties[] = "'postForm' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -340,7 +349,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     /**
      * Gets authUrl
      *
-     * @return string|null
+     * @return string
      */
     public function getAuthUrl()
     {
@@ -350,7 +359,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     /**
      * Sets authUrl
      *
-     * @param string|null $authUrl URL to which the client should redirect
+     * @param string $authUrl authUrl
      *
      * @return self
      */
@@ -367,7 +376,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     /**
      * Gets idpIntent
      *
-     * @return \Zitadel\Client\Model\UserServiceIDPIntent|null
+     * @return \Zitadel\Client\Model\UserServiceIDPIntent
      */
     public function getIdpIntent()
     {
@@ -377,7 +386,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     /**
      * Sets idpIntent
      *
-     * @param \Zitadel\Client\Model\UserServiceIDPIntent|null $idpIntent idpIntent
+     * @param \Zitadel\Client\Model\UserServiceIDPIntent $idpIntent idpIntent
      *
      * @return self
      */
@@ -394,7 +403,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     /**
      * Gets postForm
      *
-     * @return string|null
+     * @return string
      */
     public function getPostForm()
     {
@@ -404,7 +413,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     /**
      * Sets postForm
      *
-     * @param string|null $postForm POST call information
+     * @param string $postForm postForm
      *
      * @return self
      */

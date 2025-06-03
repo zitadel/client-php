@@ -29,15 +29,15 @@ namespace Zitadel\Client\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use Zitadel\Client\ApiException;
 use Zitadel\Client\Configuration;
+use Zitadel\Client\HeaderSelector;
 use Zitadel\Client\ObjectSerializer;
-use RuntimeException;
-use Exception;
 
 /**
  * FeatureServiceApi Class Doc Comment
@@ -60,46 +60,51 @@ class FeatureServiceApi
     protected $config;
 
     /**
+     * @var HeaderSelector
+     */
+    protected $headerSelector;
+
+    /**
      * @var int Host index
      */
     protected $hostIndex;
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'featureServiceGetInstanceFeatures' => [
+        'getInstanceFeatures' => [
             'application/json',
         ],
-        'featureServiceGetOrganizationFeatures' => [
+        'getOrganizationFeatures' => [
             'application/json',
         ],
-        'featureServiceGetSystemFeatures' => [
+        'getSystemFeatures' => [
             'application/json',
         ],
-        'featureServiceGetUserFeatures' => [
+        'getUserFeatures' => [
             'application/json',
         ],
-        'featureServiceResetInstanceFeatures' => [
+        'resetInstanceFeatures' => [
             'application/json',
         ],
-        'featureServiceResetOrganizationFeatures' => [
+        'resetOrganizationFeatures' => [
             'application/json',
         ],
-        'featureServiceResetSystemFeatures' => [
+        'resetSystemFeatures' => [
             'application/json',
         ],
-        'featureServiceResetUserFeatures' => [
+        'resetUserFeatures' => [
             'application/json',
         ],
-        'featureServiceSetInstanceFeatures' => [
+        'setInstanceFeatures' => [
             'application/json',
         ],
-        'featureServiceSetOrganizationFeatures' => [
+        'setOrganizationFeatures' => [
             'application/json',
         ],
-        'featureServiceSetSystemFeatures' => [
+        'setSystemFeatures' => [
             'application/json',
         ],
-        'featureServiceSetUserFeatures' => [
+        'setUserFeatures' => [
             'application/json',
         ],
     ];
@@ -107,17 +112,18 @@ class FeatureServiceApi
     /**
      * @param ClientInterface $client
      * @param Configuration   $config
+     * @param HeaderSelector  $selector
      * @param int             $hostIndex (Optional) host index to select the list of hosts if defined in the OpenAPI spec
      */
     public function __construct(
         ?ClientInterface $client = null,
-        Configuration $config = null,
+        ?Configuration $config = null,
+        ?HeaderSelector $selector = null,
         int $hostIndex = 0
     ) {
-        $this->client = $client ?: new Client([
-            'http_errors' => false,
-        ]);
-        $this->config = $config;
+        $this->client = $client ?: new Client();
+        $this->config = $config ?: Configuration::getDefaultConfiguration();
+        $this->headerSelector = $selector ?: new HeaderSelector();
         $this->hostIndex = $hostIndex;
     }
 
@@ -150,513 +156,648 @@ class FeatureServiceApi
     }
 
     /**
-     * @param string[] $accept
-     * @param string $contentType
-     * @param bool $isMultipart
-     * @return string[]
+     * Operation getInstanceFeatures
+     *
+     * GetInstanceFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesRequest $featureServiceGetInstanceFeaturesRequest featureServiceGetInstanceFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getInstanceFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError
      */
-    private function selectHeaders(array $accept, string $contentType, bool $isMultipart): array
+    public function getInstanceFeatures($featureServiceGetInstanceFeaturesRequest, string $contentType = self::contentTypes['getInstanceFeatures'][0])
     {
-        $headers = [];
-
-        $accept = $this->selectAcceptHeader($accept);
-        if ($accept !== null) {
-            $headers['Accept'] = $accept;
-        }
-
-        if (!$isMultipart) {
-            if ($contentType === '') {
-                $contentType = 'application/json';
-            }
-
-            $headers['Content-Type'] = $contentType;
-        }
-
-        return $headers;
+        list($response) = $this->getInstanceFeaturesWithHttpInfo($featureServiceGetInstanceFeaturesRequest, $contentType);
+        return $response;
     }
 
     /**
-     * Return the header 'Accept' based on an array of Accept provided.
+     * Operation getInstanceFeaturesWithHttpInfo
      *
-     * @param string[] $accept Array of header
+     * GetInstanceFeatures
      *
-     * @return null|string Accept (e.g. application/json)
+     * @param  \Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesRequest $featureServiceGetInstanceFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getInstanceFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError, HTTP status code, HTTP response headers (array of strings)
      */
-    private function selectAcceptHeader(array $accept): ?string
+    public function getInstanceFeaturesWithHttpInfo($featureServiceGetInstanceFeaturesRequest, string $contentType = self::contentTypes['getInstanceFeatures'][0])
     {
-        # filter out empty entries
-        $accept = array_filter($accept);
+        $request = $this->getInstanceFeaturesRequest($featureServiceGetInstanceFeaturesRequest, $contentType);
 
-        if (count($accept) === 0) {
-            return null;
-        }
-
-        # If there's only one Accept header, just use it
-        if (count($accept) === 1) {
-            return reset($accept);
-        }
-
-        # If none of the available Accept headers is of type "json", then just use all them
-        $headersWithJson = $this->selectJsonMimeList($accept);
-        if (count($headersWithJson) === 0) {
-            return implode(',', $accept);
-        }
-
-        # If we got here, then we need add quality values (weight), as described in IETF RFC 9110, Items 12.4.2/12.5.1,
-        # to give the highest priority to json-like headers - recalculating the existing ones, if needed
-        return $this->getAcceptHeaderWithAdjustedWeight($accept, $headersWithJson);
-    }
-
-    /**
-     * Select all items from a list containing a JSON mime type
-     *
-     * @param array $mimeList
-     * @return array
-     */
-    private function selectJsonMimeList(array $mimeList): array
-    {
-        $jsonMimeList = [];
-        foreach ($mimeList as $mime) {
-            if ($this->isJsonMime($mime)) {
-                $jsonMimeList[] = $mime;
-            }
-        }
-        return $jsonMimeList;
-    }
-
-    /**
-     * Detects whether a string contains a valid JSON mime type
-     *
-     * @param string $searchString
-     * @return bool
-     */
-    private function isJsonMime(string $searchString): bool
-    {
-        /** @noinspection PhpCoveredCharacterInClassInspection */
-        return preg_match('~^application/(json|[\w!#$&.+-^_]+\+json)\s*(;|$)~', $searchString) === 1;
-    }
-
-    /**
-     * Create an Accept header string from the given "Accept" headers array, recalculating all weights
-     *
-     * @param string[] $accept Array of Accept Headers
-     * @param string[] $headersWithJson Array of Accept Headers of type "json"
-     *
-     * @return string "Accept" Header (e.g. "application/json, text/html; q=0.9")
-     */
-    private function getAcceptHeaderWithAdjustedWeight(array $accept, array $headersWithJson): string
-    {
-        $processedHeaders = [
-          'withApplicationJson' => [],
-          'withJson' => [],
-          'withoutJson' => [],
-        ];
-
-        foreach ($accept as $header) {
-
-            $headerData = $this->getHeaderAndWeight($header);
-
-            if (stripos($headerData['header'], 'application/json') === 0) {
-                $processedHeaders['withApplicationJson'][] = $headerData;
-            } elseif (in_array($header, $headersWithJson, true)) {
-                $processedHeaders['withJson'][] = $headerData;
-            } else {
-                $processedHeaders['withoutJson'][] = $headerData;
-            }
-        }
-
-        $acceptHeaders = [];
-        $currentWeight = 1000;
-
-        $hasMoreThan28Headers = count($accept) > 28;
-
-        foreach ($processedHeaders as $headers) {
-            if (count($headers) > 0) {
-                $acceptHeaders[] = $this->adjustWeight($headers, $currentWeight, $hasMoreThan28Headers);
-            }
-        }
-
-        $acceptHeaders = array_merge(...$acceptHeaders);
-
-        return implode(',', $acceptHeaders);
-    }
-
-    /**
-     * Given an Accept header, returns an associative array splitting the header and its weight
-     *
-     * @param string $header "Accept" Header
-     *
-     * @return array with the header and its weight
-     */
-    private function getHeaderAndWeight(string $header): array
-    {
-        # matches headers with weight, splitting the header and the weight in $outputArray
-        if (preg_match('/(.*);\s*q=(1(?:\.0+)?|0\.\d+)$/', $header, $outputArray) === 1) {
-            $headerData = [
-              'header' => $outputArray[1],
-              'weight' => (int)($outputArray[2] * 1000),
-            ];
-        } else {
-            $headerData = [
-              'header' => trim($header),
-              'weight' => 1000,
-            ];
-        }
-
-        return $headerData;
-    }
-
-    /**
-     * @param array[] $headers
-     * @param float $currentWeight
-     * @param bool $hasMoreThan28Headers
-     * @return string[] array of adjusted "Accept" headers
-     */
-    private function adjustWeight(array $headers, float &$currentWeight, bool $hasMoreThan28Headers): array
-    {
-        usort($headers, fn (array $a, array $b) => $b['weight'] - $a['weight']);
-
-        $acceptHeaders = [];
-        foreach ($headers as $index => $header) {
-            if ($index > 0 && $headers[$index - 1]['weight'] > $header['weight']) {
-                $currentWeight = $this->getNextWeight($currentWeight, $hasMoreThan28Headers);
-            }
-
-            $weight = $currentWeight;
-
-            $acceptHeaders[] = $this->buildAcceptHeader($header['header'], $weight);
-        }
-
-        $currentWeight = $this->getNextWeight($currentWeight, $hasMoreThan28Headers);
-
-        return $acceptHeaders;
-    }
-
-    /**
-     * Calculate the next weight, based on the current one.
-     *
-     * If there are less than 28 "Accept" headers, the weights will be decreased by 1 on its highest significant digit, using the
-     * following formula:
-     *
-     *    next weight = current weight - 10 ^ (floor(log(current weight - 1)))
-     *
-     *    ( current weight minus ( 10 raised to the power of ( floor of (log to the base 10 of ( current weight minus 1 ) ) ) ) )
-     *
-     * Starting from 1000, this generates the following series:
-     *
-     * 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1
-     *
-     * The resulting quality codes are closer to the average "normal" usage of them (like "q=0.9", "q=0.8" and so on), but it only works
-     * if there is a maximum of 28 "Accept" headers. If we have more than that (which is extremely unlikely), then we fall back to a 1-by-1
-     * decrement rule, which will result in quality codes like "q=0.999", "q=0.998" etc.
-     *
-     * @param int $currentWeight varying from 1 to 1000 (will be divided by 1000 to build the quality value)
-     * @param bool $hasMoreThan28Headers
-     * @return int
-     */
-    private function getNextWeight(int $currentWeight, bool $hasMoreThan28Headers): int
-    {
-        if ($currentWeight <= 1) {
-            return 1;
-        }
-
-        if ($hasMoreThan28Headers) {
-            return $currentWeight - 1;
-        }
-
-        return $currentWeight - 10 ** floor(log10($currentWeight - 1));
-    }
-
-    /**
-     * @param string $header
-     * @param int $weight
-     * @return string
-     */
-    private function buildAcceptHeader(string $header, int $weight): string
-    {
-        if ($weight === 1000) {
-            return $header;
-        }
-
-        return trim($header, '; ') . ';q=' . rtrim(sprintf('%0.3f', $weight / 1000), '0');
-    }
-
-
-        /**
-     * @throws ApiException
-     */
-    private function executeRequest(
-        Request $request,
-        array $responseTypes,
-        string $defaultResponseType
-    ): mixed {
         try {
             $options = $this->createHttpClientOption();
-            $response = $this->client->send($request, $options);
-        } catch (GuzzleException $e) {
-            throw new RuntimeException(
-                "API Request failed: [{$e->getCode()}] {$e->getMessage()}",
-                (int) $e->getCode(),
-                $e
-            );
-        }
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
 
-        $statusCode = $response->getStatusCode();
-        $responseBody = $response->getBody();
-        $responseHeaders = $response->getHeaders();
+            $statusCode = $response->getStatusCode();
 
-        if ($statusCode >= 200 && $statusCode < 300) {
-            $returnType = $responseTypes[$statusCode] ?? $defaultResponseType;
 
+            switch($statusCode) {
+                case 200:
+                    if ('\Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                default:
+                    if ('\Zitadel\Client\Model\FeatureServiceConnectError' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceConnectError' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceConnectError', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse';
             if ($returnType === '\SplFileObject') {
-                return $responseBody;
+                $content = $response->getBody(); //stream goes to serializer
             } else {
-                $content = (string) $responseBody;
-
-                if (empty(trim($content)) && $returnType !== 'string') {
-                    $content = null;
-                }
-
-                try {
-                    return ObjectSerializer::deserialize($content, $returnType, $this->config, []);
-                } catch (Exception $e) {
-                    throw new RuntimeException(
-                        "Failed to process successful response for status $statusCode",
-                        $statusCode,
-                        $e
-                    );
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
                 }
             }
-        } else {
-            $errorType = $responseTypes[$statusCode] ?? $defaultResponseType;
 
-            if ($errorType === '\SplFileObject') {
-                throw new ApiException(
-                    sprintf('[%d] API Error (%s) - Expected file object', $statusCode, $request->getUri()),
-                    $statusCode,
-                    $responseHeaders,
-                    $responseBody
-                );
-            } elseif ($errorType !== 'string' && !empty(trim((string) $responseBody))) {
-                try {
-                    $decodedContent = json_decode((string)$responseBody, false, 512, JSON_THROW_ON_ERROR);
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                default:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceConnectError',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation getInstanceFeaturesAsync
+     *
+     * GetInstanceFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesRequest $featureServiceGetInstanceFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getInstanceFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function getInstanceFeaturesAsync($featureServiceGetInstanceFeaturesRequest, string $contentType = self::contentTypes['getInstanceFeatures'][0])
+    {
+        return $this->getInstanceFeaturesAsyncWithHttpInfo($featureServiceGetInstanceFeaturesRequest, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation getInstanceFeaturesAsyncWithHttpInfo
+     *
+     * GetInstanceFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesRequest $featureServiceGetInstanceFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getInstanceFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function getInstanceFeaturesAsyncWithHttpInfo($featureServiceGetInstanceFeaturesRequest, string $contentType = self::contentTypes['getInstanceFeatures'][0])
+    {
+        $returnType = '\Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse';
+        $request = $this->getInstanceFeaturesRequest($featureServiceGetInstanceFeaturesRequest, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
                     throw new ApiException(
-                        sprintf('[%d] API Error (%s)', $statusCode, (string)$request->getUri()),
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
                         $statusCode,
-                        $responseHeaders,
-                        $decodedContent,
-                    );
-                } catch (ApiException $e) {
-                    throw $e;
-                } catch (Exception $e) {
-                    throw new RuntimeException(
-                        "Failed to process error response for status $statusCode",
-                        $statusCode,
-                        $e
+                        $response->getHeaders(),
+                        (string) $response->getBody()
                     );
                 }
+            );
+    }
+
+    /**
+     * Create request for operation 'getInstanceFeatures'
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesRequest $featureServiceGetInstanceFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getInstanceFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function getInstanceFeaturesRequest($featureServiceGetInstanceFeaturesRequest, string $contentType = self::contentTypes['getInstanceFeatures'][0])
+    {
+
+        // verify the required parameter 'featureServiceGetInstanceFeaturesRequest' is set
+        if ($featureServiceGetInstanceFeaturesRequest === null || (is_array($featureServiceGetInstanceFeaturesRequest) && count($featureServiceGetInstanceFeaturesRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $featureServiceGetInstanceFeaturesRequest when calling getInstanceFeatures'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.feature.v2.FeatureService/GetInstanceFeatures';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($featureServiceGetInstanceFeaturesRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($featureServiceGetInstanceFeaturesRequest));
             } else {
+                $httpBody = $featureServiceGetInstanceFeaturesRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation getOrganizationFeatures
+     *
+     * GetOrganizationFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesRequest $featureServiceGetOrganizationFeaturesRequest featureServiceGetOrganizationFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOrganizationFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError
+     */
+    public function getOrganizationFeatures($featureServiceGetOrganizationFeaturesRequest, string $contentType = self::contentTypes['getOrganizationFeatures'][0])
+    {
+        list($response) = $this->getOrganizationFeaturesWithHttpInfo($featureServiceGetOrganizationFeaturesRequest, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation getOrganizationFeaturesWithHttpInfo
+     *
+     * GetOrganizationFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesRequest $featureServiceGetOrganizationFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOrganizationFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function getOrganizationFeaturesWithHttpInfo($featureServiceGetOrganizationFeaturesRequest, string $contentType = self::contentTypes['getOrganizationFeatures'][0])
+    {
+        $request = $this->getOrganizationFeaturesRequest($featureServiceGetOrganizationFeaturesRequest, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
                 throw new ApiException(
-                    sprintf('[%d] API Error (%s)', $statusCode, $request->getUri()),
-                    $statusCode,
-                    $responseHeaders,
-                    $responseBody
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
                 );
             }
-        }
-    }
 
-    /**
-     * Operation featureServiceGetInstanceFeatures
-     *
-     * Get Instance Features
-     *
-     * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the instance, it will be omitted from the response or Not Found is returned when the instance has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetInstanceFeatures'] to see the possible values for this operation
-     *
-     * @return \Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse
-     * @throws ApiException
-     */
-    public function featureServiceGetInstanceFeatures($inheritance = null, string $contentType = self::contentTypes['featureServiceGetInstanceFeatures'][0])
-    {
-        $request = $this->featureServiceGetInstanceFeaturesRequest($inheritance, $contentType);
-
-        $responseTypes = [
-            200 => '\Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse',
-            403 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-        ];
-        $defaultSignatureType = '\Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesResponse';
-        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
-    }
-
-    /**
-     * Create request for operation 'featureServiceGetInstanceFeatures'
-     *
-     * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the instance, it will be omitted from the response or Not Found is returned when the instance has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetInstanceFeatures'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    private function featureServiceGetInstanceFeaturesRequest($inheritance = null, string $contentType = self::contentTypes['featureServiceGetInstanceFeatures'][0])
-    {
+            $statusCode = $response->getStatusCode();
 
 
+            switch($statusCode) {
+                case 200:
+                    if ('\Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
 
-        $resourcePath = '/v2/features/instance';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                default:
+                    if ('\Zitadel\Client\Model\FeatureServiceConnectError' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceConnectError' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
 
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $inheritance,
-            'inheritance', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'boolean', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceConnectError', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
 
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
 
-
-
-        $headers = $this->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-        if (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
+            $returnType = '\Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
                     }
                 }
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
-            } else {
-                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                default:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceConnectError',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
         }
-
-        if (!empty($this->config->getAccessToken())) {
-            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
     }
 
     /**
-     * Operation featureServiceGetOrganizationFeatures
+     * Operation getOrganizationFeaturesAsync
      *
-     * Get Organization Features
+     * GetOrganizationFeatures
      *
-     * @param  string $organizationId organizationId (required)
-     * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the organization, it will be omitted from the response or Not Found is returned when the organization has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetOrganizationFeatures'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesRequest $featureServiceGetOrganizationFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOrganizationFeatures'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse
-     * @throws ApiException
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function featureServiceGetOrganizationFeatures($organizationId, $inheritance = null, string $contentType = self::contentTypes['featureServiceGetOrganizationFeatures'][0])
+    public function getOrganizationFeaturesAsync($featureServiceGetOrganizationFeaturesRequest, string $contentType = self::contentTypes['getOrganizationFeatures'][0])
     {
-        $request = $this->featureServiceGetOrganizationFeaturesRequest($organizationId, $inheritance, $contentType);
-
-        $responseTypes = [
-            200 => '\Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse',
-            403 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-        ];
-        $defaultSignatureType = '\Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse';
-        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+        return $this->getOrganizationFeaturesAsyncWithHttpInfo($featureServiceGetOrganizationFeaturesRequest, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
     }
 
     /**
-     * Create request for operation 'featureServiceGetOrganizationFeatures'
+     * Operation getOrganizationFeaturesAsyncWithHttpInfo
      *
-     * @param  string $organizationId (required)
-     * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the organization, it will be omitted from the response or Not Found is returned when the organization has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetOrganizationFeatures'] to see the possible values for this operation
+     * GetOrganizationFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesRequest $featureServiceGetOrganizationFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOrganizationFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function getOrganizationFeaturesAsyncWithHttpInfo($featureServiceGetOrganizationFeaturesRequest, string $contentType = self::contentTypes['getOrganizationFeatures'][0])
+    {
+        $returnType = '\Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesResponse';
+        $request = $this->getOrganizationFeaturesRequest($featureServiceGetOrganizationFeaturesRequest, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'getOrganizationFeatures'
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesRequest $featureServiceGetOrganizationFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function featureServiceGetOrganizationFeaturesRequest($organizationId, $inheritance = null, string $contentType = self::contentTypes['featureServiceGetOrganizationFeatures'][0])
+    public function getOrganizationFeaturesRequest($featureServiceGetOrganizationFeaturesRequest, string $contentType = self::contentTypes['getOrganizationFeatures'][0])
     {
 
-        if ($organizationId === null || (is_array($organizationId) && count($organizationId) === 0)) {
+        // verify the required parameter 'featureServiceGetOrganizationFeaturesRequest' is set
+        if ($featureServiceGetOrganizationFeaturesRequest === null || (is_array($featureServiceGetOrganizationFeaturesRequest) && count($featureServiceGetOrganizationFeaturesRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $organizationId when calling featureServiceGetOrganizationFeatures'
+                'Missing the required parameter $featureServiceGetOrganizationFeaturesRequest when calling getOrganizationFeatures'
             );
         }
 
 
-
-        $resourcePath = '/v2/features/organization/{organizationId}';
+        $resourcePath = '/zitadel.feature.v2.FeatureService/GetOrganizationFeatures';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $inheritance,
-            'inheritance', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'boolean', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
 
 
-        if ($organizationId !== null) {
-            $resourcePath = str_replace(
-                '{' . 'organizationId' . '}',
-                ObjectSerializer::toPathValue($organizationId),
-                $resourcePath
-            );
-        }
 
 
-        $headers = $this->selectHeaders(
+        $headers = $this->headerSelector->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+
+        // for model (json/xml)
+        if (isset($featureServiceGetOrganizationFeaturesRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($featureServiceGetOrganizationFeaturesRequest));
+            } else {
+                $httpBody = $featureServiceGetOrganizationFeaturesRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -668,16 +809,19 @@ class FeatureServiceApi
                         ];
                     }
                 }
+                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
             }
         }
 
+        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -694,9 +838,9 @@ class FeatureServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -704,184 +848,302 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation featureServiceGetSystemFeatures
+     * Operation getSystemFeatures
      *
-     * Get System Features
+     * GetSystemFeatures
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetSystemFeatures'] to see the possible values for this operation
+     * @param  object $body body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSystemFeatures'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse
-     * @throws ApiException
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError
      */
-    public function featureServiceGetSystemFeatures(string $contentType = self::contentTypes['featureServiceGetSystemFeatures'][0])
+    public function getSystemFeatures($body, string $contentType = self::contentTypes['getSystemFeatures'][0])
     {
-        $request = $this->featureServiceGetSystemFeaturesRequest($contentType);
-
-        $responseTypes = [
-            200 => '\Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse',
-            403 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-        ];
-        $defaultSignatureType = '\Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse';
-        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+        list($response) = $this->getSystemFeaturesWithHttpInfo($body, $contentType);
+        return $response;
     }
 
     /**
-     * Create request for operation 'featureServiceGetSystemFeatures'
+     * Operation getSystemFeaturesWithHttpInfo
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetSystemFeatures'] to see the possible values for this operation
+     * GetSystemFeatures
      *
+     * @param  object $body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSystemFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
+     * @return array of \Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError, HTTP status code, HTTP response headers (array of strings)
      */
-    private function featureServiceGetSystemFeaturesRequest(string $contentType = self::contentTypes['featureServiceGetSystemFeatures'][0])
+    public function getSystemFeaturesWithHttpInfo($body, string $contentType = self::contentTypes['getSystemFeatures'][0])
     {
+        $request = $this->getSystemFeaturesRequest($body, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
 
 
-        $resourcePath = '/v2/features/system';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
+            switch($statusCode) {
+                case 200:
+                    if ('\Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
 
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                default:
+                    if ('\Zitadel\Client\Model\FeatureServiceConnectError' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceConnectError' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
 
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceConnectError', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
 
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
 
-
-        $headers = $this->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-        if (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
+            $returnType = '\Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
                     }
                 }
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
-            } else {
-                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                default:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceConnectError',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
         }
-
-        if (!empty($this->config->getAccessToken())) {
-            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
     }
 
     /**
-     * Operation featureServiceGetUserFeatures
+     * Operation getSystemFeaturesAsync
      *
-     * Get User Features
+     * GetSystemFeatures
      *
-     * @param  string $userId userId (required)
-     * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the user, it will be ommitted from the response or Not Found is returned when the user has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetUserFeatures'] to see the possible values for this operation
+     * @param  object $body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSystemFeatures'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse
-     * @throws ApiException
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function featureServiceGetUserFeatures($userId, $inheritance = null, string $contentType = self::contentTypes['featureServiceGetUserFeatures'][0])
+    public function getSystemFeaturesAsync($body, string $contentType = self::contentTypes['getSystemFeatures'][0])
     {
-        $request = $this->featureServiceGetUserFeaturesRequest($userId, $inheritance, $contentType);
-
-        $responseTypes = [
-            200 => '\Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse',
-            403 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-        ];
-        $defaultSignatureType = '\Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse';
-        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+        return $this->getSystemFeaturesAsyncWithHttpInfo($body, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
     }
 
     /**
-     * Create request for operation 'featureServiceGetUserFeatures'
+     * Operation getSystemFeaturesAsyncWithHttpInfo
      *
-     * @param  string $userId (required)
-     * @param  bool|null $inheritance Inherit unset features from the resource owners. This option is recursive: if the flag is set, the resource&#39;s ancestors are consulted up to system defaults. If this option is disabled and the feature is not set on the user, it will be ommitted from the response or Not Found is returned when the user has no features flags at all. (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceGetUserFeatures'] to see the possible values for this operation
+     * GetSystemFeatures
+     *
+     * @param  object $body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSystemFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function getSystemFeaturesAsyncWithHttpInfo($body, string $contentType = self::contentTypes['getSystemFeatures'][0])
+    {
+        $returnType = '\Zitadel\Client\Model\FeatureServiceGetSystemFeaturesResponse';
+        $request = $this->getSystemFeaturesRequest($body, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'getSystemFeatures'
+     *
+     * @param  object $body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSystemFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function featureServiceGetUserFeaturesRequest($userId, $inheritance = null, string $contentType = self::contentTypes['featureServiceGetUserFeatures'][0])
+    public function getSystemFeaturesRequest($body, string $contentType = self::contentTypes['getSystemFeatures'][0])
     {
 
-        if ($userId === null || (is_array($userId) && count($userId) === 0)) {
+        // verify the required parameter 'body' is set
+        if ($body === null || (is_array($body) && count($body) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $userId when calling featureServiceGetUserFeatures'
+                'Missing the required parameter $body when calling getSystemFeatures'
             );
         }
 
 
-
-        $resourcePath = '/v2/features/user/{userId}';
+        $resourcePath = '/zitadel.feature.v2.FeatureService/GetSystemFeatures';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $inheritance,
-            'inheritance', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'boolean', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
 
 
-        if ($userId !== null) {
-            $resourcePath = str_replace(
-                '{' . 'userId' . '}',
-                ObjectSerializer::toPathValue($userId),
-                $resourcePath
-            );
-        }
 
 
-        $headers = $this->selectHeaders(
+        $headers = $this->headerSelector->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+
+        // for model (json/xml)
+        if (isset($body)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+            } else {
+                $httpBody = $body;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -893,16 +1155,19 @@ class FeatureServiceApi
                         ];
                     }
                 }
+                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
             }
         }
 
+        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -919,9 +1184,9 @@ class FeatureServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -929,149 +1194,277 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation featureServiceResetInstanceFeatures
+     * Operation getUserFeatures
      *
-     * Reset Instance Features
+     * GetUserFeatures
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetInstanceFeatures'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\FeatureServiceGetUserFeaturesRequest $featureServiceGetUserFeaturesRequest featureServiceGetUserFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserFeatures'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse
-     * @throws ApiException
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError
      */
-    public function featureServiceResetInstanceFeatures(string $contentType = self::contentTypes['featureServiceResetInstanceFeatures'][0])
+    public function getUserFeatures($featureServiceGetUserFeaturesRequest, string $contentType = self::contentTypes['getUserFeatures'][0])
     {
-        $request = $this->featureServiceResetInstanceFeaturesRequest($contentType);
-
-        $responseTypes = [
-            200 => '\Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse',
-            403 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-        ];
-        $defaultSignatureType = '\Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse';
-        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+        list($response) = $this->getUserFeaturesWithHttpInfo($featureServiceGetUserFeaturesRequest, $contentType);
+        return $response;
     }
 
     /**
-     * Create request for operation 'featureServiceResetInstanceFeatures'
+     * Operation getUserFeaturesWithHttpInfo
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetInstanceFeatures'] to see the possible values for this operation
+     * GetUserFeatures
      *
+     * @param  \Zitadel\Client\Model\FeatureServiceGetUserFeaturesRequest $featureServiceGetUserFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
+     * @return array of \Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError, HTTP status code, HTTP response headers (array of strings)
      */
-    private function featureServiceResetInstanceFeaturesRequest(string $contentType = self::contentTypes['featureServiceResetInstanceFeatures'][0])
+    public function getUserFeaturesWithHttpInfo($featureServiceGetUserFeaturesRequest, string $contentType = self::contentTypes['getUserFeatures'][0])
     {
+        $request = $this->getUserFeaturesRequest($featureServiceGetUserFeaturesRequest, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
 
 
-        $resourcePath = '/v2/features/instance';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
+            switch($statusCode) {
+                case 200:
+                    if ('\Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
 
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                default:
+                    if ('\Zitadel\Client\Model\FeatureServiceConnectError' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceConnectError' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
 
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceConnectError', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
 
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
 
-
-        $headers = $this->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-        if (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
+            $returnType = '\Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
                     }
                 }
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
-            } else {
-                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                default:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceConnectError',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
         }
-
-        if (!empty($this->config->getAccessToken())) {
-            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
-        return new Request(
-            'DELETE',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
     }
 
     /**
-     * Operation featureServiceResetOrganizationFeatures
+     * Operation getUserFeaturesAsync
      *
-     * Reset Organization Features
+     * GetUserFeatures
      *
-     * @param  string $organizationId organizationId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetOrganizationFeatures'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\FeatureServiceGetUserFeaturesRequest $featureServiceGetUserFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserFeatures'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse
-     * @throws ApiException
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function featureServiceResetOrganizationFeatures($organizationId, string $contentType = self::contentTypes['featureServiceResetOrganizationFeatures'][0])
+    public function getUserFeaturesAsync($featureServiceGetUserFeaturesRequest, string $contentType = self::contentTypes['getUserFeatures'][0])
     {
-        $request = $this->featureServiceResetOrganizationFeaturesRequest($organizationId, $contentType);
-
-        $responseTypes = [
-            200 => '\Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse',
-            403 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-        ];
-        $defaultSignatureType = '\Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse';
-        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+        return $this->getUserFeaturesAsyncWithHttpInfo($featureServiceGetUserFeaturesRequest, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
     }
 
     /**
-     * Create request for operation 'featureServiceResetOrganizationFeatures'
+     * Operation getUserFeaturesAsyncWithHttpInfo
      *
-     * @param  string $organizationId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetOrganizationFeatures'] to see the possible values for this operation
+     * GetUserFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceGetUserFeaturesRequest $featureServiceGetUserFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function getUserFeaturesAsyncWithHttpInfo($featureServiceGetUserFeaturesRequest, string $contentType = self::contentTypes['getUserFeatures'][0])
+    {
+        $returnType = '\Zitadel\Client\Model\FeatureServiceGetUserFeaturesResponse';
+        $request = $this->getUserFeaturesRequest($featureServiceGetUserFeaturesRequest, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'getUserFeatures'
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceGetUserFeaturesRequest $featureServiceGetUserFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function featureServiceResetOrganizationFeaturesRequest($organizationId, string $contentType = self::contentTypes['featureServiceResetOrganizationFeatures'][0])
+    public function getUserFeaturesRequest($featureServiceGetUserFeaturesRequest, string $contentType = self::contentTypes['getUserFeatures'][0])
     {
 
-        if ($organizationId === null || (is_array($organizationId) && count($organizationId) === 0)) {
+        // verify the required parameter 'featureServiceGetUserFeaturesRequest' is set
+        if ($featureServiceGetUserFeaturesRequest === null || (is_array($featureServiceGetUserFeaturesRequest) && count($featureServiceGetUserFeaturesRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $organizationId when calling featureServiceResetOrganizationFeatures'
+                'Missing the required parameter $featureServiceGetUserFeaturesRequest when calling getUserFeatures'
             );
         }
 
 
-        $resourcePath = '/v2/features/organization/{organizationId}';
+        $resourcePath = '/zitadel.feature.v2.FeatureService/GetUserFeatures';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -1080,21 +1473,23 @@ class FeatureServiceApi
 
 
 
-        if ($organizationId !== null) {
-            $resourcePath = str_replace(
-                '{' . 'organizationId' . '}',
-                ObjectSerializer::toPathValue($organizationId),
-                $resourcePath
-            );
-        }
 
 
-        $headers = $this->selectHeaders(
+        $headers = $this->headerSelector->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+
+        // for model (json/xml)
+        if (isset($featureServiceGetUserFeaturesRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($featureServiceGetUserFeaturesRequest));
+            } else {
+                $httpBody = $featureServiceGetUserFeaturesRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -1106,16 +1501,19 @@ class FeatureServiceApi
                         ];
                     }
                 }
+                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
             }
         }
 
+        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -1132,9 +1530,9 @@ class FeatureServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
-            'DELETE',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -1142,149 +1540,277 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation featureServiceResetSystemFeatures
+     * Operation resetInstanceFeatures
      *
-     * Reset System Features
+     * ResetInstanceFeatures
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetSystemFeatures'] to see the possible values for this operation
+     * @param  object $body body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetInstanceFeatures'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse
-     * @throws ApiException
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError
      */
-    public function featureServiceResetSystemFeatures(string $contentType = self::contentTypes['featureServiceResetSystemFeatures'][0])
+    public function resetInstanceFeatures($body, string $contentType = self::contentTypes['resetInstanceFeatures'][0])
     {
-        $request = $this->featureServiceResetSystemFeaturesRequest($contentType);
-
-        $responseTypes = [
-            200 => '\Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse',
-            403 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-        ];
-        $defaultSignatureType = '\Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse';
-        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+        list($response) = $this->resetInstanceFeaturesWithHttpInfo($body, $contentType);
+        return $response;
     }
 
     /**
-     * Create request for operation 'featureServiceResetSystemFeatures'
+     * Operation resetInstanceFeaturesWithHttpInfo
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetSystemFeatures'] to see the possible values for this operation
+     * ResetInstanceFeatures
      *
+     * @param  object $body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetInstanceFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
+     * @return array of \Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError, HTTP status code, HTTP response headers (array of strings)
      */
-    private function featureServiceResetSystemFeaturesRequest(string $contentType = self::contentTypes['featureServiceResetSystemFeatures'][0])
+    public function resetInstanceFeaturesWithHttpInfo($body, string $contentType = self::contentTypes['resetInstanceFeatures'][0])
     {
+        $request = $this->resetInstanceFeaturesRequest($body, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
 
 
-        $resourcePath = '/v2/features/system';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
+            switch($statusCode) {
+                case 200:
+                    if ('\Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
 
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                default:
+                    if ('\Zitadel\Client\Model\FeatureServiceConnectError' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceConnectError' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
 
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceConnectError', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
 
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
 
-
-        $headers = $this->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-        if (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
+            $returnType = '\Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
                     }
                 }
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
-            } else {
-                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
             }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                default:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceConnectError',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
         }
-
-        if (!empty($this->config->getAccessToken())) {
-            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
-        return new Request(
-            'DELETE',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
     }
 
     /**
-     * Operation featureServiceResetUserFeatures
+     * Operation resetInstanceFeaturesAsync
      *
-     * Reset User Features
+     * ResetInstanceFeatures
      *
-     * @param  string $userId userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetUserFeatures'] to see the possible values for this operation
+     * @param  object $body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetInstanceFeatures'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse
-     * @throws ApiException
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function featureServiceResetUserFeatures($userId, string $contentType = self::contentTypes['featureServiceResetUserFeatures'][0])
+    public function resetInstanceFeaturesAsync($body, string $contentType = self::contentTypes['resetInstanceFeatures'][0])
     {
-        $request = $this->featureServiceResetUserFeaturesRequest($userId, $contentType);
-
-        $responseTypes = [
-            200 => '\Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse',
-            403 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-        ];
-        $defaultSignatureType = '\Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse';
-        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+        return $this->resetInstanceFeaturesAsyncWithHttpInfo($body, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
     }
 
     /**
-     * Create request for operation 'featureServiceResetUserFeatures'
+     * Operation resetInstanceFeaturesAsyncWithHttpInfo
      *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceResetUserFeatures'] to see the possible values for this operation
+     * ResetInstanceFeatures
+     *
+     * @param  object $body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetInstanceFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function resetInstanceFeaturesAsyncWithHttpInfo($body, string $contentType = self::contentTypes['resetInstanceFeatures'][0])
+    {
+        $returnType = '\Zitadel\Client\Model\FeatureServiceResetInstanceFeaturesResponse';
+        $request = $this->resetInstanceFeaturesRequest($body, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'resetInstanceFeatures'
+     *
+     * @param  object $body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function featureServiceResetUserFeaturesRequest($userId, string $contentType = self::contentTypes['featureServiceResetUserFeatures'][0])
+    public function resetInstanceFeaturesRequest($body, string $contentType = self::contentTypes['resetInstanceFeatures'][0])
     {
 
-        if ($userId === null || (is_array($userId) && count($userId) === 0)) {
+        // verify the required parameter 'body' is set
+        if ($body === null || (is_array($body) && count($body) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $userId when calling featureServiceResetUserFeatures'
+                'Missing the required parameter $body when calling resetInstanceFeatures'
             );
         }
 
 
-        $resourcePath = '/v2/features/user/{userId}';
+        $resourcePath = '/zitadel.feature.v2.FeatureService/ResetInstanceFeatures';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -1293,21 +1819,23 @@ class FeatureServiceApi
 
 
 
-        if ($userId !== null) {
-            $resourcePath = str_replace(
-                '{' . 'userId' . '}',
-                ObjectSerializer::toPathValue($userId),
-                $resourcePath
-            );
-        }
 
 
-        $headers = $this->selectHeaders(
+        $headers = $this->headerSelector->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+
+        // for model (json/xml)
+        if (isset($body)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+            } else {
+                $httpBody = $body;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -1319,16 +1847,19 @@ class FeatureServiceApi
                         ];
                     }
                 }
+                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
             }
         }
 
+        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -1345,9 +1876,9 @@ class FeatureServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
-            'DELETE',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -1355,50 +1886,1315 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation featureServiceSetInstanceFeatures
+     * Operation resetOrganizationFeatures
      *
-     * Set Instance Features
+     * ResetOrganizationFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesRequest $featureServiceResetOrganizationFeaturesRequest featureServiceResetOrganizationFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetOrganizationFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError
+     */
+    public function resetOrganizationFeatures($featureServiceResetOrganizationFeaturesRequest, string $contentType = self::contentTypes['resetOrganizationFeatures'][0])
+    {
+        list($response) = $this->resetOrganizationFeaturesWithHttpInfo($featureServiceResetOrganizationFeaturesRequest, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation resetOrganizationFeaturesWithHttpInfo
+     *
+     * ResetOrganizationFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesRequest $featureServiceResetOrganizationFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetOrganizationFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function resetOrganizationFeaturesWithHttpInfo($featureServiceResetOrganizationFeaturesRequest, string $contentType = self::contentTypes['resetOrganizationFeatures'][0])
+    {
+        $request = $this->resetOrganizationFeaturesRequest($featureServiceResetOrganizationFeaturesRequest, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                default:
+                    if ('\Zitadel\Client\Model\FeatureServiceConnectError' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceConnectError' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceConnectError', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                default:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceConnectError',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation resetOrganizationFeaturesAsync
+     *
+     * ResetOrganizationFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesRequest $featureServiceResetOrganizationFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetOrganizationFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function resetOrganizationFeaturesAsync($featureServiceResetOrganizationFeaturesRequest, string $contentType = self::contentTypes['resetOrganizationFeatures'][0])
+    {
+        return $this->resetOrganizationFeaturesAsyncWithHttpInfo($featureServiceResetOrganizationFeaturesRequest, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation resetOrganizationFeaturesAsyncWithHttpInfo
+     *
+     * ResetOrganizationFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesRequest $featureServiceResetOrganizationFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetOrganizationFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function resetOrganizationFeaturesAsyncWithHttpInfo($featureServiceResetOrganizationFeaturesRequest, string $contentType = self::contentTypes['resetOrganizationFeatures'][0])
+    {
+        $returnType = '\Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesResponse';
+        $request = $this->resetOrganizationFeaturesRequest($featureServiceResetOrganizationFeaturesRequest, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'resetOrganizationFeatures'
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesRequest $featureServiceResetOrganizationFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetOrganizationFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function resetOrganizationFeaturesRequest($featureServiceResetOrganizationFeaturesRequest, string $contentType = self::contentTypes['resetOrganizationFeatures'][0])
+    {
+
+        // verify the required parameter 'featureServiceResetOrganizationFeaturesRequest' is set
+        if ($featureServiceResetOrganizationFeaturesRequest === null || (is_array($featureServiceResetOrganizationFeaturesRequest) && count($featureServiceResetOrganizationFeaturesRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $featureServiceResetOrganizationFeaturesRequest when calling resetOrganizationFeatures'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.feature.v2.FeatureService/ResetOrganizationFeatures';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($featureServiceResetOrganizationFeaturesRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($featureServiceResetOrganizationFeaturesRequest));
+            } else {
+                $httpBody = $featureServiceResetOrganizationFeaturesRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation resetSystemFeatures
+     *
+     * ResetSystemFeatures
+     *
+     * @param  object $body body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetSystemFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError
+     */
+    public function resetSystemFeatures($body, string $contentType = self::contentTypes['resetSystemFeatures'][0])
+    {
+        list($response) = $this->resetSystemFeaturesWithHttpInfo($body, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation resetSystemFeaturesWithHttpInfo
+     *
+     * ResetSystemFeatures
+     *
+     * @param  object $body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetSystemFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function resetSystemFeaturesWithHttpInfo($body, string $contentType = self::contentTypes['resetSystemFeatures'][0])
+    {
+        $request = $this->resetSystemFeaturesRequest($body, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                default:
+                    if ('\Zitadel\Client\Model\FeatureServiceConnectError' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceConnectError' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceConnectError', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                default:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceConnectError',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation resetSystemFeaturesAsync
+     *
+     * ResetSystemFeatures
+     *
+     * @param  object $body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetSystemFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function resetSystemFeaturesAsync($body, string $contentType = self::contentTypes['resetSystemFeatures'][0])
+    {
+        return $this->resetSystemFeaturesAsyncWithHttpInfo($body, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation resetSystemFeaturesAsyncWithHttpInfo
+     *
+     * ResetSystemFeatures
+     *
+     * @param  object $body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetSystemFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function resetSystemFeaturesAsyncWithHttpInfo($body, string $contentType = self::contentTypes['resetSystemFeatures'][0])
+    {
+        $returnType = '\Zitadel\Client\Model\FeatureServiceResetSystemFeaturesResponse';
+        $request = $this->resetSystemFeaturesRequest($body, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'resetSystemFeatures'
+     *
+     * @param  object $body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetSystemFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function resetSystemFeaturesRequest($body, string $contentType = self::contentTypes['resetSystemFeatures'][0])
+    {
+
+        // verify the required parameter 'body' is set
+        if ($body === null || (is_array($body) && count($body) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $body when calling resetSystemFeatures'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.feature.v2.FeatureService/ResetSystemFeatures';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($body)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+            } else {
+                $httpBody = $body;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation resetUserFeatures
+     *
+     * ResetUserFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceResetUserFeaturesRequest $featureServiceResetUserFeaturesRequest featureServiceResetUserFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetUserFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError
+     */
+    public function resetUserFeatures($featureServiceResetUserFeaturesRequest, string $contentType = self::contentTypes['resetUserFeatures'][0])
+    {
+        list($response) = $this->resetUserFeaturesWithHttpInfo($featureServiceResetUserFeaturesRequest, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation resetUserFeaturesWithHttpInfo
+     *
+     * ResetUserFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceResetUserFeaturesRequest $featureServiceResetUserFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetUserFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function resetUserFeaturesWithHttpInfo($featureServiceResetUserFeaturesRequest, string $contentType = self::contentTypes['resetUserFeatures'][0])
+    {
+        $request = $this->resetUserFeaturesRequest($featureServiceResetUserFeaturesRequest, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                default:
+                    if ('\Zitadel\Client\Model\FeatureServiceConnectError' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceConnectError' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceConnectError', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                default:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceConnectError',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation resetUserFeaturesAsync
+     *
+     * ResetUserFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceResetUserFeaturesRequest $featureServiceResetUserFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetUserFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function resetUserFeaturesAsync($featureServiceResetUserFeaturesRequest, string $contentType = self::contentTypes['resetUserFeatures'][0])
+    {
+        return $this->resetUserFeaturesAsyncWithHttpInfo($featureServiceResetUserFeaturesRequest, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation resetUserFeaturesAsyncWithHttpInfo
+     *
+     * ResetUserFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceResetUserFeaturesRequest $featureServiceResetUserFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetUserFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function resetUserFeaturesAsyncWithHttpInfo($featureServiceResetUserFeaturesRequest, string $contentType = self::contentTypes['resetUserFeatures'][0])
+    {
+        $returnType = '\Zitadel\Client\Model\FeatureServiceResetUserFeaturesResponse';
+        $request = $this->resetUserFeaturesRequest($featureServiceResetUserFeaturesRequest, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'resetUserFeatures'
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceResetUserFeaturesRequest $featureServiceResetUserFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetUserFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function resetUserFeaturesRequest($featureServiceResetUserFeaturesRequest, string $contentType = self::contentTypes['resetUserFeatures'][0])
+    {
+
+        // verify the required parameter 'featureServiceResetUserFeaturesRequest' is set
+        if ($featureServiceResetUserFeaturesRequest === null || (is_array($featureServiceResetUserFeaturesRequest) && count($featureServiceResetUserFeaturesRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $featureServiceResetUserFeaturesRequest when calling resetUserFeatures'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.feature.v2.FeatureService/ResetUserFeatures';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($featureServiceResetUserFeaturesRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($featureServiceResetUserFeaturesRequest));
+            } else {
+                $httpBody = $featureServiceResetUserFeaturesRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation setInstanceFeatures
+     *
+     * SetInstanceFeatures
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest featureServiceSetInstanceFeaturesRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetInstanceFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setInstanceFeatures'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse
-     * @throws ApiException
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError
      */
-    public function featureServiceSetInstanceFeatures($featureServiceSetInstanceFeaturesRequest, string $contentType = self::contentTypes['featureServiceSetInstanceFeatures'][0])
+    public function setInstanceFeatures($featureServiceSetInstanceFeaturesRequest, string $contentType = self::contentTypes['setInstanceFeatures'][0])
     {
-        $request = $this->featureServiceSetInstanceFeaturesRequest($featureServiceSetInstanceFeaturesRequest, $contentType);
-
-        $responseTypes = [
-            200 => '\Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse',
-            403 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-        ];
-        $defaultSignatureType = '\Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse';
-        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+        list($response) = $this->setInstanceFeaturesWithHttpInfo($featureServiceSetInstanceFeaturesRequest, $contentType);
+        return $response;
     }
 
     /**
-     * Create request for operation 'featureServiceSetInstanceFeatures'
+     * Operation setInstanceFeaturesWithHttpInfo
+     *
+     * SetInstanceFeatures
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetInstanceFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setInstanceFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function setInstanceFeaturesWithHttpInfo($featureServiceSetInstanceFeaturesRequest, string $contentType = self::contentTypes['setInstanceFeatures'][0])
+    {
+        $request = $this->setInstanceFeaturesRequest($featureServiceSetInstanceFeaturesRequest, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                default:
+                    if ('\Zitadel\Client\Model\FeatureServiceConnectError' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceConnectError' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceConnectError', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                default:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceConnectError',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation setInstanceFeaturesAsync
+     *
+     * SetInstanceFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setInstanceFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function setInstanceFeaturesAsync($featureServiceSetInstanceFeaturesRequest, string $contentType = self::contentTypes['setInstanceFeatures'][0])
+    {
+        return $this->setInstanceFeaturesAsyncWithHttpInfo($featureServiceSetInstanceFeaturesRequest, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation setInstanceFeaturesAsyncWithHttpInfo
+     *
+     * SetInstanceFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setInstanceFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function setInstanceFeaturesAsyncWithHttpInfo($featureServiceSetInstanceFeaturesRequest, string $contentType = self::contentTypes['setInstanceFeatures'][0])
+    {
+        $returnType = '\Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesResponse';
+        $request = $this->setInstanceFeaturesRequest($featureServiceSetInstanceFeaturesRequest, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'setInstanceFeatures'
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setInstanceFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function featureServiceSetInstanceFeaturesRequest($featureServiceSetInstanceFeaturesRequest, string $contentType = self::contentTypes['featureServiceSetInstanceFeatures'][0])
+    public function setInstanceFeaturesRequest($featureServiceSetInstanceFeaturesRequest, string $contentType = self::contentTypes['setInstanceFeatures'][0])
     {
 
+        // verify the required parameter 'featureServiceSetInstanceFeaturesRequest' is set
         if ($featureServiceSetInstanceFeaturesRequest === null || (is_array($featureServiceSetInstanceFeaturesRequest) && count($featureServiceSetInstanceFeaturesRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $featureServiceSetInstanceFeaturesRequest when calling featureServiceSetInstanceFeatures'
+                'Missing the required parameter $featureServiceSetInstanceFeaturesRequest when calling setInstanceFeatures'
             );
         }
 
 
-        $resourcePath = '/v2/features/instance';
+        $resourcePath = '/zitadel.feature.v2.FeatureService/SetInstanceFeatures';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -1409,11 +3205,13 @@ class FeatureServiceApi
 
 
 
-        $headers = $this->selectHeaders(
+        $headers = $this->headerSelector->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
+
+        // for model (json/xml)
         if (isset($featureServiceSetInstanceFeaturesRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -1433,16 +3231,19 @@ class FeatureServiceApi
                         ];
                     }
                 }
+                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
             }
         }
 
+        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -1459,9 +3260,9 @@ class FeatureServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
-            'PUT',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -1469,50 +3270,277 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation featureServiceSetOrganizationFeatures
+     * Operation setOrganizationFeatures
      *
-     * Set Organization Features
+     * SetOrganizationFeatures
      *
-     * @param  string $organizationId organizationId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetOrganizationFeatures'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesRequest $featureServiceSetOrganizationFeaturesRequest featureServiceSetOrganizationFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setOrganizationFeatures'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse
-     * @throws ApiException
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError
      */
-    public function featureServiceSetOrganizationFeatures($organizationId, string $contentType = self::contentTypes['featureServiceSetOrganizationFeatures'][0])
+    public function setOrganizationFeatures($featureServiceSetOrganizationFeaturesRequest, string $contentType = self::contentTypes['setOrganizationFeatures'][0])
     {
-        $request = $this->featureServiceSetOrganizationFeaturesRequest($organizationId, $contentType);
-
-        $responseTypes = [
-            200 => '\Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse',
-            403 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-        ];
-        $defaultSignatureType = '\Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse';
-        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+        list($response) = $this->setOrganizationFeaturesWithHttpInfo($featureServiceSetOrganizationFeaturesRequest, $contentType);
+        return $response;
     }
 
     /**
-     * Create request for operation 'featureServiceSetOrganizationFeatures'
+     * Operation setOrganizationFeaturesWithHttpInfo
      *
-     * @param  string $organizationId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetOrganizationFeatures'] to see the possible values for this operation
+     * SetOrganizationFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesRequest $featureServiceSetOrganizationFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setOrganizationFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function setOrganizationFeaturesWithHttpInfo($featureServiceSetOrganizationFeaturesRequest, string $contentType = self::contentTypes['setOrganizationFeatures'][0])
+    {
+        $request = $this->setOrganizationFeaturesRequest($featureServiceSetOrganizationFeaturesRequest, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                default:
+                    if ('\Zitadel\Client\Model\FeatureServiceConnectError' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceConnectError' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceConnectError', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                default:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceConnectError',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation setOrganizationFeaturesAsync
+     *
+     * SetOrganizationFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesRequest $featureServiceSetOrganizationFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setOrganizationFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function setOrganizationFeaturesAsync($featureServiceSetOrganizationFeaturesRequest, string $contentType = self::contentTypes['setOrganizationFeatures'][0])
+    {
+        return $this->setOrganizationFeaturesAsyncWithHttpInfo($featureServiceSetOrganizationFeaturesRequest, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation setOrganizationFeaturesAsyncWithHttpInfo
+     *
+     * SetOrganizationFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesRequest $featureServiceSetOrganizationFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setOrganizationFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function setOrganizationFeaturesAsyncWithHttpInfo($featureServiceSetOrganizationFeaturesRequest, string $contentType = self::contentTypes['setOrganizationFeatures'][0])
+    {
+        $returnType = '\Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesResponse';
+        $request = $this->setOrganizationFeaturesRequest($featureServiceSetOrganizationFeaturesRequest, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'setOrganizationFeatures'
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesRequest $featureServiceSetOrganizationFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setOrganizationFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function featureServiceSetOrganizationFeaturesRequest($organizationId, string $contentType = self::contentTypes['featureServiceSetOrganizationFeatures'][0])
+    public function setOrganizationFeaturesRequest($featureServiceSetOrganizationFeaturesRequest, string $contentType = self::contentTypes['setOrganizationFeatures'][0])
     {
 
-        if ($organizationId === null || (is_array($organizationId) && count($organizationId) === 0)) {
+        // verify the required parameter 'featureServiceSetOrganizationFeaturesRequest' is set
+        if ($featureServiceSetOrganizationFeaturesRequest === null || (is_array($featureServiceSetOrganizationFeaturesRequest) && count($featureServiceSetOrganizationFeaturesRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $organizationId when calling featureServiceSetOrganizationFeatures'
+                'Missing the required parameter $featureServiceSetOrganizationFeaturesRequest when calling setOrganizationFeatures'
             );
         }
 
 
-        $resourcePath = '/v2/features/organization/{organizationId}';
+        $resourcePath = '/zitadel.feature.v2.FeatureService/SetOrganizationFeatures';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -1521,21 +3549,23 @@ class FeatureServiceApi
 
 
 
-        if ($organizationId !== null) {
-            $resourcePath = str_replace(
-                '{' . 'organizationId' . '}',
-                ObjectSerializer::toPathValue($organizationId),
-                $resourcePath
-            );
-        }
 
 
-        $headers = $this->selectHeaders(
+        $headers = $this->headerSelector->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+
+        // for model (json/xml)
+        if (isset($featureServiceSetOrganizationFeaturesRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($featureServiceSetOrganizationFeaturesRequest));
+            } else {
+                $httpBody = $featureServiceSetOrganizationFeaturesRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -1547,16 +3577,19 @@ class FeatureServiceApi
                         ];
                     }
                 }
+                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
             }
         }
 
+        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -1573,9 +3606,9 @@ class FeatureServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
-            'PUT',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -1583,50 +3616,277 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation featureServiceSetSystemFeatures
+     * Operation setSystemFeatures
      *
-     * Set System Features
+     * SetSystemFeatures
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest featureServiceSetSystemFeaturesRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetSystemFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSystemFeatures'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse
-     * @throws ApiException
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError
      */
-    public function featureServiceSetSystemFeatures($featureServiceSetSystemFeaturesRequest, string $contentType = self::contentTypes['featureServiceSetSystemFeatures'][0])
+    public function setSystemFeatures($featureServiceSetSystemFeaturesRequest, string $contentType = self::contentTypes['setSystemFeatures'][0])
     {
-        $request = $this->featureServiceSetSystemFeaturesRequest($featureServiceSetSystemFeaturesRequest, $contentType);
-
-        $responseTypes = [
-            200 => '\Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse',
-            403 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-        ];
-        $defaultSignatureType = '\Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse';
-        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+        list($response) = $this->setSystemFeaturesWithHttpInfo($featureServiceSetSystemFeaturesRequest, $contentType);
+        return $response;
     }
 
     /**
-     * Create request for operation 'featureServiceSetSystemFeatures'
+     * Operation setSystemFeaturesWithHttpInfo
+     *
+     * SetSystemFeatures
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetSystemFeatures'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSystemFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function setSystemFeaturesWithHttpInfo($featureServiceSetSystemFeaturesRequest, string $contentType = self::contentTypes['setSystemFeatures'][0])
+    {
+        $request = $this->setSystemFeaturesRequest($featureServiceSetSystemFeaturesRequest, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                default:
+                    if ('\Zitadel\Client\Model\FeatureServiceConnectError' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceConnectError' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceConnectError', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                default:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceConnectError',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation setSystemFeaturesAsync
+     *
+     * SetSystemFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSystemFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function setSystemFeaturesAsync($featureServiceSetSystemFeaturesRequest, string $contentType = self::contentTypes['setSystemFeatures'][0])
+    {
+        return $this->setSystemFeaturesAsyncWithHttpInfo($featureServiceSetSystemFeaturesRequest, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation setSystemFeaturesAsyncWithHttpInfo
+     *
+     * SetSystemFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSystemFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function setSystemFeaturesAsyncWithHttpInfo($featureServiceSetSystemFeaturesRequest, string $contentType = self::contentTypes['setSystemFeatures'][0])
+    {
+        $returnType = '\Zitadel\Client\Model\FeatureServiceSetSystemFeaturesResponse';
+        $request = $this->setSystemFeaturesRequest($featureServiceSetSystemFeaturesRequest, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'setSystemFeatures'
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSystemFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function featureServiceSetSystemFeaturesRequest($featureServiceSetSystemFeaturesRequest, string $contentType = self::contentTypes['featureServiceSetSystemFeatures'][0])
+    public function setSystemFeaturesRequest($featureServiceSetSystemFeaturesRequest, string $contentType = self::contentTypes['setSystemFeatures'][0])
     {
 
+        // verify the required parameter 'featureServiceSetSystemFeaturesRequest' is set
         if ($featureServiceSetSystemFeaturesRequest === null || (is_array($featureServiceSetSystemFeaturesRequest) && count($featureServiceSetSystemFeaturesRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $featureServiceSetSystemFeaturesRequest when calling featureServiceSetSystemFeatures'
+                'Missing the required parameter $featureServiceSetSystemFeaturesRequest when calling setSystemFeatures'
             );
         }
 
 
-        $resourcePath = '/v2/features/system';
+        $resourcePath = '/zitadel.feature.v2.FeatureService/SetSystemFeatures';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -1637,11 +3897,13 @@ class FeatureServiceApi
 
 
 
-        $headers = $this->selectHeaders(
+        $headers = $this->headerSelector->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
+
+        // for model (json/xml)
         if (isset($featureServiceSetSystemFeaturesRequest)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
@@ -1661,16 +3923,19 @@ class FeatureServiceApi
                         ];
                     }
                 }
+                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
             }
         }
 
+        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -1687,9 +3952,9 @@ class FeatureServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
-            'PUT',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -1697,50 +3962,277 @@ class FeatureServiceApi
     }
 
     /**
-     * Operation featureServiceSetUserFeatures
+     * Operation setUserFeatures
      *
-     * Set User Features
+     * SetUserFeatures
      *
-     * @param  string $userId userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetUserFeatures'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\FeatureServiceSetUserFeatureRequest $featureServiceSetUserFeatureRequest featureServiceSetUserFeatureRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setUserFeatures'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse
-     * @throws ApiException
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError
      */
-    public function featureServiceSetUserFeatures($userId, string $contentType = self::contentTypes['featureServiceSetUserFeatures'][0])
+    public function setUserFeatures($featureServiceSetUserFeatureRequest, string $contentType = self::contentTypes['setUserFeatures'][0])
     {
-        $request = $this->featureServiceSetUserFeaturesRequest($userId, $contentType);
-
-        $responseTypes = [
-            200 => '\Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse',
-            403 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\FeatureServiceRpcStatus',
-        ];
-        $defaultSignatureType = '\Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse';
-        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+        list($response) = $this->setUserFeaturesWithHttpInfo($featureServiceSetUserFeatureRequest, $contentType);
+        return $response;
     }
 
     /**
-     * Create request for operation 'featureServiceSetUserFeatures'
+     * Operation setUserFeaturesWithHttpInfo
      *
-     * @param  string $userId (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['featureServiceSetUserFeatures'] to see the possible values for this operation
+     * SetUserFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceSetUserFeatureRequest $featureServiceSetUserFeatureRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setUserFeatures'] to see the possible values for this operation
+     *
+     * @throws \Zitadel\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse|\Zitadel\Client\Model\FeatureServiceConnectError, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function setUserFeaturesWithHttpInfo($featureServiceSetUserFeatureRequest, string $contentType = self::contentTypes['setUserFeatures'][0])
+    {
+        $request = $this->setUserFeaturesRequest($featureServiceSetUserFeatureRequest, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                default:
+                    if ('\Zitadel\Client\Model\FeatureServiceConnectError' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Zitadel\Client\Model\FeatureServiceConnectError' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Zitadel\Client\Model\FeatureServiceConnectError', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                default:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Zitadel\Client\Model\FeatureServiceConnectError',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation setUserFeaturesAsync
+     *
+     * SetUserFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceSetUserFeatureRequest $featureServiceSetUserFeatureRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setUserFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function setUserFeaturesAsync($featureServiceSetUserFeatureRequest, string $contentType = self::contentTypes['setUserFeatures'][0])
+    {
+        return $this->setUserFeaturesAsyncWithHttpInfo($featureServiceSetUserFeatureRequest, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation setUserFeaturesAsyncWithHttpInfo
+     *
+     * SetUserFeatures
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceSetUserFeatureRequest $featureServiceSetUserFeatureRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setUserFeatures'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function setUserFeaturesAsyncWithHttpInfo($featureServiceSetUserFeatureRequest, string $contentType = self::contentTypes['setUserFeatures'][0])
+    {
+        $returnType = '\Zitadel\Client\Model\FeatureServiceSetUserFeaturesResponse';
+        $request = $this->setUserFeaturesRequest($featureServiceSetUserFeatureRequest, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'setUserFeatures'
+     *
+     * @param  \Zitadel\Client\Model\FeatureServiceSetUserFeatureRequest $featureServiceSetUserFeatureRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setUserFeatures'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function featureServiceSetUserFeaturesRequest($userId, string $contentType = self::contentTypes['featureServiceSetUserFeatures'][0])
+    public function setUserFeaturesRequest($featureServiceSetUserFeatureRequest, string $contentType = self::contentTypes['setUserFeatures'][0])
     {
 
-        if ($userId === null || (is_array($userId) && count($userId) === 0)) {
+        // verify the required parameter 'featureServiceSetUserFeatureRequest' is set
+        if ($featureServiceSetUserFeatureRequest === null || (is_array($featureServiceSetUserFeatureRequest) && count($featureServiceSetUserFeatureRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $userId when calling featureServiceSetUserFeatures'
+                'Missing the required parameter $featureServiceSetUserFeatureRequest when calling setUserFeatures'
             );
         }
 
 
-        $resourcePath = '/v2/features/user/{userId}';
+        $resourcePath = '/zitadel.feature.v2.FeatureService/SetUserFeatures';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -1749,21 +4241,23 @@ class FeatureServiceApi
 
 
 
-        if ($userId !== null) {
-            $resourcePath = str_replace(
-                '{' . 'userId' . '}',
-                ObjectSerializer::toPathValue($userId),
-                $resourcePath
-            );
-        }
 
 
-        $headers = $this->selectHeaders(
+        $headers = $this->headerSelector->selectHeaders(
             ['application/json', ],
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+
+        // for model (json/xml)
+        if (isset($featureServiceSetUserFeatureRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($featureServiceSetUserFeatureRequest));
+            } else {
+                $httpBody = $featureServiceSetUserFeatureRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -1775,16 +4269,19 @@ class FeatureServiceApi
                         ];
                     }
                 }
+                // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the form parameters
                 $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
             } else {
-                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
             }
         }
 
+        // this endpoint requires Bearer authentication (access token)
         if (!empty($this->config->getAccessToken())) {
             $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
         }
@@ -1801,9 +4298,9 @@ class FeatureServiceApi
         );
 
         $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
-            'PUT',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody

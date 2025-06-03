@@ -57,8 +57,9 @@ class SAMLServiceCreateResponseRequest implements ModelInterface, ArrayAccess, \
       * @var string[]
       */
     protected static $openAPITypes = [
-        'session' => '\Zitadel\Client\Model\SAMLServiceSession',
-        'error' => '\Zitadel\Client\Model\SAMLServiceAuthorizationError'
+        'samlRequestId' => 'string',
+        'error' => '\Zitadel\Client\Model\SAMLServiceAuthorizationError',
+        'session' => '\Zitadel\Client\Model\SAMLServiceSession'
     ];
 
     /**
@@ -69,8 +70,9 @@ class SAMLServiceCreateResponseRequest implements ModelInterface, ArrayAccess, \
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'session' => null,
-        'error' => null
+        'samlRequestId' => null,
+        'error' => null,
+        'session' => null
     ];
 
     /**
@@ -79,8 +81,9 @@ class SAMLServiceCreateResponseRequest implements ModelInterface, ArrayAccess, \
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'session' => false,
-        'error' => false
+        'samlRequestId' => false,
+        'error' => false,
+        'session' => false
     ];
 
     /**
@@ -169,8 +172,9 @@ class SAMLServiceCreateResponseRequest implements ModelInterface, ArrayAccess, \
      * @var string[]
      */
     protected static $attributeMap = [
-        'session' => 'session',
-        'error' => 'error'
+        'samlRequestId' => 'samlRequestId',
+        'error' => 'error',
+        'session' => 'session'
     ];
 
     /**
@@ -179,8 +183,9 @@ class SAMLServiceCreateResponseRequest implements ModelInterface, ArrayAccess, \
      * @var string[]
      */
     protected static $setters = [
-        'session' => 'setSession',
-        'error' => 'setError'
+        'samlRequestId' => 'setSamlRequestId',
+        'error' => 'setError',
+        'session' => 'setSession'
     ];
 
     /**
@@ -189,8 +194,9 @@ class SAMLServiceCreateResponseRequest implements ModelInterface, ArrayAccess, \
      * @var string[]
      */
     protected static $getters = [
-        'session' => 'getSession',
-        'error' => 'getError'
+        'samlRequestId' => 'getSamlRequestId',
+        'error' => 'getError',
+        'session' => 'getSession'
     ];
 
     /**
@@ -250,8 +256,9 @@ class SAMLServiceCreateResponseRequest implements ModelInterface, ArrayAccess, \
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('session', $data ?? [], null);
+        $this->setIfExists('samlRequestId', $data ?? [], null);
         $this->setIfExists('error', $data ?? [], null);
+        $this->setIfExists('session', $data ?? [], null);
     }
 
     /**
@@ -281,6 +288,12 @@ class SAMLServiceCreateResponseRequest implements ModelInterface, ArrayAccess, \
     {
         $invalidProperties = [];
 
+        if ($this->container['error'] === null) {
+            $invalidProperties[] = "'error' can't be null";
+        }
+        if ($this->container['session'] === null) {
+            $invalidProperties[] = "'session' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -297,28 +310,28 @@ class SAMLServiceCreateResponseRequest implements ModelInterface, ArrayAccess, \
 
 
     /**
-     * Gets session
+     * Gets samlRequestId
      *
-     * @return \Zitadel\Client\Model\SAMLServiceSession|null
+     * @return string|null
      */
-    public function getSession()
+    public function getSamlRequestId()
     {
-        return $this->container['session'];
+        return $this->container['samlRequestId'];
     }
 
     /**
-     * Sets session
+     * Sets samlRequestId
      *
-     * @param \Zitadel\Client\Model\SAMLServiceSession|null $session session
+     * @param string|null $samlRequestId ID of the SAML Request.
      *
      * @return self
      */
-    public function setSession($session)
+    public function setSamlRequestId($samlRequestId)
     {
-        if (is_null($session)) {
-            throw new \InvalidArgumentException('non-nullable session cannot be null');
+        if (is_null($samlRequestId)) {
+            throw new \InvalidArgumentException('non-nullable samlRequestId cannot be null');
         }
-        $this->container['session'] = $session;
+        $this->container['samlRequestId'] = $samlRequestId;
 
         return $this;
     }
@@ -326,7 +339,7 @@ class SAMLServiceCreateResponseRequest implements ModelInterface, ArrayAccess, \
     /**
      * Gets error
      *
-     * @return \Zitadel\Client\Model\SAMLServiceAuthorizationError|null
+     * @return \Zitadel\Client\Model\SAMLServiceAuthorizationError
      */
     public function getError()
     {
@@ -336,7 +349,7 @@ class SAMLServiceCreateResponseRequest implements ModelInterface, ArrayAccess, \
     /**
      * Sets error
      *
-     * @param \Zitadel\Client\Model\SAMLServiceAuthorizationError|null $error error
+     * @param \Zitadel\Client\Model\SAMLServiceAuthorizationError $error error
      *
      * @return self
      */
@@ -346,6 +359,33 @@ class SAMLServiceCreateResponseRequest implements ModelInterface, ArrayAccess, \
             throw new \InvalidArgumentException('non-nullable error cannot be null');
         }
         $this->container['error'] = $error;
+
+        return $this;
+    }
+
+    /**
+     * Gets session
+     *
+     * @return \Zitadel\Client\Model\SAMLServiceSession
+     */
+    public function getSession()
+    {
+        return $this->container['session'];
+    }
+
+    /**
+     * Sets session
+     *
+     * @param \Zitadel\Client\Model\SAMLServiceSession $session session
+     *
+     * @return self
+     */
+    public function setSession($session)
+    {
+        if (is_null($session)) {
+            throw new \InvalidArgumentException('non-nullable session cannot be null');
+        }
+        $this->container['session'] = $session;
 
         return $this;
     }

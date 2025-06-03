@@ -79,8 +79,8 @@ class UserServiceSendInviteCode implements ModelInterface, ArrayAccess, \JsonSer
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'urlTemplate' => false,
-        'applicationName' => false
+        'urlTemplate' => true,
+        'applicationName' => true
     ];
 
     /**
@@ -281,22 +281,6 @@ class UserServiceSendInviteCode implements ModelInterface, ArrayAccess, \JsonSer
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['urlTemplate']) && (mb_strlen($this->container['urlTemplate']) > 200)) {
-            $invalidProperties[] = "invalid value for 'urlTemplate', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['urlTemplate']) && (mb_strlen($this->container['urlTemplate']) < 1)) {
-            $invalidProperties[] = "invalid value for 'urlTemplate', the character length must be bigger than or equal to 1.";
-        }
-
-        if (!is_null($this->container['applicationName']) && (mb_strlen($this->container['applicationName']) > 200)) {
-            $invalidProperties[] = "invalid value for 'applicationName', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['applicationName']) && (mb_strlen($this->container['applicationName']) < 1)) {
-            $invalidProperties[] = "invalid value for 'applicationName', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -325,22 +309,22 @@ class UserServiceSendInviteCode implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets urlTemplate
      *
-     * @param string|null $urlTemplate Optionally set a url_template, which will be used in the invite mail sent by ZITADEL to guide the user to your invitation page. If no template is set, the default ZITADEL url will be used.  The following placeholders can be used: UserID, OrgID, Code
+     * @param string|null $urlTemplate Optionally set a url_template, which will be used in the invite mail sent by ZITADEL to guide the user to your invitation page.  If no template is set and no previous code was created, the default ZITADEL url will be used.   The following placeholders can be used: UserID, OrgID, Code
      *
      * @return self
      */
     public function setUrlTemplate($urlTemplate)
     {
         if (is_null($urlTemplate)) {
-            throw new \InvalidArgumentException('non-nullable urlTemplate cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'urlTemplate');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('urlTemplate', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
-        if ((mb_strlen($urlTemplate) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $urlTemplate when calling UserServiceSendInviteCode., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($urlTemplate) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $urlTemplate when calling UserServiceSendInviteCode., must be bigger than or equal to 1.');
-        }
-
         $this->container['urlTemplate'] = $urlTemplate;
 
         return $this;
@@ -359,22 +343,22 @@ class UserServiceSendInviteCode implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets applicationName
      *
-     * @param string|null $applicationName Optionally set an application name, which will be used in the invite mail sent by ZITADEL. If no application name is set, ZITADEL will be used as default.
+     * @param string|null $applicationName Optionally set an application name, which will be used in the invite mail sent by ZITADEL.  If no application name is set and no previous code was created, ZITADEL will be used as default.
      *
      * @return self
      */
     public function setApplicationName($applicationName)
     {
         if (is_null($applicationName)) {
-            throw new \InvalidArgumentException('non-nullable applicationName cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'applicationName');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('applicationName', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
-        if ((mb_strlen($applicationName) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $applicationName when calling UserServiceSendInviteCode., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($applicationName) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $applicationName when calling UserServiceSendInviteCode., must be bigger than or equal to 1.');
-        }
-
         $this->container['applicationName'] = $applicationName;
 
         return $this;

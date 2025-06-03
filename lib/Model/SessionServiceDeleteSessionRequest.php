@@ -57,6 +57,7 @@ class SessionServiceDeleteSessionRequest implements ModelInterface, ArrayAccess,
       * @var string[]
       */
     protected static $openAPITypes = [
+        'sessionId' => 'string',
         'sessionToken' => 'string'
     ];
 
@@ -68,6 +69,7 @@ class SessionServiceDeleteSessionRequest implements ModelInterface, ArrayAccess,
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
+        'sessionId' => null,
         'sessionToken' => null
     ];
 
@@ -77,7 +79,8 @@ class SessionServiceDeleteSessionRequest implements ModelInterface, ArrayAccess,
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'sessionToken' => false
+        'sessionId' => false,
+        'sessionToken' => true
     ];
 
     /**
@@ -166,6 +169,7 @@ class SessionServiceDeleteSessionRequest implements ModelInterface, ArrayAccess,
      * @var string[]
      */
     protected static $attributeMap = [
+        'sessionId' => 'sessionId',
         'sessionToken' => 'sessionToken'
     ];
 
@@ -175,6 +179,7 @@ class SessionServiceDeleteSessionRequest implements ModelInterface, ArrayAccess,
      * @var string[]
      */
     protected static $setters = [
+        'sessionId' => 'setSessionId',
         'sessionToken' => 'setSessionToken'
     ];
 
@@ -184,6 +189,7 @@ class SessionServiceDeleteSessionRequest implements ModelInterface, ArrayAccess,
      * @var string[]
      */
     protected static $getters = [
+        'sessionId' => 'getSessionId',
         'sessionToken' => 'getSessionToken'
     ];
 
@@ -244,6 +250,7 @@ class SessionServiceDeleteSessionRequest implements ModelInterface, ArrayAccess,
      */
     public function __construct(?array $data = null)
     {
+        $this->setIfExists('sessionId', $data ?? [], null);
         $this->setIfExists('sessionToken', $data ?? [], null);
     }
 
@@ -290,6 +297,33 @@ class SessionServiceDeleteSessionRequest implements ModelInterface, ArrayAccess,
 
 
     /**
+     * Gets sessionId
+     *
+     * @return string|null
+     */
+    public function getSessionId()
+    {
+        return $this->container['sessionId'];
+    }
+
+    /**
+     * Sets sessionId
+     *
+     * @param string|null $sessionId sessionId
+     *
+     * @return self
+     */
+    public function setSessionId($sessionId)
+    {
+        if (is_null($sessionId)) {
+            throw new \InvalidArgumentException('non-nullable sessionId cannot be null');
+        }
+        $this->container['sessionId'] = $sessionId;
+
+        return $this;
+    }
+
+    /**
      * Gets sessionToken
      *
      * @return string|null
@@ -302,14 +336,21 @@ class SessionServiceDeleteSessionRequest implements ModelInterface, ArrayAccess,
     /**
      * Sets sessionToken
      *
-     * @param string|null $sessionToken \"The current token of the session, previously returned on the create / update request. The token is required unless the authenticated user terminates the own session or is granted the `session.delete` permission.\"
+     * @param string|null $sessionToken sessionToken
      *
      * @return self
      */
     public function setSessionToken($sessionToken)
     {
         if (is_null($sessionToken)) {
-            throw new \InvalidArgumentException('non-nullable sessionToken cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'sessionToken');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('sessionToken', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['sessionToken'] = $sessionToken;
 

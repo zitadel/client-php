@@ -432,7 +432,7 @@ class SettingsServiceLegalAndSupportSettings implements ModelInterface, ArrayAcc
     /**
      * Sets supportEmail
      *
-     * @param string|null $supportEmail help / support email address.
+     * @param string|null $supportEmail supportEmail
      *
      * @return self
      */
@@ -486,7 +486,7 @@ class SettingsServiceLegalAndSupportSettings implements ModelInterface, ArrayAcc
     /**
      * Sets docsLink
      *
-     * @param string|null $docsLink Link to documentation to be shown in the console.
+     * @param string|null $docsLink docsLink
      *
      * @return self
      */
@@ -513,7 +513,7 @@ class SettingsServiceLegalAndSupportSettings implements ModelInterface, ArrayAcc
     /**
      * Sets customLink
      *
-     * @param string|null $customLink Link to an external resource that will be available to users in the console.
+     * @param string|null $customLink customLink
      *
      * @return self
      */
@@ -540,7 +540,7 @@ class SettingsServiceLegalAndSupportSettings implements ModelInterface, ArrayAcc
     /**
      * Sets customLinkText
      *
-     * @param string|null $customLinkText The button text that would be shown in console pointing to custom link.
+     * @param string|null $customLinkText customLinkText
      *
      * @return self
      */

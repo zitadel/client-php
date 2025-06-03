@@ -77,7 +77,7 @@ class SessionServiceUserAgentQuery implements ModelInterface, ArrayAccess, \Json
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'fingerprintId' => false
+        'fingerprintId' => true
     ];
 
     /**
@@ -274,10 +274,6 @@ class SessionServiceUserAgentQuery implements ModelInterface, ArrayAccess, \Json
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['fingerprintId']) && (mb_strlen($this->container['fingerprintId']) > 200)) {
-            $invalidProperties[] = "invalid value for 'fingerprintId', the character length must be smaller than or equal to 200.";
-        }
-
         return $invalidProperties;
     }
 
@@ -306,19 +302,22 @@ class SessionServiceUserAgentQuery implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets fingerprintId
      *
-     * @param string|null $fingerprintId Finger print id of the user agent used for the session. Set an empty fingerprint_id to use the user agent from the call. If the user agent is not available from the current token, an error will be returned.
+     * @param string|null $fingerprintId Finger print id of the user agent used for the session.  Set an empty fingerprint_id to use the user agent from the call.  If the user agent is not available from the current token, an error will be returned.
      *
      * @return self
      */
     public function setFingerprintId($fingerprintId)
     {
         if (is_null($fingerprintId)) {
-            throw new \InvalidArgumentException('non-nullable fingerprintId cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'fingerprintId');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('fingerprintId', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
-        if ((mb_strlen($fingerprintId) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $fingerprintId when calling SessionServiceUserAgentQuery., must be smaller than or equal to 200.');
-        }
-
         $this->container['fingerprintId'] = $fingerprintId;
 
         return $this;

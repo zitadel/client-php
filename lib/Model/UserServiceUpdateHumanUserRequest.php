@@ -57,6 +57,7 @@ class UserServiceUpdateHumanUserRequest implements ModelInterface, ArrayAccess, 
       * @var string[]
       */
     protected static $openAPITypes = [
+        'userId' => 'string',
         'username' => 'string',
         'profile' => '\Zitadel\Client\Model\UserServiceSetHumanProfile',
         'email' => '\Zitadel\Client\Model\UserServiceSetHumanEmail',
@@ -72,6 +73,7 @@ class UserServiceUpdateHumanUserRequest implements ModelInterface, ArrayAccess, 
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
+        'userId' => null,
         'username' => null,
         'profile' => null,
         'email' => null,
@@ -85,7 +87,8 @@ class UserServiceUpdateHumanUserRequest implements ModelInterface, ArrayAccess, 
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'username' => false,
+        'userId' => false,
+        'username' => true,
         'profile' => false,
         'email' => false,
         'phone' => false,
@@ -178,6 +181,7 @@ class UserServiceUpdateHumanUserRequest implements ModelInterface, ArrayAccess, 
      * @var string[]
      */
     protected static $attributeMap = [
+        'userId' => 'userId',
         'username' => 'username',
         'profile' => 'profile',
         'email' => 'email',
@@ -191,6 +195,7 @@ class UserServiceUpdateHumanUserRequest implements ModelInterface, ArrayAccess, 
      * @var string[]
      */
     protected static $setters = [
+        'userId' => 'setUserId',
         'username' => 'setUsername',
         'profile' => 'setProfile',
         'email' => 'setEmail',
@@ -204,6 +209,7 @@ class UserServiceUpdateHumanUserRequest implements ModelInterface, ArrayAccess, 
      * @var string[]
      */
     protected static $getters = [
+        'userId' => 'getUserId',
         'username' => 'getUsername',
         'profile' => 'getProfile',
         'email' => 'getEmail',
@@ -268,6 +274,7 @@ class UserServiceUpdateHumanUserRequest implements ModelInterface, ArrayAccess, 
      */
     public function __construct(?array $data = null)
     {
+        $this->setIfExists('userId', $data ?? [], null);
         $this->setIfExists('username', $data ?? [], null);
         $this->setIfExists('profile', $data ?? [], null);
         $this->setIfExists('email', $data ?? [], null);
@@ -302,14 +309,6 @@ class UserServiceUpdateHumanUserRequest implements ModelInterface, ArrayAccess, 
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['username']) && (mb_strlen($this->container['username']) > 200)) {
-            $invalidProperties[] = "invalid value for 'username', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['username']) && (mb_strlen($this->container['username']) < 1)) {
-            $invalidProperties[] = "invalid value for 'username', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -324,6 +323,33 @@ class UserServiceUpdateHumanUserRequest implements ModelInterface, ArrayAccess, 
         return count($this->listInvalidProperties()) === 0;
     }
 
+
+    /**
+     * Gets userId
+     *
+     * @return string|null
+     */
+    public function getUserId()
+    {
+        return $this->container['userId'];
+    }
+
+    /**
+     * Sets userId
+     *
+     * @param string|null $userId userId
+     *
+     * @return self
+     */
+    public function setUserId($userId)
+    {
+        if (is_null($userId)) {
+            throw new \InvalidArgumentException('non-nullable userId cannot be null');
+        }
+        $this->container['userId'] = $userId;
+
+        return $this;
+    }
 
     /**
      * Gets username
@@ -345,15 +371,15 @@ class UserServiceUpdateHumanUserRequest implements ModelInterface, ArrayAccess, 
     public function setUsername($username)
     {
         if (is_null($username)) {
-            throw new \InvalidArgumentException('non-nullable username cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'username');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('username', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
-        if ((mb_strlen($username) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $username when calling UserServiceUpdateHumanUserRequest., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($username) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $username when calling UserServiceUpdateHumanUserRequest., must be bigger than or equal to 1.');
-        }
-
         $this->container['username'] = $username;
 
         return $this;
