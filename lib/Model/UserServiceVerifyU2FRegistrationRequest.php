@@ -57,7 +57,9 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
       * @var string[]
       */
     protected static $openAPITypes = [
-        'publicKeyCredential' => 'object',
+        'userId' => 'string',
+        'u2fId' => 'string',
+        'publicKeyCredential' => 'array<string,\Zitadel\Client\Model\UserServiceValue>',
         'tokenName' => 'string'
     ];
 
@@ -69,6 +71,8 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
+        'userId' => null,
+        'u2fId' => null,
         'publicKeyCredential' => null,
         'tokenName' => null
     ];
@@ -79,6 +83,8 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
       * @var boolean[]
       */
     protected static array $openAPINullables = [
+        'userId' => false,
+        'u2fId' => false,
         'publicKeyCredential' => false,
         'tokenName' => false
     ];
@@ -169,6 +175,8 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
      * @var string[]
      */
     protected static $attributeMap = [
+        'userId' => 'userId',
+        'u2fId' => 'u2fId',
         'publicKeyCredential' => 'publicKeyCredential',
         'tokenName' => 'tokenName'
     ];
@@ -179,6 +187,8 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
      * @var string[]
      */
     protected static $setters = [
+        'userId' => 'setUserId',
+        'u2fId' => 'setU2fId',
         'publicKeyCredential' => 'setPublicKeyCredential',
         'tokenName' => 'setTokenName'
     ];
@@ -189,6 +199,8 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
      * @var string[]
      */
     protected static $getters = [
+        'userId' => 'getUserId',
+        'u2fId' => 'getU2fId',
         'publicKeyCredential' => 'getPublicKeyCredential',
         'tokenName' => 'getTokenName'
     ];
@@ -250,6 +262,8 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
      */
     public function __construct(?array $data = null)
     {
+        $this->setIfExists('userId', $data ?? [], null);
+        $this->setIfExists('u2fId', $data ?? [], null);
         $this->setIfExists('publicKeyCredential', $data ?? [], null);
         $this->setIfExists('tokenName', $data ?? [], null);
     }
@@ -281,20 +295,18 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
     {
         $invalidProperties = [];
 
+        if ($this->container['userId'] === null) {
+            $invalidProperties[] = "'userId' can't be null";
+        }
+        if ($this->container['u2fId'] === null) {
+            $invalidProperties[] = "'u2fId' can't be null";
+        }
         if ($this->container['publicKeyCredential'] === null) {
             $invalidProperties[] = "'publicKeyCredential' can't be null";
         }
         if ($this->container['tokenName'] === null) {
             $invalidProperties[] = "'tokenName' can't be null";
         }
-        if ((mb_strlen($this->container['tokenName']) > 200)) {
-            $invalidProperties[] = "invalid value for 'tokenName', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['tokenName']) < 1)) {
-            $invalidProperties[] = "invalid value for 'tokenName', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -311,9 +323,63 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
 
 
     /**
+     * Gets userId
+     *
+     * @return string
+     */
+    public function getUserId()
+    {
+        return $this->container['userId'];
+    }
+
+    /**
+     * Sets userId
+     *
+     * @param string $userId userId
+     *
+     * @return self
+     */
+    public function setUserId($userId)
+    {
+        if (is_null($userId)) {
+            throw new \InvalidArgumentException('non-nullable userId cannot be null');
+        }
+        $this->container['userId'] = $userId;
+
+        return $this;
+    }
+
+    /**
+     * Gets u2fId
+     *
+     * @return string
+     */
+    public function getU2fId()
+    {
+        return $this->container['u2fId'];
+    }
+
+    /**
+     * Sets u2fId
+     *
+     * @param string $u2fId u2fId
+     *
+     * @return self
+     */
+    public function setU2fId($u2fId)
+    {
+        if (is_null($u2fId)) {
+            throw new \InvalidArgumentException('non-nullable u2fId cannot be null');
+        }
+        $this->container['u2fId'] = $u2fId;
+
+        return $this;
+    }
+
+    /**
      * Gets publicKeyCredential
      *
-     * @return object
+     * @return array<string,\Zitadel\Client\Model\UserServiceValue>
      */
     public function getPublicKeyCredential()
     {
@@ -323,7 +389,7 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
     /**
      * Sets publicKeyCredential
      *
-     * @param object $publicKeyCredential PublicKeyCredential Interface. Generated helper methods populate the field from JSON created by a WebauthN client. See also:  https://www.w3.org/TR/webauthn/#publickeycredential
+     * @param array<string,\Zitadel\Client\Model\UserServiceValue> $publicKeyCredential `Struct` represents a structured data value, consisting of fields  which map to dynamically typed values. In some languages, `Struct`  might be supported by a native representation. For example, in  scripting languages like JS a struct is represented as an  object. The details of that representation are described together  with the proto support for the language.   The JSON representation for `Struct` is JSON object.
      *
      * @return self
      */
@@ -332,8 +398,6 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
         if (is_null($publicKeyCredential)) {
             throw new \InvalidArgumentException('non-nullable publicKeyCredential cannot be null');
         }
-
-
         $this->container['publicKeyCredential'] = $publicKeyCredential;
 
         return $this;
@@ -361,13 +425,6 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
         if (is_null($tokenName)) {
             throw new \InvalidArgumentException('non-nullable tokenName cannot be null');
         }
-        if ((mb_strlen($tokenName) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $tokenName when calling UserServiceVerifyU2FRegistrationRequest., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($tokenName) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $tokenName when calling UserServiceVerifyU2FRegistrationRequest., must be bigger than or equal to 1.');
-        }
-
         $this->container['tokenName'] = $tokenName;
 
         return $this;

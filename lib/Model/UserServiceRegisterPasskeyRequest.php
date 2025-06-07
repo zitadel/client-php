@@ -57,6 +57,7 @@ class UserServiceRegisterPasskeyRequest implements ModelInterface, ArrayAccess, 
       * @var string[]
       */
     protected static $openAPITypes = [
+        'userId' => 'string',
         'code' => '\Zitadel\Client\Model\UserServicePasskeyRegistrationCode',
         'authenticator' => '\Zitadel\Client\Model\UserServicePasskeyAuthenticator',
         'domain' => 'string'
@@ -70,6 +71,7 @@ class UserServiceRegisterPasskeyRequest implements ModelInterface, ArrayAccess, 
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
+        'userId' => null,
         'code' => null,
         'authenticator' => null,
         'domain' => null
@@ -81,6 +83,7 @@ class UserServiceRegisterPasskeyRequest implements ModelInterface, ArrayAccess, 
       * @var boolean[]
       */
     protected static array $openAPINullables = [
+        'userId' => false,
         'code' => false,
         'authenticator' => false,
         'domain' => false
@@ -172,6 +175,7 @@ class UserServiceRegisterPasskeyRequest implements ModelInterface, ArrayAccess, 
      * @var string[]
      */
     protected static $attributeMap = [
+        'userId' => 'userId',
         'code' => 'code',
         'authenticator' => 'authenticator',
         'domain' => 'domain'
@@ -183,6 +187,7 @@ class UserServiceRegisterPasskeyRequest implements ModelInterface, ArrayAccess, 
      * @var string[]
      */
     protected static $setters = [
+        'userId' => 'setUserId',
         'code' => 'setCode',
         'authenticator' => 'setAuthenticator',
         'domain' => 'setDomain'
@@ -194,6 +199,7 @@ class UserServiceRegisterPasskeyRequest implements ModelInterface, ArrayAccess, 
      * @var string[]
      */
     protected static $getters = [
+        'userId' => 'getUserId',
         'code' => 'getCode',
         'authenticator' => 'getAuthenticator',
         'domain' => 'getDomain'
@@ -256,6 +262,7 @@ class UserServiceRegisterPasskeyRequest implements ModelInterface, ArrayAccess, 
      */
     public function __construct(?array $data = null)
     {
+        $this->setIfExists('userId', $data ?? [], null);
         $this->setIfExists('code', $data ?? [], null);
         $this->setIfExists('authenticator', $data ?? [], null);
         $this->setIfExists('domain', $data ?? [], null);
@@ -288,6 +295,9 @@ class UserServiceRegisterPasskeyRequest implements ModelInterface, ArrayAccess, 
     {
         $invalidProperties = [];
 
+        if ($this->container['userId'] === null) {
+            $invalidProperties[] = "'userId' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -302,6 +312,33 @@ class UserServiceRegisterPasskeyRequest implements ModelInterface, ArrayAccess, 
         return count($this->listInvalidProperties()) === 0;
     }
 
+
+    /**
+     * Gets userId
+     *
+     * @return string
+     */
+    public function getUserId()
+    {
+        return $this->container['userId'];
+    }
+
+    /**
+     * Sets userId
+     *
+     * @param string $userId userId
+     *
+     * @return self
+     */
+    public function setUserId($userId)
+    {
+        if (is_null($userId)) {
+            throw new \InvalidArgumentException('non-nullable userId cannot be null');
+        }
+        $this->container['userId'] = $userId;
+
+        return $this;
+    }
 
     /**
      * Gets code
@@ -370,7 +407,7 @@ class UserServiceRegisterPasskeyRequest implements ModelInterface, ArrayAccess, 
     /**
      * Sets domain
      *
-     * @param string|null $domain \"Domain on which the user is authenticated.\"
+     * @param string|null $domain domain
      *
      * @return self
      */

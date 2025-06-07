@@ -323,6 +323,12 @@ class UserServiceUser implements ModelInterface, ArrayAccess, \JsonSerializable
     {
         $invalidProperties = [];
 
+        if ($this->container['human'] === null) {
+            $invalidProperties[] = "'human' can't be null";
+        }
+        if ($this->container['machine'] === null) {
+            $invalidProperties[] = "'machine' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -503,7 +509,7 @@ class UserServiceUser implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Gets human
      *
-     * @return \Zitadel\Client\Model\UserServiceHumanUser|null
+     * @return \Zitadel\Client\Model\UserServiceHumanUser
      */
     public function getHuman()
     {
@@ -513,7 +519,7 @@ class UserServiceUser implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Sets human
      *
-     * @param \Zitadel\Client\Model\UserServiceHumanUser|null $human human
+     * @param \Zitadel\Client\Model\UserServiceHumanUser $human human
      *
      * @return self
      */
@@ -530,7 +536,7 @@ class UserServiceUser implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Gets machine
      *
-     * @return \Zitadel\Client\Model\UserServiceMachineUser|null
+     * @return \Zitadel\Client\Model\UserServiceMachineUser
      */
     public function getMachine()
     {
@@ -540,7 +546,7 @@ class UserServiceUser implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Sets machine
      *
-     * @param \Zitadel\Client\Model\UserServiceMachineUser|null $machine machine
+     * @param \Zitadel\Client\Model\UserServiceMachineUser $machine machine
      *
      * @return self
      */

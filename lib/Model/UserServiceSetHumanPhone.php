@@ -58,9 +58,9 @@ class UserServiceSetHumanPhone implements ModelInterface, ArrayAccess, \JsonSeri
       */
     protected static $openAPITypes = [
         'phone' => 'string',
-        'sendCode' => 'object',
+        'isVerified' => 'bool',
         'returnCode' => 'object',
-        'isVerified' => 'bool'
+        'sendCode' => 'object'
     ];
 
     /**
@@ -72,9 +72,9 @@ class UserServiceSetHumanPhone implements ModelInterface, ArrayAccess, \JsonSeri
       */
     protected static $openAPIFormats = [
         'phone' => null,
-        'sendCode' => null,
+        'isVerified' => null,
         'returnCode' => null,
-        'isVerified' => null
+        'sendCode' => null
     ];
 
     /**
@@ -84,9 +84,9 @@ class UserServiceSetHumanPhone implements ModelInterface, ArrayAccess, \JsonSeri
       */
     protected static array $openAPINullables = [
         'phone' => false,
-        'sendCode' => false,
+        'isVerified' => false,
         'returnCode' => false,
-        'isVerified' => false
+        'sendCode' => false
     ];
 
     /**
@@ -176,9 +176,9 @@ class UserServiceSetHumanPhone implements ModelInterface, ArrayAccess, \JsonSeri
      */
     protected static $attributeMap = [
         'phone' => 'phone',
-        'sendCode' => 'sendCode',
+        'isVerified' => 'isVerified',
         'returnCode' => 'returnCode',
-        'isVerified' => 'isVerified'
+        'sendCode' => 'sendCode'
     ];
 
     /**
@@ -188,9 +188,9 @@ class UserServiceSetHumanPhone implements ModelInterface, ArrayAccess, \JsonSeri
      */
     protected static $setters = [
         'phone' => 'setPhone',
-        'sendCode' => 'setSendCode',
+        'isVerified' => 'setIsVerified',
         'returnCode' => 'setReturnCode',
-        'isVerified' => 'setIsVerified'
+        'sendCode' => 'setSendCode'
     ];
 
     /**
@@ -200,9 +200,9 @@ class UserServiceSetHumanPhone implements ModelInterface, ArrayAccess, \JsonSeri
      */
     protected static $getters = [
         'phone' => 'getPhone',
-        'sendCode' => 'getSendCode',
+        'isVerified' => 'getIsVerified',
         'returnCode' => 'getReturnCode',
-        'isVerified' => 'getIsVerified'
+        'sendCode' => 'getSendCode'
     ];
 
     /**
@@ -263,9 +263,9 @@ class UserServiceSetHumanPhone implements ModelInterface, ArrayAccess, \JsonSeri
     public function __construct(?array $data = null)
     {
         $this->setIfExists('phone', $data ?? [], null);
-        $this->setIfExists('sendCode', $data ?? [], null);
-        $this->setIfExists('returnCode', $data ?? [], null);
         $this->setIfExists('isVerified', $data ?? [], null);
+        $this->setIfExists('returnCode', $data ?? [], null);
+        $this->setIfExists('sendCode', $data ?? [], null);
     }
 
     /**
@@ -295,10 +295,15 @@ class UserServiceSetHumanPhone implements ModelInterface, ArrayAccess, \JsonSeri
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['phone']) && (mb_strlen($this->container['phone']) > 200)) {
-            $invalidProperties[] = "invalid value for 'phone', the character length must be smaller than or equal to 200.";
+        if ($this->container['isVerified'] === null) {
+            $invalidProperties[] = "'isVerified' can't be null";
         }
-
+        if ($this->container['returnCode'] === null) {
+            $invalidProperties[] = "'returnCode' can't be null";
+        }
+        if ($this->container['sendCode'] === null) {
+            $invalidProperties[] = "'sendCode' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -336,38 +341,34 @@ class UserServiceSetHumanPhone implements ModelInterface, ArrayAccess, \JsonSeri
         if (is_null($phone)) {
             throw new \InvalidArgumentException('non-nullable phone cannot be null');
         }
-        if ((mb_strlen($phone) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $phone when calling UserServiceSetHumanPhone., must be smaller than or equal to 200.');
-        }
-
         $this->container['phone'] = $phone;
 
         return $this;
     }
 
     /**
-     * Gets sendCode
+     * Gets isVerified
      *
-     * @return object|null
+     * @return bool
      */
-    public function getSendCode()
+    public function getIsVerified()
     {
-        return $this->container['sendCode'];
+        return $this->container['isVerified'];
     }
 
     /**
-     * Sets sendCode
+     * Sets isVerified
      *
-     * @param object|null $sendCode sendCode
+     * @param bool $isVerified isVerified
      *
      * @return self
      */
-    public function setSendCode($sendCode)
+    public function setIsVerified($isVerified)
     {
-        if (is_null($sendCode)) {
-            throw new \InvalidArgumentException('non-nullable sendCode cannot be null');
+        if (is_null($isVerified)) {
+            throw new \InvalidArgumentException('non-nullable isVerified cannot be null');
         }
-        $this->container['sendCode'] = $sendCode;
+        $this->container['isVerified'] = $isVerified;
 
         return $this;
     }
@@ -375,7 +376,7 @@ class UserServiceSetHumanPhone implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Gets returnCode
      *
-     * @return object|null
+     * @return object
      */
     public function getReturnCode()
     {
@@ -385,7 +386,7 @@ class UserServiceSetHumanPhone implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Sets returnCode
      *
-     * @param object|null $returnCode returnCode
+     * @param object $returnCode returnCode
      *
      * @return self
      */
@@ -400,28 +401,28 @@ class UserServiceSetHumanPhone implements ModelInterface, ArrayAccess, \JsonSeri
     }
 
     /**
-     * Gets isVerified
+     * Gets sendCode
      *
-     * @return bool|null
+     * @return object
      */
-    public function getIsVerified()
+    public function getSendCode()
     {
-        return $this->container['isVerified'];
+        return $this->container['sendCode'];
     }
 
     /**
-     * Sets isVerified
+     * Sets sendCode
      *
-     * @param bool|null $isVerified isVerified
+     * @param object $sendCode sendCode
      *
      * @return self
      */
-    public function setIsVerified($isVerified)
+    public function setSendCode($sendCode)
     {
-        if (is_null($isVerified)) {
-            throw new \InvalidArgumentException('non-nullable isVerified cannot be null');
+        if (is_null($sendCode)) {
+            throw new \InvalidArgumentException('non-nullable sendCode cannot be null');
         }
-        $this->container['isVerified'] = $isVerified;
+        $this->container['sendCode'] = $sendCode;
 
         return $this;
     }

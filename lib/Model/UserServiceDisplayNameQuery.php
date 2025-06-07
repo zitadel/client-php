@@ -285,14 +285,6 @@ class UserServiceDisplayNameQuery implements ModelInterface, ArrayAccess, \JsonS
         if ($this->container['displayName'] === null) {
             $invalidProperties[] = "'displayName' can't be null";
         }
-        if ((mb_strlen($this->container['displayName']) > 200)) {
-            $invalidProperties[] = "invalid value for 'displayName', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['displayName']) < 1)) {
-            $invalidProperties[] = "invalid value for 'displayName', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -330,13 +322,6 @@ class UserServiceDisplayNameQuery implements ModelInterface, ArrayAccess, \JsonS
         if (is_null($displayName)) {
             throw new \InvalidArgumentException('non-nullable displayName cannot be null');
         }
-        if ((mb_strlen($displayName) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $displayName when calling UserServiceDisplayNameQuery., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($displayName) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $displayName when calling UserServiceDisplayNameQuery., must be bigger than or equal to 1.');
-        }
-
         $this->container['displayName'] = $displayName;
 
         return $this;

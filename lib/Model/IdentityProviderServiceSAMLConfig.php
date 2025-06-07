@@ -91,8 +91,8 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
         'binding' => false,
         'withSignedRequest' => false,
         'nameIdFormat' => false,
-        'transientMappingAttributeName' => false,
-        'federatedLogoutEnabled' => false
+        'transientMappingAttributeName' => true,
+        'federatedLogoutEnabled' => true
     ];
 
     /**
@@ -445,14 +445,21 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
     /**
      * Sets transientMappingAttributeName
      *
-     * @param string|null $transientMappingAttributeName Optional name of the attribute, which will be used to map the user in case the nameid-format returned is `urn:oasis:names:tc:SAML:2.0:nameid-format:transient`.
+     * @param string|null $transientMappingAttributeName Optional name of the attribute, which will be used to map the user  in case the nameid-format returned is  `urn:oasis:names:tc:SAML:2.0:nameid-format:transient`.
      *
      * @return self
      */
     public function setTransientMappingAttributeName($transientMappingAttributeName)
     {
         if (is_null($transientMappingAttributeName)) {
-            throw new \InvalidArgumentException('non-nullable transientMappingAttributeName cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'transientMappingAttributeName');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('transientMappingAttributeName', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['transientMappingAttributeName'] = $transientMappingAttributeName;
 
@@ -472,14 +479,21 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
     /**
      * Sets federatedLogoutEnabled
      *
-     * @param bool|null $federatedLogoutEnabled Boolean weather federated logout is enabled. If enabled, ZITADEL will send a logout request to the identity provider, if the user terminates the session in ZITADEL. Be sure to provide a SLO endpoint as part of the metadata.
+     * @param bool|null $federatedLogoutEnabled Boolean weather federated logout is enabled. If enabled, ZITADEL will send a logout request to the identity provider,  if the user terminates the session in ZITADEL. Be sure to provide a SLO endpoint as part of the metadata.
      *
      * @return self
      */
     public function setFederatedLogoutEnabled($federatedLogoutEnabled)
     {
         if (is_null($federatedLogoutEnabled)) {
-            throw new \InvalidArgumentException('non-nullable federatedLogoutEnabled cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'federatedLogoutEnabled');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('federatedLogoutEnabled', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['federatedLogoutEnabled'] = $federatedLogoutEnabled;
 

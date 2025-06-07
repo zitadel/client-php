@@ -57,8 +57,8 @@ class IdentityProviderServiceAzureADTenant implements ModelInterface, ArrayAcces
       * @var string[]
       */
     protected static $openAPITypes = [
-        'tenantType' => '\Zitadel\Client\Model\IdentityProviderServiceAzureADTenantType',
-        'tenantId' => 'string'
+        'tenantId' => 'string',
+        'tenantType' => '\Zitadel\Client\Model\IdentityProviderServiceAzureADTenantType'
     ];
 
     /**
@@ -69,8 +69,8 @@ class IdentityProviderServiceAzureADTenant implements ModelInterface, ArrayAcces
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'tenantType' => null,
-        'tenantId' => null
+        'tenantId' => null,
+        'tenantType' => null
     ];
 
     /**
@@ -79,8 +79,8 @@ class IdentityProviderServiceAzureADTenant implements ModelInterface, ArrayAcces
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'tenantType' => false,
-        'tenantId' => false
+        'tenantId' => false,
+        'tenantType' => false
     ];
 
     /**
@@ -169,8 +169,8 @@ class IdentityProviderServiceAzureADTenant implements ModelInterface, ArrayAcces
      * @var string[]
      */
     protected static $attributeMap = [
-        'tenantType' => 'tenantType',
-        'tenantId' => 'tenantId'
+        'tenantId' => 'tenantId',
+        'tenantType' => 'tenantType'
     ];
 
     /**
@@ -179,8 +179,8 @@ class IdentityProviderServiceAzureADTenant implements ModelInterface, ArrayAcces
      * @var string[]
      */
     protected static $setters = [
-        'tenantType' => 'setTenantType',
-        'tenantId' => 'setTenantId'
+        'tenantId' => 'setTenantId',
+        'tenantType' => 'setTenantType'
     ];
 
     /**
@@ -189,8 +189,8 @@ class IdentityProviderServiceAzureADTenant implements ModelInterface, ArrayAcces
      * @var string[]
      */
     protected static $getters = [
-        'tenantType' => 'getTenantType',
-        'tenantId' => 'getTenantId'
+        'tenantId' => 'getTenantId',
+        'tenantType' => 'getTenantType'
     ];
 
     /**
@@ -250,8 +250,8 @@ class IdentityProviderServiceAzureADTenant implements ModelInterface, ArrayAcces
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('tenantType', $data ?? [], null);
         $this->setIfExists('tenantId', $data ?? [], null);
+        $this->setIfExists('tenantType', $data ?? [], null);
     }
 
     /**
@@ -281,6 +281,12 @@ class IdentityProviderServiceAzureADTenant implements ModelInterface, ArrayAcces
     {
         $invalidProperties = [];
 
+        if ($this->container['tenantId'] === null) {
+            $invalidProperties[] = "'tenantId' can't be null";
+        }
+        if ($this->container['tenantType'] === null) {
+            $invalidProperties[] = "'tenantType' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -297,36 +303,9 @@ class IdentityProviderServiceAzureADTenant implements ModelInterface, ArrayAcces
 
 
     /**
-     * Gets tenantType
-     *
-     * @return \Zitadel\Client\Model\IdentityProviderServiceAzureADTenantType|null
-     */
-    public function getTenantType()
-    {
-        return $this->container['tenantType'];
-    }
-
-    /**
-     * Sets tenantType
-     *
-     * @param \Zitadel\Client\Model\IdentityProviderServiceAzureADTenantType|null $tenantType tenantType
-     *
-     * @return self
-     */
-    public function setTenantType($tenantType)
-    {
-        if (is_null($tenantType)) {
-            throw new \InvalidArgumentException('non-nullable tenantType cannot be null');
-        }
-        $this->container['tenantType'] = $tenantType;
-
-        return $this;
-    }
-
-    /**
      * Gets tenantId
      *
-     * @return string|null
+     * @return string
      */
     public function getTenantId()
     {
@@ -336,7 +315,7 @@ class IdentityProviderServiceAzureADTenant implements ModelInterface, ArrayAcces
     /**
      * Sets tenantId
      *
-     * @param string|null $tenantId tenantId
+     * @param string $tenantId tenantId
      *
      * @return self
      */
@@ -346,6 +325,33 @@ class IdentityProviderServiceAzureADTenant implements ModelInterface, ArrayAcces
             throw new \InvalidArgumentException('non-nullable tenantId cannot be null');
         }
         $this->container['tenantId'] = $tenantId;
+
+        return $this;
+    }
+
+    /**
+     * Gets tenantType
+     *
+     * @return \Zitadel\Client\Model\IdentityProviderServiceAzureADTenantType
+     */
+    public function getTenantType()
+    {
+        return $this->container['tenantType'];
+    }
+
+    /**
+     * Sets tenantType
+     *
+     * @param \Zitadel\Client\Model\IdentityProviderServiceAzureADTenantType $tenantType tenantType
+     *
+     * @return self
+     */
+    public function setTenantType($tenantType)
+    {
+        if (is_null($tenantType)) {
+            throw new \InvalidArgumentException('non-nullable tenantType cannot be null');
+        }
+        $this->container['tenantType'] = $tenantType;
 
         return $this;
     }

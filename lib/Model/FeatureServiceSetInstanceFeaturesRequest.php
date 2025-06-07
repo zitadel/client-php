@@ -103,20 +103,20 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'loginDefaultOrg' => false,
-        'oidcTriggerIntrospectionProjections' => false,
-        'oidcLegacyIntrospection' => false,
-        'userSchema' => false,
-        'oidcTokenExchange' => false,
+        'loginDefaultOrg' => true,
+        'oidcTriggerIntrospectionProjections' => true,
+        'oidcLegacyIntrospection' => true,
+        'userSchema' => true,
+        'oidcTokenExchange' => true,
         'improvedPerformance' => false,
-        'webKey' => false,
-        'debugOidcParentError' => false,
-        'oidcSingleV1SessionTermination' => false,
-        'disableUserTokenEvent' => false,
-        'enableBackChannelLogout' => false,
+        'webKey' => true,
+        'debugOidcParentError' => true,
+        'oidcSingleV1SessionTermination' => true,
+        'disableUserTokenEvent' => true,
+        'enableBackChannelLogout' => true,
         'loginV2' => false,
-        'permissionCheckV2' => false,
-        'consoleUseV2UserApi' => false
+        'permissionCheckV2' => true,
+        'consoleUseV2UserApi' => true
     ];
 
     /**
@@ -393,14 +393,21 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
     /**
      * Sets loginDefaultOrg
      *
-     * @param bool|null $loginDefaultOrg The login UI will use the settings of the default org (and not from the instance) if no organization context is set
+     * @param bool|null $loginDefaultOrg loginDefaultOrg
      *
      * @return self
      */
     public function setLoginDefaultOrg($loginDefaultOrg)
     {
         if (is_null($loginDefaultOrg)) {
-            throw new \InvalidArgumentException('non-nullable loginDefaultOrg cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'loginDefaultOrg');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('loginDefaultOrg', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['loginDefaultOrg'] = $loginDefaultOrg;
 
@@ -420,14 +427,21 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
     /**
      * Sets oidcTriggerIntrospectionProjections
      *
-     * @param bool|null $oidcTriggerIntrospectionProjections Enable projection triggers during an introspection request. This can act as workaround if there are noticeable consistency issues in the introspection response but can have an impact on performance. We are planning to remove triggers for introspection requests in the future. Please raise an issue if you needed to enable this feature.
+     * @param bool|null $oidcTriggerIntrospectionProjections oidcTriggerIntrospectionProjections
      *
      * @return self
      */
     public function setOidcTriggerIntrospectionProjections($oidcTriggerIntrospectionProjections)
     {
         if (is_null($oidcTriggerIntrospectionProjections)) {
-            throw new \InvalidArgumentException('non-nullable oidcTriggerIntrospectionProjections cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'oidcTriggerIntrospectionProjections');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('oidcTriggerIntrospectionProjections', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['oidcTriggerIntrospectionProjections'] = $oidcTriggerIntrospectionProjections;
 
@@ -447,14 +461,21 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
     /**
      * Sets oidcLegacyIntrospection
      *
-     * @param bool|null $oidcLegacyIntrospection We have recently refactored the introspection endpoint for performance reasons. This feature can be used to rollback to the legacy implementation if unexpected bugs arise. Please raise an issue if you needed to enable this feature.
+     * @param bool|null $oidcLegacyIntrospection oidcLegacyIntrospection
      *
      * @return self
      */
     public function setOidcLegacyIntrospection($oidcLegacyIntrospection)
     {
         if (is_null($oidcLegacyIntrospection)) {
-            throw new \InvalidArgumentException('non-nullable oidcLegacyIntrospection cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'oidcLegacyIntrospection');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('oidcLegacyIntrospection', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['oidcLegacyIntrospection'] = $oidcLegacyIntrospection;
 
@@ -474,14 +495,21 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
     /**
      * Sets userSchema
      *
-     * @param bool|null $userSchema User Schemas allow to manage data schemas of user. If the flag is enabled, you'll be able to use the new API and its features. Note that it is still in an early stage.
+     * @param bool|null $userSchema userSchema
      *
      * @return self
      */
     public function setUserSchema($userSchema)
     {
         if (is_null($userSchema)) {
-            throw new \InvalidArgumentException('non-nullable userSchema cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'userSchema');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('userSchema', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['userSchema'] = $userSchema;
 
@@ -501,14 +529,21 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
     /**
      * Sets oidcTokenExchange
      *
-     * @param bool|null $oidcTokenExchange Enable the experimental `urn:ietf:params:oauth:grant-type:token-exchange` grant type for the OIDC token endpoint. Token exchange can be used to request tokens with a lesser scope or impersonate other users. See the security policy to allow impersonation on an instance.
+     * @param bool|null $oidcTokenExchange oidcTokenExchange
      *
      * @return self
      */
     public function setOidcTokenExchange($oidcTokenExchange)
     {
         if (is_null($oidcTokenExchange)) {
-            throw new \InvalidArgumentException('non-nullable oidcTokenExchange cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'oidcTokenExchange');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('oidcTokenExchange', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['oidcTokenExchange'] = $oidcTokenExchange;
 
@@ -528,7 +563,7 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
     /**
      * Sets improvedPerformance
      *
-     * @param \Zitadel\Client\Model\FeatureServiceImprovedPerformance[]|null $improvedPerformance Improves performance of specified execution paths.
+     * @param \Zitadel\Client\Model\FeatureServiceImprovedPerformance[]|null $improvedPerformance improvedPerformance
      *
      * @return self
      */
@@ -555,14 +590,21 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
     /**
      * Sets webKey
      *
-     * @param bool|null $webKey Enable the webkey/v3alpha API. The first time this feature is enabled, web keys are generated and activated.
+     * @param bool|null $webKey webKey
      *
      * @return self
      */
     public function setWebKey($webKey)
     {
         if (is_null($webKey)) {
-            throw new \InvalidArgumentException('non-nullable webKey cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'webKey');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('webKey', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['webKey'] = $webKey;
 
@@ -582,14 +624,21 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
     /**
      * Sets debugOidcParentError
      *
-     * @param bool|null $debugOidcParentError Return parent errors to OIDC clients for debugging purposes. Parent errors may contain sensitive data or unwanted details about the system status of zitadel. Only enable if really needed.
+     * @param bool|null $debugOidcParentError debugOidcParentError
      *
      * @return self
      */
     public function setDebugOidcParentError($debugOidcParentError)
     {
         if (is_null($debugOidcParentError)) {
-            throw new \InvalidArgumentException('non-nullable debugOidcParentError cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'debugOidcParentError');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('debugOidcParentError', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['debugOidcParentError'] = $debugOidcParentError;
 
@@ -609,14 +658,21 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
     /**
      * Sets oidcSingleV1SessionTermination
      *
-     * @param bool|null $oidcSingleV1SessionTermination If the flag is enabled, you'll be able to terminate a single session from the login UI by providing an id_token with a `sid` claim as id_token_hint on the end_session endpoint. Note that currently all sessions from the same user agent (browser) are terminated in the login UI. Sessions managed through the Session API already allow the termination of single sessions.
+     * @param bool|null $oidcSingleV1SessionTermination oidcSingleV1SessionTermination
      *
      * @return self
      */
     public function setOidcSingleV1SessionTermination($oidcSingleV1SessionTermination)
     {
         if (is_null($oidcSingleV1SessionTermination)) {
-            throw new \InvalidArgumentException('non-nullable oidcSingleV1SessionTermination cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'oidcSingleV1SessionTermination');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('oidcSingleV1SessionTermination', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['oidcSingleV1SessionTermination'] = $oidcSingleV1SessionTermination;
 
@@ -636,14 +692,21 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
     /**
      * Sets disableUserTokenEvent
      *
-     * @param bool|null $disableUserTokenEvent Do not push user token meta-event user.token.v2.added to improve performance on many concurrent single (machine-)user logins
+     * @param bool|null $disableUserTokenEvent disableUserTokenEvent
      *
      * @return self
      */
     public function setDisableUserTokenEvent($disableUserTokenEvent)
     {
         if (is_null($disableUserTokenEvent)) {
-            throw new \InvalidArgumentException('non-nullable disableUserTokenEvent cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'disableUserTokenEvent');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('disableUserTokenEvent', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['disableUserTokenEvent'] = $disableUserTokenEvent;
 
@@ -663,14 +726,21 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
     /**
      * Sets enableBackChannelLogout
      *
-     * @param bool|null $enableBackChannelLogout If the flag is enabled, you'll be able to use the OIDC Back-Channel Logout to be notified in your application about terminated user sessions.
+     * @param bool|null $enableBackChannelLogout enableBackChannelLogout
      *
      * @return self
      */
     public function setEnableBackChannelLogout($enableBackChannelLogout)
     {
         if (is_null($enableBackChannelLogout)) {
-            throw new \InvalidArgumentException('non-nullable enableBackChannelLogout cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'enableBackChannelLogout');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('enableBackChannelLogout', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['enableBackChannelLogout'] = $enableBackChannelLogout;
 
@@ -717,14 +787,21 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
     /**
      * Sets permissionCheckV2
      *
-     * @param bool|null $permissionCheckV2 Enable a newer, more performant, permission check used for v2 and v3 resource based APIs.
+     * @param bool|null $permissionCheckV2 permissionCheckV2
      *
      * @return self
      */
     public function setPermissionCheckV2($permissionCheckV2)
     {
         if (is_null($permissionCheckV2)) {
-            throw new \InvalidArgumentException('non-nullable permissionCheckV2 cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'permissionCheckV2');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('permissionCheckV2', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['permissionCheckV2'] = $permissionCheckV2;
 
@@ -744,14 +821,21 @@ class FeatureServiceSetInstanceFeaturesRequest implements ModelInterface, ArrayA
     /**
      * Sets consoleUseV2UserApi
      *
-     * @param bool|null $consoleUseV2UserApi If this is enabled the console web client will use the new User v2 API for certain calls
+     * @param bool|null $consoleUseV2UserApi consoleUseV2UserApi
      *
      * @return self
      */
     public function setConsoleUseV2UserApi($consoleUseV2UserApi)
     {
         if (is_null($consoleUseV2UserApi)) {
-            throw new \InvalidArgumentException('non-nullable consoleUseV2UserApi cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'consoleUseV2UserApi');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('consoleUseV2UserApi', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['consoleUseV2UserApi'] = $consoleUseV2UserApi;
 

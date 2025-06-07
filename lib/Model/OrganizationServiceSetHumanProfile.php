@@ -89,9 +89,9 @@ class OrganizationServiceSetHumanProfile implements ModelInterface, ArrayAccess,
     protected static array $openAPINullables = [
         'givenName' => false,
         'familyName' => false,
-        'nickName' => false,
-        'displayName' => false,
-        'preferredLanguage' => false,
+        'nickName' => true,
+        'displayName' => true,
+        'preferredLanguage' => true,
         'gender' => false
     ];
 
@@ -312,37 +312,9 @@ class OrganizationServiceSetHumanProfile implements ModelInterface, ArrayAccess,
         if ($this->container['givenName'] === null) {
             $invalidProperties[] = "'givenName' can't be null";
         }
-        if ((mb_strlen($this->container['givenName']) > 200)) {
-            $invalidProperties[] = "invalid value for 'givenName', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['givenName']) < 1)) {
-            $invalidProperties[] = "invalid value for 'givenName', the character length must be bigger than or equal to 1.";
-        }
-
         if ($this->container['familyName'] === null) {
             $invalidProperties[] = "'familyName' can't be null";
         }
-        if ((mb_strlen($this->container['familyName']) > 200)) {
-            $invalidProperties[] = "invalid value for 'familyName', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['familyName']) < 1)) {
-            $invalidProperties[] = "invalid value for 'familyName', the character length must be bigger than or equal to 1.";
-        }
-
-        if (!is_null($this->container['nickName']) && (mb_strlen($this->container['nickName']) > 200)) {
-            $invalidProperties[] = "invalid value for 'nickName', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['displayName']) && (mb_strlen($this->container['displayName']) > 200)) {
-            $invalidProperties[] = "invalid value for 'displayName', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['preferredLanguage']) && (mb_strlen($this->container['preferredLanguage']) > 10)) {
-            $invalidProperties[] = "invalid value for 'preferredLanguage', the character length must be smaller than or equal to 10.";
-        }
-
         return $invalidProperties;
     }
 
@@ -380,13 +352,6 @@ class OrganizationServiceSetHumanProfile implements ModelInterface, ArrayAccess,
         if (is_null($givenName)) {
             throw new \InvalidArgumentException('non-nullable givenName cannot be null');
         }
-        if ((mb_strlen($givenName) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $givenName when calling OrganizationServiceSetHumanProfile., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($givenName) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $givenName when calling OrganizationServiceSetHumanProfile., must be bigger than or equal to 1.');
-        }
-
         $this->container['givenName'] = $givenName;
 
         return $this;
@@ -414,13 +379,6 @@ class OrganizationServiceSetHumanProfile implements ModelInterface, ArrayAccess,
         if (is_null($familyName)) {
             throw new \InvalidArgumentException('non-nullable familyName cannot be null');
         }
-        if ((mb_strlen($familyName) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $familyName when calling OrganizationServiceSetHumanProfile., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($familyName) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $familyName when calling OrganizationServiceSetHumanProfile., must be bigger than or equal to 1.');
-        }
-
         $this->container['familyName'] = $familyName;
 
         return $this;
@@ -446,12 +404,15 @@ class OrganizationServiceSetHumanProfile implements ModelInterface, ArrayAccess,
     public function setNickName($nickName)
     {
         if (is_null($nickName)) {
-            throw new \InvalidArgumentException('non-nullable nickName cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'nickName');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('nickName', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
-        if ((mb_strlen($nickName) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $nickName when calling OrganizationServiceSetHumanProfile., must be smaller than or equal to 200.');
-        }
-
         $this->container['nickName'] = $nickName;
 
         return $this;
@@ -477,12 +438,15 @@ class OrganizationServiceSetHumanProfile implements ModelInterface, ArrayAccess,
     public function setDisplayName($displayName)
     {
         if (is_null($displayName)) {
-            throw new \InvalidArgumentException('non-nullable displayName cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'displayName');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('displayName', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
-        if ((mb_strlen($displayName) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $displayName when calling OrganizationServiceSetHumanProfile., must be smaller than or equal to 200.');
-        }
-
         $this->container['displayName'] = $displayName;
 
         return $this;
@@ -508,12 +472,15 @@ class OrganizationServiceSetHumanProfile implements ModelInterface, ArrayAccess,
     public function setPreferredLanguage($preferredLanguage)
     {
         if (is_null($preferredLanguage)) {
-            throw new \InvalidArgumentException('non-nullable preferredLanguage cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'preferredLanguage');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('preferredLanguage', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
-        if ((mb_strlen($preferredLanguage) > 10)) {
-            throw new \InvalidArgumentException('invalid length for $preferredLanguage when calling OrganizationServiceSetHumanProfile., must be smaller than or equal to 10.');
-        }
-
         $this->container['preferredLanguage'] = $preferredLanguage;
 
         return $this;

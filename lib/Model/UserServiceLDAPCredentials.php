@@ -281,22 +281,6 @@ class UserServiceLDAPCredentials implements ModelInterface, ArrayAccess, \JsonSe
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['username']) && (mb_strlen($this->container['username']) > 200)) {
-            $invalidProperties[] = "invalid value for 'username', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['username']) && (mb_strlen($this->container['username']) < 1)) {
-            $invalidProperties[] = "invalid value for 'username', the character length must be bigger than or equal to 1.";
-        }
-
-        if (!is_null($this->container['password']) && (mb_strlen($this->container['password']) > 200)) {
-            $invalidProperties[] = "invalid value for 'password', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['password']) && (mb_strlen($this->container['password']) < 1)) {
-            $invalidProperties[] = "invalid value for 'password', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -325,7 +309,7 @@ class UserServiceLDAPCredentials implements ModelInterface, ArrayAccess, \JsonSe
     /**
      * Sets username
      *
-     * @param string|null $username Username used to login through LDAP
+     * @param string|null $username username
      *
      * @return self
      */
@@ -334,13 +318,6 @@ class UserServiceLDAPCredentials implements ModelInterface, ArrayAccess, \JsonSe
         if (is_null($username)) {
             throw new \InvalidArgumentException('non-nullable username cannot be null');
         }
-        if ((mb_strlen($username) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $username when calling UserServiceLDAPCredentials., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($username) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $username when calling UserServiceLDAPCredentials., must be bigger than or equal to 1.');
-        }
-
         $this->container['username'] = $username;
 
         return $this;
@@ -359,7 +336,7 @@ class UserServiceLDAPCredentials implements ModelInterface, ArrayAccess, \JsonSe
     /**
      * Sets password
      *
-     * @param string|null $password Password used to login through LDAP
+     * @param string|null $password password
      *
      * @return self
      */
@@ -368,13 +345,6 @@ class UserServiceLDAPCredentials implements ModelInterface, ArrayAccess, \JsonSe
         if (is_null($password)) {
             throw new \InvalidArgumentException('non-nullable password cannot be null');
         }
-        if ((mb_strlen($password) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $password when calling UserServiceLDAPCredentials., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($password) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $password when calling UserServiceLDAPCredentials., must be bigger than or equal to 1.');
-        }
-
         $this->container['password'] = $password;
 
         return $this;

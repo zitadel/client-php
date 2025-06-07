@@ -77,7 +77,7 @@ class SessionServiceCreatorQuery implements ModelInterface, ArrayAccess, \JsonSe
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'id' => false
+        'id' => true
     ];
 
     /**
@@ -274,10 +274,6 @@ class SessionServiceCreatorQuery implements ModelInterface, ArrayAccess, \JsonSe
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['id']) && (mb_strlen($this->container['id']) > 200)) {
-            $invalidProperties[] = "invalid value for 'id', the character length must be smaller than or equal to 200.";
-        }
-
         return $invalidProperties;
     }
 
@@ -313,12 +309,15 @@ class SessionServiceCreatorQuery implements ModelInterface, ArrayAccess, \JsonSe
     public function setId($id)
     {
         if (is_null($id)) {
-            throw new \InvalidArgumentException('non-nullable id cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'id');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('id', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
-        if ((mb_strlen($id) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $id when calling SessionServiceCreatorQuery., must be smaller than or equal to 200.');
-        }
-
         $this->container['id'] = $id;
 
         return $this;

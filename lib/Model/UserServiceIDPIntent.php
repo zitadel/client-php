@@ -288,26 +288,6 @@ class UserServiceIDPIntent implements ModelInterface, ArrayAccess, \JsonSerializ
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['idpIntentId']) && (mb_strlen($this->container['idpIntentId']) > 200)) {
-            $invalidProperties[] = "invalid value for 'idpIntentId', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['idpIntentId']) && (mb_strlen($this->container['idpIntentId']) < 1)) {
-            $invalidProperties[] = "invalid value for 'idpIntentId', the character length must be bigger than or equal to 1.";
-        }
-
-        if (!is_null($this->container['idpIntentToken']) && (mb_strlen($this->container['idpIntentToken']) > 200)) {
-            $invalidProperties[] = "invalid value for 'idpIntentToken', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['idpIntentToken']) && (mb_strlen($this->container['idpIntentToken']) < 1)) {
-            $invalidProperties[] = "invalid value for 'idpIntentToken', the character length must be bigger than or equal to 1.";
-        }
-
-        if (!is_null($this->container['userId']) && (mb_strlen($this->container['userId']) > 200)) {
-            $invalidProperties[] = "invalid value for 'userId', the character length must be smaller than or equal to 200.";
-        }
-
         return $invalidProperties;
     }
 
@@ -336,7 +316,7 @@ class UserServiceIDPIntent implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets idpIntentId
      *
-     * @param string|null $idpIntentId ID of the IDP intent
+     * @param string|null $idpIntentId idpIntentId
      *
      * @return self
      */
@@ -345,13 +325,6 @@ class UserServiceIDPIntent implements ModelInterface, ArrayAccess, \JsonSerializ
         if (is_null($idpIntentId)) {
             throw new \InvalidArgumentException('non-nullable idpIntentId cannot be null');
         }
-        if ((mb_strlen($idpIntentId) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $idpIntentId when calling UserServiceIDPIntent., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($idpIntentId) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $idpIntentId when calling UserServiceIDPIntent., must be bigger than or equal to 1.');
-        }
-
         $this->container['idpIntentId'] = $idpIntentId;
 
         return $this;
@@ -370,7 +343,7 @@ class UserServiceIDPIntent implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets idpIntentToken
      *
-     * @param string|null $idpIntentToken token of the IDP intent
+     * @param string|null $idpIntentToken idpIntentToken
      *
      * @return self
      */
@@ -379,13 +352,6 @@ class UserServiceIDPIntent implements ModelInterface, ArrayAccess, \JsonSerializ
         if (is_null($idpIntentToken)) {
             throw new \InvalidArgumentException('non-nullable idpIntentToken cannot be null');
         }
-        if ((mb_strlen($idpIntentToken) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $idpIntentToken when calling UserServiceIDPIntent., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($idpIntentToken) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $idpIntentToken when calling UserServiceIDPIntent., must be bigger than or equal to 1.');
-        }
-
         $this->container['idpIntentToken'] = $idpIntentToken;
 
         return $this;
@@ -404,7 +370,7 @@ class UserServiceIDPIntent implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets userId
      *
-     * @param string|null $userId ID of the ZITADEL user if external user already linked
+     * @param string|null $userId userId
      *
      * @return self
      */
@@ -413,10 +379,6 @@ class UserServiceIDPIntent implements ModelInterface, ArrayAccess, \JsonSerializ
         if (is_null($userId)) {
             throw new \InvalidArgumentException('non-nullable userId cannot be null');
         }
-        if ((mb_strlen($userId) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $userId when calling UserServiceIDPIntent., must be smaller than or equal to 200.');
-        }
-
         $this->container['userId'] = $userId;
 
         return $this;

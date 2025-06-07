@@ -316,7 +316,7 @@ class SettingsServiceGetGeneralSettingsResponse implements ModelInterface, Array
     /**
      * Sets defaultOrgId
      *
-     * @param string|null $defaultOrgId default organization for the current context
+     * @param string|null $defaultOrgId defaultOrgId
      *
      * @return self
      */
@@ -343,7 +343,7 @@ class SettingsServiceGetGeneralSettingsResponse implements ModelInterface, Array
     /**
      * Sets defaultLanguage
      *
-     * @param string|null $defaultLanguage default language for the current context
+     * @param string|null $defaultLanguage defaultLanguage
      *
      * @return self
      */

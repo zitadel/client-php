@@ -57,8 +57,9 @@ class UserServicePasswordResetRequest implements ModelInterface, ArrayAccess, \J
       * @var string[]
       */
     protected static $openAPITypes = [
-        'sendLink' => '\Zitadel\Client\Model\UserServiceSendPasswordResetLink',
-        'returnCode' => 'object'
+        'userId' => 'string',
+        'returnCode' => 'object',
+        'sendLink' => '\Zitadel\Client\Model\UserServiceSendPasswordResetLink'
     ];
 
     /**
@@ -69,8 +70,9 @@ class UserServicePasswordResetRequest implements ModelInterface, ArrayAccess, \J
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'sendLink' => null,
-        'returnCode' => null
+        'userId' => null,
+        'returnCode' => null,
+        'sendLink' => null
     ];
 
     /**
@@ -79,8 +81,9 @@ class UserServicePasswordResetRequest implements ModelInterface, ArrayAccess, \J
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'sendLink' => false,
-        'returnCode' => false
+        'userId' => false,
+        'returnCode' => false,
+        'sendLink' => false
     ];
 
     /**
@@ -169,8 +172,9 @@ class UserServicePasswordResetRequest implements ModelInterface, ArrayAccess, \J
      * @var string[]
      */
     protected static $attributeMap = [
-        'sendLink' => 'sendLink',
-        'returnCode' => 'returnCode'
+        'userId' => 'userId',
+        'returnCode' => 'returnCode',
+        'sendLink' => 'sendLink'
     ];
 
     /**
@@ -179,8 +183,9 @@ class UserServicePasswordResetRequest implements ModelInterface, ArrayAccess, \J
      * @var string[]
      */
     protected static $setters = [
-        'sendLink' => 'setSendLink',
-        'returnCode' => 'setReturnCode'
+        'userId' => 'setUserId',
+        'returnCode' => 'setReturnCode',
+        'sendLink' => 'setSendLink'
     ];
 
     /**
@@ -189,8 +194,9 @@ class UserServicePasswordResetRequest implements ModelInterface, ArrayAccess, \J
      * @var string[]
      */
     protected static $getters = [
-        'sendLink' => 'getSendLink',
-        'returnCode' => 'getReturnCode'
+        'userId' => 'getUserId',
+        'returnCode' => 'getReturnCode',
+        'sendLink' => 'getSendLink'
     ];
 
     /**
@@ -250,8 +256,9 @@ class UserServicePasswordResetRequest implements ModelInterface, ArrayAccess, \J
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('sendLink', $data ?? [], null);
+        $this->setIfExists('userId', $data ?? [], null);
         $this->setIfExists('returnCode', $data ?? [], null);
+        $this->setIfExists('sendLink', $data ?? [], null);
     }
 
     /**
@@ -281,6 +288,15 @@ class UserServicePasswordResetRequest implements ModelInterface, ArrayAccess, \J
     {
         $invalidProperties = [];
 
+        if ($this->container['userId'] === null) {
+            $invalidProperties[] = "'userId' can't be null";
+        }
+        if ($this->container['returnCode'] === null) {
+            $invalidProperties[] = "'returnCode' can't be null";
+        }
+        if ($this->container['sendLink'] === null) {
+            $invalidProperties[] = "'sendLink' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -297,28 +313,28 @@ class UserServicePasswordResetRequest implements ModelInterface, ArrayAccess, \J
 
 
     /**
-     * Gets sendLink
+     * Gets userId
      *
-     * @return \Zitadel\Client\Model\UserServiceSendPasswordResetLink|null
+     * @return string
      */
-    public function getSendLink()
+    public function getUserId()
     {
-        return $this->container['sendLink'];
+        return $this->container['userId'];
     }
 
     /**
-     * Sets sendLink
+     * Sets userId
      *
-     * @param \Zitadel\Client\Model\UserServiceSendPasswordResetLink|null $sendLink sendLink
+     * @param string $userId userId
      *
      * @return self
      */
-    public function setSendLink($sendLink)
+    public function setUserId($userId)
     {
-        if (is_null($sendLink)) {
-            throw new \InvalidArgumentException('non-nullable sendLink cannot be null');
+        if (is_null($userId)) {
+            throw new \InvalidArgumentException('non-nullable userId cannot be null');
         }
-        $this->container['sendLink'] = $sendLink;
+        $this->container['userId'] = $userId;
 
         return $this;
     }
@@ -326,7 +342,7 @@ class UserServicePasswordResetRequest implements ModelInterface, ArrayAccess, \J
     /**
      * Gets returnCode
      *
-     * @return object|null
+     * @return object
      */
     public function getReturnCode()
     {
@@ -336,7 +352,7 @@ class UserServicePasswordResetRequest implements ModelInterface, ArrayAccess, \J
     /**
      * Sets returnCode
      *
-     * @param object|null $returnCode returnCode
+     * @param object $returnCode returnCode
      *
      * @return self
      */
@@ -346,6 +362,33 @@ class UserServicePasswordResetRequest implements ModelInterface, ArrayAccess, \J
             throw new \InvalidArgumentException('non-nullable returnCode cannot be null');
         }
         $this->container['returnCode'] = $returnCode;
+
+        return $this;
+    }
+
+    /**
+     * Gets sendLink
+     *
+     * @return \Zitadel\Client\Model\UserServiceSendPasswordResetLink
+     */
+    public function getSendLink()
+    {
+        return $this->container['sendLink'];
+    }
+
+    /**
+     * Sets sendLink
+     *
+     * @param \Zitadel\Client\Model\UserServiceSendPasswordResetLink $sendLink sendLink
+     *
+     * @return self
+     */
+    public function setSendLink($sendLink)
+    {
+        if (is_null($sendLink)) {
+            throw new \InvalidArgumentException('non-nullable sendLink cannot be null');
+        }
+        $this->container['sendLink'] = $sendLink;
 
         return $this;
     }

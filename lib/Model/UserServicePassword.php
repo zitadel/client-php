@@ -284,14 +284,6 @@ class UserServicePassword implements ModelInterface, ArrayAccess, \JsonSerializa
         if ($this->container['password'] === null) {
             $invalidProperties[] = "'password' can't be null";
         }
-        if ((mb_strlen($this->container['password']) > 200)) {
-            $invalidProperties[] = "invalid value for 'password', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['password']) < 1)) {
-            $invalidProperties[] = "invalid value for 'password', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -329,13 +321,6 @@ class UserServicePassword implements ModelInterface, ArrayAccess, \JsonSerializa
         if (is_null($password)) {
             throw new \InvalidArgumentException('non-nullable password cannot be null');
         }
-        if ((mb_strlen($password) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $password when calling UserServicePassword., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($password) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $password when calling UserServicePassword., must be bigger than or equal to 1.');
-        }
-
         $this->container['password'] = $password;
 
         return $this;

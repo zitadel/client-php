@@ -284,14 +284,6 @@ class OrganizationServiceOrganizationDomainQuery implements ModelInterface, Arra
         if ($this->container['domain'] === null) {
             $invalidProperties[] = "'domain' can't be null";
         }
-        if ((mb_strlen($this->container['domain']) > 200)) {
-            $invalidProperties[] = "invalid value for 'domain', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['domain']) < 1)) {
-            $invalidProperties[] = "invalid value for 'domain', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -329,13 +321,6 @@ class OrganizationServiceOrganizationDomainQuery implements ModelInterface, Arra
         if (is_null($domain)) {
             throw new \InvalidArgumentException('non-nullable domain cannot be null');
         }
-        if ((mb_strlen($domain) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $domain when calling OrganizationServiceOrganizationDomainQuery., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($domain) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $domain when calling OrganizationServiceOrganizationDomainQuery., must be bigger than or equal to 1.');
-        }
-
         $this->container['domain'] = $domain;
 
         return $this;

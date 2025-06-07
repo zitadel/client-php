@@ -57,13 +57,13 @@ class UserServiceIDPInformation implements ModelInterface, ArrayAccess, \JsonSer
       * @var string[]
       */
     protected static $openAPITypes = [
-        'oauth' => '\Zitadel\Client\Model\UserServiceIDPOAuthAccessInformation',
-        'ldap' => '\Zitadel\Client\Model\UserServiceIDPLDAPAccessInformation',
-        'saml' => '\Zitadel\Client\Model\UserServiceIDPSAMLAccessInformation',
         'idpId' => 'string',
         'userId' => 'string',
         'userName' => 'string',
-        'rawInformation' => 'object'
+        'rawInformation' => 'array<string,\Zitadel\Client\Model\UserServiceValue>',
+        'ldap' => '\Zitadel\Client\Model\UserServiceIDPLDAPAccessInformation',
+        'oauth' => '\Zitadel\Client\Model\UserServiceIDPOAuthAccessInformation',
+        'saml' => '\Zitadel\Client\Model\UserServiceIDPSAMLAccessInformation'
     ];
 
     /**
@@ -74,13 +74,13 @@ class UserServiceIDPInformation implements ModelInterface, ArrayAccess, \JsonSer
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'oauth' => null,
-        'ldap' => null,
-        'saml' => null,
         'idpId' => null,
         'userId' => null,
         'userName' => null,
-        'rawInformation' => null
+        'rawInformation' => null,
+        'ldap' => null,
+        'oauth' => null,
+        'saml' => null
     ];
 
     /**
@@ -89,13 +89,13 @@ class UserServiceIDPInformation implements ModelInterface, ArrayAccess, \JsonSer
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'oauth' => false,
-        'ldap' => false,
-        'saml' => false,
         'idpId' => false,
         'userId' => false,
         'userName' => false,
-        'rawInformation' => false
+        'rawInformation' => false,
+        'ldap' => false,
+        'oauth' => false,
+        'saml' => false
     ];
 
     /**
@@ -184,13 +184,13 @@ class UserServiceIDPInformation implements ModelInterface, ArrayAccess, \JsonSer
      * @var string[]
      */
     protected static $attributeMap = [
-        'oauth' => 'oauth',
-        'ldap' => 'ldap',
-        'saml' => 'saml',
         'idpId' => 'idpId',
         'userId' => 'userId',
         'userName' => 'userName',
-        'rawInformation' => 'rawInformation'
+        'rawInformation' => 'rawInformation',
+        'ldap' => 'ldap',
+        'oauth' => 'oauth',
+        'saml' => 'saml'
     ];
 
     /**
@@ -199,13 +199,13 @@ class UserServiceIDPInformation implements ModelInterface, ArrayAccess, \JsonSer
      * @var string[]
      */
     protected static $setters = [
-        'oauth' => 'setOauth',
-        'ldap' => 'setLdap',
-        'saml' => 'setSaml',
         'idpId' => 'setIdpId',
         'userId' => 'setUserId',
         'userName' => 'setUserName',
-        'rawInformation' => 'setRawInformation'
+        'rawInformation' => 'setRawInformation',
+        'ldap' => 'setLdap',
+        'oauth' => 'setOauth',
+        'saml' => 'setSaml'
     ];
 
     /**
@@ -214,13 +214,13 @@ class UserServiceIDPInformation implements ModelInterface, ArrayAccess, \JsonSer
      * @var string[]
      */
     protected static $getters = [
-        'oauth' => 'getOauth',
-        'ldap' => 'getLdap',
-        'saml' => 'getSaml',
         'idpId' => 'getIdpId',
         'userId' => 'getUserId',
         'userName' => 'getUserName',
-        'rawInformation' => 'getRawInformation'
+        'rawInformation' => 'getRawInformation',
+        'ldap' => 'getLdap',
+        'oauth' => 'getOauth',
+        'saml' => 'getSaml'
     ];
 
     /**
@@ -280,13 +280,13 @@ class UserServiceIDPInformation implements ModelInterface, ArrayAccess, \JsonSer
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('oauth', $data ?? [], null);
-        $this->setIfExists('ldap', $data ?? [], null);
-        $this->setIfExists('saml', $data ?? [], null);
         $this->setIfExists('idpId', $data ?? [], null);
         $this->setIfExists('userId', $data ?? [], null);
         $this->setIfExists('userName', $data ?? [], null);
         $this->setIfExists('rawInformation', $data ?? [], null);
+        $this->setIfExists('ldap', $data ?? [], null);
+        $this->setIfExists('oauth', $data ?? [], null);
+        $this->setIfExists('saml', $data ?? [], null);
     }
 
     /**
@@ -316,6 +316,15 @@ class UserServiceIDPInformation implements ModelInterface, ArrayAccess, \JsonSer
     {
         $invalidProperties = [];
 
+        if ($this->container['ldap'] === null) {
+            $invalidProperties[] = "'ldap' can't be null";
+        }
+        if ($this->container['oauth'] === null) {
+            $invalidProperties[] = "'oauth' can't be null";
+        }
+        if ($this->container['saml'] === null) {
+            $invalidProperties[] = "'saml' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -332,87 +341,6 @@ class UserServiceIDPInformation implements ModelInterface, ArrayAccess, \JsonSer
 
 
     /**
-     * Gets oauth
-     *
-     * @return \Zitadel\Client\Model\UserServiceIDPOAuthAccessInformation|null
-     */
-    public function getOauth()
-    {
-        return $this->container['oauth'];
-    }
-
-    /**
-     * Sets oauth
-     *
-     * @param \Zitadel\Client\Model\UserServiceIDPOAuthAccessInformation|null $oauth oauth
-     *
-     * @return self
-     */
-    public function setOauth($oauth)
-    {
-        if (is_null($oauth)) {
-            throw new \InvalidArgumentException('non-nullable oauth cannot be null');
-        }
-        $this->container['oauth'] = $oauth;
-
-        return $this;
-    }
-
-    /**
-     * Gets ldap
-     *
-     * @return \Zitadel\Client\Model\UserServiceIDPLDAPAccessInformation|null
-     */
-    public function getLdap()
-    {
-        return $this->container['ldap'];
-    }
-
-    /**
-     * Sets ldap
-     *
-     * @param \Zitadel\Client\Model\UserServiceIDPLDAPAccessInformation|null $ldap ldap
-     *
-     * @return self
-     */
-    public function setLdap($ldap)
-    {
-        if (is_null($ldap)) {
-            throw new \InvalidArgumentException('non-nullable ldap cannot be null');
-        }
-        $this->container['ldap'] = $ldap;
-
-        return $this;
-    }
-
-    /**
-     * Gets saml
-     *
-     * @return \Zitadel\Client\Model\UserServiceIDPSAMLAccessInformation|null
-     */
-    public function getSaml()
-    {
-        return $this->container['saml'];
-    }
-
-    /**
-     * Sets saml
-     *
-     * @param \Zitadel\Client\Model\UserServiceIDPSAMLAccessInformation|null $saml saml
-     *
-     * @return self
-     */
-    public function setSaml($saml)
-    {
-        if (is_null($saml)) {
-            throw new \InvalidArgumentException('non-nullable saml cannot be null');
-        }
-        $this->container['saml'] = $saml;
-
-        return $this;
-    }
-
-    /**
      * Gets idpId
      *
      * @return string|null
@@ -425,7 +353,7 @@ class UserServiceIDPInformation implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets idpId
      *
-     * @param string|null $idpId ID of the identity provider
+     * @param string|null $idpId idpId
      *
      * @return self
      */
@@ -452,7 +380,7 @@ class UserServiceIDPInformation implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets userId
      *
-     * @param string|null $userId ID of the user of the identity provider
+     * @param string|null $userId userId
      *
      * @return self
      */
@@ -479,7 +407,7 @@ class UserServiceIDPInformation implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets userName
      *
-     * @param string|null $userName username of the user of the identity provider
+     * @param string|null $userName userName
      *
      * @return self
      */
@@ -496,7 +424,7 @@ class UserServiceIDPInformation implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Gets rawInformation
      *
-     * @return object|null
+     * @return array<string,\Zitadel\Client\Model\UserServiceValue>|null
      */
     public function getRawInformation()
     {
@@ -506,7 +434,7 @@ class UserServiceIDPInformation implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets rawInformation
      *
-     * @param object|null $rawInformation complete information returned by the identity provider
+     * @param array<string,\Zitadel\Client\Model\UserServiceValue>|null $rawInformation `Struct` represents a structured data value, consisting of fields  which map to dynamically typed values. In some languages, `Struct`  might be supported by a native representation. For example, in  scripting languages like JS a struct is represented as an  object. The details of that representation are described together  with the proto support for the language.   The JSON representation for `Struct` is JSON object.
      *
      * @return self
      */
@@ -516,6 +444,87 @@ class UserServiceIDPInformation implements ModelInterface, ArrayAccess, \JsonSer
             throw new \InvalidArgumentException('non-nullable rawInformation cannot be null');
         }
         $this->container['rawInformation'] = $rawInformation;
+
+        return $this;
+    }
+
+    /**
+     * Gets ldap
+     *
+     * @return \Zitadel\Client\Model\UserServiceIDPLDAPAccessInformation
+     */
+    public function getLdap()
+    {
+        return $this->container['ldap'];
+    }
+
+    /**
+     * Sets ldap
+     *
+     * @param \Zitadel\Client\Model\UserServiceIDPLDAPAccessInformation $ldap ldap
+     *
+     * @return self
+     */
+    public function setLdap($ldap)
+    {
+        if (is_null($ldap)) {
+            throw new \InvalidArgumentException('non-nullable ldap cannot be null');
+        }
+        $this->container['ldap'] = $ldap;
+
+        return $this;
+    }
+
+    /**
+     * Gets oauth
+     *
+     * @return \Zitadel\Client\Model\UserServiceIDPOAuthAccessInformation
+     */
+    public function getOauth()
+    {
+        return $this->container['oauth'];
+    }
+
+    /**
+     * Sets oauth
+     *
+     * @param \Zitadel\Client\Model\UserServiceIDPOAuthAccessInformation $oauth oauth
+     *
+     * @return self
+     */
+    public function setOauth($oauth)
+    {
+        if (is_null($oauth)) {
+            throw new \InvalidArgumentException('non-nullable oauth cannot be null');
+        }
+        $this->container['oauth'] = $oauth;
+
+        return $this;
+    }
+
+    /**
+     * Gets saml
+     *
+     * @return \Zitadel\Client\Model\UserServiceIDPSAMLAccessInformation
+     */
+    public function getSaml()
+    {
+        return $this->container['saml'];
+    }
+
+    /**
+     * Sets saml
+     *
+     * @param \Zitadel\Client\Model\UserServiceIDPSAMLAccessInformation $saml saml
+     *
+     * @return self
+     */
+    public function setSaml($saml)
+    {
+        if (is_null($saml)) {
+            throw new \InvalidArgumentException('non-nullable saml cannot be null');
+        }
+        $this->container['saml'] = $saml;
 
         return $this;
     }

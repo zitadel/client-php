@@ -80,7 +80,7 @@ class UserServiceCreateInviteCodeResponse implements ModelInterface, ArrayAccess
       */
     protected static array $openAPINullables = [
         'details' => false,
-        'inviteCode' => false
+        'inviteCode' => true
     ];
 
     /**
@@ -343,7 +343,14 @@ class UserServiceCreateInviteCodeResponse implements ModelInterface, ArrayAccess
     public function setInviteCode($inviteCode)
     {
         if (is_null($inviteCode)) {
-            throw new \InvalidArgumentException('non-nullable inviteCode cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'inviteCode');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('inviteCode', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['inviteCode'] = $inviteCode;
 

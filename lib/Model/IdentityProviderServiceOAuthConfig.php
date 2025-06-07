@@ -445,7 +445,7 @@ class IdentityProviderServiceOAuthConfig implements ModelInterface, ArrayAccess,
     /**
      * Sets scopes
      *
-     * @param string[]|null $scopes The scopes requested by ZITADEL during the request on the identity provider.
+     * @param string[]|null $scopes The scopes requested by ZITADEL during the request on the identity  provider.
      *
      * @return self
      */
@@ -472,7 +472,7 @@ class IdentityProviderServiceOAuthConfig implements ModelInterface, ArrayAccess,
     /**
      * Sets idAttribute
      *
-     * @param string|null $idAttribute Defines how the attribute is called where ZITADEL can get the id of the user.
+     * @param string|null $idAttribute Defines how the attribute is called where ZITADEL can get the id of the  user.
      *
      * @return self
      */

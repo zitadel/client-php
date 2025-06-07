@@ -285,14 +285,6 @@ class UserServiceUserNameQuery implements ModelInterface, ArrayAccess, \JsonSeri
         if ($this->container['userName'] === null) {
             $invalidProperties[] = "'userName' can't be null";
         }
-        if ((mb_strlen($this->container['userName']) > 200)) {
-            $invalidProperties[] = "invalid value for 'userName', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['userName']) < 1)) {
-            $invalidProperties[] = "invalid value for 'userName', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -330,13 +322,6 @@ class UserServiceUserNameQuery implements ModelInterface, ArrayAccess, \JsonSeri
         if (is_null($userName)) {
             throw new \InvalidArgumentException('non-nullable userName cannot be null');
         }
-        if ((mb_strlen($userName) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $userName when calling UserServiceUserNameQuery., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($userName) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $userName when calling UserServiceUserNameQuery., must be bigger than or equal to 1.');
-        }
-
         $this->container['userName'] = $userName;
 
         return $this;

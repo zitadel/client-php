@@ -281,22 +281,6 @@ class UserServiceRedirectURLs implements ModelInterface, ArrayAccess, \JsonSeria
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['successUrl']) && (mb_strlen($this->container['successUrl']) > 2048)) {
-            $invalidProperties[] = "invalid value for 'successUrl', the character length must be smaller than or equal to 2048.";
-        }
-
-        if (!is_null($this->container['successUrl']) && (mb_strlen($this->container['successUrl']) < 1)) {
-            $invalidProperties[] = "invalid value for 'successUrl', the character length must be bigger than or equal to 1.";
-        }
-
-        if (!is_null($this->container['failureUrl']) && (mb_strlen($this->container['failureUrl']) > 2048)) {
-            $invalidProperties[] = "invalid value for 'failureUrl', the character length must be smaller than or equal to 2048.";
-        }
-
-        if (!is_null($this->container['failureUrl']) && (mb_strlen($this->container['failureUrl']) < 1)) {
-            $invalidProperties[] = "invalid value for 'failureUrl', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -325,7 +309,7 @@ class UserServiceRedirectURLs implements ModelInterface, ArrayAccess, \JsonSeria
     /**
      * Sets successUrl
      *
-     * @param string|null $successUrl URL on which the user will be redirected after a successful login
+     * @param string|null $successUrl successUrl
      *
      * @return self
      */
@@ -334,13 +318,6 @@ class UserServiceRedirectURLs implements ModelInterface, ArrayAccess, \JsonSeria
         if (is_null($successUrl)) {
             throw new \InvalidArgumentException('non-nullable successUrl cannot be null');
         }
-        if ((mb_strlen($successUrl) > 2048)) {
-            throw new \InvalidArgumentException('invalid length for $successUrl when calling UserServiceRedirectURLs., must be smaller than or equal to 2048.');
-        }
-        if ((mb_strlen($successUrl) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $successUrl when calling UserServiceRedirectURLs., must be bigger than or equal to 1.');
-        }
-
         $this->container['successUrl'] = $successUrl;
 
         return $this;
@@ -359,7 +336,7 @@ class UserServiceRedirectURLs implements ModelInterface, ArrayAccess, \JsonSeria
     /**
      * Sets failureUrl
      *
-     * @param string|null $failureUrl URL on which the user will be redirected after a failed login
+     * @param string|null $failureUrl failureUrl
      *
      * @return self
      */
@@ -368,13 +345,6 @@ class UserServiceRedirectURLs implements ModelInterface, ArrayAccess, \JsonSeria
         if (is_null($failureUrl)) {
             throw new \InvalidArgumentException('non-nullable failureUrl cannot be null');
         }
-        if ((mb_strlen($failureUrl) > 2048)) {
-            throw new \InvalidArgumentException('invalid length for $failureUrl when calling UserServiceRedirectURLs., must be smaller than or equal to 2048.');
-        }
-        if ((mb_strlen($failureUrl) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $failureUrl when calling UserServiceRedirectURLs., must be bigger than or equal to 1.');
-        }
-
         $this->container['failureUrl'] = $failureUrl;
 
         return $this;

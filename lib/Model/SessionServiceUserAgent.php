@@ -60,7 +60,7 @@ class SessionServiceUserAgent implements ModelInterface, ArrayAccess, \JsonSeria
         'fingerprintId' => 'string',
         'ip' => 'string',
         'description' => 'string',
-        'header' => 'array<string,\Zitadel\Client\Model\SessionServiceUserAgentHeaderValues>'
+        'header' => 'array<string,\Zitadel\Client\Model\SessionServiceHeaderValues>'
     ];
 
     /**
@@ -83,9 +83,9 @@ class SessionServiceUserAgent implements ModelInterface, ArrayAccess, \JsonSeria
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'fingerprintId' => false,
-        'ip' => false,
-        'description' => false,
+        'fingerprintId' => true,
+        'ip' => true,
+        'description' => true,
         'header' => false
     ];
 
@@ -330,7 +330,14 @@ class SessionServiceUserAgent implements ModelInterface, ArrayAccess, \JsonSeria
     public function setFingerprintId($fingerprintId)
     {
         if (is_null($fingerprintId)) {
-            throw new \InvalidArgumentException('non-nullable fingerprintId cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'fingerprintId');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('fingerprintId', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['fingerprintId'] = $fingerprintId;
 
@@ -357,7 +364,14 @@ class SessionServiceUserAgent implements ModelInterface, ArrayAccess, \JsonSeria
     public function setIp($ip)
     {
         if (is_null($ip)) {
-            throw new \InvalidArgumentException('non-nullable ip cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'ip');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('ip', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['ip'] = $ip;
 
@@ -384,7 +398,14 @@ class SessionServiceUserAgent implements ModelInterface, ArrayAccess, \JsonSeria
     public function setDescription($description)
     {
         if (is_null($description)) {
-            throw new \InvalidArgumentException('non-nullable description cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'description');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('description', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['description'] = $description;
 
@@ -394,7 +415,7 @@ class SessionServiceUserAgent implements ModelInterface, ArrayAccess, \JsonSeria
     /**
      * Gets header
      *
-     * @return array<string,\Zitadel\Client\Model\SessionServiceUserAgentHeaderValues>|null
+     * @return array<string,\Zitadel\Client\Model\SessionServiceHeaderValues>|null
      */
     public function getHeader()
     {
@@ -404,7 +425,7 @@ class SessionServiceUserAgent implements ModelInterface, ArrayAccess, \JsonSeria
     /**
      * Sets header
      *
-     * @param array<string,\Zitadel\Client\Model\SessionServiceUserAgentHeaderValues>|null $header header
+     * @param array<string,\Zitadel\Client\Model\SessionServiceHeaderValues>|null $header header
      *
      * @return self
      */

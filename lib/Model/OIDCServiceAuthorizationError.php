@@ -82,8 +82,8 @@ class OIDCServiceAuthorizationError implements ModelInterface, ArrayAccess, \Jso
       */
     protected static array $openAPINullables = [
         'error' => false,
-        'errorDescription' => false,
-        'errorUri' => false
+        'errorDescription' => true,
+        'errorUri' => true
     ];
 
     /**
@@ -350,7 +350,14 @@ class OIDCServiceAuthorizationError implements ModelInterface, ArrayAccess, \Jso
     public function setErrorDescription($errorDescription)
     {
         if (is_null($errorDescription)) {
-            throw new \InvalidArgumentException('non-nullable errorDescription cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'errorDescription');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('errorDescription', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['errorDescription'] = $errorDescription;
 
@@ -377,7 +384,14 @@ class OIDCServiceAuthorizationError implements ModelInterface, ArrayAccess, \Jso
     public function setErrorUri($errorUri)
     {
         if (is_null($errorUri)) {
-            throw new \InvalidArgumentException('non-nullable errorUri cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'errorUri');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('errorUri', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['errorUri'] = $errorUri;
 

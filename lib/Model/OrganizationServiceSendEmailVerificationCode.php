@@ -77,7 +77,7 @@ class OrganizationServiceSendEmailVerificationCode implements ModelInterface, Ar
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'urlTemplate' => false
+        'urlTemplate' => true
     ];
 
     /**
@@ -274,14 +274,6 @@ class OrganizationServiceSendEmailVerificationCode implements ModelInterface, Ar
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['urlTemplate']) && (mb_strlen($this->container['urlTemplate']) > 200)) {
-            $invalidProperties[] = "invalid value for 'urlTemplate', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['urlTemplate']) && (mb_strlen($this->container['urlTemplate']) < 1)) {
-            $invalidProperties[] = "invalid value for 'urlTemplate', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -310,22 +302,22 @@ class OrganizationServiceSendEmailVerificationCode implements ModelInterface, Ar
     /**
      * Sets urlTemplate
      *
-     * @param string|null $urlTemplate Optionally set a url_template, which will be used in the verification mail sent by ZITADEL to guide the user to your verification page. If no template is set, the default ZITADEL url will be used.  The following placeholders can be used: UserID, OrgID, Code
+     * @param string|null $urlTemplate Optionally set a url_template, which will be used in the verification mail sent by ZITADEL to guide the user to your verification page.  If no template is set, the default ZITADEL url will be used.   The following placeholders can be used: UserID, OrgID, Code
      *
      * @return self
      */
     public function setUrlTemplate($urlTemplate)
     {
         if (is_null($urlTemplate)) {
-            throw new \InvalidArgumentException('non-nullable urlTemplate cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'urlTemplate');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('urlTemplate', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
-        if ((mb_strlen($urlTemplate) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $urlTemplate when calling OrganizationServiceSendEmailVerificationCode., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($urlTemplate) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $urlTemplate when calling OrganizationServiceSendEmailVerificationCode., must be bigger than or equal to 1.');
-        }
-
         $this->container['urlTemplate'] = $urlTemplate;
 
         return $this;

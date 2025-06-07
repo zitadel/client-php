@@ -285,14 +285,6 @@ class UserServicePhoneQuery implements ModelInterface, ArrayAccess, \JsonSeriali
         if ($this->container['number'] === null) {
             $invalidProperties[] = "'number' can't be null";
         }
-        if ((mb_strlen($this->container['number']) > 20)) {
-            $invalidProperties[] = "invalid value for 'number', the character length must be smaller than or equal to 20.";
-        }
-
-        if ((mb_strlen($this->container['number']) < 1)) {
-            $invalidProperties[] = "invalid value for 'number', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -321,7 +313,7 @@ class UserServicePhoneQuery implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Sets number
      *
-     * @param string $number Phone number of the user
+     * @param string $number number
      *
      * @return self
      */
@@ -330,13 +322,6 @@ class UserServicePhoneQuery implements ModelInterface, ArrayAccess, \JsonSeriali
         if (is_null($number)) {
             throw new \InvalidArgumentException('non-nullable number cannot be null');
         }
-        if ((mb_strlen($number) > 20)) {
-            throw new \InvalidArgumentException('invalid length for $number when calling UserServicePhoneQuery., must be smaller than or equal to 20.');
-        }
-        if ((mb_strlen($number) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $number when calling UserServicePhoneQuery., must be bigger than or equal to 1.');
-        }
-
         $this->container['number'] = $number;
 
         return $this;

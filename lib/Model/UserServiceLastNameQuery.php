@@ -285,14 +285,6 @@ class UserServiceLastNameQuery implements ModelInterface, ArrayAccess, \JsonSeri
         if ($this->container['lastName'] === null) {
             $invalidProperties[] = "'lastName' can't be null";
         }
-        if ((mb_strlen($this->container['lastName']) > 200)) {
-            $invalidProperties[] = "invalid value for 'lastName', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['lastName']) < 1)) {
-            $invalidProperties[] = "invalid value for 'lastName', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -330,13 +322,6 @@ class UserServiceLastNameQuery implements ModelInterface, ArrayAccess, \JsonSeri
         if (is_null($lastName)) {
             throw new \InvalidArgumentException('non-nullable lastName cannot be null');
         }
-        if ((mb_strlen($lastName) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $lastName when calling UserServiceLastNameQuery., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($lastName) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $lastName when calling UserServiceLastNameQuery., must be bigger than or equal to 1.');
-        }
-
         $this->container['lastName'] = $lastName;
 
         return $this;

@@ -57,6 +57,7 @@ class UserServiceRegisterU2FRequest implements ModelInterface, ArrayAccess, \Jso
       * @var string[]
       */
     protected static $openAPITypes = [
+        'userId' => 'string',
         'domain' => 'string'
     ];
 
@@ -68,6 +69,7 @@ class UserServiceRegisterU2FRequest implements ModelInterface, ArrayAccess, \Jso
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
+        'userId' => null,
         'domain' => null
     ];
 
@@ -77,6 +79,7 @@ class UserServiceRegisterU2FRequest implements ModelInterface, ArrayAccess, \Jso
       * @var boolean[]
       */
     protected static array $openAPINullables = [
+        'userId' => false,
         'domain' => false
     ];
 
@@ -166,6 +169,7 @@ class UserServiceRegisterU2FRequest implements ModelInterface, ArrayAccess, \Jso
      * @var string[]
      */
     protected static $attributeMap = [
+        'userId' => 'userId',
         'domain' => 'domain'
     ];
 
@@ -175,6 +179,7 @@ class UserServiceRegisterU2FRequest implements ModelInterface, ArrayAccess, \Jso
      * @var string[]
      */
     protected static $setters = [
+        'userId' => 'setUserId',
         'domain' => 'setDomain'
     ];
 
@@ -184,6 +189,7 @@ class UserServiceRegisterU2FRequest implements ModelInterface, ArrayAccess, \Jso
      * @var string[]
      */
     protected static $getters = [
+        'userId' => 'getUserId',
         'domain' => 'getDomain'
     ];
 
@@ -244,6 +250,7 @@ class UserServiceRegisterU2FRequest implements ModelInterface, ArrayAccess, \Jso
      */
     public function __construct(?array $data = null)
     {
+        $this->setIfExists('userId', $data ?? [], null);
         $this->setIfExists('domain', $data ?? [], null);
     }
 
@@ -274,6 +281,9 @@ class UserServiceRegisterU2FRequest implements ModelInterface, ArrayAccess, \Jso
     {
         $invalidProperties = [];
 
+        if ($this->container['userId'] === null) {
+            $invalidProperties[] = "'userId' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -290,6 +300,33 @@ class UserServiceRegisterU2FRequest implements ModelInterface, ArrayAccess, \Jso
 
 
     /**
+     * Gets userId
+     *
+     * @return string
+     */
+    public function getUserId()
+    {
+        return $this->container['userId'];
+    }
+
+    /**
+     * Sets userId
+     *
+     * @param string $userId userId
+     *
+     * @return self
+     */
+    public function setUserId($userId)
+    {
+        if (is_null($userId)) {
+            throw new \InvalidArgumentException('non-nullable userId cannot be null');
+        }
+        $this->container['userId'] = $userId;
+
+        return $this;
+    }
+
+    /**
      * Gets domain
      *
      * @return string|null
@@ -302,7 +339,7 @@ class UserServiceRegisterU2FRequest implements ModelInterface, ArrayAccess, \Jso
     /**
      * Sets domain
      *
-     * @param string|null $domain \"Domain on which the user is authenticated.\"
+     * @param string|null $domain domain
      *
      * @return self
      */

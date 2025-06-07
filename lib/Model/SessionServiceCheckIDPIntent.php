@@ -281,22 +281,6 @@ class SessionServiceCheckIDPIntent implements ModelInterface, ArrayAccess, \Json
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['idpIntentId']) && (mb_strlen($this->container['idpIntentId']) > 200)) {
-            $invalidProperties[] = "invalid value for 'idpIntentId', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['idpIntentId']) && (mb_strlen($this->container['idpIntentId']) < 1)) {
-            $invalidProperties[] = "invalid value for 'idpIntentId', the character length must be bigger than or equal to 1.";
-        }
-
-        if (!is_null($this->container['idpIntentToken']) && (mb_strlen($this->container['idpIntentToken']) > 200)) {
-            $invalidProperties[] = "invalid value for 'idpIntentToken', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['idpIntentToken']) && (mb_strlen($this->container['idpIntentToken']) < 1)) {
-            $invalidProperties[] = "invalid value for 'idpIntentToken', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -325,7 +309,7 @@ class SessionServiceCheckIDPIntent implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets idpIntentId
      *
-     * @param string|null $idpIntentId ID of the idp intent, previously returned on the success response of the IDP callback
+     * @param string|null $idpIntentId idpIntentId
      *
      * @return self
      */
@@ -334,13 +318,6 @@ class SessionServiceCheckIDPIntent implements ModelInterface, ArrayAccess, \Json
         if (is_null($idpIntentId)) {
             throw new \InvalidArgumentException('non-nullable idpIntentId cannot be null');
         }
-        if ((mb_strlen($idpIntentId) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $idpIntentId when calling SessionServiceCheckIDPIntent., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($idpIntentId) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $idpIntentId when calling SessionServiceCheckIDPIntent., must be bigger than or equal to 1.');
-        }
-
         $this->container['idpIntentId'] = $idpIntentId;
 
         return $this;
@@ -359,7 +336,7 @@ class SessionServiceCheckIDPIntent implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets idpIntentToken
      *
-     * @param string|null $idpIntentToken token of the idp intent, previously returned on the success response of the IDP callback
+     * @param string|null $idpIntentToken idpIntentToken
      *
      * @return self
      */
@@ -368,13 +345,6 @@ class SessionServiceCheckIDPIntent implements ModelInterface, ArrayAccess, \Json
         if (is_null($idpIntentToken)) {
             throw new \InvalidArgumentException('non-nullable idpIntentToken cannot be null');
         }
-        if ((mb_strlen($idpIntentToken) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $idpIntentToken when calling SessionServiceCheckIDPIntent., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($idpIntentToken) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $idpIntentToken when calling SessionServiceCheckIDPIntent., must be bigger than or equal to 1.');
-        }
-
         $this->container['idpIntentToken'] = $idpIntentToken;
 
         return $this;
