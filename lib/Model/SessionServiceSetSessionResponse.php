@@ -343,7 +343,7 @@ class SessionServiceSetSessionResponse implements ModelInterface, ArrayAccess, \
     /**
      * Sets sessionToken
      *
-     * @param string|null $sessionToken \"The current token of the session, which is required for delete session, get session or the request of other resources.\"
+     * @param string|null $sessionToken sessionToken
      *
      * @return self
      */

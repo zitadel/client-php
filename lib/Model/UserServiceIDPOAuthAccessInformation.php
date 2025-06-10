@@ -80,7 +80,7 @@ class UserServiceIDPOAuthAccessInformation implements ModelInterface, ArrayAcces
       */
     protected static array $openAPINullables = [
         'accessToken' => false,
-        'idToken' => false
+        'idToken' => true
     ];
 
     /**
@@ -343,7 +343,14 @@ class UserServiceIDPOAuthAccessInformation implements ModelInterface, ArrayAcces
     public function setIdToken($idToken)
     {
         if (is_null($idToken)) {
-            throw new \InvalidArgumentException('non-nullable idToken cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'idToken');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('idToken', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['idToken'] = $idToken;
 

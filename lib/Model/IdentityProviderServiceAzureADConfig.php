@@ -323,7 +323,7 @@ class IdentityProviderServiceAzureADConfig implements ModelInterface, ArrayAcces
     /**
      * Sets clientId
      *
-     * @param string|null $clientId clientId
+     * @param string|null $clientId Client id of the Azure AD application
      *
      * @return self
      */
@@ -377,7 +377,7 @@ class IdentityProviderServiceAzureADConfig implements ModelInterface, ArrayAcces
     /**
      * Sets emailVerified
      *
-     * @param bool|null $emailVerified Azure AD doesn't send if the email has been verified. Enable this if the user email should always be added verified in ZITADEL (no verification emails will be sent).
+     * @param bool|null $emailVerified Azure AD doesn't send if the email has been verified. Enable this if the  user email should always be added verified in ZITADEL (no verification  emails will be sent).
      *
      * @return self
      */

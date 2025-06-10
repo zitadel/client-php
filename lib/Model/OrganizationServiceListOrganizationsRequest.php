@@ -370,7 +370,7 @@ class OrganizationServiceListOrganizationsRequest implements ModelInterface, Arr
     /**
      * Sets queries
      *
-     * @param \Zitadel\Client\Model\OrganizationServiceSearchQuery[]|null $queries queries
+     * @param \Zitadel\Client\Model\OrganizationServiceSearchQuery[]|null $queries criteria the client is looking for
      *
      * @return self
      */

@@ -310,7 +310,7 @@ class FeatureServiceFeatureFlag implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets enabled
      *
-     * @param bool|null $enabled Whether a feature is enabled.
+     * @param bool|null $enabled enabled
      *
      * @return self
      */

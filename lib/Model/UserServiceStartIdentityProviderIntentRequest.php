@@ -58,8 +58,8 @@ class UserServiceStartIdentityProviderIntentRequest implements ModelInterface, A
       */
     protected static $openAPITypes = [
         'idpId' => 'string',
-        'urls' => '\Zitadel\Client\Model\UserServiceRedirectURLs',
-        'ldap' => '\Zitadel\Client\Model\UserServiceLDAPCredentials'
+        'ldap' => '\Zitadel\Client\Model\UserServiceLDAPCredentials',
+        'urls' => '\Zitadel\Client\Model\UserServiceRedirectURLs'
     ];
 
     /**
@@ -71,8 +71,8 @@ class UserServiceStartIdentityProviderIntentRequest implements ModelInterface, A
       */
     protected static $openAPIFormats = [
         'idpId' => null,
-        'urls' => null,
-        'ldap' => null
+        'ldap' => null,
+        'urls' => null
     ];
 
     /**
@@ -82,8 +82,8 @@ class UserServiceStartIdentityProviderIntentRequest implements ModelInterface, A
       */
     protected static array $openAPINullables = [
         'idpId' => false,
-        'urls' => false,
-        'ldap' => false
+        'ldap' => false,
+        'urls' => false
     ];
 
     /**
@@ -173,8 +173,8 @@ class UserServiceStartIdentityProviderIntentRequest implements ModelInterface, A
      */
     protected static $attributeMap = [
         'idpId' => 'idpId',
-        'urls' => 'urls',
-        'ldap' => 'ldap'
+        'ldap' => 'ldap',
+        'urls' => 'urls'
     ];
 
     /**
@@ -184,8 +184,8 @@ class UserServiceStartIdentityProviderIntentRequest implements ModelInterface, A
      */
     protected static $setters = [
         'idpId' => 'setIdpId',
-        'urls' => 'setUrls',
-        'ldap' => 'setLdap'
+        'ldap' => 'setLdap',
+        'urls' => 'setUrls'
     ];
 
     /**
@@ -195,8 +195,8 @@ class UserServiceStartIdentityProviderIntentRequest implements ModelInterface, A
      */
     protected static $getters = [
         'idpId' => 'getIdpId',
-        'urls' => 'getUrls',
-        'ldap' => 'getLdap'
+        'ldap' => 'getLdap',
+        'urls' => 'getUrls'
     ];
 
     /**
@@ -257,8 +257,8 @@ class UserServiceStartIdentityProviderIntentRequest implements ModelInterface, A
     public function __construct(?array $data = null)
     {
         $this->setIfExists('idpId', $data ?? [], null);
-        $this->setIfExists('urls', $data ?? [], null);
         $this->setIfExists('ldap', $data ?? [], null);
+        $this->setIfExists('urls', $data ?? [], null);
     }
 
     /**
@@ -288,14 +288,12 @@ class UserServiceStartIdentityProviderIntentRequest implements ModelInterface, A
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['idpId']) && (mb_strlen($this->container['idpId']) > 200)) {
-            $invalidProperties[] = "invalid value for 'idpId', the character length must be smaller than or equal to 200.";
+        if ($this->container['ldap'] === null) {
+            $invalidProperties[] = "'ldap' can't be null";
         }
-
-        if (!is_null($this->container['idpId']) && (mb_strlen($this->container['idpId']) < 1)) {
-            $invalidProperties[] = "invalid value for 'idpId', the character length must be bigger than or equal to 1.";
+        if ($this->container['urls'] === null) {
+            $invalidProperties[] = "'urls' can't be null";
         }
-
         return $invalidProperties;
     }
 
@@ -324,7 +322,7 @@ class UserServiceStartIdentityProviderIntentRequest implements ModelInterface, A
     /**
      * Sets idpId
      *
-     * @param string|null $idpId ID for existing identity provider
+     * @param string|null $idpId idpId
      *
      * @return self
      */
@@ -333,41 +331,7 @@ class UserServiceStartIdentityProviderIntentRequest implements ModelInterface, A
         if (is_null($idpId)) {
             throw new \InvalidArgumentException('non-nullable idpId cannot be null');
         }
-        if ((mb_strlen($idpId) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $idpId when calling UserServiceStartIdentityProviderIntentRequest., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($idpId) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $idpId when calling UserServiceStartIdentityProviderIntentRequest., must be bigger than or equal to 1.');
-        }
-
         $this->container['idpId'] = $idpId;
-
-        return $this;
-    }
-
-    /**
-     * Gets urls
-     *
-     * @return \Zitadel\Client\Model\UserServiceRedirectURLs|null
-     */
-    public function getUrls()
-    {
-        return $this->container['urls'];
-    }
-
-    /**
-     * Sets urls
-     *
-     * @param \Zitadel\Client\Model\UserServiceRedirectURLs|null $urls urls
-     *
-     * @return self
-     */
-    public function setUrls($urls)
-    {
-        if (is_null($urls)) {
-            throw new \InvalidArgumentException('non-nullable urls cannot be null');
-        }
-        $this->container['urls'] = $urls;
 
         return $this;
     }
@@ -375,7 +339,7 @@ class UserServiceStartIdentityProviderIntentRequest implements ModelInterface, A
     /**
      * Gets ldap
      *
-     * @return \Zitadel\Client\Model\UserServiceLDAPCredentials|null
+     * @return \Zitadel\Client\Model\UserServiceLDAPCredentials
      */
     public function getLdap()
     {
@@ -385,7 +349,7 @@ class UserServiceStartIdentityProviderIntentRequest implements ModelInterface, A
     /**
      * Sets ldap
      *
-     * @param \Zitadel\Client\Model\UserServiceLDAPCredentials|null $ldap ldap
+     * @param \Zitadel\Client\Model\UserServiceLDAPCredentials $ldap ldap
      *
      * @return self
      */
@@ -395,6 +359,33 @@ class UserServiceStartIdentityProviderIntentRequest implements ModelInterface, A
             throw new \InvalidArgumentException('non-nullable ldap cannot be null');
         }
         $this->container['ldap'] = $ldap;
+
+        return $this;
+    }
+
+    /**
+     * Gets urls
+     *
+     * @return \Zitadel\Client\Model\UserServiceRedirectURLs
+     */
+    public function getUrls()
+    {
+        return $this->container['urls'];
+    }
+
+    /**
+     * Sets urls
+     *
+     * @param \Zitadel\Client\Model\UserServiceRedirectURLs $urls urls
+     *
+     * @return self
+     */
+    public function setUrls($urls)
+    {
+        if (is_null($urls)) {
+            throw new \InvalidArgumentException('non-nullable urls cannot be null');
+        }
+        $this->container['urls'] = $urls;
 
         return $this;
     }

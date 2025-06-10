@@ -278,14 +278,6 @@ class UserServiceOrganizationIdQuery implements ModelInterface, ArrayAccess, \Js
         if ($this->container['organizationId'] === null) {
             $invalidProperties[] = "'organizationId' can't be null";
         }
-        if ((mb_strlen($this->container['organizationId']) > 200)) {
-            $invalidProperties[] = "invalid value for 'organizationId', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['organizationId']) < 1)) {
-            $invalidProperties[] = "invalid value for 'organizationId', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -323,13 +315,6 @@ class UserServiceOrganizationIdQuery implements ModelInterface, ArrayAccess, \Js
         if (is_null($organizationId)) {
             throw new \InvalidArgumentException('non-nullable organizationId cannot be null');
         }
-        if ((mb_strlen($organizationId) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $organizationId when calling UserServiceOrganizationIdQuery., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($organizationId) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $organizationId when calling UserServiceOrganizationIdQuery., must be bigger than or equal to 1.');
-        }
-
         $this->container['organizationId'] = $organizationId;
 
         return $this;

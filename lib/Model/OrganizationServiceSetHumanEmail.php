@@ -58,9 +58,9 @@ class OrganizationServiceSetHumanEmail implements ModelInterface, ArrayAccess, \
       */
     protected static $openAPITypes = [
         'email' => 'string',
-        'sendCode' => '\Zitadel\Client\Model\OrganizationServiceSendEmailVerificationCode',
+        'isVerified' => 'bool',
         'returnCode' => 'object',
-        'isVerified' => 'bool'
+        'sendCode' => '\Zitadel\Client\Model\OrganizationServiceSendEmailVerificationCode'
     ];
 
     /**
@@ -72,9 +72,9 @@ class OrganizationServiceSetHumanEmail implements ModelInterface, ArrayAccess, \
       */
     protected static $openAPIFormats = [
         'email' => null,
-        'sendCode' => null,
+        'isVerified' => null,
         'returnCode' => null,
-        'isVerified' => null
+        'sendCode' => null
     ];
 
     /**
@@ -84,9 +84,9 @@ class OrganizationServiceSetHumanEmail implements ModelInterface, ArrayAccess, \
       */
     protected static array $openAPINullables = [
         'email' => false,
-        'sendCode' => false,
+        'isVerified' => false,
         'returnCode' => false,
-        'isVerified' => false
+        'sendCode' => false
     ];
 
     /**
@@ -176,9 +176,9 @@ class OrganizationServiceSetHumanEmail implements ModelInterface, ArrayAccess, \
      */
     protected static $attributeMap = [
         'email' => 'email',
-        'sendCode' => 'sendCode',
+        'isVerified' => 'isVerified',
         'returnCode' => 'returnCode',
-        'isVerified' => 'isVerified'
+        'sendCode' => 'sendCode'
     ];
 
     /**
@@ -188,9 +188,9 @@ class OrganizationServiceSetHumanEmail implements ModelInterface, ArrayAccess, \
      */
     protected static $setters = [
         'email' => 'setEmail',
-        'sendCode' => 'setSendCode',
+        'isVerified' => 'setIsVerified',
         'returnCode' => 'setReturnCode',
-        'isVerified' => 'setIsVerified'
+        'sendCode' => 'setSendCode'
     ];
 
     /**
@@ -200,9 +200,9 @@ class OrganizationServiceSetHumanEmail implements ModelInterface, ArrayAccess, \
      */
     protected static $getters = [
         'email' => 'getEmail',
-        'sendCode' => 'getSendCode',
+        'isVerified' => 'getIsVerified',
         'returnCode' => 'getReturnCode',
-        'isVerified' => 'getIsVerified'
+        'sendCode' => 'getSendCode'
     ];
 
     /**
@@ -263,9 +263,9 @@ class OrganizationServiceSetHumanEmail implements ModelInterface, ArrayAccess, \
     public function __construct(?array $data = null)
     {
         $this->setIfExists('email', $data ?? [], null);
-        $this->setIfExists('sendCode', $data ?? [], null);
-        $this->setIfExists('returnCode', $data ?? [], null);
         $this->setIfExists('isVerified', $data ?? [], null);
+        $this->setIfExists('returnCode', $data ?? [], null);
+        $this->setIfExists('sendCode', $data ?? [], null);
     }
 
     /**
@@ -298,14 +298,15 @@ class OrganizationServiceSetHumanEmail implements ModelInterface, ArrayAccess, \
         if ($this->container['email'] === null) {
             $invalidProperties[] = "'email' can't be null";
         }
-        if ((mb_strlen($this->container['email']) > 200)) {
-            $invalidProperties[] = "invalid value for 'email', the character length must be smaller than or equal to 200.";
+        if ($this->container['isVerified'] === null) {
+            $invalidProperties[] = "'isVerified' can't be null";
         }
-
-        if ((mb_strlen($this->container['email']) < 1)) {
-            $invalidProperties[] = "invalid value for 'email', the character length must be bigger than or equal to 1.";
+        if ($this->container['returnCode'] === null) {
+            $invalidProperties[] = "'returnCode' can't be null";
         }
-
+        if ($this->container['sendCode'] === null) {
+            $invalidProperties[] = "'sendCode' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -343,41 +344,34 @@ class OrganizationServiceSetHumanEmail implements ModelInterface, ArrayAccess, \
         if (is_null($email)) {
             throw new \InvalidArgumentException('non-nullable email cannot be null');
         }
-        if ((mb_strlen($email) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $email when calling OrganizationServiceSetHumanEmail., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($email) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $email when calling OrganizationServiceSetHumanEmail., must be bigger than or equal to 1.');
-        }
-
         $this->container['email'] = $email;
 
         return $this;
     }
 
     /**
-     * Gets sendCode
+     * Gets isVerified
      *
-     * @return \Zitadel\Client\Model\OrganizationServiceSendEmailVerificationCode|null
+     * @return bool
      */
-    public function getSendCode()
+    public function getIsVerified()
     {
-        return $this->container['sendCode'];
+        return $this->container['isVerified'];
     }
 
     /**
-     * Sets sendCode
+     * Sets isVerified
      *
-     * @param \Zitadel\Client\Model\OrganizationServiceSendEmailVerificationCode|null $sendCode sendCode
+     * @param bool $isVerified isVerified
      *
      * @return self
      */
-    public function setSendCode($sendCode)
+    public function setIsVerified($isVerified)
     {
-        if (is_null($sendCode)) {
-            throw new \InvalidArgumentException('non-nullable sendCode cannot be null');
+        if (is_null($isVerified)) {
+            throw new \InvalidArgumentException('non-nullable isVerified cannot be null');
         }
-        $this->container['sendCode'] = $sendCode;
+        $this->container['isVerified'] = $isVerified;
 
         return $this;
     }
@@ -385,7 +379,7 @@ class OrganizationServiceSetHumanEmail implements ModelInterface, ArrayAccess, \
     /**
      * Gets returnCode
      *
-     * @return object|null
+     * @return object
      */
     public function getReturnCode()
     {
@@ -395,7 +389,7 @@ class OrganizationServiceSetHumanEmail implements ModelInterface, ArrayAccess, \
     /**
      * Sets returnCode
      *
-     * @param object|null $returnCode returnCode
+     * @param object $returnCode returnCode
      *
      * @return self
      */
@@ -410,28 +404,28 @@ class OrganizationServiceSetHumanEmail implements ModelInterface, ArrayAccess, \
     }
 
     /**
-     * Gets isVerified
+     * Gets sendCode
      *
-     * @return bool|null
+     * @return \Zitadel\Client\Model\OrganizationServiceSendEmailVerificationCode
      */
-    public function getIsVerified()
+    public function getSendCode()
     {
-        return $this->container['isVerified'];
+        return $this->container['sendCode'];
     }
 
     /**
-     * Sets isVerified
+     * Sets sendCode
      *
-     * @param bool|null $isVerified isVerified
+     * @param \Zitadel\Client\Model\OrganizationServiceSendEmailVerificationCode $sendCode sendCode
      *
      * @return self
      */
-    public function setIsVerified($isVerified)
+    public function setSendCode($sendCode)
     {
-        if (is_null($isVerified)) {
-            throw new \InvalidArgumentException('non-nullable isVerified cannot be null');
+        if (is_null($sendCode)) {
+            throw new \InvalidArgumentException('non-nullable sendCode cannot be null');
         }
-        $this->container['isVerified'] = $isVerified;
+        $this->container['sendCode'] = $sendCode;
 
         return $this;
     }

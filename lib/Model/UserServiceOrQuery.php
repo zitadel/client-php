@@ -303,7 +303,7 @@ class UserServiceOrQuery implements ModelInterface, ArrayAccess, \JsonSerializab
     /**
      * Sets queries
      *
-     * @param \Zitadel\Client\Model\UserServiceSearchQuery[]|null $queries the sub queries to 'OR'
+     * @param \Zitadel\Client\Model\UserServiceSearchQuery[]|null $queries queries
      *
      * @return self
      */

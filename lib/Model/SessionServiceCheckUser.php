@@ -57,8 +57,8 @@ class SessionServiceCheckUser implements ModelInterface, ArrayAccess, \JsonSeria
       * @var string[]
       */
     protected static $openAPITypes = [
-        'userId' => 'string',
-        'loginName' => 'string'
+        'loginName' => 'string',
+        'userId' => 'string'
     ];
 
     /**
@@ -69,8 +69,8 @@ class SessionServiceCheckUser implements ModelInterface, ArrayAccess, \JsonSeria
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'userId' => null,
-        'loginName' => null
+        'loginName' => null,
+        'userId' => null
     ];
 
     /**
@@ -79,8 +79,8 @@ class SessionServiceCheckUser implements ModelInterface, ArrayAccess, \JsonSeria
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'userId' => false,
-        'loginName' => false
+        'loginName' => false,
+        'userId' => false
     ];
 
     /**
@@ -169,8 +169,8 @@ class SessionServiceCheckUser implements ModelInterface, ArrayAccess, \JsonSeria
      * @var string[]
      */
     protected static $attributeMap = [
-        'userId' => 'userId',
-        'loginName' => 'loginName'
+        'loginName' => 'loginName',
+        'userId' => 'userId'
     ];
 
     /**
@@ -179,8 +179,8 @@ class SessionServiceCheckUser implements ModelInterface, ArrayAccess, \JsonSeria
      * @var string[]
      */
     protected static $setters = [
-        'userId' => 'setUserId',
-        'loginName' => 'setLoginName'
+        'loginName' => 'setLoginName',
+        'userId' => 'setUserId'
     ];
 
     /**
@@ -189,8 +189,8 @@ class SessionServiceCheckUser implements ModelInterface, ArrayAccess, \JsonSeria
      * @var string[]
      */
     protected static $getters = [
-        'userId' => 'getUserId',
-        'loginName' => 'getLoginName'
+        'loginName' => 'getLoginName',
+        'userId' => 'getUserId'
     ];
 
     /**
@@ -250,8 +250,8 @@ class SessionServiceCheckUser implements ModelInterface, ArrayAccess, \JsonSeria
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('userId', $data ?? [], null);
         $this->setIfExists('loginName', $data ?? [], null);
+        $this->setIfExists('userId', $data ?? [], null);
     }
 
     /**
@@ -281,22 +281,12 @@ class SessionServiceCheckUser implements ModelInterface, ArrayAccess, \JsonSeria
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['userId']) && (mb_strlen($this->container['userId']) > 200)) {
-            $invalidProperties[] = "invalid value for 'userId', the character length must be smaller than or equal to 200.";
+        if ($this->container['loginName'] === null) {
+            $invalidProperties[] = "'loginName' can't be null";
         }
-
-        if (!is_null($this->container['userId']) && (mb_strlen($this->container['userId']) < 1)) {
-            $invalidProperties[] = "invalid value for 'userId', the character length must be bigger than or equal to 1.";
+        if ($this->container['userId'] === null) {
+            $invalidProperties[] = "'userId' can't be null";
         }
-
-        if (!is_null($this->container['loginName']) && (mb_strlen($this->container['loginName']) > 200)) {
-            $invalidProperties[] = "invalid value for 'loginName', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['loginName']) && (mb_strlen($this->container['loginName']) < 1)) {
-            $invalidProperties[] = "invalid value for 'loginName', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -313,43 +303,9 @@ class SessionServiceCheckUser implements ModelInterface, ArrayAccess, \JsonSeria
 
 
     /**
-     * Gets userId
-     *
-     * @return string|null
-     */
-    public function getUserId()
-    {
-        return $this->container['userId'];
-    }
-
-    /**
-     * Sets userId
-     *
-     * @param string|null $userId userId
-     *
-     * @return self
-     */
-    public function setUserId($userId)
-    {
-        if (is_null($userId)) {
-            throw new \InvalidArgumentException('non-nullable userId cannot be null');
-        }
-        if ((mb_strlen($userId) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $userId when calling SessionServiceCheckUser., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($userId) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $userId when calling SessionServiceCheckUser., must be bigger than or equal to 1.');
-        }
-
-        $this->container['userId'] = $userId;
-
-        return $this;
-    }
-
-    /**
      * Gets loginName
      *
-     * @return string|null
+     * @return string
      */
     public function getLoginName()
     {
@@ -359,7 +315,7 @@ class SessionServiceCheckUser implements ModelInterface, ArrayAccess, \JsonSeria
     /**
      * Sets loginName
      *
-     * @param string|null $loginName loginName
+     * @param string $loginName loginName
      *
      * @return self
      */
@@ -368,14 +324,34 @@ class SessionServiceCheckUser implements ModelInterface, ArrayAccess, \JsonSeria
         if (is_null($loginName)) {
             throw new \InvalidArgumentException('non-nullable loginName cannot be null');
         }
-        if ((mb_strlen($loginName) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $loginName when calling SessionServiceCheckUser., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($loginName) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $loginName when calling SessionServiceCheckUser., must be bigger than or equal to 1.');
-        }
-
         $this->container['loginName'] = $loginName;
+
+        return $this;
+    }
+
+    /**
+     * Gets userId
+     *
+     * @return string
+     */
+    public function getUserId()
+    {
+        return $this->container['userId'];
+    }
+
+    /**
+     * Sets userId
+     *
+     * @param string $userId userId
+     *
+     * @return self
+     */
+    public function setUserId($userId)
+    {
+        if (is_null($userId)) {
+            throw new \InvalidArgumentException('non-nullable userId cannot be null');
+        }
+        $this->container['userId'] = $userId;
 
         return $this;
     }

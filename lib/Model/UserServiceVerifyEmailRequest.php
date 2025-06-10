@@ -57,6 +57,7 @@ class UserServiceVerifyEmailRequest implements ModelInterface, ArrayAccess, \Jso
       * @var string[]
       */
     protected static $openAPITypes = [
+        'userId' => 'string',
         'verificationCode' => 'string'
     ];
 
@@ -68,6 +69,7 @@ class UserServiceVerifyEmailRequest implements ModelInterface, ArrayAccess, \Jso
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
+        'userId' => null,
         'verificationCode' => null
     ];
 
@@ -77,6 +79,7 @@ class UserServiceVerifyEmailRequest implements ModelInterface, ArrayAccess, \Jso
       * @var boolean[]
       */
     protected static array $openAPINullables = [
+        'userId' => false,
         'verificationCode' => false
     ];
 
@@ -166,6 +169,7 @@ class UserServiceVerifyEmailRequest implements ModelInterface, ArrayAccess, \Jso
      * @var string[]
      */
     protected static $attributeMap = [
+        'userId' => 'userId',
         'verificationCode' => 'verificationCode'
     ];
 
@@ -175,6 +179,7 @@ class UserServiceVerifyEmailRequest implements ModelInterface, ArrayAccess, \Jso
      * @var string[]
      */
     protected static $setters = [
+        'userId' => 'setUserId',
         'verificationCode' => 'setVerificationCode'
     ];
 
@@ -184,6 +189,7 @@ class UserServiceVerifyEmailRequest implements ModelInterface, ArrayAccess, \Jso
      * @var string[]
      */
     protected static $getters = [
+        'userId' => 'getUserId',
         'verificationCode' => 'getVerificationCode'
     ];
 
@@ -244,6 +250,7 @@ class UserServiceVerifyEmailRequest implements ModelInterface, ArrayAccess, \Jso
      */
     public function __construct(?array $data = null)
     {
+        $this->setIfExists('userId', $data ?? [], null);
         $this->setIfExists('verificationCode', $data ?? [], null);
     }
 
@@ -274,17 +281,12 @@ class UserServiceVerifyEmailRequest implements ModelInterface, ArrayAccess, \Jso
     {
         $invalidProperties = [];
 
+        if ($this->container['userId'] === null) {
+            $invalidProperties[] = "'userId' can't be null";
+        }
         if ($this->container['verificationCode'] === null) {
             $invalidProperties[] = "'verificationCode' can't be null";
         }
-        if ((mb_strlen($this->container['verificationCode']) > 20)) {
-            $invalidProperties[] = "invalid value for 'verificationCode', the character length must be smaller than or equal to 20.";
-        }
-
-        if ((mb_strlen($this->container['verificationCode']) < 1)) {
-            $invalidProperties[] = "invalid value for 'verificationCode', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -301,6 +303,33 @@ class UserServiceVerifyEmailRequest implements ModelInterface, ArrayAccess, \Jso
 
 
     /**
+     * Gets userId
+     *
+     * @return string
+     */
+    public function getUserId()
+    {
+        return $this->container['userId'];
+    }
+
+    /**
+     * Sets userId
+     *
+     * @param string $userId userId
+     *
+     * @return self
+     */
+    public function setUserId($userId)
+    {
+        if (is_null($userId)) {
+            throw new \InvalidArgumentException('non-nullable userId cannot be null');
+        }
+        $this->container['userId'] = $userId;
+
+        return $this;
+    }
+
+    /**
      * Gets verificationCode
      *
      * @return string
@@ -313,7 +342,7 @@ class UserServiceVerifyEmailRequest implements ModelInterface, ArrayAccess, \Jso
     /**
      * Sets verificationCode
      *
-     * @param string $verificationCode \"the verification code generated during the set email request\"
+     * @param string $verificationCode verificationCode
      *
      * @return self
      */
@@ -322,13 +351,6 @@ class UserServiceVerifyEmailRequest implements ModelInterface, ArrayAccess, \Jso
         if (is_null($verificationCode)) {
             throw new \InvalidArgumentException('non-nullable verificationCode cannot be null');
         }
-        if ((mb_strlen($verificationCode) > 20)) {
-            throw new \InvalidArgumentException('invalid length for $verificationCode when calling UserServiceVerifyEmailRequest., must be smaller than or equal to 20.');
-        }
-        if ((mb_strlen($verificationCode) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $verificationCode when calling UserServiceVerifyEmailRequest., must be bigger than or equal to 1.');
-        }
-
         $this->container['verificationCode'] = $verificationCode;
 
         return $this;

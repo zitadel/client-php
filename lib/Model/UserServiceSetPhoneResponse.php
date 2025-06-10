@@ -80,7 +80,7 @@ class UserServiceSetPhoneResponse implements ModelInterface, ArrayAccess, \JsonS
       */
     protected static array $openAPINullables = [
         'details' => false,
-        'verificationCode' => false
+        'verificationCode' => true
     ];
 
     /**
@@ -336,14 +336,21 @@ class UserServiceSetPhoneResponse implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Sets verificationCode
      *
-     * @param string|null $verificationCode verificationCode
+     * @param string|null $verificationCode in case the verification was set to return_code, the code will be returned
      *
      * @return self
      */
     public function setVerificationCode($verificationCode)
     {
         if (is_null($verificationCode)) {
-            throw new \InvalidArgumentException('non-nullable verificationCode cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'verificationCode');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('verificationCode', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['verificationCode'] = $verificationCode;
 

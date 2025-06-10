@@ -95,11 +95,11 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
         'hidePasswordReset' => null,
         'ignoreUnknownUsernames' => null,
         'defaultRedirectUri' => null,
-        'passwordCheckLifetime' => null,
-        'externalLoginCheckLifetime' => null,
-        'mfaInitSkipLifetime' => null,
-        'secondFactorCheckLifetime' => null,
-        'multiFactorCheckLifetime' => null,
+        'passwordCheckLifetime' => 'duration',
+        'externalLoginCheckLifetime' => 'duration',
+        'mfaInitSkipLifetime' => 'duration',
+        'secondFactorCheckLifetime' => 'duration',
+        'multiFactorCheckLifetime' => 'duration',
         'secondFactors' => null,
         'multiFactors' => null,
         'allowDomainDiscovery' => null,
@@ -435,7 +435,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets allowUsernamePassword
      *
-     * @param bool|null $allowUsernamePassword defines if a user is allowed to log in with username and password
+     * @param bool|null $allowUsernamePassword allowUsernamePassword
      *
      * @return self
      */
@@ -462,7 +462,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets allowRegister
      *
-     * @param bool|null $allowRegister defines if a person is allowed to register a user on this organization
+     * @param bool|null $allowRegister allowRegister
      *
      * @return self
      */
@@ -489,7 +489,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets allowExternalIdp
      *
-     * @param bool|null $allowExternalIdp defines if a user is allowed to add a defined identity provider. E.g. Google auth
+     * @param bool|null $allowExternalIdp allowExternalIdp
      *
      * @return self
      */
@@ -516,7 +516,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets forceMfa
      *
-     * @param bool|null $forceMfa defines if a user MUST use a multi-factor to log in
+     * @param bool|null $forceMfa forceMfa
      *
      * @return self
      */
@@ -570,7 +570,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets hidePasswordReset
      *
-     * @param bool|null $hidePasswordReset defines if password reset link should be shown in the login screen
+     * @param bool|null $hidePasswordReset hidePasswordReset
      *
      * @return self
      */
@@ -597,7 +597,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets ignoreUnknownUsernames
      *
-     * @param bool|null $ignoreUnknownUsernames defines if unknown username on login screen directly returns an error or always displays the password screen
+     * @param bool|null $ignoreUnknownUsernames ignoreUnknownUsernames
      *
      * @return self
      */
@@ -624,7 +624,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets defaultRedirectUri
      *
-     * @param string|null $defaultRedirectUri defines where the user will be redirected to if the login is started without app context (e.g. from mail)
+     * @param string|null $defaultRedirectUri defaultRedirectUri
      *
      * @return self
      */
@@ -651,7 +651,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets passwordCheckLifetime
      *
-     * @param string|null $passwordCheckLifetime Defines after how much time the user has to re-authenticate with the password.
+     * @param string|null $passwordCheckLifetime A Duration represents a signed, fixed-length span of time represented  as a count of seconds and fractions of seconds at nanosecond  resolution. It is independent of any calendar and concepts like \"day\"  or \"month\". It is related to Timestamp in that the difference between  two Timestamp values is a Duration and it can be added or subtracted  from a Timestamp. Range is approximately +-10,000 years.   # Examples   Example 1: Compute Duration from two Timestamps in pseudo code.       Timestamp start = ...;      Timestamp end = ...;      Duration duration = ...;       duration.seconds = end.seconds - start.seconds;      duration.nanos = end.nanos - start.nanos;       if (duration.seconds < 0 && duration.nanos > 0) {        duration.seconds += 1;        duration.nanos -= 1000000000;      } else if (duration.seconds > 0 && duration.nanos < 0) {        duration.seconds -= 1;        duration.nanos += 1000000000;      }   Example 2: Compute Timestamp from Timestamp + Duration in pseudo code.       Timestamp start = ...;      Duration duration = ...;      Timestamp end = ...;       end.seconds = start.seconds + duration.seconds;      end.nanos = start.nanos + duration.nanos;       if (end.nanos < 0) {        end.seconds -= 1;        end.nanos += 1000000000;      } else if (end.nanos >= 1000000000) {        end.seconds += 1;        end.nanos -= 1000000000;      }   Example 3: Compute Duration from datetime.timedelta in Python.       td = datetime.timedelta(days=3, minutes=10)      duration = Duration()      duration.FromTimedelta(td)   # JSON Mapping   In JSON format, the Duration type is encoded as a string rather than an  object, where the string ends in the suffix \"s\" (indicating seconds) and  is preceded by the number of seconds, with nanoseconds expressed as  fractional seconds. For example, 3 seconds with 0 nanoseconds should be  encoded in JSON format as \"3s\", while 3 seconds and 1 nanosecond should  be expressed in JSON format as \"3.000000001s\", and 3 seconds and 1  microsecond should be expressed in JSON format as \"3.000001s\".
      *
      * @return self
      */
@@ -678,7 +678,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets externalLoginCheckLifetime
      *
-     * @param string|null $externalLoginCheckLifetime Defines after how much time the user has to re-authenticate with an external provider.
+     * @param string|null $externalLoginCheckLifetime A Duration represents a signed, fixed-length span of time represented  as a count of seconds and fractions of seconds at nanosecond  resolution. It is independent of any calendar and concepts like \"day\"  or \"month\". It is related to Timestamp in that the difference between  two Timestamp values is a Duration and it can be added or subtracted  from a Timestamp. Range is approximately +-10,000 years.   # Examples   Example 1: Compute Duration from two Timestamps in pseudo code.       Timestamp start = ...;      Timestamp end = ...;      Duration duration = ...;       duration.seconds = end.seconds - start.seconds;      duration.nanos = end.nanos - start.nanos;       if (duration.seconds < 0 && duration.nanos > 0) {        duration.seconds += 1;        duration.nanos -= 1000000000;      } else if (duration.seconds > 0 && duration.nanos < 0) {        duration.seconds -= 1;        duration.nanos += 1000000000;      }   Example 2: Compute Timestamp from Timestamp + Duration in pseudo code.       Timestamp start = ...;      Duration duration = ...;      Timestamp end = ...;       end.seconds = start.seconds + duration.seconds;      end.nanos = start.nanos + duration.nanos;       if (end.nanos < 0) {        end.seconds -= 1;        end.nanos += 1000000000;      } else if (end.nanos >= 1000000000) {        end.seconds += 1;        end.nanos -= 1000000000;      }   Example 3: Compute Duration from datetime.timedelta in Python.       td = datetime.timedelta(days=3, minutes=10)      duration = Duration()      duration.FromTimedelta(td)   # JSON Mapping   In JSON format, the Duration type is encoded as a string rather than an  object, where the string ends in the suffix \"s\" (indicating seconds) and  is preceded by the number of seconds, with nanoseconds expressed as  fractional seconds. For example, 3 seconds with 0 nanoseconds should be  encoded in JSON format as \"3s\", while 3 seconds and 1 nanosecond should  be expressed in JSON format as \"3.000000001s\", and 3 seconds and 1  microsecond should be expressed in JSON format as \"3.000001s\".
      *
      * @return self
      */
@@ -705,7 +705,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets mfaInitSkipLifetime
      *
-     * @param string|null $mfaInitSkipLifetime Defines after how much time the mfa prompt will be shown again.
+     * @param string|null $mfaInitSkipLifetime A Duration represents a signed, fixed-length span of time represented  as a count of seconds and fractions of seconds at nanosecond  resolution. It is independent of any calendar and concepts like \"day\"  or \"month\". It is related to Timestamp in that the difference between  two Timestamp values is a Duration and it can be added or subtracted  from a Timestamp. Range is approximately +-10,000 years.   # Examples   Example 1: Compute Duration from two Timestamps in pseudo code.       Timestamp start = ...;      Timestamp end = ...;      Duration duration = ...;       duration.seconds = end.seconds - start.seconds;      duration.nanos = end.nanos - start.nanos;       if (duration.seconds < 0 && duration.nanos > 0) {        duration.seconds += 1;        duration.nanos -= 1000000000;      } else if (duration.seconds > 0 && duration.nanos < 0) {        duration.seconds -= 1;        duration.nanos += 1000000000;      }   Example 2: Compute Timestamp from Timestamp + Duration in pseudo code.       Timestamp start = ...;      Duration duration = ...;      Timestamp end = ...;       end.seconds = start.seconds + duration.seconds;      end.nanos = start.nanos + duration.nanos;       if (end.nanos < 0) {        end.seconds -= 1;        end.nanos += 1000000000;      } else if (end.nanos >= 1000000000) {        end.seconds += 1;        end.nanos -= 1000000000;      }   Example 3: Compute Duration from datetime.timedelta in Python.       td = datetime.timedelta(days=3, minutes=10)      duration = Duration()      duration.FromTimedelta(td)   # JSON Mapping   In JSON format, the Duration type is encoded as a string rather than an  object, where the string ends in the suffix \"s\" (indicating seconds) and  is preceded by the number of seconds, with nanoseconds expressed as  fractional seconds. For example, 3 seconds with 0 nanoseconds should be  encoded in JSON format as \"3s\", while 3 seconds and 1 nanosecond should  be expressed in JSON format as \"3.000000001s\", and 3 seconds and 1  microsecond should be expressed in JSON format as \"3.000001s\".
      *
      * @return self
      */
@@ -732,7 +732,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets secondFactorCheckLifetime
      *
-     * @param string|null $secondFactorCheckLifetime Defines after how long the second factor check is valid.
+     * @param string|null $secondFactorCheckLifetime A Duration represents a signed, fixed-length span of time represented  as a count of seconds and fractions of seconds at nanosecond  resolution. It is independent of any calendar and concepts like \"day\"  or \"month\". It is related to Timestamp in that the difference between  two Timestamp values is a Duration and it can be added or subtracted  from a Timestamp. Range is approximately +-10,000 years.   # Examples   Example 1: Compute Duration from two Timestamps in pseudo code.       Timestamp start = ...;      Timestamp end = ...;      Duration duration = ...;       duration.seconds = end.seconds - start.seconds;      duration.nanos = end.nanos - start.nanos;       if (duration.seconds < 0 && duration.nanos > 0) {        duration.seconds += 1;        duration.nanos -= 1000000000;      } else if (duration.seconds > 0 && duration.nanos < 0) {        duration.seconds -= 1;        duration.nanos += 1000000000;      }   Example 2: Compute Timestamp from Timestamp + Duration in pseudo code.       Timestamp start = ...;      Duration duration = ...;      Timestamp end = ...;       end.seconds = start.seconds + duration.seconds;      end.nanos = start.nanos + duration.nanos;       if (end.nanos < 0) {        end.seconds -= 1;        end.nanos += 1000000000;      } else if (end.nanos >= 1000000000) {        end.seconds += 1;        end.nanos -= 1000000000;      }   Example 3: Compute Duration from datetime.timedelta in Python.       td = datetime.timedelta(days=3, minutes=10)      duration = Duration()      duration.FromTimedelta(td)   # JSON Mapping   In JSON format, the Duration type is encoded as a string rather than an  object, where the string ends in the suffix \"s\" (indicating seconds) and  is preceded by the number of seconds, with nanoseconds expressed as  fractional seconds. For example, 3 seconds with 0 nanoseconds should be  encoded in JSON format as \"3s\", while 3 seconds and 1 nanosecond should  be expressed in JSON format as \"3.000000001s\", and 3 seconds and 1  microsecond should be expressed in JSON format as \"3.000001s\".
      *
      * @return self
      */
@@ -759,7 +759,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets multiFactorCheckLifetime
      *
-     * @param string|null $multiFactorCheckLifetime Defines how long the multi-factor check is valid.
+     * @param string|null $multiFactorCheckLifetime A Duration represents a signed, fixed-length span of time represented  as a count of seconds and fractions of seconds at nanosecond  resolution. It is independent of any calendar and concepts like \"day\"  or \"month\". It is related to Timestamp in that the difference between  two Timestamp values is a Duration and it can be added or subtracted  from a Timestamp. Range is approximately +-10,000 years.   # Examples   Example 1: Compute Duration from two Timestamps in pseudo code.       Timestamp start = ...;      Timestamp end = ...;      Duration duration = ...;       duration.seconds = end.seconds - start.seconds;      duration.nanos = end.nanos - start.nanos;       if (duration.seconds < 0 && duration.nanos > 0) {        duration.seconds += 1;        duration.nanos -= 1000000000;      } else if (duration.seconds > 0 && duration.nanos < 0) {        duration.seconds -= 1;        duration.nanos += 1000000000;      }   Example 2: Compute Timestamp from Timestamp + Duration in pseudo code.       Timestamp start = ...;      Duration duration = ...;      Timestamp end = ...;       end.seconds = start.seconds + duration.seconds;      end.nanos = start.nanos + duration.nanos;       if (end.nanos < 0) {        end.seconds -= 1;        end.nanos += 1000000000;      } else if (end.nanos >= 1000000000) {        end.seconds += 1;        end.nanos -= 1000000000;      }   Example 3: Compute Duration from datetime.timedelta in Python.       td = datetime.timedelta(days=3, minutes=10)      duration = Duration()      duration.FromTimedelta(td)   # JSON Mapping   In JSON format, the Duration type is encoded as a string rather than an  object, where the string ends in the suffix \"s\" (indicating seconds) and  is preceded by the number of seconds, with nanoseconds expressed as  fractional seconds. For example, 3 seconds with 0 nanoseconds should be  encoded in JSON format as \"3s\", while 3 seconds and 1 nanosecond should  be expressed in JSON format as \"3.000000001s\", and 3 seconds and 1  microsecond should be expressed in JSON format as \"3.000001s\".
      *
      * @return self
      */
@@ -867,7 +867,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets disableLoginWithEmail
      *
-     * @param bool|null $disableLoginWithEmail defines if the user can additionally (to the login name) be identified by their verified email address
+     * @param bool|null $disableLoginWithEmail disableLoginWithEmail
      *
      * @return self
      */
@@ -894,7 +894,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets disableLoginWithPhone
      *
-     * @param bool|null $disableLoginWithPhone defines if the user can additionally (to the login name) be identified by their verified phone number
+     * @param bool|null $disableLoginWithPhone disableLoginWithPhone
      *
      * @return self
      */
@@ -948,7 +948,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets forceMfaLocalOnly
      *
-     * @param bool|null $forceMfaLocalOnly if activated, only local authenticated users are forced to use MFA. Authentication through IDPs won't prompt a MFA step in the login.
+     * @param bool|null $forceMfaLocalOnly forceMfaLocalOnly
      *
      * @return self
      */

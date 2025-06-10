@@ -57,7 +57,7 @@ class SettingsServicePasswordComplexitySettings implements ModelInterface, Array
       * @var string[]
       */
     protected static $openAPITypes = [
-        'minLength' => 'string',
+        'minLength' => 'mixed',
         'requiresUppercase' => 'bool',
         'requiresLowercase' => 'bool',
         'requiresNumber' => 'bool',
@@ -73,7 +73,7 @@ class SettingsServicePasswordComplexitySettings implements ModelInterface, Array
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'minLength' => 'uint64',
+        'minLength' => 'int64',
         'requiresUppercase' => null,
         'requiresLowercase' => null,
         'requiresNumber' => null,
@@ -87,7 +87,7 @@ class SettingsServicePasswordComplexitySettings implements ModelInterface, Array
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'minLength' => false,
+        'minLength' => true,
         'requiresUppercase' => false,
         'requiresLowercase' => false,
         'requiresNumber' => false,
@@ -327,7 +327,7 @@ class SettingsServicePasswordComplexitySettings implements ModelInterface, Array
     /**
      * Gets minLength
      *
-     * @return string|null
+     * @return mixed|null
      */
     public function getMinLength()
     {
@@ -337,14 +337,21 @@ class SettingsServicePasswordComplexitySettings implements ModelInterface, Array
     /**
      * Sets minLength
      *
-     * @param string|null $minLength Defines the minimum length of a password.
+     * @param mixed|null $minLength minLength
      *
      * @return self
      */
     public function setMinLength($minLength)
     {
         if (is_null($minLength)) {
-            throw new \InvalidArgumentException('non-nullable minLength cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'minLength');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('minLength', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['minLength'] = $minLength;
 
@@ -364,7 +371,7 @@ class SettingsServicePasswordComplexitySettings implements ModelInterface, Array
     /**
      * Sets requiresUppercase
      *
-     * @param bool|null $requiresUppercase defines if the password MUST contain an upper case letter
+     * @param bool|null $requiresUppercase requiresUppercase
      *
      * @return self
      */
@@ -391,7 +398,7 @@ class SettingsServicePasswordComplexitySettings implements ModelInterface, Array
     /**
      * Sets requiresLowercase
      *
-     * @param bool|null $requiresLowercase defines if the password MUST contain a lowercase letter
+     * @param bool|null $requiresLowercase requiresLowercase
      *
      * @return self
      */
@@ -418,7 +425,7 @@ class SettingsServicePasswordComplexitySettings implements ModelInterface, Array
     /**
      * Sets requiresNumber
      *
-     * @param bool|null $requiresNumber defines if the password MUST contain a number
+     * @param bool|null $requiresNumber requiresNumber
      *
      * @return self
      */
@@ -445,7 +452,7 @@ class SettingsServicePasswordComplexitySettings implements ModelInterface, Array
     /**
      * Sets requiresSymbol
      *
-     * @param bool|null $requiresSymbol defines if the password MUST contain a symbol. E.g. \"$\"
+     * @param bool|null $requiresSymbol requiresSymbol
      *
      * @return self
      */

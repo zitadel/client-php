@@ -8,6 +8,7 @@ use Zitadel\Client\Model\SessionServiceChecks;
 use Zitadel\Client\Model\SessionServiceCheckUser;
 use Zitadel\Client\Model\SessionServiceCreateSessionRequest;
 use Zitadel\Client\Model\SessionServiceDeleteSessionRequest;
+use Zitadel\Client\Model\SessionServiceGetSessionRequest;
 use Zitadel\Client\Model\SessionServiceListSessionsRequest;
 use Zitadel\Client\Model\SessionServiceSetSessionRequest;
 use Zitadel\Client\Zitadel;
@@ -54,8 +55,8 @@ class SessionServiceSanityCheckSpec extends TestCase
      */
     public function testRetrievesTheSessionDetailsById(): void
     {
-        $response = self::$client->sessions->sessionServiceGetSession(
-            $this->sessionId,
+        $response = self::$client->sessions->getSession(
+            (new SessionServiceGetSessionRequest())->setSessionId($this->sessionId)
         );
         $this->assertSame(
             $this->sessionId,
@@ -71,7 +72,7 @@ class SessionServiceSanityCheckSpec extends TestCase
         $request = (new SessionServiceListSessionsRequest())
             ->setQueries([]);
 
-        $response = self::$client->sessions->sessionServiceListSessions($request);
+        $response = self::$client->sessions->listSessions($request);
         $ids = array_map(
             fn ($session) => $session->getId(),
             $response->getSessions()
@@ -85,12 +86,8 @@ class SessionServiceSanityCheckSpec extends TestCase
      */
     public function testUpdatesTheSessionLifetimeAndReturnsANewToken(): void
     {
-        $request = (new SessionServiceSetSessionRequest())
-            ->setLifetime('36000s');
-
-        $response = self::$client->sessions->sessionServiceSetSession(
-            $this->sessionId,
-            $request
+        $response = self::$client->sessions->setSession(
+            (new SessionServiceSetSessionRequest())->setSessionId($this->sessionId)->setLifetime('36000s')
         );
         $this->assertIsString($response->getSessionToken());
     }
@@ -98,8 +95,8 @@ class SessionServiceSanityCheckSpec extends TestCase
     public function testRaisesAnApiExceptionWhenRetrievingANonExistentSession(): void
     {
         $this->expectException(ApiException::class);
-        self::$client->sessions->sessionServiceGetSession(
-            uniqid()
+        self::$client->sessions->getSession(
+            (new SessionServiceGetSessionRequest())->setSessionId(uniqid())
         );
     }
 
@@ -118,17 +115,15 @@ class SessionServiceSanityCheckSpec extends TestCase
         );
         $request->setLifetime('18000s');
 
-        $response = self::$client->sessions->sessionServiceCreateSession($request);
+        $response = self::$client->sessions->createSession($request);
         $this->sessionId = $response->getSessionId();
     }
 
     protected function tearDown(): void
     {
-        $request = new SessionServiceDeleteSessionRequest();
         try {
-            self::$client->sessions->sessionServiceDeleteSession(
-                $this->sessionId,
-                $request
+            self::$client->sessions->deleteSession(
+                (new SessionServiceDeleteSessionRequest())->setSessionId($this->sessionId)
             );
         } catch (ApiException) {
             // Ignore cleanup errors

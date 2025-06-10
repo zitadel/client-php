@@ -285,10 +285,6 @@ class UserServiceEmailQuery implements ModelInterface, ArrayAccess, \JsonSeriali
         if ($this->container['emailAddress'] === null) {
             $invalidProperties[] = "'emailAddress' can't be null";
         }
-        if ((mb_strlen($this->container['emailAddress']) > 200)) {
-            $invalidProperties[] = "invalid value for 'emailAddress', the character length must be smaller than or equal to 200.";
-        }
-
         return $invalidProperties;
     }
 
@@ -317,7 +313,7 @@ class UserServiceEmailQuery implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Sets emailAddress
      *
-     * @param string $emailAddress email address of the user
+     * @param string $emailAddress emailAddress
      *
      * @return self
      */
@@ -326,10 +322,6 @@ class UserServiceEmailQuery implements ModelInterface, ArrayAccess, \JsonSeriali
         if (is_null($emailAddress)) {
             throw new \InvalidArgumentException('non-nullable emailAddress cannot be null');
         }
-        if ((mb_strlen($emailAddress) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $emailAddress when calling UserServiceEmailQuery., must be smaller than or equal to 200.');
-        }
-
         $this->container['emailAddress'] = $emailAddress;
 
         return $this;

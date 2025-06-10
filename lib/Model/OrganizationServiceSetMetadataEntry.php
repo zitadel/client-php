@@ -284,25 +284,9 @@ class OrganizationServiceSetMetadataEntry implements ModelInterface, ArrayAccess
         if ($this->container['key'] === null) {
             $invalidProperties[] = "'key' can't be null";
         }
-        if ((mb_strlen($this->container['key']) > 200)) {
-            $invalidProperties[] = "invalid value for 'key', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['key']) < 1)) {
-            $invalidProperties[] = "invalid value for 'key', the character length must be bigger than or equal to 1.";
-        }
-
         if ($this->container['value'] === null) {
             $invalidProperties[] = "'value' can't be null";
         }
-        if ((mb_strlen($this->container['value']) > 500000)) {
-            $invalidProperties[] = "invalid value for 'value', the character length must be smaller than or equal to 500000.";
-        }
-
-        if ((mb_strlen($this->container['value']) < 1)) {
-            $invalidProperties[] = "invalid value for 'value', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -340,13 +324,6 @@ class OrganizationServiceSetMetadataEntry implements ModelInterface, ArrayAccess
         if (is_null($key)) {
             throw new \InvalidArgumentException('non-nullable key cannot be null');
         }
-        if ((mb_strlen($key) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $key when calling OrganizationServiceSetMetadataEntry., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($key) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $key when calling OrganizationServiceSetMetadataEntry., must be bigger than or equal to 1.');
-        }
-
         $this->container['key'] = $key;
 
         return $this;
@@ -365,7 +342,7 @@ class OrganizationServiceSetMetadataEntry implements ModelInterface, ArrayAccess
     /**
      * Sets value
      *
-     * @param string $value The value has to be base64 encoded.
+     * @param string $value value
      *
      * @return self
      */
@@ -374,13 +351,6 @@ class OrganizationServiceSetMetadataEntry implements ModelInterface, ArrayAccess
         if (is_null($value)) {
             throw new \InvalidArgumentException('non-nullable value cannot be null');
         }
-        if ((mb_strlen($value) > 500000)) {
-            throw new \InvalidArgumentException('invalid length for $value when calling OrganizationServiceSetMetadataEntry., must be smaller than or equal to 500000.');
-        }
-        if ((mb_strlen($value) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $value when calling OrganizationServiceSetMetadataEntry., must be bigger than or equal to 1.');
-        }
-
         $this->container['value'] = $value;
 
         return $this;

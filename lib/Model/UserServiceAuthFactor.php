@@ -59,9 +59,9 @@ class UserServiceAuthFactor implements ModelInterface, ArrayAccess, \JsonSeriali
     protected static $openAPITypes = [
         'state' => '\Zitadel\Client\Model\UserServiceAuthFactorState',
         'otp' => 'object',
-        'u2f' => '\Zitadel\Client\Model\UserServiceAuthFactorU2F',
+        'otpEmail' => 'object',
         'otpSms' => 'object',
-        'otpEmail' => 'object'
+        'u2f' => '\Zitadel\Client\Model\UserServiceAuthFactorU2F'
     ];
 
     /**
@@ -74,9 +74,9 @@ class UserServiceAuthFactor implements ModelInterface, ArrayAccess, \JsonSeriali
     protected static $openAPIFormats = [
         'state' => null,
         'otp' => null,
-        'u2f' => null,
+        'otpEmail' => null,
         'otpSms' => null,
-        'otpEmail' => null
+        'u2f' => null
     ];
 
     /**
@@ -87,9 +87,9 @@ class UserServiceAuthFactor implements ModelInterface, ArrayAccess, \JsonSeriali
     protected static array $openAPINullables = [
         'state' => false,
         'otp' => false,
-        'u2f' => false,
+        'otpEmail' => false,
         'otpSms' => false,
-        'otpEmail' => false
+        'u2f' => false
     ];
 
     /**
@@ -180,9 +180,9 @@ class UserServiceAuthFactor implements ModelInterface, ArrayAccess, \JsonSeriali
     protected static $attributeMap = [
         'state' => 'state',
         'otp' => 'otp',
-        'u2f' => 'u2f',
+        'otpEmail' => 'otpEmail',
         'otpSms' => 'otpSms',
-        'otpEmail' => 'otpEmail'
+        'u2f' => 'u2f'
     ];
 
     /**
@@ -193,9 +193,9 @@ class UserServiceAuthFactor implements ModelInterface, ArrayAccess, \JsonSeriali
     protected static $setters = [
         'state' => 'setState',
         'otp' => 'setOtp',
-        'u2f' => 'setU2f',
+        'otpEmail' => 'setOtpEmail',
         'otpSms' => 'setOtpSms',
-        'otpEmail' => 'setOtpEmail'
+        'u2f' => 'setU2f'
     ];
 
     /**
@@ -206,9 +206,9 @@ class UserServiceAuthFactor implements ModelInterface, ArrayAccess, \JsonSeriali
     protected static $getters = [
         'state' => 'getState',
         'otp' => 'getOtp',
-        'u2f' => 'getU2f',
+        'otpEmail' => 'getOtpEmail',
         'otpSms' => 'getOtpSms',
-        'otpEmail' => 'getOtpEmail'
+        'u2f' => 'getU2f'
     ];
 
     /**
@@ -270,9 +270,9 @@ class UserServiceAuthFactor implements ModelInterface, ArrayAccess, \JsonSeriali
     {
         $this->setIfExists('state', $data ?? [], null);
         $this->setIfExists('otp', $data ?? [], null);
-        $this->setIfExists('u2f', $data ?? [], null);
-        $this->setIfExists('otpSms', $data ?? [], null);
         $this->setIfExists('otpEmail', $data ?? [], null);
+        $this->setIfExists('otpSms', $data ?? [], null);
+        $this->setIfExists('u2f', $data ?? [], null);
     }
 
     /**
@@ -302,6 +302,18 @@ class UserServiceAuthFactor implements ModelInterface, ArrayAccess, \JsonSeriali
     {
         $invalidProperties = [];
 
+        if ($this->container['otp'] === null) {
+            $invalidProperties[] = "'otp' can't be null";
+        }
+        if ($this->container['otpEmail'] === null) {
+            $invalidProperties[] = "'otpEmail' can't be null";
+        }
+        if ($this->container['otpSms'] === null) {
+            $invalidProperties[] = "'otpSms' can't be null";
+        }
+        if ($this->container['u2f'] === null) {
+            $invalidProperties[] = "'u2f' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -347,7 +359,7 @@ class UserServiceAuthFactor implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Gets otp
      *
-     * @return object|null
+     * @return object
      */
     public function getOtp()
     {
@@ -357,7 +369,7 @@ class UserServiceAuthFactor implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Sets otp
      *
-     * @param object|null $otp otp
+     * @param object $otp otp
      *
      * @return self
      */
@@ -372,28 +384,28 @@ class UserServiceAuthFactor implements ModelInterface, ArrayAccess, \JsonSeriali
     }
 
     /**
-     * Gets u2f
+     * Gets otpEmail
      *
-     * @return \Zitadel\Client\Model\UserServiceAuthFactorU2F|null
+     * @return object
      */
-    public function getU2f()
+    public function getOtpEmail()
     {
-        return $this->container['u2f'];
+        return $this->container['otpEmail'];
     }
 
     /**
-     * Sets u2f
+     * Sets otpEmail
      *
-     * @param \Zitadel\Client\Model\UserServiceAuthFactorU2F|null $u2f u2f
+     * @param object $otpEmail otpEmail
      *
      * @return self
      */
-    public function setU2f($u2f)
+    public function setOtpEmail($otpEmail)
     {
-        if (is_null($u2f)) {
-            throw new \InvalidArgumentException('non-nullable u2f cannot be null');
+        if (is_null($otpEmail)) {
+            throw new \InvalidArgumentException('non-nullable otpEmail cannot be null');
         }
-        $this->container['u2f'] = $u2f;
+        $this->container['otpEmail'] = $otpEmail;
 
         return $this;
     }
@@ -401,7 +413,7 @@ class UserServiceAuthFactor implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Gets otpSms
      *
-     * @return object|null
+     * @return object
      */
     public function getOtpSms()
     {
@@ -411,7 +423,7 @@ class UserServiceAuthFactor implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Sets otpSms
      *
-     * @param object|null $otpSms otpSms
+     * @param object $otpSms otpSms
      *
      * @return self
      */
@@ -426,28 +438,28 @@ class UserServiceAuthFactor implements ModelInterface, ArrayAccess, \JsonSeriali
     }
 
     /**
-     * Gets otpEmail
+     * Gets u2f
      *
-     * @return object|null
+     * @return \Zitadel\Client\Model\UserServiceAuthFactorU2F
      */
-    public function getOtpEmail()
+    public function getU2f()
     {
-        return $this->container['otpEmail'];
+        return $this->container['u2f'];
     }
 
     /**
-     * Sets otpEmail
+     * Sets u2f
      *
-     * @param object|null $otpEmail otpEmail
+     * @param \Zitadel\Client\Model\UserServiceAuthFactorU2F $u2f u2f
      *
      * @return self
      */
-    public function setOtpEmail($otpEmail)
+    public function setU2f($u2f)
     {
-        if (is_null($otpEmail)) {
-            throw new \InvalidArgumentException('non-nullable otpEmail cannot be null');
+        if (is_null($u2f)) {
+            throw new \InvalidArgumentException('non-nullable u2f cannot be null');
         }
-        $this->container['otpEmail'] = $otpEmail;
+        $this->container['u2f'] = $u2f;
 
         return $this;
     }

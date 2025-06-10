@@ -80,7 +80,7 @@ class SAMLServiceAuthorizationError implements ModelInterface, ArrayAccess, \Jso
       */
     protected static array $openAPINullables = [
         'error' => false,
-        'errorDescription' => false
+        'errorDescription' => true
     ];
 
     /**
@@ -343,7 +343,14 @@ class SAMLServiceAuthorizationError implements ModelInterface, ArrayAccess, \Jso
     public function setErrorDescription($errorDescription)
     {
         if (is_null($errorDescription)) {
-            throw new \InvalidArgumentException('non-nullable errorDescription cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'errorDescription');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('errorDescription', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['errorDescription'] = $errorDescription;
 

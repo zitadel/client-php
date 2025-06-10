@@ -59,7 +59,7 @@ class OrganizationServiceListOrganizationsResponse implements ModelInterface, Ar
     protected static $openAPITypes = [
         'details' => '\Zitadel\Client\Model\OrganizationServiceListDetails',
         'sortingColumn' => '\Zitadel\Client\Model\OrganizationServiceOrganizationFieldName',
-        'result' => '\Zitadel\Client\Model\Zitadelorgv2Organization[]'
+        'result' => '\Zitadel\Client\Model\OrganizationServiceOrganization[]'
     ];
 
     /**
@@ -360,7 +360,7 @@ class OrganizationServiceListOrganizationsResponse implements ModelInterface, Ar
     /**
      * Gets result
      *
-     * @return \Zitadel\Client\Model\Zitadelorgv2Organization[]|null
+     * @return \Zitadel\Client\Model\OrganizationServiceOrganization[]|null
      */
     public function getResult()
     {
@@ -370,7 +370,7 @@ class OrganizationServiceListOrganizationsResponse implements ModelInterface, Ar
     /**
      * Sets result
      *
-     * @param \Zitadel\Client\Model\Zitadelorgv2Organization[]|null $result result
+     * @param \Zitadel\Client\Model\OrganizationServiceOrganization[]|null $result result
      *
      * @return self
      */

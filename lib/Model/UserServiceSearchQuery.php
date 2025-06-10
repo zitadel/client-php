@@ -57,22 +57,22 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
       * @var string[]
       */
     protected static $openAPITypes = [
-        'userNameQuery' => '\Zitadel\Client\Model\UserServiceUserNameQuery',
-        'firstNameQuery' => '\Zitadel\Client\Model\UserServiceFirstNameQuery',
-        'lastNameQuery' => '\Zitadel\Client\Model\UserServiceLastNameQuery',
-        'nickNameQuery' => '\Zitadel\Client\Model\UserServiceNickNameQuery',
+        'andQuery' => '\Zitadel\Client\Model\UserServiceAndQuery',
         'displayNameQuery' => '\Zitadel\Client\Model\UserServiceDisplayNameQuery',
         'emailQuery' => '\Zitadel\Client\Model\UserServiceEmailQuery',
+        'firstNameQuery' => '\Zitadel\Client\Model\UserServiceFirstNameQuery',
+        'inUserEmailsQuery' => '\Zitadel\Client\Model\UserServiceInUserEmailsQuery',
+        'inUserIdsQuery' => '\Zitadel\Client\Model\UserServiceInUserIDQuery',
+        'lastNameQuery' => '\Zitadel\Client\Model\UserServiceLastNameQuery',
+        'loginNameQuery' => '\Zitadel\Client\Model\UserServiceLoginNameQuery',
+        'nickNameQuery' => '\Zitadel\Client\Model\UserServiceNickNameQuery',
+        'notQuery' => '\Zitadel\Client\Model\UserServiceNotQuery',
+        'orQuery' => '\Zitadel\Client\Model\UserServiceOrQuery',
+        'organizationIdQuery' => '\Zitadel\Client\Model\UserServiceOrganizationIdQuery',
+        'phoneQuery' => '\Zitadel\Client\Model\UserServicePhoneQuery',
         'stateQuery' => '\Zitadel\Client\Model\UserServiceStateQuery',
         'typeQuery' => '\Zitadel\Client\Model\UserServiceTypeQuery',
-        'loginNameQuery' => '\Zitadel\Client\Model\UserServiceLoginNameQuery',
-        'inUserIdsQuery' => '\Zitadel\Client\Model\UserServiceInUserIDQuery',
-        'orQuery' => '\Zitadel\Client\Model\UserServiceOrQuery',
-        'andQuery' => '\Zitadel\Client\Model\UserServiceAndQuery',
-        'notQuery' => '\Zitadel\Client\Model\UserServiceNotQuery',
-        'inUserEmailsQuery' => '\Zitadel\Client\Model\UserServiceInUserEmailsQuery',
-        'organizationIdQuery' => '\Zitadel\Client\Model\UserServiceOrganizationIdQuery',
-        'phoneQuery' => '\Zitadel\Client\Model\UserServicePhoneQuery'
+        'userNameQuery' => '\Zitadel\Client\Model\UserServiceUserNameQuery'
     ];
 
     /**
@@ -83,22 +83,22 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'userNameQuery' => null,
-        'firstNameQuery' => null,
-        'lastNameQuery' => null,
-        'nickNameQuery' => null,
+        'andQuery' => null,
         'displayNameQuery' => null,
         'emailQuery' => null,
+        'firstNameQuery' => null,
+        'inUserEmailsQuery' => null,
+        'inUserIdsQuery' => null,
+        'lastNameQuery' => null,
+        'loginNameQuery' => null,
+        'nickNameQuery' => null,
+        'notQuery' => null,
+        'orQuery' => null,
+        'organizationIdQuery' => null,
+        'phoneQuery' => null,
         'stateQuery' => null,
         'typeQuery' => null,
-        'loginNameQuery' => null,
-        'inUserIdsQuery' => null,
-        'orQuery' => null,
-        'andQuery' => null,
-        'notQuery' => null,
-        'inUserEmailsQuery' => null,
-        'organizationIdQuery' => null,
-        'phoneQuery' => null
+        'userNameQuery' => null
     ];
 
     /**
@@ -107,22 +107,22 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'userNameQuery' => false,
-        'firstNameQuery' => false,
-        'lastNameQuery' => false,
-        'nickNameQuery' => false,
+        'andQuery' => false,
         'displayNameQuery' => false,
         'emailQuery' => false,
+        'firstNameQuery' => false,
+        'inUserEmailsQuery' => false,
+        'inUserIdsQuery' => false,
+        'lastNameQuery' => false,
+        'loginNameQuery' => false,
+        'nickNameQuery' => false,
+        'notQuery' => false,
+        'orQuery' => false,
+        'organizationIdQuery' => false,
+        'phoneQuery' => false,
         'stateQuery' => false,
         'typeQuery' => false,
-        'loginNameQuery' => false,
-        'inUserIdsQuery' => false,
-        'orQuery' => false,
-        'andQuery' => false,
-        'notQuery' => false,
-        'inUserEmailsQuery' => false,
-        'organizationIdQuery' => false,
-        'phoneQuery' => false
+        'userNameQuery' => false
     ];
 
     /**
@@ -211,22 +211,22 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
      * @var string[]
      */
     protected static $attributeMap = [
-        'userNameQuery' => 'userNameQuery',
-        'firstNameQuery' => 'firstNameQuery',
-        'lastNameQuery' => 'lastNameQuery',
-        'nickNameQuery' => 'nickNameQuery',
+        'andQuery' => 'andQuery',
         'displayNameQuery' => 'displayNameQuery',
         'emailQuery' => 'emailQuery',
+        'firstNameQuery' => 'firstNameQuery',
+        'inUserEmailsQuery' => 'inUserEmailsQuery',
+        'inUserIdsQuery' => 'inUserIdsQuery',
+        'lastNameQuery' => 'lastNameQuery',
+        'loginNameQuery' => 'loginNameQuery',
+        'nickNameQuery' => 'nickNameQuery',
+        'notQuery' => 'notQuery',
+        'orQuery' => 'orQuery',
+        'organizationIdQuery' => 'organizationIdQuery',
+        'phoneQuery' => 'phoneQuery',
         'stateQuery' => 'stateQuery',
         'typeQuery' => 'typeQuery',
-        'loginNameQuery' => 'loginNameQuery',
-        'inUserIdsQuery' => 'inUserIdsQuery',
-        'orQuery' => 'orQuery',
-        'andQuery' => 'andQuery',
-        'notQuery' => 'notQuery',
-        'inUserEmailsQuery' => 'inUserEmailsQuery',
-        'organizationIdQuery' => 'organizationIdQuery',
-        'phoneQuery' => 'phoneQuery'
+        'userNameQuery' => 'userNameQuery'
     ];
 
     /**
@@ -235,22 +235,22 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
      * @var string[]
      */
     protected static $setters = [
-        'userNameQuery' => 'setUserNameQuery',
-        'firstNameQuery' => 'setFirstNameQuery',
-        'lastNameQuery' => 'setLastNameQuery',
-        'nickNameQuery' => 'setNickNameQuery',
+        'andQuery' => 'setAndQuery',
         'displayNameQuery' => 'setDisplayNameQuery',
         'emailQuery' => 'setEmailQuery',
+        'firstNameQuery' => 'setFirstNameQuery',
+        'inUserEmailsQuery' => 'setInUserEmailsQuery',
+        'inUserIdsQuery' => 'setInUserIdsQuery',
+        'lastNameQuery' => 'setLastNameQuery',
+        'loginNameQuery' => 'setLoginNameQuery',
+        'nickNameQuery' => 'setNickNameQuery',
+        'notQuery' => 'setNotQuery',
+        'orQuery' => 'setOrQuery',
+        'organizationIdQuery' => 'setOrganizationIdQuery',
+        'phoneQuery' => 'setPhoneQuery',
         'stateQuery' => 'setStateQuery',
         'typeQuery' => 'setTypeQuery',
-        'loginNameQuery' => 'setLoginNameQuery',
-        'inUserIdsQuery' => 'setInUserIdsQuery',
-        'orQuery' => 'setOrQuery',
-        'andQuery' => 'setAndQuery',
-        'notQuery' => 'setNotQuery',
-        'inUserEmailsQuery' => 'setInUserEmailsQuery',
-        'organizationIdQuery' => 'setOrganizationIdQuery',
-        'phoneQuery' => 'setPhoneQuery'
+        'userNameQuery' => 'setUserNameQuery'
     ];
 
     /**
@@ -259,22 +259,22 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
      * @var string[]
      */
     protected static $getters = [
-        'userNameQuery' => 'getUserNameQuery',
-        'firstNameQuery' => 'getFirstNameQuery',
-        'lastNameQuery' => 'getLastNameQuery',
-        'nickNameQuery' => 'getNickNameQuery',
+        'andQuery' => 'getAndQuery',
         'displayNameQuery' => 'getDisplayNameQuery',
         'emailQuery' => 'getEmailQuery',
+        'firstNameQuery' => 'getFirstNameQuery',
+        'inUserEmailsQuery' => 'getInUserEmailsQuery',
+        'inUserIdsQuery' => 'getInUserIdsQuery',
+        'lastNameQuery' => 'getLastNameQuery',
+        'loginNameQuery' => 'getLoginNameQuery',
+        'nickNameQuery' => 'getNickNameQuery',
+        'notQuery' => 'getNotQuery',
+        'orQuery' => 'getOrQuery',
+        'organizationIdQuery' => 'getOrganizationIdQuery',
+        'phoneQuery' => 'getPhoneQuery',
         'stateQuery' => 'getStateQuery',
         'typeQuery' => 'getTypeQuery',
-        'loginNameQuery' => 'getLoginNameQuery',
-        'inUserIdsQuery' => 'getInUserIdsQuery',
-        'orQuery' => 'getOrQuery',
-        'andQuery' => 'getAndQuery',
-        'notQuery' => 'getNotQuery',
-        'inUserEmailsQuery' => 'getInUserEmailsQuery',
-        'organizationIdQuery' => 'getOrganizationIdQuery',
-        'phoneQuery' => 'getPhoneQuery'
+        'userNameQuery' => 'getUserNameQuery'
     ];
 
     /**
@@ -334,22 +334,22 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('userNameQuery', $data ?? [], null);
-        $this->setIfExists('firstNameQuery', $data ?? [], null);
-        $this->setIfExists('lastNameQuery', $data ?? [], null);
-        $this->setIfExists('nickNameQuery', $data ?? [], null);
+        $this->setIfExists('andQuery', $data ?? [], null);
         $this->setIfExists('displayNameQuery', $data ?? [], null);
         $this->setIfExists('emailQuery', $data ?? [], null);
-        $this->setIfExists('stateQuery', $data ?? [], null);
-        $this->setIfExists('typeQuery', $data ?? [], null);
-        $this->setIfExists('loginNameQuery', $data ?? [], null);
-        $this->setIfExists('inUserIdsQuery', $data ?? [], null);
-        $this->setIfExists('orQuery', $data ?? [], null);
-        $this->setIfExists('andQuery', $data ?? [], null);
-        $this->setIfExists('notQuery', $data ?? [], null);
+        $this->setIfExists('firstNameQuery', $data ?? [], null);
         $this->setIfExists('inUserEmailsQuery', $data ?? [], null);
+        $this->setIfExists('inUserIdsQuery', $data ?? [], null);
+        $this->setIfExists('lastNameQuery', $data ?? [], null);
+        $this->setIfExists('loginNameQuery', $data ?? [], null);
+        $this->setIfExists('nickNameQuery', $data ?? [], null);
+        $this->setIfExists('notQuery', $data ?? [], null);
+        $this->setIfExists('orQuery', $data ?? [], null);
         $this->setIfExists('organizationIdQuery', $data ?? [], null);
         $this->setIfExists('phoneQuery', $data ?? [], null);
+        $this->setIfExists('stateQuery', $data ?? [], null);
+        $this->setIfExists('typeQuery', $data ?? [], null);
+        $this->setIfExists('userNameQuery', $data ?? [], null);
     }
 
     /**
@@ -379,6 +379,54 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
     {
         $invalidProperties = [];
 
+        if ($this->container['andQuery'] === null) {
+            $invalidProperties[] = "'andQuery' can't be null";
+        }
+        if ($this->container['displayNameQuery'] === null) {
+            $invalidProperties[] = "'displayNameQuery' can't be null";
+        }
+        if ($this->container['emailQuery'] === null) {
+            $invalidProperties[] = "'emailQuery' can't be null";
+        }
+        if ($this->container['firstNameQuery'] === null) {
+            $invalidProperties[] = "'firstNameQuery' can't be null";
+        }
+        if ($this->container['inUserEmailsQuery'] === null) {
+            $invalidProperties[] = "'inUserEmailsQuery' can't be null";
+        }
+        if ($this->container['inUserIdsQuery'] === null) {
+            $invalidProperties[] = "'inUserIdsQuery' can't be null";
+        }
+        if ($this->container['lastNameQuery'] === null) {
+            $invalidProperties[] = "'lastNameQuery' can't be null";
+        }
+        if ($this->container['loginNameQuery'] === null) {
+            $invalidProperties[] = "'loginNameQuery' can't be null";
+        }
+        if ($this->container['nickNameQuery'] === null) {
+            $invalidProperties[] = "'nickNameQuery' can't be null";
+        }
+        if ($this->container['notQuery'] === null) {
+            $invalidProperties[] = "'notQuery' can't be null";
+        }
+        if ($this->container['orQuery'] === null) {
+            $invalidProperties[] = "'orQuery' can't be null";
+        }
+        if ($this->container['organizationIdQuery'] === null) {
+            $invalidProperties[] = "'organizationIdQuery' can't be null";
+        }
+        if ($this->container['phoneQuery'] === null) {
+            $invalidProperties[] = "'phoneQuery' can't be null";
+        }
+        if ($this->container['stateQuery'] === null) {
+            $invalidProperties[] = "'stateQuery' can't be null";
+        }
+        if ($this->container['typeQuery'] === null) {
+            $invalidProperties[] = "'typeQuery' can't be null";
+        }
+        if ($this->container['userNameQuery'] === null) {
+            $invalidProperties[] = "'userNameQuery' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -395,109 +443,28 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
 
 
     /**
-     * Gets userNameQuery
+     * Gets andQuery
      *
-     * @return \Zitadel\Client\Model\UserServiceUserNameQuery|null
+     * @return \Zitadel\Client\Model\UserServiceAndQuery
      */
-    public function getUserNameQuery()
+    public function getAndQuery()
     {
-        return $this->container['userNameQuery'];
+        return $this->container['andQuery'];
     }
 
     /**
-     * Sets userNameQuery
+     * Sets andQuery
      *
-     * @param \Zitadel\Client\Model\UserServiceUserNameQuery|null $userNameQuery userNameQuery
+     * @param \Zitadel\Client\Model\UserServiceAndQuery $andQuery andQuery
      *
      * @return self
      */
-    public function setUserNameQuery($userNameQuery)
+    public function setAndQuery($andQuery)
     {
-        if (is_null($userNameQuery)) {
-            throw new \InvalidArgumentException('non-nullable userNameQuery cannot be null');
+        if (is_null($andQuery)) {
+            throw new \InvalidArgumentException('non-nullable andQuery cannot be null');
         }
-        $this->container['userNameQuery'] = $userNameQuery;
-
-        return $this;
-    }
-
-    /**
-     * Gets firstNameQuery
-     *
-     * @return \Zitadel\Client\Model\UserServiceFirstNameQuery|null
-     */
-    public function getFirstNameQuery()
-    {
-        return $this->container['firstNameQuery'];
-    }
-
-    /**
-     * Sets firstNameQuery
-     *
-     * @param \Zitadel\Client\Model\UserServiceFirstNameQuery|null $firstNameQuery firstNameQuery
-     *
-     * @return self
-     */
-    public function setFirstNameQuery($firstNameQuery)
-    {
-        if (is_null($firstNameQuery)) {
-            throw new \InvalidArgumentException('non-nullable firstNameQuery cannot be null');
-        }
-        $this->container['firstNameQuery'] = $firstNameQuery;
-
-        return $this;
-    }
-
-    /**
-     * Gets lastNameQuery
-     *
-     * @return \Zitadel\Client\Model\UserServiceLastNameQuery|null
-     */
-    public function getLastNameQuery()
-    {
-        return $this->container['lastNameQuery'];
-    }
-
-    /**
-     * Sets lastNameQuery
-     *
-     * @param \Zitadel\Client\Model\UserServiceLastNameQuery|null $lastNameQuery lastNameQuery
-     *
-     * @return self
-     */
-    public function setLastNameQuery($lastNameQuery)
-    {
-        if (is_null($lastNameQuery)) {
-            throw new \InvalidArgumentException('non-nullable lastNameQuery cannot be null');
-        }
-        $this->container['lastNameQuery'] = $lastNameQuery;
-
-        return $this;
-    }
-
-    /**
-     * Gets nickNameQuery
-     *
-     * @return \Zitadel\Client\Model\UserServiceNickNameQuery|null
-     */
-    public function getNickNameQuery()
-    {
-        return $this->container['nickNameQuery'];
-    }
-
-    /**
-     * Sets nickNameQuery
-     *
-     * @param \Zitadel\Client\Model\UserServiceNickNameQuery|null $nickNameQuery nickNameQuery
-     *
-     * @return self
-     */
-    public function setNickNameQuery($nickNameQuery)
-    {
-        if (is_null($nickNameQuery)) {
-            throw new \InvalidArgumentException('non-nullable nickNameQuery cannot be null');
-        }
-        $this->container['nickNameQuery'] = $nickNameQuery;
+        $this->container['andQuery'] = $andQuery;
 
         return $this;
     }
@@ -505,7 +472,7 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Gets displayNameQuery
      *
-     * @return \Zitadel\Client\Model\UserServiceDisplayNameQuery|null
+     * @return \Zitadel\Client\Model\UserServiceDisplayNameQuery
      */
     public function getDisplayNameQuery()
     {
@@ -515,7 +482,7 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets displayNameQuery
      *
-     * @param \Zitadel\Client\Model\UserServiceDisplayNameQuery|null $displayNameQuery displayNameQuery
+     * @param \Zitadel\Client\Model\UserServiceDisplayNameQuery $displayNameQuery displayNameQuery
      *
      * @return self
      */
@@ -532,7 +499,7 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Gets emailQuery
      *
-     * @return \Zitadel\Client\Model\UserServiceEmailQuery|null
+     * @return \Zitadel\Client\Model\UserServiceEmailQuery
      */
     public function getEmailQuery()
     {
@@ -542,7 +509,7 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets emailQuery
      *
-     * @param \Zitadel\Client\Model\UserServiceEmailQuery|null $emailQuery emailQuery
+     * @param \Zitadel\Client\Model\UserServiceEmailQuery $emailQuery emailQuery
      *
      * @return self
      */
@@ -557,190 +524,28 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
     }
 
     /**
-     * Gets stateQuery
+     * Gets firstNameQuery
      *
-     * @return \Zitadel\Client\Model\UserServiceStateQuery|null
+     * @return \Zitadel\Client\Model\UserServiceFirstNameQuery
      */
-    public function getStateQuery()
+    public function getFirstNameQuery()
     {
-        return $this->container['stateQuery'];
+        return $this->container['firstNameQuery'];
     }
 
     /**
-     * Sets stateQuery
+     * Sets firstNameQuery
      *
-     * @param \Zitadel\Client\Model\UserServiceStateQuery|null $stateQuery stateQuery
+     * @param \Zitadel\Client\Model\UserServiceFirstNameQuery $firstNameQuery firstNameQuery
      *
      * @return self
      */
-    public function setStateQuery($stateQuery)
+    public function setFirstNameQuery($firstNameQuery)
     {
-        if (is_null($stateQuery)) {
-            throw new \InvalidArgumentException('non-nullable stateQuery cannot be null');
+        if (is_null($firstNameQuery)) {
+            throw new \InvalidArgumentException('non-nullable firstNameQuery cannot be null');
         }
-        $this->container['stateQuery'] = $stateQuery;
-
-        return $this;
-    }
-
-    /**
-     * Gets typeQuery
-     *
-     * @return \Zitadel\Client\Model\UserServiceTypeQuery|null
-     */
-    public function getTypeQuery()
-    {
-        return $this->container['typeQuery'];
-    }
-
-    /**
-     * Sets typeQuery
-     *
-     * @param \Zitadel\Client\Model\UserServiceTypeQuery|null $typeQuery typeQuery
-     *
-     * @return self
-     */
-    public function setTypeQuery($typeQuery)
-    {
-        if (is_null($typeQuery)) {
-            throw new \InvalidArgumentException('non-nullable typeQuery cannot be null');
-        }
-        $this->container['typeQuery'] = $typeQuery;
-
-        return $this;
-    }
-
-    /**
-     * Gets loginNameQuery
-     *
-     * @return \Zitadel\Client\Model\UserServiceLoginNameQuery|null
-     */
-    public function getLoginNameQuery()
-    {
-        return $this->container['loginNameQuery'];
-    }
-
-    /**
-     * Sets loginNameQuery
-     *
-     * @param \Zitadel\Client\Model\UserServiceLoginNameQuery|null $loginNameQuery loginNameQuery
-     *
-     * @return self
-     */
-    public function setLoginNameQuery($loginNameQuery)
-    {
-        if (is_null($loginNameQuery)) {
-            throw new \InvalidArgumentException('non-nullable loginNameQuery cannot be null');
-        }
-        $this->container['loginNameQuery'] = $loginNameQuery;
-
-        return $this;
-    }
-
-    /**
-     * Gets inUserIdsQuery
-     *
-     * @return \Zitadel\Client\Model\UserServiceInUserIDQuery|null
-     */
-    public function getInUserIdsQuery()
-    {
-        return $this->container['inUserIdsQuery'];
-    }
-
-    /**
-     * Sets inUserIdsQuery
-     *
-     * @param \Zitadel\Client\Model\UserServiceInUserIDQuery|null $inUserIdsQuery inUserIdsQuery
-     *
-     * @return self
-     */
-    public function setInUserIdsQuery($inUserIdsQuery)
-    {
-        if (is_null($inUserIdsQuery)) {
-            throw new \InvalidArgumentException('non-nullable inUserIdsQuery cannot be null');
-        }
-        $this->container['inUserIdsQuery'] = $inUserIdsQuery;
-
-        return $this;
-    }
-
-    /**
-     * Gets orQuery
-     *
-     * @return \Zitadel\Client\Model\UserServiceOrQuery|null
-     */
-    public function getOrQuery()
-    {
-        return $this->container['orQuery'];
-    }
-
-    /**
-     * Sets orQuery
-     *
-     * @param \Zitadel\Client\Model\UserServiceOrQuery|null $orQuery orQuery
-     *
-     * @return self
-     */
-    public function setOrQuery($orQuery)
-    {
-        if (is_null($orQuery)) {
-            throw new \InvalidArgumentException('non-nullable orQuery cannot be null');
-        }
-        $this->container['orQuery'] = $orQuery;
-
-        return $this;
-    }
-
-    /**
-     * Gets andQuery
-     *
-     * @return \Zitadel\Client\Model\UserServiceAndQuery|null
-     */
-    public function getAndQuery()
-    {
-        return $this->container['andQuery'];
-    }
-
-    /**
-     * Sets andQuery
-     *
-     * @param \Zitadel\Client\Model\UserServiceAndQuery|null $andQuery andQuery
-     *
-     * @return self
-     */
-    public function setAndQuery($andQuery)
-    {
-        if (is_null($andQuery)) {
-            throw new \InvalidArgumentException('non-nullable andQuery cannot be null');
-        }
-        $this->container['andQuery'] = $andQuery;
-
-        return $this;
-    }
-
-    /**
-     * Gets notQuery
-     *
-     * @return \Zitadel\Client\Model\UserServiceNotQuery|null
-     */
-    public function getNotQuery()
-    {
-        return $this->container['notQuery'];
-    }
-
-    /**
-     * Sets notQuery
-     *
-     * @param \Zitadel\Client\Model\UserServiceNotQuery|null $notQuery notQuery
-     *
-     * @return self
-     */
-    public function setNotQuery($notQuery)
-    {
-        if (is_null($notQuery)) {
-            throw new \InvalidArgumentException('non-nullable notQuery cannot be null');
-        }
-        $this->container['notQuery'] = $notQuery;
+        $this->container['firstNameQuery'] = $firstNameQuery;
 
         return $this;
     }
@@ -748,7 +553,7 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Gets inUserEmailsQuery
      *
-     * @return \Zitadel\Client\Model\UserServiceInUserEmailsQuery|null
+     * @return \Zitadel\Client\Model\UserServiceInUserEmailsQuery
      */
     public function getInUserEmailsQuery()
     {
@@ -758,7 +563,7 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets inUserEmailsQuery
      *
-     * @param \Zitadel\Client\Model\UserServiceInUserEmailsQuery|null $inUserEmailsQuery inUserEmailsQuery
+     * @param \Zitadel\Client\Model\UserServiceInUserEmailsQuery $inUserEmailsQuery inUserEmailsQuery
      *
      * @return self
      */
@@ -773,9 +578,171 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
     }
 
     /**
+     * Gets inUserIdsQuery
+     *
+     * @return \Zitadel\Client\Model\UserServiceInUserIDQuery
+     */
+    public function getInUserIdsQuery()
+    {
+        return $this->container['inUserIdsQuery'];
+    }
+
+    /**
+     * Sets inUserIdsQuery
+     *
+     * @param \Zitadel\Client\Model\UserServiceInUserIDQuery $inUserIdsQuery inUserIdsQuery
+     *
+     * @return self
+     */
+    public function setInUserIdsQuery($inUserIdsQuery)
+    {
+        if (is_null($inUserIdsQuery)) {
+            throw new \InvalidArgumentException('non-nullable inUserIdsQuery cannot be null');
+        }
+        $this->container['inUserIdsQuery'] = $inUserIdsQuery;
+
+        return $this;
+    }
+
+    /**
+     * Gets lastNameQuery
+     *
+     * @return \Zitadel\Client\Model\UserServiceLastNameQuery
+     */
+    public function getLastNameQuery()
+    {
+        return $this->container['lastNameQuery'];
+    }
+
+    /**
+     * Sets lastNameQuery
+     *
+     * @param \Zitadel\Client\Model\UserServiceLastNameQuery $lastNameQuery lastNameQuery
+     *
+     * @return self
+     */
+    public function setLastNameQuery($lastNameQuery)
+    {
+        if (is_null($lastNameQuery)) {
+            throw new \InvalidArgumentException('non-nullable lastNameQuery cannot be null');
+        }
+        $this->container['lastNameQuery'] = $lastNameQuery;
+
+        return $this;
+    }
+
+    /**
+     * Gets loginNameQuery
+     *
+     * @return \Zitadel\Client\Model\UserServiceLoginNameQuery
+     */
+    public function getLoginNameQuery()
+    {
+        return $this->container['loginNameQuery'];
+    }
+
+    /**
+     * Sets loginNameQuery
+     *
+     * @param \Zitadel\Client\Model\UserServiceLoginNameQuery $loginNameQuery loginNameQuery
+     *
+     * @return self
+     */
+    public function setLoginNameQuery($loginNameQuery)
+    {
+        if (is_null($loginNameQuery)) {
+            throw new \InvalidArgumentException('non-nullable loginNameQuery cannot be null');
+        }
+        $this->container['loginNameQuery'] = $loginNameQuery;
+
+        return $this;
+    }
+
+    /**
+     * Gets nickNameQuery
+     *
+     * @return \Zitadel\Client\Model\UserServiceNickNameQuery
+     */
+    public function getNickNameQuery()
+    {
+        return $this->container['nickNameQuery'];
+    }
+
+    /**
+     * Sets nickNameQuery
+     *
+     * @param \Zitadel\Client\Model\UserServiceNickNameQuery $nickNameQuery nickNameQuery
+     *
+     * @return self
+     */
+    public function setNickNameQuery($nickNameQuery)
+    {
+        if (is_null($nickNameQuery)) {
+            throw new \InvalidArgumentException('non-nullable nickNameQuery cannot be null');
+        }
+        $this->container['nickNameQuery'] = $nickNameQuery;
+
+        return $this;
+    }
+
+    /**
+     * Gets notQuery
+     *
+     * @return \Zitadel\Client\Model\UserServiceNotQuery
+     */
+    public function getNotQuery()
+    {
+        return $this->container['notQuery'];
+    }
+
+    /**
+     * Sets notQuery
+     *
+     * @param \Zitadel\Client\Model\UserServiceNotQuery $notQuery notQuery
+     *
+     * @return self
+     */
+    public function setNotQuery($notQuery)
+    {
+        if (is_null($notQuery)) {
+            throw new \InvalidArgumentException('non-nullable notQuery cannot be null');
+        }
+        $this->container['notQuery'] = $notQuery;
+
+        return $this;
+    }
+
+    /**
+     * Gets orQuery
+     *
+     * @return \Zitadel\Client\Model\UserServiceOrQuery
+     */
+    public function getOrQuery()
+    {
+        return $this->container['orQuery'];
+    }
+
+    /**
+     * Sets orQuery
+     *
+     * @param \Zitadel\Client\Model\UserServiceOrQuery $orQuery orQuery
+     *
+     * @return self
+     */
+    public function setOrQuery($orQuery)
+    {
+        if (is_null($orQuery)) {
+            throw new \InvalidArgumentException('non-nullable orQuery cannot be null');
+        }
+        $this->container['orQuery'] = $orQuery;
+
+        return $this;
+    }
+
+    /**
      * Gets organizationIdQuery
      *
-     * @return \Zitadel\Client\Model\UserServiceOrganizationIdQuery|null
+     * @return \Zitadel\Client\Model\UserServiceOrganizationIdQuery
      */
     public function getOrganizationIdQuery()
     {
@@ -785,7 +752,7 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets organizationIdQuery
      *
-     * @param \Zitadel\Client\Model\UserServiceOrganizationIdQuery|null $organizationIdQuery organizationIdQuery
+     * @param \Zitadel\Client\Model\UserServiceOrganizationIdQuery $organizationIdQuery organizationIdQuery
      *
      * @return self
      */
@@ -802,7 +769,7 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Gets phoneQuery
      *
-     * @return \Zitadel\Client\Model\UserServicePhoneQuery|null
+     * @return \Zitadel\Client\Model\UserServicePhoneQuery
      */
     public function getPhoneQuery()
     {
@@ -812,7 +779,7 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets phoneQuery
      *
-     * @param \Zitadel\Client\Model\UserServicePhoneQuery|null $phoneQuery phoneQuery
+     * @param \Zitadel\Client\Model\UserServicePhoneQuery $phoneQuery phoneQuery
      *
      * @return self
      */
@@ -822,6 +789,87 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
             throw new \InvalidArgumentException('non-nullable phoneQuery cannot be null');
         }
         $this->container['phoneQuery'] = $phoneQuery;
+
+        return $this;
+    }
+
+    /**
+     * Gets stateQuery
+     *
+     * @return \Zitadel\Client\Model\UserServiceStateQuery
+     */
+    public function getStateQuery()
+    {
+        return $this->container['stateQuery'];
+    }
+
+    /**
+     * Sets stateQuery
+     *
+     * @param \Zitadel\Client\Model\UserServiceStateQuery $stateQuery stateQuery
+     *
+     * @return self
+     */
+    public function setStateQuery($stateQuery)
+    {
+        if (is_null($stateQuery)) {
+            throw new \InvalidArgumentException('non-nullable stateQuery cannot be null');
+        }
+        $this->container['stateQuery'] = $stateQuery;
+
+        return $this;
+    }
+
+    /**
+     * Gets typeQuery
+     *
+     * @return \Zitadel\Client\Model\UserServiceTypeQuery
+     */
+    public function getTypeQuery()
+    {
+        return $this->container['typeQuery'];
+    }
+
+    /**
+     * Sets typeQuery
+     *
+     * @param \Zitadel\Client\Model\UserServiceTypeQuery $typeQuery typeQuery
+     *
+     * @return self
+     */
+    public function setTypeQuery($typeQuery)
+    {
+        if (is_null($typeQuery)) {
+            throw new \InvalidArgumentException('non-nullable typeQuery cannot be null');
+        }
+        $this->container['typeQuery'] = $typeQuery;
+
+        return $this;
+    }
+
+    /**
+     * Gets userNameQuery
+     *
+     * @return \Zitadel\Client\Model\UserServiceUserNameQuery
+     */
+    public function getUserNameQuery()
+    {
+        return $this->container['userNameQuery'];
+    }
+
+    /**
+     * Sets userNameQuery
+     *
+     * @param \Zitadel\Client\Model\UserServiceUserNameQuery $userNameQuery userNameQuery
+     *
+     * @return self
+     */
+    public function setUserNameQuery($userNameQuery)
+    {
+        if (is_null($userNameQuery)) {
+            throw new \InvalidArgumentException('non-nullable userNameQuery cannot be null');
+        }
+        $this->container['userNameQuery'] = $userNameQuery;
 
         return $this;
     }

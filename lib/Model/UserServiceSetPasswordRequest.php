@@ -57,6 +57,7 @@ class UserServiceSetPasswordRequest implements ModelInterface, ArrayAccess, \Jso
       * @var string[]
       */
     protected static $openAPITypes = [
+        'userId' => 'string',
         'newPassword' => '\Zitadel\Client\Model\UserServicePassword',
         'currentPassword' => 'string',
         'verificationCode' => 'string'
@@ -70,6 +71,7 @@ class UserServiceSetPasswordRequest implements ModelInterface, ArrayAccess, \Jso
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
+        'userId' => null,
         'newPassword' => null,
         'currentPassword' => null,
         'verificationCode' => null
@@ -81,6 +83,7 @@ class UserServiceSetPasswordRequest implements ModelInterface, ArrayAccess, \Jso
       * @var boolean[]
       */
     protected static array $openAPINullables = [
+        'userId' => false,
         'newPassword' => false,
         'currentPassword' => false,
         'verificationCode' => false
@@ -172,6 +175,7 @@ class UserServiceSetPasswordRequest implements ModelInterface, ArrayAccess, \Jso
      * @var string[]
      */
     protected static $attributeMap = [
+        'userId' => 'userId',
         'newPassword' => 'newPassword',
         'currentPassword' => 'currentPassword',
         'verificationCode' => 'verificationCode'
@@ -183,6 +187,7 @@ class UserServiceSetPasswordRequest implements ModelInterface, ArrayAccess, \Jso
      * @var string[]
      */
     protected static $setters = [
+        'userId' => 'setUserId',
         'newPassword' => 'setNewPassword',
         'currentPassword' => 'setCurrentPassword',
         'verificationCode' => 'setVerificationCode'
@@ -194,6 +199,7 @@ class UserServiceSetPasswordRequest implements ModelInterface, ArrayAccess, \Jso
      * @var string[]
      */
     protected static $getters = [
+        'userId' => 'getUserId',
         'newPassword' => 'getNewPassword',
         'currentPassword' => 'getCurrentPassword',
         'verificationCode' => 'getVerificationCode'
@@ -256,6 +262,7 @@ class UserServiceSetPasswordRequest implements ModelInterface, ArrayAccess, \Jso
      */
     public function __construct(?array $data = null)
     {
+        $this->setIfExists('userId', $data ?? [], null);
         $this->setIfExists('newPassword', $data ?? [], null);
         $this->setIfExists('currentPassword', $data ?? [], null);
         $this->setIfExists('verificationCode', $data ?? [], null);
@@ -288,28 +295,15 @@ class UserServiceSetPasswordRequest implements ModelInterface, ArrayAccess, \Jso
     {
         $invalidProperties = [];
 
+        if ($this->container['userId'] === null) {
+            $invalidProperties[] = "'userId' can't be null";
+        }
         if ($this->container['currentPassword'] === null) {
             $invalidProperties[] = "'currentPassword' can't be null";
         }
-        if ((mb_strlen($this->container['currentPassword']) > 200)) {
-            $invalidProperties[] = "invalid value for 'currentPassword', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['currentPassword']) < 1)) {
-            $invalidProperties[] = "invalid value for 'currentPassword', the character length must be bigger than or equal to 1.";
-        }
-
         if ($this->container['verificationCode'] === null) {
             $invalidProperties[] = "'verificationCode' can't be null";
         }
-        if ((mb_strlen($this->container['verificationCode']) > 20)) {
-            $invalidProperties[] = "invalid value for 'verificationCode', the character length must be smaller than or equal to 20.";
-        }
-
-        if ((mb_strlen($this->container['verificationCode']) < 1)) {
-            $invalidProperties[] = "invalid value for 'verificationCode', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -324,6 +318,33 @@ class UserServiceSetPasswordRequest implements ModelInterface, ArrayAccess, \Jso
         return count($this->listInvalidProperties()) === 0;
     }
 
+
+    /**
+     * Gets userId
+     *
+     * @return string
+     */
+    public function getUserId()
+    {
+        return $this->container['userId'];
+    }
+
+    /**
+     * Sets userId
+     *
+     * @param string $userId userId
+     *
+     * @return self
+     */
+    public function setUserId($userId)
+    {
+        if (is_null($userId)) {
+            throw new \InvalidArgumentException('non-nullable userId cannot be null');
+        }
+        $this->container['userId'] = $userId;
+
+        return $this;
+    }
 
     /**
      * Gets newPassword
@@ -374,13 +395,6 @@ class UserServiceSetPasswordRequest implements ModelInterface, ArrayAccess, \Jso
         if (is_null($currentPassword)) {
             throw new \InvalidArgumentException('non-nullable currentPassword cannot be null');
         }
-        if ((mb_strlen($currentPassword) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $currentPassword when calling UserServiceSetPasswordRequest., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($currentPassword) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $currentPassword when calling UserServiceSetPasswordRequest., must be bigger than or equal to 1.');
-        }
-
         $this->container['currentPassword'] = $currentPassword;
 
         return $this;
@@ -399,7 +413,7 @@ class UserServiceSetPasswordRequest implements ModelInterface, ArrayAccess, \Jso
     /**
      * Sets verificationCode
      *
-     * @param string $verificationCode \"the verification code generated during password reset request\"
+     * @param string $verificationCode verificationCode
      *
      * @return self
      */
@@ -408,13 +422,6 @@ class UserServiceSetPasswordRequest implements ModelInterface, ArrayAccess, \Jso
         if (is_null($verificationCode)) {
             throw new \InvalidArgumentException('non-nullable verificationCode cannot be null');
         }
-        if ((mb_strlen($verificationCode) > 20)) {
-            throw new \InvalidArgumentException('invalid length for $verificationCode when calling UserServiceSetPasswordRequest., must be smaller than or equal to 20.');
-        }
-        if ((mb_strlen($verificationCode) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $verificationCode when calling UserServiceSetPasswordRequest., must be bigger than or equal to 1.');
-        }
-
         $this->container['verificationCode'] = $verificationCode;
 
         return $this;

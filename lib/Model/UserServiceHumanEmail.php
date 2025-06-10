@@ -281,14 +281,6 @@ class UserServiceHumanEmail implements ModelInterface, ArrayAccess, \JsonSeriali
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['email']) && (mb_strlen($this->container['email']) > 200)) {
-            $invalidProperties[] = "invalid value for 'email', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['email']) && (mb_strlen($this->container['email']) < 1)) {
-            $invalidProperties[] = "invalid value for 'email', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -326,13 +318,6 @@ class UserServiceHumanEmail implements ModelInterface, ArrayAccess, \JsonSeriali
         if (is_null($email)) {
             throw new \InvalidArgumentException('non-nullable email cannot be null');
         }
-        if ((mb_strlen($email) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $email when calling UserServiceHumanEmail., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($email) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $email when calling UserServiceHumanEmail., must be bigger than or equal to 1.');
-        }
-
         $this->container['email'] = $email;
 
         return $this;

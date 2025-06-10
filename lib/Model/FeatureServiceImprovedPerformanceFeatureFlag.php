@@ -309,7 +309,7 @@ class FeatureServiceImprovedPerformanceFeatureFlag implements ModelInterface, Ar
     /**
      * Sets executionPaths
      *
-     * @param \Zitadel\Client\Model\FeatureServiceImprovedPerformance[]|null $executionPaths Which of the performance improvements is enabled
+     * @param \Zitadel\Client\Model\FeatureServiceImprovedPerformance[]|null $executionPaths executionPaths
      *
      * @return self
      */

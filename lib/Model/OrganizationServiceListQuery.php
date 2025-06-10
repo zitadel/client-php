@@ -35,7 +35,6 @@ use \Zitadel\Client\ObjectSerializer;
  * OrganizationServiceListQuery Class Doc Comment
  *
  * @category Class
- * @description Object unspecific list filters like offset, limit and asc/desc.
  * @package  Zitadel\Client
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
@@ -58,7 +57,7 @@ class OrganizationServiceListQuery implements ModelInterface, ArrayAccess, \Json
       * @var string[]
       */
     protected static $openAPITypes = [
-        'offset' => 'string',
+        'offset' => 'mixed',
         'limit' => 'int',
         'asc' => 'bool'
     ];
@@ -71,8 +70,8 @@ class OrganizationServiceListQuery implements ModelInterface, ArrayAccess, \Json
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'offset' => 'uint64',
-        'limit' => 'int64',
+        'offset' => 'int64',
+        'limit' => null,
         'asc' => null
     ];
 
@@ -82,7 +81,7 @@ class OrganizationServiceListQuery implements ModelInterface, ArrayAccess, \Json
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'offset' => false,
+        'offset' => true,
         'limit' => false,
         'asc' => false
     ];
@@ -307,7 +306,7 @@ class OrganizationServiceListQuery implements ModelInterface, ArrayAccess, \Json
     /**
      * Gets offset
      *
-     * @return string|null
+     * @return mixed|null
      */
     public function getOffset()
     {
@@ -317,14 +316,21 @@ class OrganizationServiceListQuery implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets offset
      *
-     * @param string|null $offset offset
+     * @param mixed|null $offset offset
      *
      * @return self
      */
     public function setOffset($offset)
     {
         if (is_null($offset)) {
-            throw new \InvalidArgumentException('non-nullable offset cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'offset');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('offset', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['offset'] = $offset;
 
@@ -344,7 +350,7 @@ class OrganizationServiceListQuery implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets limit
      *
-     * @param int|null $limit Maximum amount of events returned. The default is set to 1000 in https://github.com/zitadel/zitadel/blob/new-eventstore/cmd/zitadel/startup.yaml. If the limit exceeds the maximum configured ZITADEL will throw an error. If no limit is present the default is taken.
+     * @param int|null $limit limit
      *
      * @return self
      */
@@ -371,7 +377,7 @@ class OrganizationServiceListQuery implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets asc
      *
-     * @param bool|null $asc default is descending
+     * @param bool|null $asc asc
      *
      * @return self
      */

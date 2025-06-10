@@ -274,10 +274,6 @@ class SessionServiceCheckOTP implements ModelInterface, ArrayAccess, \JsonSerial
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['code']) && (mb_strlen($this->container['code']) < 1)) {
-            $invalidProperties[] = "invalid value for 'code', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -315,11 +311,6 @@ class SessionServiceCheckOTP implements ModelInterface, ArrayAccess, \JsonSerial
         if (is_null($code)) {
             throw new \InvalidArgumentException('non-nullable code cannot be null');
         }
-
-        if ((mb_strlen($code) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $code when calling SessionServiceCheckOTP., must be bigger than or equal to 1.');
-        }
-
         $this->container['code'] = $code;
 
         return $this;

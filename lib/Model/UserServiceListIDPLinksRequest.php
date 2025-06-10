@@ -57,6 +57,7 @@ class UserServiceListIDPLinksRequest implements ModelInterface, ArrayAccess, \Js
       * @var string[]
       */
     protected static $openAPITypes = [
+        'userId' => 'string',
         'query' => '\Zitadel\Client\Model\UserServiceListQuery'
     ];
 
@@ -68,6 +69,7 @@ class UserServiceListIDPLinksRequest implements ModelInterface, ArrayAccess, \Js
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
+        'userId' => null,
         'query' => null
     ];
 
@@ -77,6 +79,7 @@ class UserServiceListIDPLinksRequest implements ModelInterface, ArrayAccess, \Js
       * @var boolean[]
       */
     protected static array $openAPINullables = [
+        'userId' => false,
         'query' => false
     ];
 
@@ -166,6 +169,7 @@ class UserServiceListIDPLinksRequest implements ModelInterface, ArrayAccess, \Js
      * @var string[]
      */
     protected static $attributeMap = [
+        'userId' => 'userId',
         'query' => 'query'
     ];
 
@@ -175,6 +179,7 @@ class UserServiceListIDPLinksRequest implements ModelInterface, ArrayAccess, \Js
      * @var string[]
      */
     protected static $setters = [
+        'userId' => 'setUserId',
         'query' => 'setQuery'
     ];
 
@@ -184,6 +189,7 @@ class UserServiceListIDPLinksRequest implements ModelInterface, ArrayAccess, \Js
      * @var string[]
      */
     protected static $getters = [
+        'userId' => 'getUserId',
         'query' => 'getQuery'
     ];
 
@@ -244,6 +250,7 @@ class UserServiceListIDPLinksRequest implements ModelInterface, ArrayAccess, \Js
      */
     public function __construct(?array $data = null)
     {
+        $this->setIfExists('userId', $data ?? [], null);
         $this->setIfExists('query', $data ?? [], null);
     }
 
@@ -288,6 +295,33 @@ class UserServiceListIDPLinksRequest implements ModelInterface, ArrayAccess, \Js
         return count($this->listInvalidProperties()) === 0;
     }
 
+
+    /**
+     * Gets userId
+     *
+     * @return string|null
+     */
+    public function getUserId()
+    {
+        return $this->container['userId'];
+    }
+
+    /**
+     * Sets userId
+     *
+     * @param string|null $userId userId
+     *
+     * @return self
+     */
+    public function setUserId($userId)
+    {
+        if (is_null($userId)) {
+            throw new \InvalidArgumentException('non-nullable userId cannot be null');
+        }
+        $this->container['userId'] = $userId;
+
+        return $this;
+    }
 
     /**
      * Gets query

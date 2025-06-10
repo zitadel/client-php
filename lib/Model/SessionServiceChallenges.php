@@ -57,7 +57,7 @@ class SessionServiceChallenges implements ModelInterface, ArrayAccess, \JsonSeri
       * @var string[]
       */
     protected static $openAPITypes = [
-        'webAuthN' => '\Zitadel\Client\Model\SessionServiceChallengesWebAuthN',
+        'webAuthN' => '\Zitadel\Client\Model\SessionServiceWebAuthN',
         'otpSms' => 'string',
         'otpEmail' => 'string'
     ];
@@ -82,8 +82,8 @@ class SessionServiceChallenges implements ModelInterface, ArrayAccess, \JsonSeri
       */
     protected static array $openAPINullables = [
         'webAuthN' => false,
-        'otpSms' => false,
-        'otpEmail' => false
+        'otpSms' => true,
+        'otpEmail' => true
     ];
 
     /**
@@ -306,7 +306,7 @@ class SessionServiceChallenges implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Gets webAuthN
      *
-     * @return \Zitadel\Client\Model\SessionServiceChallengesWebAuthN|null
+     * @return \Zitadel\Client\Model\SessionServiceWebAuthN|null
      */
     public function getWebAuthN()
     {
@@ -316,7 +316,7 @@ class SessionServiceChallenges implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Sets webAuthN
      *
-     * @param \Zitadel\Client\Model\SessionServiceChallengesWebAuthN|null $webAuthN webAuthN
+     * @param \Zitadel\Client\Model\SessionServiceWebAuthN|null $webAuthN webAuthN
      *
      * @return self
      */
@@ -350,7 +350,14 @@ class SessionServiceChallenges implements ModelInterface, ArrayAccess, \JsonSeri
     public function setOtpSms($otpSms)
     {
         if (is_null($otpSms)) {
-            throw new \InvalidArgumentException('non-nullable otpSms cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'otpSms');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('otpSms', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['otpSms'] = $otpSms;
 
@@ -377,7 +384,14 @@ class SessionServiceChallenges implements ModelInterface, ArrayAccess, \JsonSeri
     public function setOtpEmail($otpEmail)
     {
         if (is_null($otpEmail)) {
-            throw new \InvalidArgumentException('non-nullable otpEmail cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'otpEmail');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('otpEmail', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['otpEmail'] = $otpEmail;
 
