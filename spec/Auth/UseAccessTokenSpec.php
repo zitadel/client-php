@@ -3,8 +3,8 @@
 namespace Zitadel\Client\Spec\Auth;
 
 use Exception;
-use PHPUnit\Framework\TestCase;
 use Zitadel\Client\ApiException;
+use Zitadel\Client\Spec\AbstractIntegrationTest;
 use Zitadel\Client\Zitadel;
 use Zitadel\Client\ZitadelException;
 
@@ -17,7 +17,7 @@ use Zitadel\Client\ZitadelException;
  *  1. Retrieve general settings successfully with a valid token
  *  2. Expect an ApiException when using an invalid token
  */
-class UseAccessTokenSpec extends TestCase
+class UseAccessTokenSpec extends AbstractIntegrationTest
 {
     /**
      * Validate retrieval of general settings with a valid PAT.
@@ -27,20 +27,8 @@ class UseAccessTokenSpec extends TestCase
      */
     public function testRetrievesGeneralSettingsWithValidAuth(): void
     {
-        $client = Zitadel::withAccessToken(
-            self::env('BASE_URL'),
-            self::env('AUTH_TOKEN')
-        );
-
+        $client = Zitadel::withAccessToken(self::getBaseUrl(), self::getAuthToken());
         $client->settings->settingsServiceGetGeneralSettings();
-    }
-
-    /**
-     * Retrieve a configuration variable from the environment, falling back to $_ENV.
-     */
-    private static function env(string $key): string
-    {
-        return getenv($key) ?: ($_ENV[$key] ?? '');
     }
 
     /**
@@ -49,10 +37,7 @@ class UseAccessTokenSpec extends TestCase
      */
     public function testRaisesApiExceptionWithInvalidAuth(): void
     {
-        $invalid = Zitadel::withAccessToken(
-            self::env('BASE_URL'),
-            'invalid'
-        );
+        $invalid = Zitadel::withAccessToken(self::getBaseUrl(), 'invalid');
 
         $this->expectException(ZitadelException::class);
         $invalid->settings->settingsServiceGetGeneralSettings();

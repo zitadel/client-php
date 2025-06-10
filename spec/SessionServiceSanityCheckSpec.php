@@ -2,7 +2,6 @@
 
 namespace Zitadel\Client\Spec;
 
-use PHPUnit\Framework\TestCase;
 use Zitadel\Client\ApiException;
 use Zitadel\Client\Model\SessionServiceChecks;
 use Zitadel\Client\Model\SessionServiceCheckUser;
@@ -10,6 +9,9 @@ use Zitadel\Client\Model\SessionServiceCreateSessionRequest;
 use Zitadel\Client\Model\SessionServiceDeleteSessionRequest;
 use Zitadel\Client\Model\SessionServiceListSessionsRequest;
 use Zitadel\Client\Model\SessionServiceSetSessionRequest;
+use Zitadel\Client\Model\UserServiceAddHumanUserRequest;
+use Zitadel\Client\Model\UserServiceSetHumanEmail;
+use Zitadel\Client\Model\UserServiceSetHumanProfile;
 use Zitadel\Client\Zitadel;
 
 /**
@@ -27,26 +29,15 @@ use Zitadel\Client\Zitadel;
  * Each test runs in isolation: a new session is created in setUp() and deleted in
  * tearDown() to ensure a clean state.
  */
-class SessionServiceSanityCheckSpec extends TestCase
+class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
 {
-    private static string $validToken;
-    private static string $baseUrl;
     private static Zitadel $client;
     private string $sessionId;
 
     public static function setUpBeforeClass(): void
     {
-        self::$validToken = self::env('AUTH_TOKEN');
-        self::$baseUrl = self::env('BASE_URL');
-        self::$client = Zitadel::withAccessToken(self::$baseUrl, self::$validToken);
-    }
-
-    /**
-     * Retrieve a configuration variable from the environment, falling back to $_ENV.
-     */
-    private static function env(string $key): string
-    {
-        return getenv($key) ?: ($_ENV[$key] ?? '');
+        parent::setUpBeforeClass();
+        self::$client = Zitadel::withAccessToken(self::getBaseUrl(), self::getAuthToken());
     }
 
     /**
@@ -108,12 +99,26 @@ class SessionServiceSanityCheckSpec extends TestCase
      */
     protected function setUp(): void
     {
+        $id = uniqid('user_');
+        $request = (new UserServiceAddHumanUserRequest())
+            ->setUsername($id)
+            ->setProfile(
+                (new UserServiceSetHumanProfile())
+                    ->setGivenName('John')
+                    ->setFamilyName('Doe')
+            )
+            ->setEmail(
+                (new UserServiceSetHumanEmail())
+                    ->setEmail('johndoe' . uniqid() . '@example.com')
+            );
+
+        $user = self::$client->users->userServiceAddHumanUser($request);
         $request = new SessionServiceCreateSessionRequest();
         $request->setChecks(
             (new SessionServiceChecks())
                 ->setUser(
                     (new SessionServiceCheckUser())
-                        ->setLoginName('johndoe')
+                        ->setLoginName($id)
                 )
         );
         $request->setLifetime('18000s');

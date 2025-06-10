@@ -2,7 +2,6 @@
 
 namespace Zitadel\Client\Spec;
 
-use PHPUnit\Framework\TestCase;
 use Zitadel\Client\ApiException;
 use Zitadel\Client\Model\UserServiceAddHumanUserRequest;
 use Zitadel\Client\Model\UserServiceAddHumanUserResponse;
@@ -22,32 +21,21 @@ use Zitadel\Client\Zitadel;
  *  1. Create a human user
  *  2. Retrieve the user by ID
  *  3. List users and ensure the created user appears
- *  4. Update the user's email and confirm the change
+ *  4. Update the user's email and confirm change
  *  5. Error when retrieving a non-existent user
  *
  * Each test runs in isolation: a new user is created in setUp() and removed in
  * tearDown() to ensure a clean state.
  */
-class UserServiceSanityCheckSpec extends TestCase
+class UserServiceSanityCheckSpec extends AbstractIntegrationTest
 {
-    protected static string $validToken;
-    protected static string $baseUrl;
     protected static Zitadel $client;
     protected UserServiceAddHumanUserResponse $user;
 
     public static function setUpBeforeClass(): void
     {
-        self::$validToken = self::env('AUTH_TOKEN');
-        self::$baseUrl = self::env('BASE_URL');
-        self::$client = Zitadel::withAccessToken(self::$baseUrl, self::$validToken);
-    }
-
-    /**
-     * Retrieve a configuration variable from the environment, falling back to $_ENV.
-     */
-    private static function env(string $key): string
-    {
-        return getenv($key) ?: ($_ENV[$key] ?? '');
+        parent::setUpBeforeClass();
+        self::$client = Zitadel::withAccessToken(self::getBaseUrl(), self::getAuthToken());
     }
 
     /**
