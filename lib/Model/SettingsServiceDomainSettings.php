@@ -323,7 +323,7 @@ class SettingsServiceDomainSettings implements ModelInterface, ArrayAccess, \Jso
     /**
      * Sets loginNameIncludesDomain
      *
-     * @param bool|null $loginNameIncludesDomain the username has to end with the domain of its organization
+     * @param bool|null $loginNameIncludesDomain loginNameIncludesDomain
      *
      * @return self
      */
@@ -350,7 +350,7 @@ class SettingsServiceDomainSettings implements ModelInterface, ArrayAccess, \Jso
     /**
      * Sets requireOrgDomainVerification
      *
-     * @param bool|null $requireOrgDomainVerification defines if organization domains should be verified upon creation, otherwise will be created already verified
+     * @param bool|null $requireOrgDomainVerification requireOrgDomainVerification
      *
      * @return self
      */
@@ -377,7 +377,7 @@ class SettingsServiceDomainSettings implements ModelInterface, ArrayAccess, \Jso
     /**
      * Sets smtpSenderAddressMatchesInstanceDomain
      *
-     * @param bool|null $smtpSenderAddressMatchesInstanceDomain defines if the SMTP sender address domain should match an existing domain on the instance
+     * @param bool|null $smtpSenderAddressMatchesInstanceDomain smtpSenderAddressMatchesInstanceDomain
      *
      * @return self
      */

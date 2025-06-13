@@ -336,7 +336,7 @@ class SettingsServiceSetSecuritySettingsRequest implements ModelInterface, Array
     /**
      * Sets enableImpersonation
      *
-     * @param bool|null $enableImpersonation allows users to impersonate other users. The impersonator needs the appropriate `*_IMPERSONATOR` roles assigned as well
+     * @param bool|null $enableImpersonation enableImpersonation
      *
      * @return self
      */

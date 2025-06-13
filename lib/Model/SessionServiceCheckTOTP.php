@@ -274,14 +274,6 @@ class SessionServiceCheckTOTP implements ModelInterface, ArrayAccess, \JsonSeria
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['code']) && (mb_strlen($this->container['code']) > 6)) {
-            $invalidProperties[] = "invalid value for 'code', the character length must be smaller than or equal to 6.";
-        }
-
-        if (!is_null($this->container['code']) && (mb_strlen($this->container['code']) < 6)) {
-            $invalidProperties[] = "invalid value for 'code', the character length must be bigger than or equal to 6.";
-        }
-
         return $invalidProperties;
     }
 
@@ -319,13 +311,6 @@ class SessionServiceCheckTOTP implements ModelInterface, ArrayAccess, \JsonSeria
         if (is_null($code)) {
             throw new \InvalidArgumentException('non-nullable code cannot be null');
         }
-        if ((mb_strlen($code) > 6)) {
-            throw new \InvalidArgumentException('invalid length for $code when calling SessionServiceCheckTOTP., must be smaller than or equal to 6.');
-        }
-        if ((mb_strlen($code) < 6)) {
-            throw new \InvalidArgumentException('invalid length for $code when calling SessionServiceCheckTOTP., must be bigger than or equal to 6.');
-        }
-
         $this->container['code'] = $code;
 
         return $this;

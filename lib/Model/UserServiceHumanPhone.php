@@ -281,10 +281,6 @@ class UserServiceHumanPhone implements ModelInterface, ArrayAccess, \JsonSeriali
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['phone']) && (mb_strlen($this->container['phone']) > 200)) {
-            $invalidProperties[] = "invalid value for 'phone', the character length must be smaller than or equal to 200.";
-        }
-
         return $invalidProperties;
     }
 
@@ -322,10 +318,6 @@ class UserServiceHumanPhone implements ModelInterface, ArrayAccess, \JsonSeriali
         if (is_null($phone)) {
             throw new \InvalidArgumentException('non-nullable phone cannot be null');
         }
-        if ((mb_strlen($phone) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $phone when calling UserServiceHumanPhone., must be smaller than or equal to 200.');
-        }
-
         $this->container['phone'] = $phone;
 
         return $this;

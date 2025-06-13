@@ -303,7 +303,7 @@ class UserServiceInUserIDQuery implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Sets userIds
      *
-     * @param string[]|null $userIds the ids of the users to include
+     * @param string[]|null $userIds userIds
      *
      * @return self
      */

@@ -66,16 +66,19 @@ class OIDCServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'oIDCServiceAuthorizeOrDenyDeviceAuthorization' => [
+        'authorizeOrDenyDeviceAuthorization' => [
             'application/json',
         ],
-        'oIDCServiceCreateCallback' => [
+        'createCallback' => [
             'application/json',
         ],
-        'oIDCServiceGetAuthRequest' => [
+        'getAuthRequest' => [
             'application/json',
         ],
-        'oIDCServiceGetDeviceAuthorizationRequest' => [
+        'getDeviceAuthorizationRequest' => [
+            'application/json',
+        ],
+        'noOp' => [
             'application/json',
         ],
     ];
@@ -443,58 +446,48 @@ class OIDCServiceApi
     }
 
     /**
-     * Operation oIDCServiceAuthorizeOrDenyDeviceAuthorization
+     * Operation authorizeOrDenyDeviceAuthorization
      *
-     * Authorize or deny device authorization
+     * AuthorizeOrDenyDeviceAuthorization
      *
-     * @param  string $deviceAuthorizationId The device authorization id returned when submitting the user code. (required)
      * @param  \Zitadel\Client\Model\OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceAuthorizeOrDenyDeviceAuthorization'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authorizeOrDenyDeviceAuthorization'] to see the possible values for this operation
      *
      * @return object
      * @throws ApiException
      */
-    public function oIDCServiceAuthorizeOrDenyDeviceAuthorization($deviceAuthorizationId, $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, string $contentType = self::contentTypes['oIDCServiceAuthorizeOrDenyDeviceAuthorization'][0])
+    public function authorizeOrDenyDeviceAuthorization($oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, string $contentType = self::contentTypes['authorizeOrDenyDeviceAuthorization'][0])
     {
-        $request = $this->oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest($deviceAuthorizationId, $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, $contentType);
+        $request = $this->authorizeOrDenyDeviceAuthorizationRequest($oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, $contentType);
 
         $responseTypes = [
             200 => 'object',
-            403 => '\Zitadel\Client\Model\OIDCServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\OIDCServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\OIDCServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\OIDCServiceConnectError',
         ];
         $defaultSignatureType = 'object';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'oIDCServiceAuthorizeOrDenyDeviceAuthorization'
+     * Create request for operation 'authorizeOrDenyDeviceAuthorization'
      *
-     * @param  string $deviceAuthorizationId The device authorization id returned when submitting the user code. (required)
      * @param  \Zitadel\Client\Model\OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceAuthorizeOrDenyDeviceAuthorization'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authorizeOrDenyDeviceAuthorization'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest($deviceAuthorizationId, $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, string $contentType = self::contentTypes['oIDCServiceAuthorizeOrDenyDeviceAuthorization'][0])
+    private function authorizeOrDenyDeviceAuthorizationRequest($oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, string $contentType = self::contentTypes['authorizeOrDenyDeviceAuthorization'][0])
     {
-
-        if ($deviceAuthorizationId === null || (is_array($deviceAuthorizationId) && count($deviceAuthorizationId) === 0)) {
-            throw new \InvalidArgumentException(
-                'Missing the required parameter $deviceAuthorizationId when calling oIDCServiceAuthorizeOrDenyDeviceAuthorization'
-            );
-        }
 
         if ($oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest === null || (is_array($oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest) && count($oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest when calling oIDCServiceAuthorizeOrDenyDeviceAuthorization'
+                'Missing the required parameter $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest when calling authorizeOrDenyDeviceAuthorization'
             );
         }
 
 
-        $resourcePath = '/v2/oidc/device_authorization/{deviceAuthorizationId}';
+        $resourcePath = '/zitadel.oidc.v2.OIDCService/AuthorizeOrDenyDeviceAuthorization';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -503,13 +496,6 @@ class OIDCServiceApi
 
 
 
-        if ($deviceAuthorizationId !== null) {
-            $resourcePath = str_replace(
-                '{' . 'deviceAuthorizationId' . '}',
-                ObjectSerializer::toPathValue($deviceAuthorizationId),
-                $resourcePath
-            );
-        }
 
 
         $headers = $this->selectHeaders(
@@ -572,58 +558,48 @@ class OIDCServiceApi
     }
 
     /**
-     * Operation oIDCServiceCreateCallback
+     * Operation createCallback
      *
-     * Finalize an Auth Request and get the callback URL.
+     * CreateCallback
      *
-     * @param  string $authRequestId ID of the Auth Request. (required)
      * @param  \Zitadel\Client\Model\OIDCServiceCreateCallbackRequest $oIDCServiceCreateCallbackRequest oIDCServiceCreateCallbackRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceCreateCallback'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createCallback'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\OIDCServiceCreateCallbackResponse
      * @throws ApiException
      */
-    public function oIDCServiceCreateCallback($authRequestId, $oIDCServiceCreateCallbackRequest, string $contentType = self::contentTypes['oIDCServiceCreateCallback'][0])
+    public function createCallback($oIDCServiceCreateCallbackRequest, string $contentType = self::contentTypes['createCallback'][0])
     {
-        $request = $this->oIDCServiceCreateCallbackRequest($authRequestId, $oIDCServiceCreateCallbackRequest, $contentType);
+        $request = $this->createCallbackRequest($oIDCServiceCreateCallbackRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\OIDCServiceCreateCallbackResponse',
-            403 => '\Zitadel\Client\Model\OIDCServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\OIDCServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\OIDCServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\OIDCServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\OIDCServiceCreateCallbackResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'oIDCServiceCreateCallback'
+     * Create request for operation 'createCallback'
      *
-     * @param  string $authRequestId ID of the Auth Request. (required)
      * @param  \Zitadel\Client\Model\OIDCServiceCreateCallbackRequest $oIDCServiceCreateCallbackRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceCreateCallback'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createCallback'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function oIDCServiceCreateCallbackRequest($authRequestId, $oIDCServiceCreateCallbackRequest, string $contentType = self::contentTypes['oIDCServiceCreateCallback'][0])
+    private function createCallbackRequest($oIDCServiceCreateCallbackRequest, string $contentType = self::contentTypes['createCallback'][0])
     {
-
-        if ($authRequestId === null || (is_array($authRequestId) && count($authRequestId) === 0)) {
-            throw new \InvalidArgumentException(
-                'Missing the required parameter $authRequestId when calling oIDCServiceCreateCallback'
-            );
-        }
 
         if ($oIDCServiceCreateCallbackRequest === null || (is_array($oIDCServiceCreateCallbackRequest) && count($oIDCServiceCreateCallbackRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $oIDCServiceCreateCallbackRequest when calling oIDCServiceCreateCallback'
+                'Missing the required parameter $oIDCServiceCreateCallbackRequest when calling createCallback'
             );
         }
 
 
-        $resourcePath = '/v2/oidc/auth_requests/{authRequestId}';
+        $resourcePath = '/zitadel.oidc.v2.OIDCService/CreateCallback';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -632,13 +608,6 @@ class OIDCServiceApi
 
 
 
-        if ($authRequestId !== null) {
-            $resourcePath = str_replace(
-                '{' . 'authRequestId' . '}',
-                ObjectSerializer::toPathValue($authRequestId),
-                $resourcePath
-            );
-        }
 
 
         $headers = $this->selectHeaders(
@@ -701,50 +670,48 @@ class OIDCServiceApi
     }
 
     /**
-     * Operation oIDCServiceGetAuthRequest
+     * Operation getAuthRequest
      *
-     * Get OIDC Auth Request details
+     * GetAuthRequest
      *
-     * @param  string $authRequestId ID of the Auth Request, as obtained from the redirect URL. (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceGetAuthRequest'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\OIDCServiceGetAuthRequestRequest $oIDCServiceGetAuthRequestRequest oIDCServiceGetAuthRequestRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAuthRequest'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\OIDCServiceGetAuthRequestResponse
      * @throws ApiException
      */
-    public function oIDCServiceGetAuthRequest($authRequestId, string $contentType = self::contentTypes['oIDCServiceGetAuthRequest'][0])
+    public function getAuthRequest($oIDCServiceGetAuthRequestRequest, string $contentType = self::contentTypes['getAuthRequest'][0])
     {
-        $request = $this->oIDCServiceGetAuthRequestRequest($authRequestId, $contentType);
+        $request = $this->getAuthRequestRequest($oIDCServiceGetAuthRequestRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\OIDCServiceGetAuthRequestResponse',
-            403 => '\Zitadel\Client\Model\OIDCServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\OIDCServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\OIDCServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\OIDCServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\OIDCServiceGetAuthRequestResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'oIDCServiceGetAuthRequest'
+     * Create request for operation 'getAuthRequest'
      *
-     * @param  string $authRequestId ID of the Auth Request, as obtained from the redirect URL. (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceGetAuthRequest'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\OIDCServiceGetAuthRequestRequest $oIDCServiceGetAuthRequestRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAuthRequest'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function oIDCServiceGetAuthRequestRequest($authRequestId, string $contentType = self::contentTypes['oIDCServiceGetAuthRequest'][0])
+    private function getAuthRequestRequest($oIDCServiceGetAuthRequestRequest, string $contentType = self::contentTypes['getAuthRequest'][0])
     {
 
-        if ($authRequestId === null || (is_array($authRequestId) && count($authRequestId) === 0)) {
+        if ($oIDCServiceGetAuthRequestRequest === null || (is_array($oIDCServiceGetAuthRequestRequest) && count($oIDCServiceGetAuthRequestRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $authRequestId when calling oIDCServiceGetAuthRequest'
+                'Missing the required parameter $oIDCServiceGetAuthRequestRequest when calling getAuthRequest'
             );
         }
 
 
-        $resourcePath = '/v2/oidc/auth_requests/{authRequestId}';
+        $resourcePath = '/zitadel.oidc.v2.OIDCService/GetAuthRequest';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -753,13 +720,6 @@ class OIDCServiceApi
 
 
 
-        if ($authRequestId !== null) {
-            $resourcePath = str_replace(
-                '{' . 'authRequestId' . '}',
-                ObjectSerializer::toPathValue($authRequestId),
-                $resourcePath
-            );
-        }
 
 
         $headers = $this->selectHeaders(
@@ -767,7 +727,14 @@ class OIDCServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($oIDCServiceGetAuthRequestRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($oIDCServiceGetAuthRequestRequest));
+            } else {
+                $httpBody = $oIDCServiceGetAuthRequestRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -807,7 +774,7 @@ class OIDCServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -815,50 +782,48 @@ class OIDCServiceApi
     }
 
     /**
-     * Operation oIDCServiceGetDeviceAuthorizationRequest
+     * Operation getDeviceAuthorizationRequest
      *
-     * Get device authorization request
+     * GetDeviceAuthorizationRequest
      *
-     * @param  string $userCode The user_code returned by the device authorization request and provided to the user by the device. (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceGetDeviceAuthorizationRequest'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\OIDCServiceGetDeviceAuthorizationRequestRequest $oIDCServiceGetDeviceAuthorizationRequestRequest oIDCServiceGetDeviceAuthorizationRequestRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDeviceAuthorizationRequest'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\OIDCServiceGetDeviceAuthorizationRequestResponse
      * @throws ApiException
      */
-    public function oIDCServiceGetDeviceAuthorizationRequest($userCode, string $contentType = self::contentTypes['oIDCServiceGetDeviceAuthorizationRequest'][0])
+    public function getDeviceAuthorizationRequest($oIDCServiceGetDeviceAuthorizationRequestRequest, string $contentType = self::contentTypes['getDeviceAuthorizationRequest'][0])
     {
-        $request = $this->oIDCServiceGetDeviceAuthorizationRequestRequest($userCode, $contentType);
+        $request = $this->getDeviceAuthorizationRequestRequest($oIDCServiceGetDeviceAuthorizationRequestRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\OIDCServiceGetDeviceAuthorizationRequestResponse',
-            403 => '\Zitadel\Client\Model\OIDCServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\OIDCServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\OIDCServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\OIDCServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\OIDCServiceGetDeviceAuthorizationRequestResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'oIDCServiceGetDeviceAuthorizationRequest'
+     * Create request for operation 'getDeviceAuthorizationRequest'
      *
-     * @param  string $userCode The user_code returned by the device authorization request and provided to the user by the device. (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['oIDCServiceGetDeviceAuthorizationRequest'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\OIDCServiceGetDeviceAuthorizationRequestRequest $oIDCServiceGetDeviceAuthorizationRequestRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDeviceAuthorizationRequest'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function oIDCServiceGetDeviceAuthorizationRequestRequest($userCode, string $contentType = self::contentTypes['oIDCServiceGetDeviceAuthorizationRequest'][0])
+    private function getDeviceAuthorizationRequestRequest($oIDCServiceGetDeviceAuthorizationRequestRequest, string $contentType = self::contentTypes['getDeviceAuthorizationRequest'][0])
     {
 
-        if ($userCode === null || (is_array($userCode) && count($userCode) === 0)) {
+        if ($oIDCServiceGetDeviceAuthorizationRequestRequest === null || (is_array($oIDCServiceGetDeviceAuthorizationRequestRequest) && count($oIDCServiceGetDeviceAuthorizationRequestRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $userCode when calling oIDCServiceGetDeviceAuthorizationRequest'
+                'Missing the required parameter $oIDCServiceGetDeviceAuthorizationRequestRequest when calling getDeviceAuthorizationRequest'
             );
         }
 
 
-        $resourcePath = '/v2/oidc/device_authorization/{userCode}';
+        $resourcePath = '/zitadel.oidc.v2.OIDCService/GetDeviceAuthorizationRequest';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -867,13 +832,109 @@ class OIDCServiceApi
 
 
 
-        if ($userCode !== null) {
-            $resourcePath = str_replace(
-                '{' . 'userCode' . '}',
-                ObjectSerializer::toPathValue($userCode),
-                $resourcePath
-            );
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($oIDCServiceGetDeviceAuthorizationRequestRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($oIDCServiceGetDeviceAuthorizationRequestRequest));
+            } else {
+                $httpBody = $oIDCServiceGetDeviceAuthorizationRequestRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
         }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation noOp
+     *
+     * Dummy endpoint to retain union-member schemas
+     *
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['noOp'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\NoOp200Response6
+     * @throws ApiException
+     */
+    public function noOp(string $contentType = self::contentTypes['noOp'][0])
+    {
+        $request = $this->noOpRequest($contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\NoOp200Response6',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\NoOp200Response6';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'noOp'
+     *
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['noOp'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function noOpRequest(string $contentType = self::contentTypes['noOp'][0])
+    {
+
+
+        $resourcePath = '/dc68286c';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
 
 
         $headers = $this->selectHeaders(

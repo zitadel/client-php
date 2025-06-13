@@ -288,14 +288,6 @@ class UserServicePasskey implements ModelInterface, ArrayAccess, \JsonSerializab
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['name']) && (mb_strlen($this->container['name']) > 200)) {
-            $invalidProperties[] = "invalid value for 'name', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['name']) && (mb_strlen($this->container['name']) < 1)) {
-            $invalidProperties[] = "invalid value for 'name', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -387,13 +379,6 @@ class UserServicePasskey implements ModelInterface, ArrayAccess, \JsonSerializab
         if (is_null($name)) {
             throw new \InvalidArgumentException('non-nullable name cannot be null');
         }
-        if ((mb_strlen($name) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $name when calling UserServicePasskey., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($name) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $name when calling UserServicePasskey., must be bigger than or equal to 1.');
-        }
-
         $this->container['name'] = $name;
 
         return $this;

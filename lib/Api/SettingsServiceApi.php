@@ -66,37 +66,37 @@ class SettingsServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'settingsServiceGetActiveIdentityProviders' => [
+        'getActiveIdentityProviders' => [
             'application/json',
         ],
-        'settingsServiceGetBrandingSettings' => [
+        'getBrandingSettings' => [
             'application/json',
         ],
-        'settingsServiceGetDomainSettings' => [
+        'getDomainSettings' => [
             'application/json',
         ],
-        'settingsServiceGetGeneralSettings' => [
+        'getGeneralSettings' => [
             'application/json',
         ],
-        'settingsServiceGetLegalAndSupportSettings' => [
+        'getLegalAndSupportSettings' => [
             'application/json',
         ],
-        'settingsServiceGetLockoutSettings' => [
+        'getLockoutSettings' => [
             'application/json',
         ],
-        'settingsServiceGetLoginSettings' => [
+        'getLoginSettings' => [
             'application/json',
         ],
-        'settingsServiceGetPasswordComplexitySettings' => [
+        'getPasswordComplexitySettings' => [
             'application/json',
         ],
-        'settingsServiceGetPasswordExpirySettings' => [
+        'getPasswordExpirySettings' => [
             'application/json',
         ],
-        'settingsServiceGetSecuritySettings' => [
+        'getSecuritySettings' => [
             'application/json',
         ],
-        'settingsServiceSetSecuritySettings' => [
+        'setSecuritySettings' => [
             'application/json',
         ],
     ];
@@ -464,120 +464,54 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation settingsServiceGetActiveIdentityProviders
+     * Operation getActiveIdentityProviders
      *
-     * Get the current active identity providers
+     * GetActiveIdentityProviders
      *
-     * @param  string|null $ctxOrgId ctxOrgId (optional)
-     * @param  bool|null $ctxInstance ctxInstance (optional)
-     * @param  bool|null $creationAllowed creationAllowed (optional)
-     * @param  bool|null $linkingAllowed linkingAllowed (optional)
-     * @param  bool|null $autoCreation autoCreation (optional)
-     * @param  bool|null $autoLinking autoLinking (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetActiveIdentityProviders'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetActiveIdentityProvidersRequest $settingsServiceGetActiveIdentityProvidersRequest settingsServiceGetActiveIdentityProvidersRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getActiveIdentityProviders'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SettingsServiceGetActiveIdentityProvidersResponse
      * @throws ApiException
      */
-    public function settingsServiceGetActiveIdentityProviders($ctxOrgId = null, $ctxInstance = null, $creationAllowed = null, $linkingAllowed = null, $autoCreation = null, $autoLinking = null, string $contentType = self::contentTypes['settingsServiceGetActiveIdentityProviders'][0])
+    public function getActiveIdentityProviders($settingsServiceGetActiveIdentityProvidersRequest, string $contentType = self::contentTypes['getActiveIdentityProviders'][0])
     {
-        $request = $this->settingsServiceGetActiveIdentityProvidersRequest($ctxOrgId, $ctxInstance, $creationAllowed, $linkingAllowed, $autoCreation, $autoLinking, $contentType);
+        $request = $this->getActiveIdentityProvidersRequest($settingsServiceGetActiveIdentityProvidersRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SettingsServiceGetActiveIdentityProvidersResponse',
-            403 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SettingsServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SettingsServiceGetActiveIdentityProvidersResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'settingsServiceGetActiveIdentityProviders'
+     * Create request for operation 'getActiveIdentityProviders'
      *
-     * @param  string|null $ctxOrgId (optional)
-     * @param  bool|null $ctxInstance (optional)
-     * @param  bool|null $creationAllowed (optional)
-     * @param  bool|null $linkingAllowed (optional)
-     * @param  bool|null $autoCreation (optional)
-     * @param  bool|null $autoLinking (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetActiveIdentityProviders'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetActiveIdentityProvidersRequest $settingsServiceGetActiveIdentityProvidersRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getActiveIdentityProviders'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function settingsServiceGetActiveIdentityProvidersRequest($ctxOrgId = null, $ctxInstance = null, $creationAllowed = null, $linkingAllowed = null, $autoCreation = null, $autoLinking = null, string $contentType = self::contentTypes['settingsServiceGetActiveIdentityProviders'][0])
+    private function getActiveIdentityProvidersRequest($settingsServiceGetActiveIdentityProvidersRequest, string $contentType = self::contentTypes['getActiveIdentityProviders'][0])
     {
 
+        if ($settingsServiceGetActiveIdentityProvidersRequest === null || (is_array($settingsServiceGetActiveIdentityProvidersRequest) && count($settingsServiceGetActiveIdentityProvidersRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $settingsServiceGetActiveIdentityProvidersRequest when calling getActiveIdentityProviders'
+            );
+        }
 
 
-
-
-
-
-
-        $resourcePath = '/v2/settings/login/idps';
+        $resourcePath = '/zitadel.settings.v2.SettingsService/GetActiveIdentityProviders';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxOrgId,
-            'ctx.orgId', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'string', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxInstance,
-            'ctx.instance', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'boolean', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $creationAllowed,
-            'creationAllowed', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'boolean', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $linkingAllowed,
-            'linkingAllowed', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'boolean', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $autoCreation,
-            'autoCreation', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'boolean', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $autoLinking,
-            'autoLinking', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'boolean', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
 
 
 
@@ -587,7 +521,14 @@ class SettingsServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($settingsServiceGetActiveIdentityProvidersRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($settingsServiceGetActiveIdentityProvidersRequest));
+            } else {
+                $httpBody = $settingsServiceGetActiveIdentityProvidersRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -627,7 +568,7 @@ class SettingsServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -635,72 +576,54 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation settingsServiceGetBrandingSettings
+     * Operation getBrandingSettings
      *
-     * Get the current active branding settings
+     * GetBrandingSettings
      *
-     * @param  string|null $ctxOrgId ctxOrgId (optional)
-     * @param  bool|null $ctxInstance ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetBrandingSettings'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetBrandingSettingsRequest $settingsServiceGetBrandingSettingsRequest settingsServiceGetBrandingSettingsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBrandingSettings'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SettingsServiceGetBrandingSettingsResponse
      * @throws ApiException
      */
-    public function settingsServiceGetBrandingSettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetBrandingSettings'][0])
+    public function getBrandingSettings($settingsServiceGetBrandingSettingsRequest, string $contentType = self::contentTypes['getBrandingSettings'][0])
     {
-        $request = $this->settingsServiceGetBrandingSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $request = $this->getBrandingSettingsRequest($settingsServiceGetBrandingSettingsRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SettingsServiceGetBrandingSettingsResponse',
-            403 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SettingsServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SettingsServiceGetBrandingSettingsResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'settingsServiceGetBrandingSettings'
+     * Create request for operation 'getBrandingSettings'
      *
-     * @param  string|null $ctxOrgId (optional)
-     * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetBrandingSettings'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetBrandingSettingsRequest $settingsServiceGetBrandingSettingsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBrandingSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function settingsServiceGetBrandingSettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetBrandingSettings'][0])
+    private function getBrandingSettingsRequest($settingsServiceGetBrandingSettingsRequest, string $contentType = self::contentTypes['getBrandingSettings'][0])
     {
 
+        if ($settingsServiceGetBrandingSettingsRequest === null || (is_array($settingsServiceGetBrandingSettingsRequest) && count($settingsServiceGetBrandingSettingsRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $settingsServiceGetBrandingSettingsRequest when calling getBrandingSettings'
+            );
+        }
 
 
-
-        $resourcePath = '/v2/settings/branding';
+        $resourcePath = '/zitadel.settings.v2.SettingsService/GetBrandingSettings';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxOrgId,
-            'ctx.orgId', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'string', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxInstance,
-            'ctx.instance', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'boolean', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
 
 
 
@@ -710,7 +633,14 @@ class SettingsServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($settingsServiceGetBrandingSettingsRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($settingsServiceGetBrandingSettingsRequest));
+            } else {
+                $httpBody = $settingsServiceGetBrandingSettingsRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -750,7 +680,7 @@ class SettingsServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -758,72 +688,54 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation settingsServiceGetDomainSettings
+     * Operation getDomainSettings
      *
-     * Get the domain settings
+     * GetDomainSettings
      *
-     * @param  string|null $ctxOrgId ctxOrgId (optional)
-     * @param  bool|null $ctxInstance ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetDomainSettings'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetDomainSettingsRequest $settingsServiceGetDomainSettingsRequest settingsServiceGetDomainSettingsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDomainSettings'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SettingsServiceGetDomainSettingsResponse
      * @throws ApiException
      */
-    public function settingsServiceGetDomainSettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetDomainSettings'][0])
+    public function getDomainSettings($settingsServiceGetDomainSettingsRequest, string $contentType = self::contentTypes['getDomainSettings'][0])
     {
-        $request = $this->settingsServiceGetDomainSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $request = $this->getDomainSettingsRequest($settingsServiceGetDomainSettingsRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SettingsServiceGetDomainSettingsResponse',
-            403 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SettingsServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SettingsServiceGetDomainSettingsResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'settingsServiceGetDomainSettings'
+     * Create request for operation 'getDomainSettings'
      *
-     * @param  string|null $ctxOrgId (optional)
-     * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetDomainSettings'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetDomainSettingsRequest $settingsServiceGetDomainSettingsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDomainSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function settingsServiceGetDomainSettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetDomainSettings'][0])
+    private function getDomainSettingsRequest($settingsServiceGetDomainSettingsRequest, string $contentType = self::contentTypes['getDomainSettings'][0])
     {
 
+        if ($settingsServiceGetDomainSettingsRequest === null || (is_array($settingsServiceGetDomainSettingsRequest) && count($settingsServiceGetDomainSettingsRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $settingsServiceGetDomainSettingsRequest when calling getDomainSettings'
+            );
+        }
 
 
-
-        $resourcePath = '/v2/settings/domain';
+        $resourcePath = '/zitadel.settings.v2.SettingsService/GetDomainSettings';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxOrgId,
-            'ctx.orgId', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'string', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxInstance,
-            'ctx.instance', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'boolean', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
 
 
 
@@ -833,7 +745,14 @@ class SettingsServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($settingsServiceGetDomainSettingsRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($settingsServiceGetDomainSettingsRequest));
+            } else {
+                $httpBody = $settingsServiceGetDomainSettingsRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -873,7 +792,7 @@ class SettingsServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -881,42 +800,48 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation settingsServiceGetGeneralSettings
+     * Operation getGeneralSettings
      *
-     * Get basic information over the instance
+     * GetGeneralSettings
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetGeneralSettings'] to see the possible values for this operation
+     * @param  object $body body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getGeneralSettings'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SettingsServiceGetGeneralSettingsResponse
      * @throws ApiException
      */
-    public function settingsServiceGetGeneralSettings(string $contentType = self::contentTypes['settingsServiceGetGeneralSettings'][0])
+    public function getGeneralSettings($body, string $contentType = self::contentTypes['getGeneralSettings'][0])
     {
-        $request = $this->settingsServiceGetGeneralSettingsRequest($contentType);
+        $request = $this->getGeneralSettingsRequest($body, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SettingsServiceGetGeneralSettingsResponse',
-            403 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SettingsServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SettingsServiceGetGeneralSettingsResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'settingsServiceGetGeneralSettings'
+     * Create request for operation 'getGeneralSettings'
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetGeneralSettings'] to see the possible values for this operation
+     * @param  object $body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getGeneralSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function settingsServiceGetGeneralSettingsRequest(string $contentType = self::contentTypes['settingsServiceGetGeneralSettings'][0])
+    private function getGeneralSettingsRequest($body, string $contentType = self::contentTypes['getGeneralSettings'][0])
     {
 
+        if ($body === null || (is_array($body) && count($body) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $body when calling getGeneralSettings'
+            );
+        }
 
-        $resourcePath = '/v2/settings';
+
+        $resourcePath = '/zitadel.settings.v2.SettingsService/GetGeneralSettings';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -932,7 +857,14 @@ class SettingsServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($body)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+            } else {
+                $httpBody = $body;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -972,7 +904,7 @@ class SettingsServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -980,72 +912,54 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation settingsServiceGetLegalAndSupportSettings
+     * Operation getLegalAndSupportSettings
      *
-     * Get the legal and support settings
+     * GetLegalAndSupportSettings
      *
-     * @param  string|null $ctxOrgId ctxOrgId (optional)
-     * @param  bool|null $ctxInstance ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLegalAndSupportSettings'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetLegalAndSupportSettingsRequest $settingsServiceGetLegalAndSupportSettingsRequest settingsServiceGetLegalAndSupportSettingsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLegalAndSupportSettings'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SettingsServiceGetLegalAndSupportSettingsResponse
      * @throws ApiException
      */
-    public function settingsServiceGetLegalAndSupportSettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLegalAndSupportSettings'][0])
+    public function getLegalAndSupportSettings($settingsServiceGetLegalAndSupportSettingsRequest, string $contentType = self::contentTypes['getLegalAndSupportSettings'][0])
     {
-        $request = $this->settingsServiceGetLegalAndSupportSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $request = $this->getLegalAndSupportSettingsRequest($settingsServiceGetLegalAndSupportSettingsRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SettingsServiceGetLegalAndSupportSettingsResponse',
-            403 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SettingsServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SettingsServiceGetLegalAndSupportSettingsResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'settingsServiceGetLegalAndSupportSettings'
+     * Create request for operation 'getLegalAndSupportSettings'
      *
-     * @param  string|null $ctxOrgId (optional)
-     * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLegalAndSupportSettings'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetLegalAndSupportSettingsRequest $settingsServiceGetLegalAndSupportSettingsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLegalAndSupportSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function settingsServiceGetLegalAndSupportSettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLegalAndSupportSettings'][0])
+    private function getLegalAndSupportSettingsRequest($settingsServiceGetLegalAndSupportSettingsRequest, string $contentType = self::contentTypes['getLegalAndSupportSettings'][0])
     {
 
+        if ($settingsServiceGetLegalAndSupportSettingsRequest === null || (is_array($settingsServiceGetLegalAndSupportSettingsRequest) && count($settingsServiceGetLegalAndSupportSettingsRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $settingsServiceGetLegalAndSupportSettingsRequest when calling getLegalAndSupportSettings'
+            );
+        }
 
 
-
-        $resourcePath = '/v2/settings/legal_support';
+        $resourcePath = '/zitadel.settings.v2.SettingsService/GetLegalAndSupportSettings';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxOrgId,
-            'ctx.orgId', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'string', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxInstance,
-            'ctx.instance', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'boolean', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
 
 
 
@@ -1055,7 +969,14 @@ class SettingsServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($settingsServiceGetLegalAndSupportSettingsRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($settingsServiceGetLegalAndSupportSettingsRequest));
+            } else {
+                $httpBody = $settingsServiceGetLegalAndSupportSettingsRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -1095,7 +1016,7 @@ class SettingsServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -1103,72 +1024,54 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation settingsServiceGetLockoutSettings
+     * Operation getLockoutSettings
      *
-     * Get the lockout settings
+     * GetLockoutSettings
      *
-     * @param  string|null $ctxOrgId ctxOrgId (optional)
-     * @param  bool|null $ctxInstance ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLockoutSettings'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetLockoutSettingsRequest $settingsServiceGetLockoutSettingsRequest settingsServiceGetLockoutSettingsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLockoutSettings'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SettingsServiceGetLockoutSettingsResponse
      * @throws ApiException
      */
-    public function settingsServiceGetLockoutSettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLockoutSettings'][0])
+    public function getLockoutSettings($settingsServiceGetLockoutSettingsRequest, string $contentType = self::contentTypes['getLockoutSettings'][0])
     {
-        $request = $this->settingsServiceGetLockoutSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $request = $this->getLockoutSettingsRequest($settingsServiceGetLockoutSettingsRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SettingsServiceGetLockoutSettingsResponse',
-            403 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SettingsServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SettingsServiceGetLockoutSettingsResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'settingsServiceGetLockoutSettings'
+     * Create request for operation 'getLockoutSettings'
      *
-     * @param  string|null $ctxOrgId (optional)
-     * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLockoutSettings'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetLockoutSettingsRequest $settingsServiceGetLockoutSettingsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLockoutSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function settingsServiceGetLockoutSettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLockoutSettings'][0])
+    private function getLockoutSettingsRequest($settingsServiceGetLockoutSettingsRequest, string $contentType = self::contentTypes['getLockoutSettings'][0])
     {
 
+        if ($settingsServiceGetLockoutSettingsRequest === null || (is_array($settingsServiceGetLockoutSettingsRequest) && count($settingsServiceGetLockoutSettingsRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $settingsServiceGetLockoutSettingsRequest when calling getLockoutSettings'
+            );
+        }
 
 
-
-        $resourcePath = '/v2/settings/lockout';
+        $resourcePath = '/zitadel.settings.v2.SettingsService/GetLockoutSettings';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxOrgId,
-            'ctx.orgId', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'string', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxInstance,
-            'ctx.instance', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'boolean', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
 
 
 
@@ -1178,7 +1081,14 @@ class SettingsServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($settingsServiceGetLockoutSettingsRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($settingsServiceGetLockoutSettingsRequest));
+            } else {
+                $httpBody = $settingsServiceGetLockoutSettingsRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -1218,7 +1128,7 @@ class SettingsServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -1226,72 +1136,54 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation settingsServiceGetLoginSettings
+     * Operation getLoginSettings
      *
-     * Get the login settings
+     * GetLoginSettings
      *
-     * @param  string|null $ctxOrgId ctxOrgId (optional)
-     * @param  bool|null $ctxInstance ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLoginSettings'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetLoginSettingsRequest $settingsServiceGetLoginSettingsRequest settingsServiceGetLoginSettingsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLoginSettings'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SettingsServiceGetLoginSettingsResponse
      * @throws ApiException
      */
-    public function settingsServiceGetLoginSettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLoginSettings'][0])
+    public function getLoginSettings($settingsServiceGetLoginSettingsRequest, string $contentType = self::contentTypes['getLoginSettings'][0])
     {
-        $request = $this->settingsServiceGetLoginSettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $request = $this->getLoginSettingsRequest($settingsServiceGetLoginSettingsRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SettingsServiceGetLoginSettingsResponse',
-            403 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SettingsServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SettingsServiceGetLoginSettingsResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'settingsServiceGetLoginSettings'
+     * Create request for operation 'getLoginSettings'
      *
-     * @param  string|null $ctxOrgId (optional)
-     * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetLoginSettings'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetLoginSettingsRequest $settingsServiceGetLoginSettingsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLoginSettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function settingsServiceGetLoginSettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetLoginSettings'][0])
+    private function getLoginSettingsRequest($settingsServiceGetLoginSettingsRequest, string $contentType = self::contentTypes['getLoginSettings'][0])
     {
 
+        if ($settingsServiceGetLoginSettingsRequest === null || (is_array($settingsServiceGetLoginSettingsRequest) && count($settingsServiceGetLoginSettingsRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $settingsServiceGetLoginSettingsRequest when calling getLoginSettings'
+            );
+        }
 
 
-
-        $resourcePath = '/v2/settings/login';
+        $resourcePath = '/zitadel.settings.v2.SettingsService/GetLoginSettings';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxOrgId,
-            'ctx.orgId', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'string', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxInstance,
-            'ctx.instance', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'boolean', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
 
 
 
@@ -1301,7 +1193,14 @@ class SettingsServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($settingsServiceGetLoginSettingsRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($settingsServiceGetLoginSettingsRequest));
+            } else {
+                $httpBody = $settingsServiceGetLoginSettingsRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -1341,7 +1240,7 @@ class SettingsServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -1349,72 +1248,54 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation settingsServiceGetPasswordComplexitySettings
+     * Operation getPasswordComplexitySettings
      *
-     * Get the password complexity settings
+     * GetPasswordComplexitySettings
      *
-     * @param  string|null $ctxOrgId ctxOrgId (optional)
-     * @param  bool|null $ctxInstance ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetPasswordComplexitySettings'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetPasswordComplexitySettingsRequest $settingsServiceGetPasswordComplexitySettingsRequest settingsServiceGetPasswordComplexitySettingsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordComplexitySettings'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SettingsServiceGetPasswordComplexitySettingsResponse
      * @throws ApiException
      */
-    public function settingsServiceGetPasswordComplexitySettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetPasswordComplexitySettings'][0])
+    public function getPasswordComplexitySettings($settingsServiceGetPasswordComplexitySettingsRequest, string $contentType = self::contentTypes['getPasswordComplexitySettings'][0])
     {
-        $request = $this->settingsServiceGetPasswordComplexitySettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $request = $this->getPasswordComplexitySettingsRequest($settingsServiceGetPasswordComplexitySettingsRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SettingsServiceGetPasswordComplexitySettingsResponse',
-            403 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SettingsServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SettingsServiceGetPasswordComplexitySettingsResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'settingsServiceGetPasswordComplexitySettings'
+     * Create request for operation 'getPasswordComplexitySettings'
      *
-     * @param  string|null $ctxOrgId (optional)
-     * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetPasswordComplexitySettings'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetPasswordComplexitySettingsRequest $settingsServiceGetPasswordComplexitySettingsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordComplexitySettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function settingsServiceGetPasswordComplexitySettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetPasswordComplexitySettings'][0])
+    private function getPasswordComplexitySettingsRequest($settingsServiceGetPasswordComplexitySettingsRequest, string $contentType = self::contentTypes['getPasswordComplexitySettings'][0])
     {
 
+        if ($settingsServiceGetPasswordComplexitySettingsRequest === null || (is_array($settingsServiceGetPasswordComplexitySettingsRequest) && count($settingsServiceGetPasswordComplexitySettingsRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $settingsServiceGetPasswordComplexitySettingsRequest when calling getPasswordComplexitySettings'
+            );
+        }
 
 
-
-        $resourcePath = '/v2/settings/password/complexity';
+        $resourcePath = '/zitadel.settings.v2.SettingsService/GetPasswordComplexitySettings';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxOrgId,
-            'ctx.orgId', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'string', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxInstance,
-            'ctx.instance', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'boolean', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
 
 
 
@@ -1424,7 +1305,14 @@ class SettingsServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($settingsServiceGetPasswordComplexitySettingsRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($settingsServiceGetPasswordComplexitySettingsRequest));
+            } else {
+                $httpBody = $settingsServiceGetPasswordComplexitySettingsRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -1464,7 +1352,7 @@ class SettingsServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -1472,72 +1360,54 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation settingsServiceGetPasswordExpirySettings
+     * Operation getPasswordExpirySettings
      *
-     * Get the password expiry settings
+     * GetPasswordExpirySettings
      *
-     * @param  string|null $ctxOrgId ctxOrgId (optional)
-     * @param  bool|null $ctxInstance ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetPasswordExpirySettings'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetPasswordExpirySettingsRequest $settingsServiceGetPasswordExpirySettingsRequest settingsServiceGetPasswordExpirySettingsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordExpirySettings'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SettingsServiceGetPasswordExpirySettingsResponse
      * @throws ApiException
      */
-    public function settingsServiceGetPasswordExpirySettings($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetPasswordExpirySettings'][0])
+    public function getPasswordExpirySettings($settingsServiceGetPasswordExpirySettingsRequest, string $contentType = self::contentTypes['getPasswordExpirySettings'][0])
     {
-        $request = $this->settingsServiceGetPasswordExpirySettingsRequest($ctxOrgId, $ctxInstance, $contentType);
+        $request = $this->getPasswordExpirySettingsRequest($settingsServiceGetPasswordExpirySettingsRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SettingsServiceGetPasswordExpirySettingsResponse',
-            403 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SettingsServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SettingsServiceGetPasswordExpirySettingsResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'settingsServiceGetPasswordExpirySettings'
+     * Create request for operation 'getPasswordExpirySettings'
      *
-     * @param  string|null $ctxOrgId (optional)
-     * @param  bool|null $ctxInstance (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetPasswordExpirySettings'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SettingsServiceGetPasswordExpirySettingsRequest $settingsServiceGetPasswordExpirySettingsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordExpirySettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function settingsServiceGetPasswordExpirySettingsRequest($ctxOrgId = null, $ctxInstance = null, string $contentType = self::contentTypes['settingsServiceGetPasswordExpirySettings'][0])
+    private function getPasswordExpirySettingsRequest($settingsServiceGetPasswordExpirySettingsRequest, string $contentType = self::contentTypes['getPasswordExpirySettings'][0])
     {
 
+        if ($settingsServiceGetPasswordExpirySettingsRequest === null || (is_array($settingsServiceGetPasswordExpirySettingsRequest) && count($settingsServiceGetPasswordExpirySettingsRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $settingsServiceGetPasswordExpirySettingsRequest when calling getPasswordExpirySettings'
+            );
+        }
 
 
-
-        $resourcePath = '/v2/settings/password/expiry';
+        $resourcePath = '/zitadel.settings.v2.SettingsService/GetPasswordExpirySettings';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxOrgId,
-            'ctx.orgId', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'string', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $ctxInstance,
-            'ctx.instance', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'boolean', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
 
 
 
@@ -1547,7 +1417,14 @@ class SettingsServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($settingsServiceGetPasswordExpirySettingsRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($settingsServiceGetPasswordExpirySettingsRequest));
+            } else {
+                $httpBody = $settingsServiceGetPasswordExpirySettingsRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -1587,7 +1464,7 @@ class SettingsServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -1595,42 +1472,48 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation settingsServiceGetSecuritySettings
+     * Operation getSecuritySettings
      *
-     * Get Security Settings
+     * GetSecuritySettings
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetSecuritySettings'] to see the possible values for this operation
+     * @param  object $body body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSecuritySettings'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SettingsServiceGetSecuritySettingsResponse
      * @throws ApiException
      */
-    public function settingsServiceGetSecuritySettings(string $contentType = self::contentTypes['settingsServiceGetSecuritySettings'][0])
+    public function getSecuritySettings($body, string $contentType = self::contentTypes['getSecuritySettings'][0])
     {
-        $request = $this->settingsServiceGetSecuritySettingsRequest($contentType);
+        $request = $this->getSecuritySettingsRequest($body, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SettingsServiceGetSecuritySettingsResponse',
-            403 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SettingsServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SettingsServiceGetSecuritySettingsResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'settingsServiceGetSecuritySettings'
+     * Create request for operation 'getSecuritySettings'
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceGetSecuritySettings'] to see the possible values for this operation
+     * @param  object $body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSecuritySettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function settingsServiceGetSecuritySettingsRequest(string $contentType = self::contentTypes['settingsServiceGetSecuritySettings'][0])
+    private function getSecuritySettingsRequest($body, string $contentType = self::contentTypes['getSecuritySettings'][0])
     {
 
+        if ($body === null || (is_array($body) && count($body) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $body when calling getSecuritySettings'
+            );
+        }
 
-        $resourcePath = '/v2/settings/security';
+
+        $resourcePath = '/zitadel.settings.v2.SettingsService/GetSecuritySettings';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -1646,7 +1529,14 @@ class SettingsServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($body)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+            } else {
+                $httpBody = $body;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -1686,7 +1576,7 @@ class SettingsServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -1694,50 +1584,48 @@ class SettingsServiceApi
     }
 
     /**
-     * Operation settingsServiceSetSecuritySettings
+     * Operation setSecuritySettings
      *
-     * Set Security Settings
+     * SetSecuritySettings
      *
      * @param  \Zitadel\Client\Model\SettingsServiceSetSecuritySettingsRequest $settingsServiceSetSecuritySettingsRequest settingsServiceSetSecuritySettingsRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceSetSecuritySettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSecuritySettings'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SettingsServiceSetSecuritySettingsResponse
      * @throws ApiException
      */
-    public function settingsServiceSetSecuritySettings($settingsServiceSetSecuritySettingsRequest, string $contentType = self::contentTypes['settingsServiceSetSecuritySettings'][0])
+    public function setSecuritySettings($settingsServiceSetSecuritySettingsRequest, string $contentType = self::contentTypes['setSecuritySettings'][0])
     {
-        $request = $this->settingsServiceSetSecuritySettingsRequest($settingsServiceSetSecuritySettingsRequest, $contentType);
+        $request = $this->setSecuritySettingsRequest($settingsServiceSetSecuritySettingsRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SettingsServiceSetSecuritySettingsResponse',
-            403 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SettingsServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SettingsServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SettingsServiceSetSecuritySettingsResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'settingsServiceSetSecuritySettings'
+     * Create request for operation 'setSecuritySettings'
      *
      * @param  \Zitadel\Client\Model\SettingsServiceSetSecuritySettingsRequest $settingsServiceSetSecuritySettingsRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['settingsServiceSetSecuritySettings'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSecuritySettings'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function settingsServiceSetSecuritySettingsRequest($settingsServiceSetSecuritySettingsRequest, string $contentType = self::contentTypes['settingsServiceSetSecuritySettings'][0])
+    private function setSecuritySettingsRequest($settingsServiceSetSecuritySettingsRequest, string $contentType = self::contentTypes['setSecuritySettings'][0])
     {
 
         if ($settingsServiceSetSecuritySettingsRequest === null || (is_array($settingsServiceSetSecuritySettingsRequest) && count($settingsServiceSetSecuritySettingsRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $settingsServiceSetSecuritySettingsRequest when calling settingsServiceSetSecuritySettings'
+                'Missing the required parameter $settingsServiceSetSecuritySettingsRequest when calling setSecuritySettings'
             );
         }
 
 
-        $resourcePath = '/v2/policies/security';
+        $resourcePath = '/zitadel.settings.v2.SettingsService/SetSecuritySettings';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -1800,7 +1688,7 @@ class SettingsServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'PUT',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody

@@ -377,7 +377,7 @@ class IdentityProviderServiceGenericOIDCConfig implements ModelInterface, ArrayA
     /**
      * Sets scopes
      *
-     * @param string[]|null $scopes The scopes requested by ZITADEL during the request on the identity provider.
+     * @param string[]|null $scopes The scopes requested by ZITADEL during the request on the identity  provider.
      *
      * @return self
      */
@@ -404,7 +404,7 @@ class IdentityProviderServiceGenericOIDCConfig implements ModelInterface, ArrayA
     /**
      * Sets isIdTokenMapping
      *
-     * @param bool|null $isIdTokenMapping If true, provider information get mapped from the id token, not from the userinfo endpoint.
+     * @param bool|null $isIdTokenMapping If true, provider information get mapped from the id token, not from the  userinfo endpoint.
      *
      * @return self
      */

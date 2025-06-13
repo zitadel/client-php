@@ -59,7 +59,7 @@ class OrganizationServiceAddOrganizationResponse implements ModelInterface, Arra
     protected static $openAPITypes = [
         'details' => '\Zitadel\Client\Model\OrganizationServiceDetails',
         'organizationId' => 'string',
-        'createdAdmins' => '\Zitadel\Client\Model\OrganizationServiceAddOrganizationResponseCreatedAdmin[]'
+        'createdAdmins' => '\Zitadel\Client\Model\OrganizationServiceCreatedAdmin[]'
     ];
 
     /**
@@ -360,7 +360,7 @@ class OrganizationServiceAddOrganizationResponse implements ModelInterface, Arra
     /**
      * Gets createdAdmins
      *
-     * @return \Zitadel\Client\Model\OrganizationServiceAddOrganizationResponseCreatedAdmin[]|null
+     * @return \Zitadel\Client\Model\OrganizationServiceCreatedAdmin[]|null
      */
     public function getCreatedAdmins()
     {
@@ -370,7 +370,7 @@ class OrganizationServiceAddOrganizationResponse implements ModelInterface, Arra
     /**
      * Sets createdAdmins
      *
-     * @param \Zitadel\Client\Model\OrganizationServiceAddOrganizationResponseCreatedAdmin[]|null $createdAdmins createdAdmins
+     * @param \Zitadel\Client\Model\OrganizationServiceCreatedAdmin[]|null $createdAdmins createdAdmins
      *
      * @return self
      */

@@ -57,11 +57,11 @@ class OrganizationServiceSearchQuery implements ModelInterface, ArrayAccess, \Js
       * @var string[]
       */
     protected static $openAPITypes = [
-        'nameQuery' => '\Zitadel\Client\Model\OrganizationServiceOrganizationNameQuery',
+        'defaultQuery' => 'object',
         'domainQuery' => '\Zitadel\Client\Model\OrganizationServiceOrganizationDomainQuery',
-        'stateQuery' => '\Zitadel\Client\Model\OrganizationServiceOrganizationStateQuery',
         'idQuery' => '\Zitadel\Client\Model\OrganizationServiceOrganizationIDQuery',
-        'defaultQuery' => 'object'
+        'nameQuery' => '\Zitadel\Client\Model\OrganizationServiceOrganizationNameQuery',
+        'stateQuery' => '\Zitadel\Client\Model\OrganizationServiceOrganizationStateQuery'
     ];
 
     /**
@@ -72,11 +72,11 @@ class OrganizationServiceSearchQuery implements ModelInterface, ArrayAccess, \Js
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'nameQuery' => null,
+        'defaultQuery' => null,
         'domainQuery' => null,
-        'stateQuery' => null,
         'idQuery' => null,
-        'defaultQuery' => null
+        'nameQuery' => null,
+        'stateQuery' => null
     ];
 
     /**
@@ -85,11 +85,11 @@ class OrganizationServiceSearchQuery implements ModelInterface, ArrayAccess, \Js
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'nameQuery' => false,
+        'defaultQuery' => false,
         'domainQuery' => false,
-        'stateQuery' => false,
         'idQuery' => false,
-        'defaultQuery' => false
+        'nameQuery' => false,
+        'stateQuery' => false
     ];
 
     /**
@@ -178,11 +178,11 @@ class OrganizationServiceSearchQuery implements ModelInterface, ArrayAccess, \Js
      * @var string[]
      */
     protected static $attributeMap = [
-        'nameQuery' => 'nameQuery',
+        'defaultQuery' => 'defaultQuery',
         'domainQuery' => 'domainQuery',
-        'stateQuery' => 'stateQuery',
         'idQuery' => 'idQuery',
-        'defaultQuery' => 'defaultQuery'
+        'nameQuery' => 'nameQuery',
+        'stateQuery' => 'stateQuery'
     ];
 
     /**
@@ -191,11 +191,11 @@ class OrganizationServiceSearchQuery implements ModelInterface, ArrayAccess, \Js
      * @var string[]
      */
     protected static $setters = [
-        'nameQuery' => 'setNameQuery',
+        'defaultQuery' => 'setDefaultQuery',
         'domainQuery' => 'setDomainQuery',
-        'stateQuery' => 'setStateQuery',
         'idQuery' => 'setIdQuery',
-        'defaultQuery' => 'setDefaultQuery'
+        'nameQuery' => 'setNameQuery',
+        'stateQuery' => 'setStateQuery'
     ];
 
     /**
@@ -204,11 +204,11 @@ class OrganizationServiceSearchQuery implements ModelInterface, ArrayAccess, \Js
      * @var string[]
      */
     protected static $getters = [
-        'nameQuery' => 'getNameQuery',
+        'defaultQuery' => 'getDefaultQuery',
         'domainQuery' => 'getDomainQuery',
-        'stateQuery' => 'getStateQuery',
         'idQuery' => 'getIdQuery',
-        'defaultQuery' => 'getDefaultQuery'
+        'nameQuery' => 'getNameQuery',
+        'stateQuery' => 'getStateQuery'
     ];
 
     /**
@@ -268,11 +268,11 @@ class OrganizationServiceSearchQuery implements ModelInterface, ArrayAccess, \Js
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('nameQuery', $data ?? [], null);
-        $this->setIfExists('domainQuery', $data ?? [], null);
-        $this->setIfExists('stateQuery', $data ?? [], null);
-        $this->setIfExists('idQuery', $data ?? [], null);
         $this->setIfExists('defaultQuery', $data ?? [], null);
+        $this->setIfExists('domainQuery', $data ?? [], null);
+        $this->setIfExists('idQuery', $data ?? [], null);
+        $this->setIfExists('nameQuery', $data ?? [], null);
+        $this->setIfExists('stateQuery', $data ?? [], null);
     }
 
     /**
@@ -302,6 +302,21 @@ class OrganizationServiceSearchQuery implements ModelInterface, ArrayAccess, \Js
     {
         $invalidProperties = [];
 
+        if ($this->container['defaultQuery'] === null) {
+            $invalidProperties[] = "'defaultQuery' can't be null";
+        }
+        if ($this->container['domainQuery'] === null) {
+            $invalidProperties[] = "'domainQuery' can't be null";
+        }
+        if ($this->container['idQuery'] === null) {
+            $invalidProperties[] = "'idQuery' can't be null";
+        }
+        if ($this->container['nameQuery'] === null) {
+            $invalidProperties[] = "'nameQuery' can't be null";
+        }
+        if ($this->container['stateQuery'] === null) {
+            $invalidProperties[] = "'stateQuery' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -318,28 +333,28 @@ class OrganizationServiceSearchQuery implements ModelInterface, ArrayAccess, \Js
 
 
     /**
-     * Gets nameQuery
+     * Gets defaultQuery
      *
-     * @return \Zitadel\Client\Model\OrganizationServiceOrganizationNameQuery|null
+     * @return object
      */
-    public function getNameQuery()
+    public function getDefaultQuery()
     {
-        return $this->container['nameQuery'];
+        return $this->container['defaultQuery'];
     }
 
     /**
-     * Sets nameQuery
+     * Sets defaultQuery
      *
-     * @param \Zitadel\Client\Model\OrganizationServiceOrganizationNameQuery|null $nameQuery nameQuery
+     * @param object $defaultQuery defaultQuery
      *
      * @return self
      */
-    public function setNameQuery($nameQuery)
+    public function setDefaultQuery($defaultQuery)
     {
-        if (is_null($nameQuery)) {
-            throw new \InvalidArgumentException('non-nullable nameQuery cannot be null');
+        if (is_null($defaultQuery)) {
+            throw new \InvalidArgumentException('non-nullable defaultQuery cannot be null');
         }
-        $this->container['nameQuery'] = $nameQuery;
+        $this->container['defaultQuery'] = $defaultQuery;
 
         return $this;
     }
@@ -347,7 +362,7 @@ class OrganizationServiceSearchQuery implements ModelInterface, ArrayAccess, \Js
     /**
      * Gets domainQuery
      *
-     * @return \Zitadel\Client\Model\OrganizationServiceOrganizationDomainQuery|null
+     * @return \Zitadel\Client\Model\OrganizationServiceOrganizationDomainQuery
      */
     public function getDomainQuery()
     {
@@ -357,7 +372,7 @@ class OrganizationServiceSearchQuery implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets domainQuery
      *
-     * @param \Zitadel\Client\Model\OrganizationServiceOrganizationDomainQuery|null $domainQuery domainQuery
+     * @param \Zitadel\Client\Model\OrganizationServiceOrganizationDomainQuery $domainQuery domainQuery
      *
      * @return self
      */
@@ -372,36 +387,9 @@ class OrganizationServiceSearchQuery implements ModelInterface, ArrayAccess, \Js
     }
 
     /**
-     * Gets stateQuery
-     *
-     * @return \Zitadel\Client\Model\OrganizationServiceOrganizationStateQuery|null
-     */
-    public function getStateQuery()
-    {
-        return $this->container['stateQuery'];
-    }
-
-    /**
-     * Sets stateQuery
-     *
-     * @param \Zitadel\Client\Model\OrganizationServiceOrganizationStateQuery|null $stateQuery stateQuery
-     *
-     * @return self
-     */
-    public function setStateQuery($stateQuery)
-    {
-        if (is_null($stateQuery)) {
-            throw new \InvalidArgumentException('non-nullable stateQuery cannot be null');
-        }
-        $this->container['stateQuery'] = $stateQuery;
-
-        return $this;
-    }
-
-    /**
      * Gets idQuery
      *
-     * @return \Zitadel\Client\Model\OrganizationServiceOrganizationIDQuery|null
+     * @return \Zitadel\Client\Model\OrganizationServiceOrganizationIDQuery
      */
     public function getIdQuery()
     {
@@ -411,7 +399,7 @@ class OrganizationServiceSearchQuery implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets idQuery
      *
-     * @param \Zitadel\Client\Model\OrganizationServiceOrganizationIDQuery|null $idQuery idQuery
+     * @param \Zitadel\Client\Model\OrganizationServiceOrganizationIDQuery $idQuery idQuery
      *
      * @return self
      */
@@ -426,28 +414,55 @@ class OrganizationServiceSearchQuery implements ModelInterface, ArrayAccess, \Js
     }
 
     /**
-     * Gets defaultQuery
+     * Gets nameQuery
      *
-     * @return object|null
+     * @return \Zitadel\Client\Model\OrganizationServiceOrganizationNameQuery
      */
-    public function getDefaultQuery()
+    public function getNameQuery()
     {
-        return $this->container['defaultQuery'];
+        return $this->container['nameQuery'];
     }
 
     /**
-     * Sets defaultQuery
+     * Sets nameQuery
      *
-     * @param object|null $defaultQuery defaultQuery
+     * @param \Zitadel\Client\Model\OrganizationServiceOrganizationNameQuery $nameQuery nameQuery
      *
      * @return self
      */
-    public function setDefaultQuery($defaultQuery)
+    public function setNameQuery($nameQuery)
     {
-        if (is_null($defaultQuery)) {
-            throw new \InvalidArgumentException('non-nullable defaultQuery cannot be null');
+        if (is_null($nameQuery)) {
+            throw new \InvalidArgumentException('non-nullable nameQuery cannot be null');
         }
-        $this->container['defaultQuery'] = $defaultQuery;
+        $this->container['nameQuery'] = $nameQuery;
+
+        return $this;
+    }
+
+    /**
+     * Gets stateQuery
+     *
+     * @return \Zitadel\Client\Model\OrganizationServiceOrganizationStateQuery
+     */
+    public function getStateQuery()
+    {
+        return $this->container['stateQuery'];
+    }
+
+    /**
+     * Sets stateQuery
+     *
+     * @param \Zitadel\Client\Model\OrganizationServiceOrganizationStateQuery $stateQuery stateQuery
+     *
+     * @return self
+     */
+    public function setStateQuery($stateQuery)
+    {
+        if (is_null($stateQuery)) {
+            throw new \InvalidArgumentException('non-nullable stateQuery cannot be null');
+        }
+        $this->container['stateQuery'] = $stateQuery;
 
         return $this;
     }
