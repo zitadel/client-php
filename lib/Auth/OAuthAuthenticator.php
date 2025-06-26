@@ -60,7 +60,7 @@ abstract class OAuthAuthenticator extends Authenticator
      */
     public function getAuthToken(): string
     {
-        if ($this->token === null || $this->token->hasExpired()) {
+        if ($this->token === null || ($this->token->getExpires() && time() >= ($this->token->getExpires() - 300))) {
             $this->refreshToken();
         }
         return $this->token->getToken();
@@ -82,7 +82,7 @@ abstract class OAuthAuthenticator extends Authenticator
 
             // @phpstan-ignore-next-line
             if ($this->token === null) {
-                throw new Exception('Unable to refresh token');
+                throw new ZitadelException('Unable to refresh token');
             }
 
             return $this->token;
