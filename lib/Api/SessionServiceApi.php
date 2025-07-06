@@ -461,7 +461,7 @@ class SessionServiceApi
         $request = $this->sessionServiceCreateSessionRequest($sessionServiceCreateSessionRequest, $contentType);
 
         $responseTypes = [
-            200 => '\Zitadel\Client\Model\SessionServiceCreateSessionResponse',
+            201 => '\Zitadel\Client\Model\SessionServiceCreateSessionResponse',
             403 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
             404 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
             'default' => '\Zitadel\Client\Model\SessionServiceRpcStatus',
