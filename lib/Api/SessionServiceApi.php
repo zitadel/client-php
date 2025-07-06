@@ -66,19 +66,22 @@ class SessionServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'sessionServiceCreateSession' => [
+        'createSession' => [
             'application/json',
         ],
-        'sessionServiceDeleteSession' => [
+        'deleteSession' => [
             'application/json',
         ],
-        'sessionServiceGetSession' => [
+        'getSession' => [
             'application/json',
         ],
-        'sessionServiceListSessions' => [
+        'listSessions' => [
             'application/json',
         ],
-        'sessionServiceSetSession' => [
+        'noOp' => [
+            'application/json',
+        ],
+        'setSession' => [
             'application/json',
         ],
     ];
@@ -446,50 +449,48 @@ class SessionServiceApi
     }
 
     /**
-     * Operation sessionServiceCreateSession
+     * Operation createSession
      *
-     * Create a new session
+     * CreateSession
      *
      * @param  \Zitadel\Client\Model\SessionServiceCreateSessionRequest $sessionServiceCreateSessionRequest sessionServiceCreateSessionRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceCreateSession'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createSession'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SessionServiceCreateSessionResponse
      * @throws ApiException
      */
-    public function sessionServiceCreateSession($sessionServiceCreateSessionRequest, string $contentType = self::contentTypes['sessionServiceCreateSession'][0])
+    public function createSession(    $sessionServiceCreateSessionRequest,string $contentType = self::contentTypes['createSession'][0])
     {
-        $request = $this->sessionServiceCreateSessionRequest($sessionServiceCreateSessionRequest, $contentType);
+        $request = $this->createSessionRequest($sessionServiceCreateSessionRequest, $contentType);
 
         $responseTypes = [
-            201 => '\Zitadel\Client\Model\SessionServiceCreateSessionResponse',
-            403 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SessionServiceRpcStatus',
+            200 => '\Zitadel\Client\Model\SessionServiceCreateSessionResponse',
+            'default' => '\Zitadel\Client\Model\SessionServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SessionServiceCreateSessionResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'sessionServiceCreateSession'
+     * Create request for operation 'createSession'
      *
      * @param  \Zitadel\Client\Model\SessionServiceCreateSessionRequest $sessionServiceCreateSessionRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceCreateSession'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function sessionServiceCreateSessionRequest($sessionServiceCreateSessionRequest, string $contentType = self::contentTypes['sessionServiceCreateSession'][0])
+    private function createSessionRequest($sessionServiceCreateSessionRequest, string $contentType = self::contentTypes['createSession'][0])
     {
 
         if ($sessionServiceCreateSessionRequest === null || (is_array($sessionServiceCreateSessionRequest) && count($sessionServiceCreateSessionRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionServiceCreateSessionRequest when calling sessionServiceCreateSession'
+                'Missing the required parameter $sessionServiceCreateSessionRequest when calling createSession'
             );
         }
 
 
-        $resourcePath = '/v2/sessions';
+        $resourcePath = '/zitadel.session.v2.SessionService/CreateSession';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -560,58 +561,48 @@ class SessionServiceApi
     }
 
     /**
-     * Operation sessionServiceDeleteSession
+     * Operation deleteSession
      *
-     * Terminate an existing session
+     * DeleteSession
      *
-     * @param  string $sessionId \&quot;id of the session to terminate\&quot; (required)
      * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionRequest $sessionServiceDeleteSessionRequest sessionServiceDeleteSessionRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceDeleteSession'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteSession'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SessionServiceDeleteSessionResponse
      * @throws ApiException
      */
-    public function sessionServiceDeleteSession($sessionId, $sessionServiceDeleteSessionRequest, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
+    public function deleteSession(    $sessionServiceDeleteSessionRequest,string $contentType = self::contentTypes['deleteSession'][0])
     {
-        $request = $this->sessionServiceDeleteSessionRequest($sessionId, $sessionServiceDeleteSessionRequest, $contentType);
+        $request = $this->deleteSessionRequest($sessionServiceDeleteSessionRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SessionServiceDeleteSessionResponse',
-            403 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SessionServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SessionServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SessionServiceDeleteSessionResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'sessionServiceDeleteSession'
+     * Create request for operation 'deleteSession'
      *
-     * @param  string $sessionId \&quot;id of the session to terminate\&quot; (required)
      * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionRequest $sessionServiceDeleteSessionRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceDeleteSession'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function sessionServiceDeleteSessionRequest($sessionId, $sessionServiceDeleteSessionRequest, string $contentType = self::contentTypes['sessionServiceDeleteSession'][0])
+    private function deleteSessionRequest($sessionServiceDeleteSessionRequest, string $contentType = self::contentTypes['deleteSession'][0])
     {
-
-        if ($sessionId === null || (is_array($sessionId) && count($sessionId) === 0)) {
-            throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionId when calling sessionServiceDeleteSession'
-            );
-        }
 
         if ($sessionServiceDeleteSessionRequest === null || (is_array($sessionServiceDeleteSessionRequest) && count($sessionServiceDeleteSessionRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionServiceDeleteSessionRequest when calling sessionServiceDeleteSession'
+                'Missing the required parameter $sessionServiceDeleteSessionRequest when calling deleteSession'
             );
         }
 
 
-        $resourcePath = '/v2/sessions/{sessionId}';
+        $resourcePath = '/zitadel.session.v2.SessionService/DeleteSession';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -620,13 +611,6 @@ class SessionServiceApi
 
 
 
-        if ($sessionId !== null) {
-            $resourcePath = str_replace(
-                '{' . 'sessionId' . '}',
-                ObjectSerializer::toPathValue($sessionId),
-                $resourcePath
-            );
-        }
 
 
         $headers = $this->selectHeaders(
@@ -681,7 +665,7 @@ class SessionServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'DELETE',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -689,77 +673,56 @@ class SessionServiceApi
     }
 
     /**
-     * Operation sessionServiceGetSession
+     * Operation getSession
      *
-     * Get a session
+     * GetSession
      *
-     * @param  string $sessionId sessionId (required)
-     * @param  string|null $sessionToken sessionToken (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceGetSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceGetSessionRequest $sessionServiceGetSessionRequest sessionServiceGetSessionRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSession'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SessionServiceGetSessionResponse
      * @throws ApiException
      */
-    public function sessionServiceGetSession($sessionId, $sessionToken = null, string $contentType = self::contentTypes['sessionServiceGetSession'][0])
+    public function getSession(    $sessionServiceGetSessionRequest,string $contentType = self::contentTypes['getSession'][0])
     {
-        $request = $this->sessionServiceGetSessionRequest($sessionId, $sessionToken, $contentType);
+        $request = $this->getSessionRequest($sessionServiceGetSessionRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SessionServiceGetSessionResponse',
-            403 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SessionServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SessionServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SessionServiceGetSessionResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'sessionServiceGetSession'
+     * Create request for operation 'getSession'
      *
-     * @param  string $sessionId (required)
-     * @param  string|null $sessionToken (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceGetSession'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SessionServiceGetSessionRequest $sessionServiceGetSessionRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSession'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function sessionServiceGetSessionRequest($sessionId, $sessionToken = null, string $contentType = self::contentTypes['sessionServiceGetSession'][0])
+    private function getSessionRequest($sessionServiceGetSessionRequest, string $contentType = self::contentTypes['getSession'][0])
     {
 
-        if ($sessionId === null || (is_array($sessionId) && count($sessionId) === 0)) {
+        if ($sessionServiceGetSessionRequest === null || (is_array($sessionServiceGetSessionRequest) && count($sessionServiceGetSessionRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionId when calling sessionServiceGetSession'
+                'Missing the required parameter $sessionServiceGetSessionRequest when calling getSession'
             );
         }
 
 
-
-        $resourcePath = '/v2/sessions/{sessionId}';
+        $resourcePath = '/zitadel.session.v2.SessionService/GetSession';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $sessionToken,
-            'sessionToken', // param base name
-            $this->config->getBooleanFormatForQueryString(),
-            'string', // openApiType
-            '', // style
-            false, // explode
-            false // required
-        ) ?? []);
 
 
-        if ($sessionId !== null) {
-            $resourcePath = str_replace(
-                '{' . 'sessionId' . '}',
-                ObjectSerializer::toPathValue($sessionId),
-                $resourcePath
-            );
-        }
 
 
         $headers = $this->selectHeaders(
@@ -767,7 +730,14 @@ class SessionServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($sessionServiceGetSessionRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($sessionServiceGetSessionRequest));
+            } else {
+                $httpBody = $sessionServiceGetSessionRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -807,7 +777,7 @@ class SessionServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -815,51 +785,48 @@ class SessionServiceApi
     }
 
     /**
-     * Operation sessionServiceListSessions
+     * Operation listSessions
      *
-     * Search sessions
+     * ListSessions
      *
      * @param  \Zitadel\Client\Model\SessionServiceListSessionsRequest $sessionServiceListSessionsRequest sessionServiceListSessionsRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceListSessions'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listSessions'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SessionServiceListSessionsResponse
      * @throws ApiException
      */
-    public function sessionServiceListSessions($sessionServiceListSessionsRequest, string $contentType = self::contentTypes['sessionServiceListSessions'][0])
+    public function listSessions(    $sessionServiceListSessionsRequest,string $contentType = self::contentTypes['listSessions'][0])
     {
-        $request = $this->sessionServiceListSessionsRequest($sessionServiceListSessionsRequest, $contentType);
+        $request = $this->listSessionsRequest($sessionServiceListSessionsRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SessionServiceListSessionsResponse',
-            400 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            403 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SessionServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SessionServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SessionServiceListSessionsResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'sessionServiceListSessions'
+     * Create request for operation 'listSessions'
      *
      * @param  \Zitadel\Client\Model\SessionServiceListSessionsRequest $sessionServiceListSessionsRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceListSessions'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listSessions'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function sessionServiceListSessionsRequest($sessionServiceListSessionsRequest, string $contentType = self::contentTypes['sessionServiceListSessions'][0])
+    private function listSessionsRequest($sessionServiceListSessionsRequest, string $contentType = self::contentTypes['listSessions'][0])
     {
 
         if ($sessionServiceListSessionsRequest === null || (is_array($sessionServiceListSessionsRequest) && count($sessionServiceListSessionsRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionServiceListSessionsRequest when calling sessionServiceListSessions'
+                'Missing the required parameter $sessionServiceListSessionsRequest when calling listSessions'
             );
         }
 
 
-        $resourcePath = '/v2/sessions/search';
+        $resourcePath = '/zitadel.session.v2.SessionService/ListSessions';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -930,58 +897,39 @@ class SessionServiceApi
     }
 
     /**
-     * Operation sessionServiceSetSession
+     * Operation noOp
      *
-     * Update an existing session
+     * Dummy endpoint to retain union-member schemas
      *
-     * @param  string $sessionId \&quot;id of the session to update\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceSetSessionRequest $sessionServiceSetSessionRequest sessionServiceSetSessionRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceSetSession'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['noOp'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\SessionServiceSetSessionResponse
+     * @return \Zitadel\Client\Model\NoOp200Response4
      * @throws ApiException
      */
-    public function sessionServiceSetSession($sessionId, $sessionServiceSetSessionRequest, string $contentType = self::contentTypes['sessionServiceSetSession'][0])
+    public function noOp(string $contentType = self::contentTypes['noOp'][0])
     {
-        $request = $this->sessionServiceSetSessionRequest($sessionId, $sessionServiceSetSessionRequest, $contentType);
+        $request = $this->noOpRequest($contentType);
 
         $responseTypes = [
-            200 => '\Zitadel\Client\Model\SessionServiceSetSessionResponse',
-            403 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SessionServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SessionServiceRpcStatus',
+            200 => '\Zitadel\Client\Model\NoOp200Response4',
         ];
-        $defaultSignatureType = '\Zitadel\Client\Model\SessionServiceSetSessionResponse';
+        $defaultSignatureType = '\Zitadel\Client\Model\NoOp200Response4';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'sessionServiceSetSession'
+     * Create request for operation 'noOp'
      *
-     * @param  string $sessionId \&quot;id of the session to update\&quot; (required)
-     * @param  \Zitadel\Client\Model\SessionServiceSetSessionRequest $sessionServiceSetSessionRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sessionServiceSetSession'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['noOp'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function sessionServiceSetSessionRequest($sessionId, $sessionServiceSetSessionRequest, string $contentType = self::contentTypes['sessionServiceSetSession'][0])
+    private function noOpRequest(string $contentType = self::contentTypes['noOp'][0])
     {
 
-        if ($sessionId === null || (is_array($sessionId) && count($sessionId) === 0)) {
-            throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionId when calling sessionServiceSetSession'
-            );
-        }
 
-        if ($sessionServiceSetSessionRequest === null || (is_array($sessionServiceSetSessionRequest) && count($sessionServiceSetSessionRequest) === 0)) {
-            throw new \InvalidArgumentException(
-                'Missing the required parameter $sessionServiceSetSessionRequest when calling sessionServiceSetSession'
-            );
-        }
-
-
-        $resourcePath = '/v2/sessions/{sessionId}';
+        $resourcePath = '/202bd4b3';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -990,13 +938,111 @@ class SessionServiceApi
 
 
 
-        if ($sessionId !== null) {
-            $resourcePath = str_replace(
-                '{' . 'sessionId' . '}',
-                ObjectSerializer::toPathValue($sessionId),
-                $resourcePath
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'GET',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation setSession
+     *
+     * SetSession
+     *
+     * @param  \Zitadel\Client\Model\SessionServiceSetSessionRequest $sessionServiceSetSessionRequest sessionServiceSetSessionRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSession'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\SessionServiceSetSessionResponse
+     * @throws ApiException
+     */
+    public function setSession(    $sessionServiceSetSessionRequest,string $contentType = self::contentTypes['setSession'][0])
+    {
+        $request = $this->setSessionRequest($sessionServiceSetSessionRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\SessionServiceSetSessionResponse',
+            'default' => '\Zitadel\Client\Model\SessionServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\SessionServiceSetSessionResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'setSession'
+     *
+     * @param  \Zitadel\Client\Model\SessionServiceSetSessionRequest $sessionServiceSetSessionRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSession'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function setSessionRequest($sessionServiceSetSessionRequest, string $contentType = self::contentTypes['setSession'][0])
+    {
+
+        if ($sessionServiceSetSessionRequest === null || (is_array($sessionServiceSetSessionRequest) && count($sessionServiceSetSessionRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $sessionServiceSetSessionRequest when calling setSession'
             );
         }
+
+
+        $resourcePath = '/zitadel.session.v2.SessionService/SetSession';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
 
 
         $headers = $this->selectHeaders(
@@ -1051,7 +1097,7 @@ class SessionServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'PATCH',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody

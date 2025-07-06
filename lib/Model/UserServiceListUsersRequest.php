@@ -370,7 +370,7 @@ class UserServiceListUsersRequest implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Sets queries
      *
-     * @param \Zitadel\Client\Model\UserServiceSearchQuery[]|null $queries queries
+     * @param \Zitadel\Client\Model\UserServiceSearchQuery[]|null $queries criteria the client is looking for
      *
      * @return self
      */

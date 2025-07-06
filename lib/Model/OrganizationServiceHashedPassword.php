@@ -284,14 +284,6 @@ class OrganizationServiceHashedPassword implements ModelInterface, ArrayAccess, 
         if ($this->container['hash'] === null) {
             $invalidProperties[] = "'hash' can't be null";
         }
-        if ((mb_strlen($this->container['hash']) > 200)) {
-            $invalidProperties[] = "invalid value for 'hash', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['hash']) < 1)) {
-            $invalidProperties[] = "invalid value for 'hash', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -320,7 +312,7 @@ class OrganizationServiceHashedPassword implements ModelInterface, ArrayAccess, 
     /**
      * Sets hash
      *
-     * @param string $hash \"Encoded hash of a password in Modular Crypt Format: https://zitadel.com/docs/concepts/architecture/secrets#hashed-secrets\"
+     * @param string $hash hash
      *
      * @return self
      */
@@ -329,13 +321,6 @@ class OrganizationServiceHashedPassword implements ModelInterface, ArrayAccess, 
         if (is_null($hash)) {
             throw new \InvalidArgumentException('non-nullable hash cannot be null');
         }
-        if ((mb_strlen($hash) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $hash when calling OrganizationServiceHashedPassword., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($hash) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $hash when calling OrganizationServiceHashedPassword., must be bigger than or equal to 1.');
-        }
-
         $this->container['hash'] = $hash;
 
         return $this;

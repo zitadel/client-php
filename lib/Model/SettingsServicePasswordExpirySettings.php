@@ -57,8 +57,8 @@ class SettingsServicePasswordExpirySettings implements ModelInterface, ArrayAcce
       * @var string[]
       */
     protected static $openAPITypes = [
-        'maxAgeDays' => 'string',
-        'expireWarnDays' => 'string',
+        'maxAgeDays' => 'mixed',
+        'expireWarnDays' => 'mixed',
         'resourceOwnerType' => '\Zitadel\Client\Model\SettingsServiceResourceOwnerType'
     ];
 
@@ -70,8 +70,8 @@ class SettingsServicePasswordExpirySettings implements ModelInterface, ArrayAcce
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'maxAgeDays' => 'uint64',
-        'expireWarnDays' => 'uint64',
+        'maxAgeDays' => 'int64',
+        'expireWarnDays' => 'int64',
         'resourceOwnerType' => null
     ];
 
@@ -81,8 +81,8 @@ class SettingsServicePasswordExpirySettings implements ModelInterface, ArrayAcce
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'maxAgeDays' => false,
-        'expireWarnDays' => false,
+        'maxAgeDays' => true,
+        'expireWarnDays' => true,
         'resourceOwnerType' => false
     ];
 
@@ -306,7 +306,7 @@ class SettingsServicePasswordExpirySettings implements ModelInterface, ArrayAcce
     /**
      * Gets maxAgeDays
      *
-     * @return string|null
+     * @return mixed|null
      */
     public function getMaxAgeDays()
     {
@@ -316,14 +316,21 @@ class SettingsServicePasswordExpirySettings implements ModelInterface, ArrayAcce
     /**
      * Sets maxAgeDays
      *
-     * @param string|null $maxAgeDays Amount of days after which a password will expire. The user will be forced to change the password on the following authentication.
+     * @param mixed|null $maxAgeDays Amount of days after which a password will expire. The user will be forced to change the password on the following authentication.
      *
      * @return self
      */
     public function setMaxAgeDays($maxAgeDays)
     {
         if (is_null($maxAgeDays)) {
-            throw new \InvalidArgumentException('non-nullable maxAgeDays cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'maxAgeDays');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('maxAgeDays', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['maxAgeDays'] = $maxAgeDays;
 
@@ -333,7 +340,7 @@ class SettingsServicePasswordExpirySettings implements ModelInterface, ArrayAcce
     /**
      * Gets expireWarnDays
      *
-     * @return string|null
+     * @return mixed|null
      */
     public function getExpireWarnDays()
     {
@@ -343,14 +350,21 @@ class SettingsServicePasswordExpirySettings implements ModelInterface, ArrayAcce
     /**
      * Sets expireWarnDays
      *
-     * @param string|null $expireWarnDays Amount of days after which the user should be notified of the upcoming expiry. ZITADEL will not notify the user.
+     * @param mixed|null $expireWarnDays Amount of days after which the user should be notified of the upcoming expiry. ZITADEL will not notify the user.
      *
      * @return self
      */
     public function setExpireWarnDays($expireWarnDays)
     {
         if (is_null($expireWarnDays)) {
-            throw new \InvalidArgumentException('non-nullable expireWarnDays cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'expireWarnDays');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('expireWarnDays', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['expireWarnDays'] = $expireWarnDays;
 

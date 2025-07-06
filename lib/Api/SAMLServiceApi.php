@@ -66,10 +66,13 @@ class SAMLServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'sAMLServiceCreateResponse' => [
+        'createResponse' => [
             'application/json',
         ],
-        'sAMLServiceGetSAMLRequest' => [
+        'getSAMLRequest' => [
+            'application/json',
+        ],
+        'noOp' => [
             'application/json',
         ],
     ];
@@ -437,58 +440,48 @@ class SAMLServiceApi
     }
 
     /**
-     * Operation sAMLServiceCreateResponse
+     * Operation createResponse
      *
-     * Finalize a SAML Request and get the response.
+     * CreateResponse
      *
-     * @param  string $samlRequestId ID of the SAML Request. (required)
      * @param  \Zitadel\Client\Model\SAMLServiceCreateResponseRequest $sAMLServiceCreateResponseRequest sAMLServiceCreateResponseRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sAMLServiceCreateResponse'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createResponse'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SAMLServiceCreateResponseResponse
      * @throws ApiException
      */
-    public function sAMLServiceCreateResponse($samlRequestId, $sAMLServiceCreateResponseRequest, string $contentType = self::contentTypes['sAMLServiceCreateResponse'][0])
+    public function createResponse(    $sAMLServiceCreateResponseRequest,string $contentType = self::contentTypes['createResponse'][0])
     {
-        $request = $this->sAMLServiceCreateResponseRequest($samlRequestId, $sAMLServiceCreateResponseRequest, $contentType);
+        $request = $this->createResponseRequest($sAMLServiceCreateResponseRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SAMLServiceCreateResponseResponse',
-            403 => '\Zitadel\Client\Model\SAMLServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SAMLServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SAMLServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SAMLServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SAMLServiceCreateResponseResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'sAMLServiceCreateResponse'
+     * Create request for operation 'createResponse'
      *
-     * @param  string $samlRequestId ID of the SAML Request. (required)
      * @param  \Zitadel\Client\Model\SAMLServiceCreateResponseRequest $sAMLServiceCreateResponseRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sAMLServiceCreateResponse'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createResponse'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function sAMLServiceCreateResponseRequest($samlRequestId, $sAMLServiceCreateResponseRequest, string $contentType = self::contentTypes['sAMLServiceCreateResponse'][0])
+    private function createResponseRequest($sAMLServiceCreateResponseRequest, string $contentType = self::contentTypes['createResponse'][0])
     {
-
-        if ($samlRequestId === null || (is_array($samlRequestId) && count($samlRequestId) === 0)) {
-            throw new \InvalidArgumentException(
-                'Missing the required parameter $samlRequestId when calling sAMLServiceCreateResponse'
-            );
-        }
 
         if ($sAMLServiceCreateResponseRequest === null || (is_array($sAMLServiceCreateResponseRequest) && count($sAMLServiceCreateResponseRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $sAMLServiceCreateResponseRequest when calling sAMLServiceCreateResponse'
+                'Missing the required parameter $sAMLServiceCreateResponseRequest when calling createResponse'
             );
         }
 
 
-        $resourcePath = '/v2/saml/saml_requests/{samlRequestId}';
+        $resourcePath = '/zitadel.saml.v2.SAMLService/CreateResponse';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -497,13 +490,6 @@ class SAMLServiceApi
 
 
 
-        if ($samlRequestId !== null) {
-            $resourcePath = str_replace(
-                '{' . 'samlRequestId' . '}',
-                ObjectSerializer::toPathValue($samlRequestId),
-                $resourcePath
-            );
-        }
 
 
         $headers = $this->selectHeaders(
@@ -566,50 +552,48 @@ class SAMLServiceApi
     }
 
     /**
-     * Operation sAMLServiceGetSAMLRequest
+     * Operation getSAMLRequest
      *
-     * Get SAML Request details
+     * GetSAMLRequest
      *
-     * @param  string $samlRequestId ID of the SAML Request, as obtained from the redirect URL. (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sAMLServiceGetSAMLRequest'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SAMLServiceGetSAMLRequestRequest $sAMLServiceGetSAMLRequestRequest sAMLServiceGetSAMLRequestRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSAMLRequest'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\SAMLServiceGetSAMLRequestResponse
      * @throws ApiException
      */
-    public function sAMLServiceGetSAMLRequest($samlRequestId, string $contentType = self::contentTypes['sAMLServiceGetSAMLRequest'][0])
+    public function getSAMLRequest(    $sAMLServiceGetSAMLRequestRequest,string $contentType = self::contentTypes['getSAMLRequest'][0])
     {
-        $request = $this->sAMLServiceGetSAMLRequestRequest($samlRequestId, $contentType);
+        $request = $this->getSAMLRequestRequest($sAMLServiceGetSAMLRequestRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\SAMLServiceGetSAMLRequestResponse',
-            403 => '\Zitadel\Client\Model\SAMLServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\SAMLServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\SAMLServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\SAMLServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\SAMLServiceGetSAMLRequestResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'sAMLServiceGetSAMLRequest'
+     * Create request for operation 'getSAMLRequest'
      *
-     * @param  string $samlRequestId ID of the SAML Request, as obtained from the redirect URL. (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sAMLServiceGetSAMLRequest'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\SAMLServiceGetSAMLRequestRequest $sAMLServiceGetSAMLRequestRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSAMLRequest'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function sAMLServiceGetSAMLRequestRequest($samlRequestId, string $contentType = self::contentTypes['sAMLServiceGetSAMLRequest'][0])
+    private function getSAMLRequestRequest($sAMLServiceGetSAMLRequestRequest, string $contentType = self::contentTypes['getSAMLRequest'][0])
     {
 
-        if ($samlRequestId === null || (is_array($samlRequestId) && count($samlRequestId) === 0)) {
+        if ($sAMLServiceGetSAMLRequestRequest === null || (is_array($sAMLServiceGetSAMLRequestRequest) && count($sAMLServiceGetSAMLRequestRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $samlRequestId when calling sAMLServiceGetSAMLRequest'
+                'Missing the required parameter $sAMLServiceGetSAMLRequestRequest when calling getSAMLRequest'
             );
         }
 
 
-        $resourcePath = '/v2/saml/saml_requests/{samlRequestId}';
+        $resourcePath = '/zitadel.saml.v2.SAMLService/GetSAMLRequest';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -618,13 +602,109 @@ class SAMLServiceApi
 
 
 
-        if ($samlRequestId !== null) {
-            $resourcePath = str_replace(
-                '{' . 'samlRequestId' . '}',
-                ObjectSerializer::toPathValue($samlRequestId),
-                $resourcePath
-            );
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($sAMLServiceGetSAMLRequestRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($sAMLServiceGetSAMLRequestRequest));
+            } else {
+                $httpBody = $sAMLServiceGetSAMLRequestRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
         }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation noOp
+     *
+     * Dummy endpoint to retain union-member schemas
+     *
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['noOp'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\NoOp200Response9
+     * @throws ApiException
+     */
+    public function noOp(string $contentType = self::contentTypes['noOp'][0])
+    {
+        $request = $this->noOpRequest($contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\NoOp200Response9',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\NoOp200Response9';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'noOp'
+     *
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['noOp'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function noOpRequest(string $contentType = self::contentTypes['noOp'][0])
+    {
+
+
+        $resourcePath = '/304d95ce';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
 
 
         $headers = $this->selectHeaders(

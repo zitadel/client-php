@@ -59,7 +59,7 @@ class UserServiceRegisterU2FResponse implements ModelInterface, ArrayAccess, \Js
     protected static $openAPITypes = [
         'details' => '\Zitadel\Client\Model\UserServiceDetails',
         'u2fId' => 'string',
-        'publicKeyCredentialCreationOptions' => 'object'
+        'publicKeyCredentialCreationOptions' => 'array<string,\Zitadel\Client\Model\UserServiceValue>'
     ];
 
     /**
@@ -360,7 +360,7 @@ class UserServiceRegisterU2FResponse implements ModelInterface, ArrayAccess, \Js
     /**
      * Gets publicKeyCredentialCreationOptions
      *
-     * @return object|null
+     * @return array<string,\Zitadel\Client\Model\UserServiceValue>|null
      */
     public function getPublicKeyCredentialCreationOptions()
     {
@@ -370,7 +370,7 @@ class UserServiceRegisterU2FResponse implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets publicKeyCredentialCreationOptions
      *
-     * @param object|null $publicKeyCredentialCreationOptions Options for Credential Creation (dictionary PublicKeyCredentialCreationOptions). Generated helper methods transform the field to JSON, for use in a WebauthN client. See also:  https://www.w3.org/TR/webauthn/#dictdef-publickeycredentialcreationoptions
+     * @param array<string,\Zitadel\Client\Model\UserServiceValue>|null $publicKeyCredentialCreationOptions `Struct` represents a structured data value, consisting of fields  which map to dynamically typed values. In some languages, `Struct`  might be supported by a native representation. For example, in  scripting languages like JS a struct is represented as an  object. The details of that representation are described together  with the proto support for the language.   The JSON representation for `Struct` is JSON object.
      *
      * @return self
      */

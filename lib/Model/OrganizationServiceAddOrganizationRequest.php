@@ -58,7 +58,8 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
       */
     protected static $openAPITypes = [
         'name' => 'string',
-        'admins' => '\Zitadel\Client\Model\OrganizationServiceAddOrganizationRequestAdmin[]'
+        'admins' => '\Zitadel\Client\Model\OrganizationServiceAdmin[]',
+        'orgId' => 'string'
     ];
 
     /**
@@ -70,7 +71,8 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
       */
     protected static $openAPIFormats = [
         'name' => null,
-        'admins' => null
+        'admins' => null,
+        'orgId' => null
     ];
 
     /**
@@ -80,7 +82,8 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
       */
     protected static array $openAPINullables = [
         'name' => false,
-        'admins' => false
+        'admins' => false,
+        'orgId' => true
     ];
 
     /**
@@ -170,7 +173,8 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
      */
     protected static $attributeMap = [
         'name' => 'name',
-        'admins' => 'admins'
+        'admins' => 'admins',
+        'orgId' => 'orgId'
     ];
 
     /**
@@ -180,7 +184,8 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
      */
     protected static $setters = [
         'name' => 'setName',
-        'admins' => 'setAdmins'
+        'admins' => 'setAdmins',
+        'orgId' => 'setOrgId'
     ];
 
     /**
@@ -190,7 +195,8 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
      */
     protected static $getters = [
         'name' => 'getName',
-        'admins' => 'getAdmins'
+        'admins' => 'getAdmins',
+        'orgId' => 'getOrgId'
     ];
 
     /**
@@ -252,6 +258,7 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
     {
         $this->setIfExists('name', $data ?? [], null);
         $this->setIfExists('admins', $data ?? [], null);
+        $this->setIfExists('orgId', $data ?? [], null);
     }
 
     /**
@@ -284,14 +291,6 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
         if ($this->container['name'] === null) {
             $invalidProperties[] = "'name' can't be null";
         }
-        if ((mb_strlen($this->container['name']) > 200)) {
-            $invalidProperties[] = "invalid value for 'name', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['name']) < 1)) {
-            $invalidProperties[] = "invalid value for 'name', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -329,13 +328,6 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
         if (is_null($name)) {
             throw new \InvalidArgumentException('non-nullable name cannot be null');
         }
-        if ((mb_strlen($name) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $name when calling OrganizationServiceAddOrganizationRequest., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($name) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $name when calling OrganizationServiceAddOrganizationRequest., must be bigger than or equal to 1.');
-        }
-
         $this->container['name'] = $name;
 
         return $this;
@@ -344,7 +336,7 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
     /**
      * Gets admins
      *
-     * @return \Zitadel\Client\Model\OrganizationServiceAddOrganizationRequestAdmin[]|null
+     * @return \Zitadel\Client\Model\OrganizationServiceAdmin[]|null
      */
     public function getAdmins()
     {
@@ -354,7 +346,7 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
     /**
      * Sets admins
      *
-     * @param \Zitadel\Client\Model\OrganizationServiceAddOrganizationRequestAdmin[]|null $admins admins
+     * @param \Zitadel\Client\Model\OrganizationServiceAdmin[]|null $admins admins
      *
      * @return self
      */
@@ -364,6 +356,40 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
             throw new \InvalidArgumentException('non-nullable admins cannot be null');
         }
         $this->container['admins'] = $admins;
+
+        return $this;
+    }
+
+    /**
+     * Gets orgId
+     *
+     * @return string|null
+     */
+    public function getOrgId()
+    {
+        return $this->container['orgId'];
+    }
+
+    /**
+     * Sets orgId
+     *
+     * @param string|null $orgId optionally set your own id unique for the organization.
+     *
+     * @return self
+     */
+    public function setOrgId($orgId)
+    {
+        if (is_null($orgId)) {
+            array_push($this->openAPINullablesSetToNull, 'orgId');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('orgId', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['orgId'] = $orgId;
 
         return $this;
     }

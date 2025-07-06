@@ -59,6 +59,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     protected static $openAPITypes = [
         'details' => '\Zitadel\Client\Model\UserServiceDetails',
         'authUrl' => 'string',
+        'formData' => '\Zitadel\Client\Model\UserServiceFormData',
         'idpIntent' => '\Zitadel\Client\Model\UserServiceIDPIntent',
         'postForm' => 'string'
     ];
@@ -73,6 +74,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     protected static $openAPIFormats = [
         'details' => null,
         'authUrl' => null,
+        'formData' => null,
         'idpIntent' => null,
         'postForm' => 'byte'
     ];
@@ -85,6 +87,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     protected static array $openAPINullables = [
         'details' => false,
         'authUrl' => false,
+        'formData' => false,
         'idpIntent' => false,
         'postForm' => false
     ];
@@ -177,6 +180,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     protected static $attributeMap = [
         'details' => 'details',
         'authUrl' => 'authUrl',
+        'formData' => 'formData',
         'idpIntent' => 'idpIntent',
         'postForm' => 'postForm'
     ];
@@ -189,6 +193,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     protected static $setters = [
         'details' => 'setDetails',
         'authUrl' => 'setAuthUrl',
+        'formData' => 'setFormData',
         'idpIntent' => 'setIdpIntent',
         'postForm' => 'setPostForm'
     ];
@@ -201,6 +206,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     protected static $getters = [
         'details' => 'getDetails',
         'authUrl' => 'getAuthUrl',
+        'formData' => 'getFormData',
         'idpIntent' => 'getIdpIntent',
         'postForm' => 'getPostForm'
     ];
@@ -264,6 +270,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     {
         $this->setIfExists('details', $data ?? [], null);
         $this->setIfExists('authUrl', $data ?? [], null);
+        $this->setIfExists('formData', $data ?? [], null);
         $this->setIfExists('idpIntent', $data ?? [], null);
         $this->setIfExists('postForm', $data ?? [], null);
     }
@@ -295,6 +302,18 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     {
         $invalidProperties = [];
 
+        if ($this->container['authUrl'] === null) {
+            $invalidProperties[] = "'authUrl' can't be null";
+        }
+        if ($this->container['formData'] === null) {
+            $invalidProperties[] = "'formData' can't be null";
+        }
+        if ($this->container['idpIntent'] === null) {
+            $invalidProperties[] = "'idpIntent' can't be null";
+        }
+        if ($this->container['postForm'] === null) {
+            $invalidProperties[] = "'postForm' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -340,7 +359,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     /**
      * Gets authUrl
      *
-     * @return string|null
+     * @return string
      */
     public function getAuthUrl()
     {
@@ -350,7 +369,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     /**
      * Sets authUrl
      *
-     * @param string|null $authUrl URL to which the client should redirect
+     * @param string $authUrl authUrl
      *
      * @return self
      */
@@ -365,9 +384,36 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     }
 
     /**
+     * Gets formData
+     *
+     * @return \Zitadel\Client\Model\UserServiceFormData
+     */
+    public function getFormData()
+    {
+        return $this->container['formData'];
+    }
+
+    /**
+     * Sets formData
+     *
+     * @param \Zitadel\Client\Model\UserServiceFormData $formData formData
+     *
+     * @return self
+     */
+    public function setFormData($formData)
+    {
+        if (is_null($formData)) {
+            throw new \InvalidArgumentException('non-nullable formData cannot be null');
+        }
+        $this->container['formData'] = $formData;
+
+        return $this;
+    }
+
+    /**
      * Gets idpIntent
      *
-     * @return \Zitadel\Client\Model\UserServiceIDPIntent|null
+     * @return \Zitadel\Client\Model\UserServiceIDPIntent
      */
     public function getIdpIntent()
     {
@@ -377,7 +423,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     /**
      * Sets idpIntent
      *
-     * @param \Zitadel\Client\Model\UserServiceIDPIntent|null $idpIntent idpIntent
+     * @param \Zitadel\Client\Model\UserServiceIDPIntent $idpIntent idpIntent
      *
      * @return self
      */
@@ -394,7 +440,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     /**
      * Gets postForm
      *
-     * @return string|null
+     * @return string
      */
     public function getPostForm()
     {
@@ -404,7 +450,7 @@ class UserServiceStartIdentityProviderIntentResponse implements ModelInterface, 
     /**
      * Sets postForm
      *
-     * @param string|null $postForm POST call information
+     * @param string $postForm POST call information  Deprecated: Use form_data instead
      *
      * @return self
      */

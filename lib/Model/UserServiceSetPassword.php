@@ -57,8 +57,8 @@ class UserServiceSetPassword implements ModelInterface, ArrayAccess, \JsonSerial
       * @var string[]
       */
     protected static $openAPITypes = [
-        'password' => '\Zitadel\Client\Model\UserServicePassword',
         'hashedPassword' => '\Zitadel\Client\Model\UserServiceHashedPassword',
+        'password' => '\Zitadel\Client\Model\UserServicePassword',
         'currentPassword' => 'string',
         'verificationCode' => 'string'
     ];
@@ -71,8 +71,8 @@ class UserServiceSetPassword implements ModelInterface, ArrayAccess, \JsonSerial
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'password' => null,
         'hashedPassword' => null,
+        'password' => null,
         'currentPassword' => null,
         'verificationCode' => null
     ];
@@ -83,8 +83,8 @@ class UserServiceSetPassword implements ModelInterface, ArrayAccess, \JsonSerial
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'password' => false,
         'hashedPassword' => false,
+        'password' => false,
         'currentPassword' => false,
         'verificationCode' => false
     ];
@@ -175,8 +175,8 @@ class UserServiceSetPassword implements ModelInterface, ArrayAccess, \JsonSerial
      * @var string[]
      */
     protected static $attributeMap = [
-        'password' => 'password',
         'hashedPassword' => 'hashedPassword',
+        'password' => 'password',
         'currentPassword' => 'currentPassword',
         'verificationCode' => 'verificationCode'
     ];
@@ -187,8 +187,8 @@ class UserServiceSetPassword implements ModelInterface, ArrayAccess, \JsonSerial
      * @var string[]
      */
     protected static $setters = [
-        'password' => 'setPassword',
         'hashedPassword' => 'setHashedPassword',
+        'password' => 'setPassword',
         'currentPassword' => 'setCurrentPassword',
         'verificationCode' => 'setVerificationCode'
     ];
@@ -199,8 +199,8 @@ class UserServiceSetPassword implements ModelInterface, ArrayAccess, \JsonSerial
      * @var string[]
      */
     protected static $getters = [
-        'password' => 'getPassword',
         'hashedPassword' => 'getHashedPassword',
+        'password' => 'getPassword',
         'currentPassword' => 'getCurrentPassword',
         'verificationCode' => 'getVerificationCode'
     ];
@@ -262,8 +262,8 @@ class UserServiceSetPassword implements ModelInterface, ArrayAccess, \JsonSerial
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('password', $data ?? [], null);
         $this->setIfExists('hashedPassword', $data ?? [], null);
+        $this->setIfExists('password', $data ?? [], null);
         $this->setIfExists('currentPassword', $data ?? [], null);
         $this->setIfExists('verificationCode', $data ?? [], null);
     }
@@ -295,28 +295,18 @@ class UserServiceSetPassword implements ModelInterface, ArrayAccess, \JsonSerial
     {
         $invalidProperties = [];
 
+        if ($this->container['hashedPassword'] === null) {
+            $invalidProperties[] = "'hashedPassword' can't be null";
+        }
+        if ($this->container['password'] === null) {
+            $invalidProperties[] = "'password' can't be null";
+        }
         if ($this->container['currentPassword'] === null) {
             $invalidProperties[] = "'currentPassword' can't be null";
         }
-        if ((mb_strlen($this->container['currentPassword']) > 200)) {
-            $invalidProperties[] = "invalid value for 'currentPassword', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['currentPassword']) < 1)) {
-            $invalidProperties[] = "invalid value for 'currentPassword', the character length must be bigger than or equal to 1.";
-        }
-
         if ($this->container['verificationCode'] === null) {
             $invalidProperties[] = "'verificationCode' can't be null";
         }
-        if ((mb_strlen($this->container['verificationCode']) > 20)) {
-            $invalidProperties[] = "invalid value for 'verificationCode', the character length must be smaller than or equal to 20.";
-        }
-
-        if ((mb_strlen($this->container['verificationCode']) < 1)) {
-            $invalidProperties[] = "invalid value for 'verificationCode', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -333,36 +323,9 @@ class UserServiceSetPassword implements ModelInterface, ArrayAccess, \JsonSerial
 
 
     /**
-     * Gets password
-     *
-     * @return \Zitadel\Client\Model\UserServicePassword|null
-     */
-    public function getPassword()
-    {
-        return $this->container['password'];
-    }
-
-    /**
-     * Sets password
-     *
-     * @param \Zitadel\Client\Model\UserServicePassword|null $password password
-     *
-     * @return self
-     */
-    public function setPassword($password)
-    {
-        if (is_null($password)) {
-            throw new \InvalidArgumentException('non-nullable password cannot be null');
-        }
-        $this->container['password'] = $password;
-
-        return $this;
-    }
-
-    /**
      * Gets hashedPassword
      *
-     * @return \Zitadel\Client\Model\UserServiceHashedPassword|null
+     * @return \Zitadel\Client\Model\UserServiceHashedPassword
      */
     public function getHashedPassword()
     {
@@ -372,7 +335,7 @@ class UserServiceSetPassword implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets hashedPassword
      *
-     * @param \Zitadel\Client\Model\UserServiceHashedPassword|null $hashedPassword hashedPassword
+     * @param \Zitadel\Client\Model\UserServiceHashedPassword $hashedPassword hashedPassword
      *
      * @return self
      */
@@ -382,6 +345,33 @@ class UserServiceSetPassword implements ModelInterface, ArrayAccess, \JsonSerial
             throw new \InvalidArgumentException('non-nullable hashedPassword cannot be null');
         }
         $this->container['hashedPassword'] = $hashedPassword;
+
+        return $this;
+    }
+
+    /**
+     * Gets password
+     *
+     * @return \Zitadel\Client\Model\UserServicePassword
+     */
+    public function getPassword()
+    {
+        return $this->container['password'];
+    }
+
+    /**
+     * Sets password
+     *
+     * @param \Zitadel\Client\Model\UserServicePassword $password password
+     *
+     * @return self
+     */
+    public function setPassword($password)
+    {
+        if (is_null($password)) {
+            throw new \InvalidArgumentException('non-nullable password cannot be null');
+        }
+        $this->container['password'] = $password;
 
         return $this;
     }
@@ -408,13 +398,6 @@ class UserServiceSetPassword implements ModelInterface, ArrayAccess, \JsonSerial
         if (is_null($currentPassword)) {
             throw new \InvalidArgumentException('non-nullable currentPassword cannot be null');
         }
-        if ((mb_strlen($currentPassword) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $currentPassword when calling UserServiceSetPassword., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($currentPassword) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $currentPassword when calling UserServiceSetPassword., must be bigger than or equal to 1.');
-        }
-
         $this->container['currentPassword'] = $currentPassword;
 
         return $this;
@@ -433,7 +416,7 @@ class UserServiceSetPassword implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets verificationCode
      *
-     * @param string $verificationCode \"the verification code generated during password reset request\"
+     * @param string $verificationCode verificationCode
      *
      * @return self
      */
@@ -442,13 +425,6 @@ class UserServiceSetPassword implements ModelInterface, ArrayAccess, \JsonSerial
         if (is_null($verificationCode)) {
             throw new \InvalidArgumentException('non-nullable verificationCode cannot be null');
         }
-        if ((mb_strlen($verificationCode) > 20)) {
-            throw new \InvalidArgumentException('invalid length for $verificationCode when calling UserServiceSetPassword., must be smaller than or equal to 20.');
-        }
-        if ((mb_strlen($verificationCode) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $verificationCode when calling UserServiceSetPassword., must be bigger than or equal to 1.');
-        }
-
         $this->container['verificationCode'] = $verificationCode;
 
         return $this;
