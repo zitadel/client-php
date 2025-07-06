@@ -29,7 +29,7 @@ class UsePrivateKeySpec extends AbstractIntegrationTest
     public function testRetrievesGeneralSettingsWithValidAuth(): void
     {
         $client = Zitadel::withPrivateKey(self::getBaseUrl(), self::getJwtKey());
-        $client->settings->settingsServiceGetGeneralSettings();
+        $client->settings->getGeneralSettings();
     }
 
     /**
@@ -41,6 +41,6 @@ class UsePrivateKeySpec extends AbstractIntegrationTest
         $invalid = Zitadel::withPrivateKey("https://zitadel.cloud", self::getJwtKey());
 
         $this->expectException(ZitadelException::class);
-        $invalid->settings->settingsServiceGetGeneralSettings();
+        $invalid->settings->getGeneralSettings();
     }
 }

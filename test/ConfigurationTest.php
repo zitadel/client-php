@@ -42,7 +42,7 @@ class ConfigurationTest extends TestCase
         $config = new Configuration($authenticator);
 
         $this->assertMatchesRegularExpression(
-            '/^zitadel-client\/\d\.\d\.\d \(lang=php; lang_version=[^;]+; os=[^;]+; arch=[^;]+\)$/',
+            '/^zitadel-client\/\d+\.\d+\.\d+ \(lang=php; lang_version=[^;]+; os=[^;]+; arch=[^;]+\)$/',
             $config->getUserAgent()
         );
         $config->setUserAgent('CustomUserAgent/1.0');
