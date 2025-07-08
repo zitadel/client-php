@@ -57,7 +57,9 @@ class UserServiceVerifyPasskeyRegistrationRequest implements ModelInterface, Arr
       * @var string[]
       */
     protected static $openAPITypes = [
-        'publicKeyCredential' => 'object',
+        'userId' => 'string',
+        'passkeyId' => 'string',
+        'publicKeyCredential' => 'array<string,mixed>',
         'passkeyName' => 'string'
     ];
 
@@ -69,6 +71,8 @@ class UserServiceVerifyPasskeyRegistrationRequest implements ModelInterface, Arr
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
+        'userId' => null,
+        'passkeyId' => null,
         'publicKeyCredential' => null,
         'passkeyName' => null
     ];
@@ -79,6 +83,8 @@ class UserServiceVerifyPasskeyRegistrationRequest implements ModelInterface, Arr
       * @var boolean[]
       */
     protected static array $openAPINullables = [
+        'userId' => false,
+        'passkeyId' => false,
         'publicKeyCredential' => false,
         'passkeyName' => false
     ];
@@ -169,6 +175,8 @@ class UserServiceVerifyPasskeyRegistrationRequest implements ModelInterface, Arr
      * @var string[]
      */
     protected static $attributeMap = [
+        'userId' => 'userId',
+        'passkeyId' => 'passkeyId',
         'publicKeyCredential' => 'publicKeyCredential',
         'passkeyName' => 'passkeyName'
     ];
@@ -179,6 +187,8 @@ class UserServiceVerifyPasskeyRegistrationRequest implements ModelInterface, Arr
      * @var string[]
      */
     protected static $setters = [
+        'userId' => 'setUserId',
+        'passkeyId' => 'setPasskeyId',
         'publicKeyCredential' => 'setPublicKeyCredential',
         'passkeyName' => 'setPasskeyName'
     ];
@@ -189,6 +199,8 @@ class UserServiceVerifyPasskeyRegistrationRequest implements ModelInterface, Arr
      * @var string[]
      */
     protected static $getters = [
+        'userId' => 'getUserId',
+        'passkeyId' => 'getPasskeyId',
         'publicKeyCredential' => 'getPublicKeyCredential',
         'passkeyName' => 'getPasskeyName'
     ];
@@ -250,6 +262,8 @@ class UserServiceVerifyPasskeyRegistrationRequest implements ModelInterface, Arr
      */
     public function __construct(?array $data = null)
     {
+        $this->setIfExists('userId', $data ?? [], null);
+        $this->setIfExists('passkeyId', $data ?? [], null);
         $this->setIfExists('publicKeyCredential', $data ?? [], null);
         $this->setIfExists('passkeyName', $data ?? [], null);
     }
@@ -281,20 +295,18 @@ class UserServiceVerifyPasskeyRegistrationRequest implements ModelInterface, Arr
     {
         $invalidProperties = [];
 
+        if ($this->container['userId'] === null) {
+            $invalidProperties[] = "'userId' can't be null";
+        }
+        if ($this->container['passkeyId'] === null) {
+            $invalidProperties[] = "'passkeyId' can't be null";
+        }
         if ($this->container['publicKeyCredential'] === null) {
             $invalidProperties[] = "'publicKeyCredential' can't be null";
         }
         if ($this->container['passkeyName'] === null) {
             $invalidProperties[] = "'passkeyName' can't be null";
         }
-        if ((mb_strlen($this->container['passkeyName']) > 200)) {
-            $invalidProperties[] = "invalid value for 'passkeyName', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['passkeyName']) < 1)) {
-            $invalidProperties[] = "invalid value for 'passkeyName', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -311,9 +323,63 @@ class UserServiceVerifyPasskeyRegistrationRequest implements ModelInterface, Arr
 
 
     /**
+     * Gets userId
+     *
+     * @return string
+     */
+    public function getUserId()
+    {
+        return $this->container['userId'];
+    }
+
+    /**
+     * Sets userId
+     *
+     * @param string $userId userId
+     *
+     * @return self
+     */
+    public function setUserId($userId)
+    {
+        if (is_null($userId)) {
+            throw new \InvalidArgumentException('non-nullable userId cannot be null');
+        }
+        $this->container['userId'] = $userId;
+
+        return $this;
+    }
+
+    /**
+     * Gets passkeyId
+     *
+     * @return string
+     */
+    public function getPasskeyId()
+    {
+        return $this->container['passkeyId'];
+    }
+
+    /**
+     * Sets passkeyId
+     *
+     * @param string $passkeyId passkeyId
+     *
+     * @return self
+     */
+    public function setPasskeyId($passkeyId)
+    {
+        if (is_null($passkeyId)) {
+            throw new \InvalidArgumentException('non-nullable passkeyId cannot be null');
+        }
+        $this->container['passkeyId'] = $passkeyId;
+
+        return $this;
+    }
+
+    /**
      * Gets publicKeyCredential
      *
-     * @return object
+     * @return array<string,mixed>
      */
     public function getPublicKeyCredential()
     {
@@ -323,7 +389,7 @@ class UserServiceVerifyPasskeyRegistrationRequest implements ModelInterface, Arr
     /**
      * Sets publicKeyCredential
      *
-     * @param object $publicKeyCredential PublicKeyCredential Interface. Generated helper methods populate the field from JSON created by a WebauthN client. See also:  https://www.w3.org/TR/webauthn/#publickeycredential
+     * @param array<string,mixed> $publicKeyCredential `Struct` represents a structured data value, consisting of fields  which map to dynamically typed values. In some languages, `Struct`  might be supported by a native representation. For example, in  scripting languages like JS a struct is represented as an  object. The details of that representation are described together  with the proto support for the language.   The JSON representation for `Struct` is JSON object.
      *
      * @return self
      */
@@ -332,8 +398,6 @@ class UserServiceVerifyPasskeyRegistrationRequest implements ModelInterface, Arr
         if (is_null($publicKeyCredential)) {
             throw new \InvalidArgumentException('non-nullable publicKeyCredential cannot be null');
         }
-
-
         $this->container['publicKeyCredential'] = $publicKeyCredential;
 
         return $this;
@@ -361,13 +425,6 @@ class UserServiceVerifyPasskeyRegistrationRequest implements ModelInterface, Arr
         if (is_null($passkeyName)) {
             throw new \InvalidArgumentException('non-nullable passkeyName cannot be null');
         }
-        if ((mb_strlen($passkeyName) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $passkeyName when calling UserServiceVerifyPasskeyRegistrationRequest., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($passkeyName) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $passkeyName when calling UserServiceVerifyPasskeyRegistrationRequest., must be bigger than or equal to 1.');
-        }
-
         $this->container['passkeyName'] = $passkeyName;
 
         return $this;

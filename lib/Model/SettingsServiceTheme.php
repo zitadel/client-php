@@ -391,7 +391,7 @@ class SettingsServiceTheme implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets warnColor
      *
-     * @param string|null $warnColor hex value for warn color
+     * @param string|null $warnColor hex value for warning color
      *
      * @return self
      */
@@ -445,7 +445,7 @@ class SettingsServiceTheme implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets logoUrl
      *
-     * @param string|null $logoUrl url to the logo
+     * @param string|null $logoUrl url where the logo is served
      *
      * @return self
      */
@@ -472,7 +472,7 @@ class SettingsServiceTheme implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets iconUrl
      *
-     * @param string|null $iconUrl url to the icon
+     * @param string|null $iconUrl url where the icon is served
      *
      * @return self
      */

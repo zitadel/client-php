@@ -85,8 +85,8 @@ class UserServiceAddHumanUserResponse implements ModelInterface, ArrayAccess, \J
     protected static array $openAPINullables = [
         'userId' => false,
         'details' => false,
-        'emailCode' => false,
-        'phoneCode' => false
+        'emailCode' => true,
+        'phoneCode' => true
     ];
 
     /**
@@ -384,7 +384,14 @@ class UserServiceAddHumanUserResponse implements ModelInterface, ArrayAccess, \J
     public function setEmailCode($emailCode)
     {
         if (is_null($emailCode)) {
-            throw new \InvalidArgumentException('non-nullable emailCode cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'emailCode');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('emailCode', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['emailCode'] = $emailCode;
 
@@ -411,7 +418,14 @@ class UserServiceAddHumanUserResponse implements ModelInterface, ArrayAccess, \J
     public function setPhoneCode($phoneCode)
     {
         if (is_null($phoneCode)) {
-            throw new \InvalidArgumentException('non-nullable phoneCode cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'phoneCode');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('phoneCode', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['phoneCode'] = $phoneCode;
 

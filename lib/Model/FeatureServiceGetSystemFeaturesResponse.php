@@ -59,8 +59,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
     protected static $openAPITypes = [
         'details' => '\Zitadel\Client\Model\FeatureServiceDetails',
         'loginDefaultOrg' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
-        'oidcTriggerIntrospectionProjections' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
-        'oidcLegacyIntrospection' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'userSchema' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'oidcTokenExchange' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'improvedPerformance' => '\Zitadel\Client\Model\FeatureServiceImprovedPerformanceFeatureFlag',
@@ -81,8 +79,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
     protected static $openAPIFormats = [
         'details' => null,
         'loginDefaultOrg' => null,
-        'oidcTriggerIntrospectionProjections' => null,
-        'oidcLegacyIntrospection' => null,
         'userSchema' => null,
         'oidcTokenExchange' => null,
         'improvedPerformance' => null,
@@ -101,8 +97,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
     protected static array $openAPINullables = [
         'details' => false,
         'loginDefaultOrg' => false,
-        'oidcTriggerIntrospectionProjections' => false,
-        'oidcLegacyIntrospection' => false,
         'userSchema' => false,
         'oidcTokenExchange' => false,
         'improvedPerformance' => false,
@@ -201,8 +195,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
     protected static $attributeMap = [
         'details' => 'details',
         'loginDefaultOrg' => 'loginDefaultOrg',
-        'oidcTriggerIntrospectionProjections' => 'oidcTriggerIntrospectionProjections',
-        'oidcLegacyIntrospection' => 'oidcLegacyIntrospection',
         'userSchema' => 'userSchema',
         'oidcTokenExchange' => 'oidcTokenExchange',
         'improvedPerformance' => 'improvedPerformance',
@@ -221,8 +213,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
     protected static $setters = [
         'details' => 'setDetails',
         'loginDefaultOrg' => 'setLoginDefaultOrg',
-        'oidcTriggerIntrospectionProjections' => 'setOidcTriggerIntrospectionProjections',
-        'oidcLegacyIntrospection' => 'setOidcLegacyIntrospection',
         'userSchema' => 'setUserSchema',
         'oidcTokenExchange' => 'setOidcTokenExchange',
         'improvedPerformance' => 'setImprovedPerformance',
@@ -241,8 +231,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
     protected static $getters = [
         'details' => 'getDetails',
         'loginDefaultOrg' => 'getLoginDefaultOrg',
-        'oidcTriggerIntrospectionProjections' => 'getOidcTriggerIntrospectionProjections',
-        'oidcLegacyIntrospection' => 'getOidcLegacyIntrospection',
         'userSchema' => 'getUserSchema',
         'oidcTokenExchange' => 'getOidcTokenExchange',
         'improvedPerformance' => 'getImprovedPerformance',
@@ -312,8 +300,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
     {
         $this->setIfExists('details', $data ?? [], null);
         $this->setIfExists('loginDefaultOrg', $data ?? [], null);
-        $this->setIfExists('oidcTriggerIntrospectionProjections', $data ?? [], null);
-        $this->setIfExists('oidcLegacyIntrospection', $data ?? [], null);
         $this->setIfExists('userSchema', $data ?? [], null);
         $this->setIfExists('oidcTokenExchange', $data ?? [], null);
         $this->setIfExists('improvedPerformance', $data ?? [], null);
@@ -416,60 +402,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
             throw new \InvalidArgumentException('non-nullable loginDefaultOrg cannot be null');
         }
         $this->container['loginDefaultOrg'] = $loginDefaultOrg;
-
-        return $this;
-    }
-
-    /**
-     * Gets oidcTriggerIntrospectionProjections
-     *
-     * @return \Zitadel\Client\Model\FeatureServiceFeatureFlag|null
-     */
-    public function getOidcTriggerIntrospectionProjections()
-    {
-        return $this->container['oidcTriggerIntrospectionProjections'];
-    }
-
-    /**
-     * Sets oidcTriggerIntrospectionProjections
-     *
-     * @param \Zitadel\Client\Model\FeatureServiceFeatureFlag|null $oidcTriggerIntrospectionProjections oidcTriggerIntrospectionProjections
-     *
-     * @return self
-     */
-    public function setOidcTriggerIntrospectionProjections($oidcTriggerIntrospectionProjections)
-    {
-        if (is_null($oidcTriggerIntrospectionProjections)) {
-            throw new \InvalidArgumentException('non-nullable oidcTriggerIntrospectionProjections cannot be null');
-        }
-        $this->container['oidcTriggerIntrospectionProjections'] = $oidcTriggerIntrospectionProjections;
-
-        return $this;
-    }
-
-    /**
-     * Gets oidcLegacyIntrospection
-     *
-     * @return \Zitadel\Client\Model\FeatureServiceFeatureFlag|null
-     */
-    public function getOidcLegacyIntrospection()
-    {
-        return $this->container['oidcLegacyIntrospection'];
-    }
-
-    /**
-     * Sets oidcLegacyIntrospection
-     *
-     * @param \Zitadel\Client\Model\FeatureServiceFeatureFlag|null $oidcLegacyIntrospection oidcLegacyIntrospection
-     *
-     * @return self
-     */
-    public function setOidcLegacyIntrospection($oidcLegacyIntrospection)
-    {
-        if (is_null($oidcLegacyIntrospection)) {
-            throw new \InvalidArgumentException('non-nullable oidcLegacyIntrospection cannot be null');
-        }
-        $this->container['oidcLegacyIntrospection'] = $oidcLegacyIntrospection;
 
         return $this;
     }

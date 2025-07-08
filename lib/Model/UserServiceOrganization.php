@@ -57,8 +57,8 @@ class UserServiceOrganization implements ModelInterface, ArrayAccess, \JsonSeria
       * @var string[]
       */
     protected static $openAPITypes = [
-        'orgId' => 'string',
-        'orgDomain' => 'string'
+        'orgDomain' => 'string',
+        'orgId' => 'string'
     ];
 
     /**
@@ -69,8 +69,8 @@ class UserServiceOrganization implements ModelInterface, ArrayAccess, \JsonSeria
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'orgId' => null,
-        'orgDomain' => null
+        'orgDomain' => null,
+        'orgId' => null
     ];
 
     /**
@@ -79,8 +79,8 @@ class UserServiceOrganization implements ModelInterface, ArrayAccess, \JsonSeria
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'orgId' => false,
-        'orgDomain' => false
+        'orgDomain' => false,
+        'orgId' => false
     ];
 
     /**
@@ -169,8 +169,8 @@ class UserServiceOrganization implements ModelInterface, ArrayAccess, \JsonSeria
      * @var string[]
      */
     protected static $attributeMap = [
-        'orgId' => 'orgId',
-        'orgDomain' => 'orgDomain'
+        'orgDomain' => 'orgDomain',
+        'orgId' => 'orgId'
     ];
 
     /**
@@ -179,8 +179,8 @@ class UserServiceOrganization implements ModelInterface, ArrayAccess, \JsonSeria
      * @var string[]
      */
     protected static $setters = [
-        'orgId' => 'setOrgId',
-        'orgDomain' => 'setOrgDomain'
+        'orgDomain' => 'setOrgDomain',
+        'orgId' => 'setOrgId'
     ];
 
     /**
@@ -189,8 +189,8 @@ class UserServiceOrganization implements ModelInterface, ArrayAccess, \JsonSeria
      * @var string[]
      */
     protected static $getters = [
-        'orgId' => 'getOrgId',
-        'orgDomain' => 'getOrgDomain'
+        'orgDomain' => 'getOrgDomain',
+        'orgId' => 'getOrgId'
     ];
 
     /**
@@ -250,8 +250,8 @@ class UserServiceOrganization implements ModelInterface, ArrayAccess, \JsonSeria
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('orgId', $data ?? [], null);
         $this->setIfExists('orgDomain', $data ?? [], null);
+        $this->setIfExists('orgId', $data ?? [], null);
     }
 
     /**
@@ -297,33 +297,6 @@ class UserServiceOrganization implements ModelInterface, ArrayAccess, \JsonSeria
 
 
     /**
-     * Gets orgId
-     *
-     * @return string|null
-     */
-    public function getOrgId()
-    {
-        return $this->container['orgId'];
-    }
-
-    /**
-     * Sets orgId
-     *
-     * @param string|null $orgId orgId
-     *
-     * @return self
-     */
-    public function setOrgId($orgId)
-    {
-        if (is_null($orgId)) {
-            throw new \InvalidArgumentException('non-nullable orgId cannot be null');
-        }
-        $this->container['orgId'] = $orgId;
-
-        return $this;
-    }
-
-    /**
      * Gets orgDomain
      *
      * @return string|null
@@ -346,6 +319,33 @@ class UserServiceOrganization implements ModelInterface, ArrayAccess, \JsonSeria
             throw new \InvalidArgumentException('non-nullable orgDomain cannot be null');
         }
         $this->container['orgDomain'] = $orgDomain;
+
+        return $this;
+    }
+
+    /**
+     * Gets orgId
+     *
+     * @return string|null
+     */
+    public function getOrgId()
+    {
+        return $this->container['orgId'];
+    }
+
+    /**
+     * Sets orgId
+     *
+     * @param string|null $orgId orgId
+     *
+     * @return self
+     */
+    public function setOrgId($orgId)
+    {
+        if (is_null($orgId)) {
+            throw new \InvalidArgumentException('non-nullable orgId cannot be null');
+        }
+        $this->container['orgId'] = $orgId;
 
         return $this;
     }

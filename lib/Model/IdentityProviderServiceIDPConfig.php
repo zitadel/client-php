@@ -58,17 +58,17 @@ class IdentityProviderServiceIDPConfig implements ModelInterface, ArrayAccess, \
       */
     protected static $openAPITypes = [
         'options' => '\Zitadel\Client\Model\IdentityProviderServiceOptions',
-        'ldap' => '\Zitadel\Client\Model\IdentityProviderServiceLDAPConfig',
-        'google' => '\Zitadel\Client\Model\IdentityProviderServiceGoogleConfig',
-        'oauth' => '\Zitadel\Client\Model\IdentityProviderServiceOAuthConfig',
-        'oidc' => '\Zitadel\Client\Model\IdentityProviderServiceGenericOIDCConfig',
-        'jwt' => '\Zitadel\Client\Model\IdentityProviderServiceJWTConfig',
+        'apple' => '\Zitadel\Client\Model\IdentityProviderServiceAppleConfig',
+        'azureAd' => '\Zitadel\Client\Model\IdentityProviderServiceAzureADConfig',
         'github' => '\Zitadel\Client\Model\IdentityProviderServiceGitHubConfig',
         'githubEs' => '\Zitadel\Client\Model\IdentityProviderServiceGitHubEnterpriseServerConfig',
         'gitlab' => '\Zitadel\Client\Model\IdentityProviderServiceGitLabConfig',
         'gitlabSelfHosted' => '\Zitadel\Client\Model\IdentityProviderServiceGitLabSelfHostedConfig',
-        'azureAd' => '\Zitadel\Client\Model\IdentityProviderServiceAzureADConfig',
-        'apple' => '\Zitadel\Client\Model\IdentityProviderServiceAppleConfig',
+        'google' => '\Zitadel\Client\Model\IdentityProviderServiceGoogleConfig',
+        'jwt' => '\Zitadel\Client\Model\IdentityProviderServiceJWTConfig',
+        'ldap' => '\Zitadel\Client\Model\IdentityProviderServiceLDAPConfig',
+        'oauth' => '\Zitadel\Client\Model\IdentityProviderServiceOAuthConfig',
+        'oidc' => '\Zitadel\Client\Model\IdentityProviderServiceGenericOIDCConfig',
         'saml' => '\Zitadel\Client\Model\IdentityProviderServiceSAMLConfig'
     ];
 
@@ -81,17 +81,17 @@ class IdentityProviderServiceIDPConfig implements ModelInterface, ArrayAccess, \
       */
     protected static $openAPIFormats = [
         'options' => null,
-        'ldap' => null,
-        'google' => null,
-        'oauth' => null,
-        'oidc' => null,
-        'jwt' => null,
+        'apple' => null,
+        'azureAd' => null,
         'github' => null,
         'githubEs' => null,
         'gitlab' => null,
         'gitlabSelfHosted' => null,
-        'azureAd' => null,
-        'apple' => null,
+        'google' => null,
+        'jwt' => null,
+        'ldap' => null,
+        'oauth' => null,
+        'oidc' => null,
         'saml' => null
     ];
 
@@ -102,17 +102,17 @@ class IdentityProviderServiceIDPConfig implements ModelInterface, ArrayAccess, \
       */
     protected static array $openAPINullables = [
         'options' => false,
-        'ldap' => false,
-        'google' => false,
-        'oauth' => false,
-        'oidc' => false,
-        'jwt' => false,
+        'apple' => false,
+        'azureAd' => false,
         'github' => false,
         'githubEs' => false,
         'gitlab' => false,
         'gitlabSelfHosted' => false,
-        'azureAd' => false,
-        'apple' => false,
+        'google' => false,
+        'jwt' => false,
+        'ldap' => false,
+        'oauth' => false,
+        'oidc' => false,
         'saml' => false
     ];
 
@@ -203,17 +203,17 @@ class IdentityProviderServiceIDPConfig implements ModelInterface, ArrayAccess, \
      */
     protected static $attributeMap = [
         'options' => 'options',
-        'ldap' => 'ldap',
-        'google' => 'google',
-        'oauth' => 'oauth',
-        'oidc' => 'oidc',
-        'jwt' => 'jwt',
+        'apple' => 'apple',
+        'azureAd' => 'azureAd',
         'github' => 'github',
         'githubEs' => 'githubEs',
         'gitlab' => 'gitlab',
         'gitlabSelfHosted' => 'gitlabSelfHosted',
-        'azureAd' => 'azureAd',
-        'apple' => 'apple',
+        'google' => 'google',
+        'jwt' => 'jwt',
+        'ldap' => 'ldap',
+        'oauth' => 'oauth',
+        'oidc' => 'oidc',
         'saml' => 'saml'
     ];
 
@@ -224,17 +224,17 @@ class IdentityProviderServiceIDPConfig implements ModelInterface, ArrayAccess, \
      */
     protected static $setters = [
         'options' => 'setOptions',
-        'ldap' => 'setLdap',
-        'google' => 'setGoogle',
-        'oauth' => 'setOauth',
-        'oidc' => 'setOidc',
-        'jwt' => 'setJwt',
+        'apple' => 'setApple',
+        'azureAd' => 'setAzureAd',
         'github' => 'setGithub',
         'githubEs' => 'setGithubEs',
         'gitlab' => 'setGitlab',
         'gitlabSelfHosted' => 'setGitlabSelfHosted',
-        'azureAd' => 'setAzureAd',
-        'apple' => 'setApple',
+        'google' => 'setGoogle',
+        'jwt' => 'setJwt',
+        'ldap' => 'setLdap',
+        'oauth' => 'setOauth',
+        'oidc' => 'setOidc',
         'saml' => 'setSaml'
     ];
 
@@ -245,17 +245,17 @@ class IdentityProviderServiceIDPConfig implements ModelInterface, ArrayAccess, \
      */
     protected static $getters = [
         'options' => 'getOptions',
-        'ldap' => 'getLdap',
-        'google' => 'getGoogle',
-        'oauth' => 'getOauth',
-        'oidc' => 'getOidc',
-        'jwt' => 'getJwt',
+        'apple' => 'getApple',
+        'azureAd' => 'getAzureAd',
         'github' => 'getGithub',
         'githubEs' => 'getGithubEs',
         'gitlab' => 'getGitlab',
         'gitlabSelfHosted' => 'getGitlabSelfHosted',
-        'azureAd' => 'getAzureAd',
-        'apple' => 'getApple',
+        'google' => 'getGoogle',
+        'jwt' => 'getJwt',
+        'ldap' => 'getLdap',
+        'oauth' => 'getOauth',
+        'oidc' => 'getOidc',
         'saml' => 'getSaml'
     ];
 
@@ -317,17 +317,17 @@ class IdentityProviderServiceIDPConfig implements ModelInterface, ArrayAccess, \
     public function __construct(?array $data = null)
     {
         $this->setIfExists('options', $data ?? [], null);
-        $this->setIfExists('ldap', $data ?? [], null);
-        $this->setIfExists('google', $data ?? [], null);
-        $this->setIfExists('oauth', $data ?? [], null);
-        $this->setIfExists('oidc', $data ?? [], null);
-        $this->setIfExists('jwt', $data ?? [], null);
+        $this->setIfExists('apple', $data ?? [], null);
+        $this->setIfExists('azureAd', $data ?? [], null);
         $this->setIfExists('github', $data ?? [], null);
         $this->setIfExists('githubEs', $data ?? [], null);
         $this->setIfExists('gitlab', $data ?? [], null);
         $this->setIfExists('gitlabSelfHosted', $data ?? [], null);
-        $this->setIfExists('azureAd', $data ?? [], null);
-        $this->setIfExists('apple', $data ?? [], null);
+        $this->setIfExists('google', $data ?? [], null);
+        $this->setIfExists('jwt', $data ?? [], null);
+        $this->setIfExists('ldap', $data ?? [], null);
+        $this->setIfExists('oauth', $data ?? [], null);
+        $this->setIfExists('oidc', $data ?? [], null);
         $this->setIfExists('saml', $data ?? [], null);
     }
 
@@ -401,136 +401,55 @@ class IdentityProviderServiceIDPConfig implements ModelInterface, ArrayAccess, \
     }
 
     /**
-     * Gets ldap
+     * Gets apple
      *
-     * @return \Zitadel\Client\Model\IdentityProviderServiceLDAPConfig|null
+     * @return \Zitadel\Client\Model\IdentityProviderServiceAppleConfig|null
      */
-    public function getLdap()
+    public function getApple()
     {
-        return $this->container['ldap'];
+        return $this->container['apple'];
     }
 
     /**
-     * Sets ldap
+     * Sets apple
      *
-     * @param \Zitadel\Client\Model\IdentityProviderServiceLDAPConfig|null $ldap ldap
+     * @param \Zitadel\Client\Model\IdentityProviderServiceAppleConfig|null $apple apple
      *
      * @return self
      */
-    public function setLdap($ldap)
+    public function setApple($apple)
     {
-        if (is_null($ldap)) {
-            throw new \InvalidArgumentException('non-nullable ldap cannot be null');
+        if (is_null($apple)) {
+            throw new \InvalidArgumentException('non-nullable apple cannot be null');
         }
-        $this->container['ldap'] = $ldap;
+        $this->container['apple'] = $apple;
 
         return $this;
     }
 
     /**
-     * Gets google
+     * Gets azureAd
      *
-     * @return \Zitadel\Client\Model\IdentityProviderServiceGoogleConfig|null
+     * @return \Zitadel\Client\Model\IdentityProviderServiceAzureADConfig|null
      */
-    public function getGoogle()
+    public function getAzureAd()
     {
-        return $this->container['google'];
+        return $this->container['azureAd'];
     }
 
     /**
-     * Sets google
+     * Sets azureAd
      *
-     * @param \Zitadel\Client\Model\IdentityProviderServiceGoogleConfig|null $google google
+     * @param \Zitadel\Client\Model\IdentityProviderServiceAzureADConfig|null $azureAd azureAd
      *
      * @return self
      */
-    public function setGoogle($google)
+    public function setAzureAd($azureAd)
     {
-        if (is_null($google)) {
-            throw new \InvalidArgumentException('non-nullable google cannot be null');
+        if (is_null($azureAd)) {
+            throw new \InvalidArgumentException('non-nullable azureAd cannot be null');
         }
-        $this->container['google'] = $google;
-
-        return $this;
-    }
-
-    /**
-     * Gets oauth
-     *
-     * @return \Zitadel\Client\Model\IdentityProviderServiceOAuthConfig|null
-     */
-    public function getOauth()
-    {
-        return $this->container['oauth'];
-    }
-
-    /**
-     * Sets oauth
-     *
-     * @param \Zitadel\Client\Model\IdentityProviderServiceOAuthConfig|null $oauth oauth
-     *
-     * @return self
-     */
-    public function setOauth($oauth)
-    {
-        if (is_null($oauth)) {
-            throw new \InvalidArgumentException('non-nullable oauth cannot be null');
-        }
-        $this->container['oauth'] = $oauth;
-
-        return $this;
-    }
-
-    /**
-     * Gets oidc
-     *
-     * @return \Zitadel\Client\Model\IdentityProviderServiceGenericOIDCConfig|null
-     */
-    public function getOidc()
-    {
-        return $this->container['oidc'];
-    }
-
-    /**
-     * Sets oidc
-     *
-     * @param \Zitadel\Client\Model\IdentityProviderServiceGenericOIDCConfig|null $oidc oidc
-     *
-     * @return self
-     */
-    public function setOidc($oidc)
-    {
-        if (is_null($oidc)) {
-            throw new \InvalidArgumentException('non-nullable oidc cannot be null');
-        }
-        $this->container['oidc'] = $oidc;
-
-        return $this;
-    }
-
-    /**
-     * Gets jwt
-     *
-     * @return \Zitadel\Client\Model\IdentityProviderServiceJWTConfig|null
-     */
-    public function getJwt()
-    {
-        return $this->container['jwt'];
-    }
-
-    /**
-     * Sets jwt
-     *
-     * @param \Zitadel\Client\Model\IdentityProviderServiceJWTConfig|null $jwt jwt
-     *
-     * @return self
-     */
-    public function setJwt($jwt)
-    {
-        if (is_null($jwt)) {
-            throw new \InvalidArgumentException('non-nullable jwt cannot be null');
-        }
-        $this->container['jwt'] = $jwt;
+        $this->container['azureAd'] = $azureAd;
 
         return $this;
     }
@@ -644,55 +563,136 @@ class IdentityProviderServiceIDPConfig implements ModelInterface, ArrayAccess, \
     }
 
     /**
-     * Gets azureAd
+     * Gets google
      *
-     * @return \Zitadel\Client\Model\IdentityProviderServiceAzureADConfig|null
+     * @return \Zitadel\Client\Model\IdentityProviderServiceGoogleConfig|null
      */
-    public function getAzureAd()
+    public function getGoogle()
     {
-        return $this->container['azureAd'];
+        return $this->container['google'];
     }
 
     /**
-     * Sets azureAd
+     * Sets google
      *
-     * @param \Zitadel\Client\Model\IdentityProviderServiceAzureADConfig|null $azureAd azureAd
+     * @param \Zitadel\Client\Model\IdentityProviderServiceGoogleConfig|null $google google
      *
      * @return self
      */
-    public function setAzureAd($azureAd)
+    public function setGoogle($google)
     {
-        if (is_null($azureAd)) {
-            throw new \InvalidArgumentException('non-nullable azureAd cannot be null');
+        if (is_null($google)) {
+            throw new \InvalidArgumentException('non-nullable google cannot be null');
         }
-        $this->container['azureAd'] = $azureAd;
+        $this->container['google'] = $google;
 
         return $this;
     }
 
     /**
-     * Gets apple
+     * Gets jwt
      *
-     * @return \Zitadel\Client\Model\IdentityProviderServiceAppleConfig|null
+     * @return \Zitadel\Client\Model\IdentityProviderServiceJWTConfig|null
      */
-    public function getApple()
+    public function getJwt()
     {
-        return $this->container['apple'];
+        return $this->container['jwt'];
     }
 
     /**
-     * Sets apple
+     * Sets jwt
      *
-     * @param \Zitadel\Client\Model\IdentityProviderServiceAppleConfig|null $apple apple
+     * @param \Zitadel\Client\Model\IdentityProviderServiceJWTConfig|null $jwt jwt
      *
      * @return self
      */
-    public function setApple($apple)
+    public function setJwt($jwt)
     {
-        if (is_null($apple)) {
-            throw new \InvalidArgumentException('non-nullable apple cannot be null');
+        if (is_null($jwt)) {
+            throw new \InvalidArgumentException('non-nullable jwt cannot be null');
         }
-        $this->container['apple'] = $apple;
+        $this->container['jwt'] = $jwt;
+
+        return $this;
+    }
+
+    /**
+     * Gets ldap
+     *
+     * @return \Zitadel\Client\Model\IdentityProviderServiceLDAPConfig|null
+     */
+    public function getLdap()
+    {
+        return $this->container['ldap'];
+    }
+
+    /**
+     * Sets ldap
+     *
+     * @param \Zitadel\Client\Model\IdentityProviderServiceLDAPConfig|null $ldap ldap
+     *
+     * @return self
+     */
+    public function setLdap($ldap)
+    {
+        if (is_null($ldap)) {
+            throw new \InvalidArgumentException('non-nullable ldap cannot be null');
+        }
+        $this->container['ldap'] = $ldap;
+
+        return $this;
+    }
+
+    /**
+     * Gets oauth
+     *
+     * @return \Zitadel\Client\Model\IdentityProviderServiceOAuthConfig|null
+     */
+    public function getOauth()
+    {
+        return $this->container['oauth'];
+    }
+
+    /**
+     * Sets oauth
+     *
+     * @param \Zitadel\Client\Model\IdentityProviderServiceOAuthConfig|null $oauth oauth
+     *
+     * @return self
+     */
+    public function setOauth($oauth)
+    {
+        if (is_null($oauth)) {
+            throw new \InvalidArgumentException('non-nullable oauth cannot be null');
+        }
+        $this->container['oauth'] = $oauth;
+
+        return $this;
+    }
+
+    /**
+     * Gets oidc
+     *
+     * @return \Zitadel\Client\Model\IdentityProviderServiceGenericOIDCConfig|null
+     */
+    public function getOidc()
+    {
+        return $this->container['oidc'];
+    }
+
+    /**
+     * Sets oidc
+     *
+     * @param \Zitadel\Client\Model\IdentityProviderServiceGenericOIDCConfig|null $oidc oidc
+     *
+     * @return self
+     */
+    public function setOidc($oidc)
+    {
+        if (is_null($oidc)) {
+            throw new \InvalidArgumentException('non-nullable oidc cannot be null');
+        }
+        $this->container['oidc'] = $oidc;
 
         return $this;
     }

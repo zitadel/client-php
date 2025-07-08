@@ -66,10 +66,10 @@ class OrganizationServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'organizationServiceAddOrganization' => [
+        'addOrganization' => [
             'application/json',
         ],
-        'organizationServiceListOrganizations' => [
+        'listOrganizations' => [
             'application/json',
         ],
     ];
@@ -437,50 +437,48 @@ class OrganizationServiceApi
     }
 
     /**
-     * Operation organizationServiceAddOrganization
+     * Operation addOrganization
      *
-     * Create an Organization
+     * AddOrganization
      *
      * @param  \Zitadel\Client\Model\OrganizationServiceAddOrganizationRequest $organizationServiceAddOrganizationRequest organizationServiceAddOrganizationRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['organizationServiceAddOrganization'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOrganization'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\OrganizationServiceAddOrganizationResponse
      * @throws ApiException
      */
-    public function organizationServiceAddOrganization($organizationServiceAddOrganizationRequest, string $contentType = self::contentTypes['organizationServiceAddOrganization'][0])
+    public function addOrganization(    $organizationServiceAddOrganizationRequest,string $contentType = self::contentTypes['addOrganization'][0])
     {
-        $request = $this->organizationServiceAddOrganizationRequest($organizationServiceAddOrganizationRequest, $contentType);
+        $request = $this->addOrganizationRequest($organizationServiceAddOrganizationRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\OrganizationServiceAddOrganizationResponse',
-            403 => '\Zitadel\Client\Model\OrganizationServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\OrganizationServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\OrganizationServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\OrganizationServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\OrganizationServiceAddOrganizationResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'organizationServiceAddOrganization'
+     * Create request for operation 'addOrganization'
      *
      * @param  \Zitadel\Client\Model\OrganizationServiceAddOrganizationRequest $organizationServiceAddOrganizationRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['organizationServiceAddOrganization'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOrganization'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function organizationServiceAddOrganizationRequest($organizationServiceAddOrganizationRequest, string $contentType = self::contentTypes['organizationServiceAddOrganization'][0])
+    private function addOrganizationRequest($organizationServiceAddOrganizationRequest, string $contentType = self::contentTypes['addOrganization'][0])
     {
 
         if ($organizationServiceAddOrganizationRequest === null || (is_array($organizationServiceAddOrganizationRequest) && count($organizationServiceAddOrganizationRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $organizationServiceAddOrganizationRequest when calling organizationServiceAddOrganization'
+                'Missing the required parameter $organizationServiceAddOrganizationRequest when calling addOrganization'
             );
         }
 
 
-        $resourcePath = '/v2/organizations';
+        $resourcePath = '/zitadel.org.v2.OrganizationService/AddOrganization';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -551,51 +549,48 @@ class OrganizationServiceApi
     }
 
     /**
-     * Operation organizationServiceListOrganizations
+     * Operation listOrganizations
      *
-     * Search Organizations
+     * ListOrganizations
      *
      * @param  \Zitadel\Client\Model\OrganizationServiceListOrganizationsRequest $organizationServiceListOrganizationsRequest organizationServiceListOrganizationsRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['organizationServiceListOrganizations'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizations'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\OrganizationServiceListOrganizationsResponse
      * @throws ApiException
      */
-    public function organizationServiceListOrganizations($organizationServiceListOrganizationsRequest, string $contentType = self::contentTypes['organizationServiceListOrganizations'][0])
+    public function listOrganizations(    $organizationServiceListOrganizationsRequest,string $contentType = self::contentTypes['listOrganizations'][0])
     {
-        $request = $this->organizationServiceListOrganizationsRequest($organizationServiceListOrganizationsRequest, $contentType);
+        $request = $this->listOrganizationsRequest($organizationServiceListOrganizationsRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\OrganizationServiceListOrganizationsResponse',
-            400 => '\Zitadel\Client\Model\OrganizationServiceRpcStatus',
-            403 => '\Zitadel\Client\Model\OrganizationServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\OrganizationServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\OrganizationServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\OrganizationServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\OrganizationServiceListOrganizationsResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'organizationServiceListOrganizations'
+     * Create request for operation 'listOrganizations'
      *
      * @param  \Zitadel\Client\Model\OrganizationServiceListOrganizationsRequest $organizationServiceListOrganizationsRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['organizationServiceListOrganizations'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizations'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function organizationServiceListOrganizationsRequest($organizationServiceListOrganizationsRequest, string $contentType = self::contentTypes['organizationServiceListOrganizations'][0])
+    private function listOrganizationsRequest($organizationServiceListOrganizationsRequest, string $contentType = self::contentTypes['listOrganizations'][0])
     {
 
         if ($organizationServiceListOrganizationsRequest === null || (is_array($organizationServiceListOrganizationsRequest) && count($organizationServiceListOrganizationsRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $organizationServiceListOrganizationsRequest when calling organizationServiceListOrganizations'
+                'Missing the required parameter $organizationServiceListOrganizationsRequest when calling listOrganizations'
             );
         }
 
 
-        $resourcePath = '/v2/organizations/_search';
+        $resourcePath = '/zitadel.org.v2.OrganizationService/ListOrganizations';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];

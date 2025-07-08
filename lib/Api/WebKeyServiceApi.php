@@ -66,16 +66,16 @@ class WebKeyServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'webKeyServiceActivateWebKey' => [
+        'activateWebKey' => [
             'application/json',
         ],
-        'webKeyServiceCreateWebKey' => [
+        'createWebKey' => [
             'application/json',
         ],
-        'webKeyServiceDeleteWebKey' => [
+        'deleteWebKey' => [
             'application/json',
         ],
-        'webKeyServiceListWebKeys' => [
+        'listWebKeys' => [
             'application/json',
         ],
     ];
@@ -443,51 +443,48 @@ class WebKeyServiceApi
     }
 
     /**
-     * Operation webKeyServiceActivateWebKey
+     * Operation activateWebKey
      *
-     * Activate Web Key
+     * ActivateWebKey
      *
-     * @param  string $id id (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceActivateWebKey'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\WebKeyServiceActivateWebKeyRequest $webKeyServiceActivateWebKeyRequest webKeyServiceActivateWebKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['activateWebKey'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\WebKeyServiceBetaActivateWebKeyResponse
+     * @return \Zitadel\Client\Model\WebKeyServiceActivateWebKeyResponse
      * @throws ApiException
      */
-    public function webKeyServiceActivateWebKey($id, string $contentType = self::contentTypes['webKeyServiceActivateWebKey'][0])
+    public function activateWebKey(    $webKeyServiceActivateWebKeyRequest,string $contentType = self::contentTypes['activateWebKey'][0])
     {
-        $request = $this->webKeyServiceActivateWebKeyRequest($id, $contentType);
+        $request = $this->activateWebKeyRequest($webKeyServiceActivateWebKeyRequest, $contentType);
 
         $responseTypes = [
-            200 => '\Zitadel\Client\Model\WebKeyServiceBetaActivateWebKeyResponse',
-            400 => 'object',
-            403 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
-            404 => 'object',
-            'default' => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            200 => '\Zitadel\Client\Model\WebKeyServiceActivateWebKeyResponse',
+            'default' => '\Zitadel\Client\Model\WebKeyServiceConnectError',
         ];
-        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceBetaActivateWebKeyResponse';
+        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceActivateWebKeyResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'webKeyServiceActivateWebKey'
+     * Create request for operation 'activateWebKey'
      *
-     * @param  string $id (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceActivateWebKey'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\WebKeyServiceActivateWebKeyRequest $webKeyServiceActivateWebKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['activateWebKey'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function webKeyServiceActivateWebKeyRequest($id, string $contentType = self::contentTypes['webKeyServiceActivateWebKey'][0])
+    private function activateWebKeyRequest($webKeyServiceActivateWebKeyRequest, string $contentType = self::contentTypes['activateWebKey'][0])
     {
 
-        if ($id === null || (is_array($id) && count($id) === 0)) {
+        if ($webKeyServiceActivateWebKeyRequest === null || (is_array($webKeyServiceActivateWebKeyRequest) && count($webKeyServiceActivateWebKeyRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $id when calling webKeyServiceActivateWebKey'
+                'Missing the required parameter $webKeyServiceActivateWebKeyRequest when calling activateWebKey'
             );
         }
 
 
-        $resourcePath = '/v2beta/web_keys/{id}/activate';
+        $resourcePath = '/zitadel.webkey.v2.WebKeyService/ActivateWebKey';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -496,13 +493,6 @@ class WebKeyServiceApi
 
 
 
-        if ($id !== null) {
-            $resourcePath = str_replace(
-                '{' . 'id' . '}',
-                ObjectSerializer::toPathValue($id),
-                $resourcePath
-            );
-        }
 
 
         $headers = $this->selectHeaders(
@@ -510,7 +500,14 @@ class WebKeyServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($webKeyServiceActivateWebKeyRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($webKeyServiceActivateWebKeyRequest));
+            } else {
+                $httpBody = $webKeyServiceActivateWebKeyRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -558,51 +555,48 @@ class WebKeyServiceApi
     }
 
     /**
-     * Operation webKeyServiceCreateWebKey
+     * Operation createWebKey
      *
-     * Create Web Key
+     * CreateWebKey
      *
      * @param  \Zitadel\Client\Model\WebKeyServiceCreateWebKeyRequest $webKeyServiceCreateWebKeyRequest webKeyServiceCreateWebKeyRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceCreateWebKey'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createWebKey'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\WebKeyServiceBetaCreateWebKeyResponse
+     * @return \Zitadel\Client\Model\WebKeyServiceCreateWebKeyResponse
      * @throws ApiException
      */
-    public function webKeyServiceCreateWebKey($webKeyServiceCreateWebKeyRequest, string $contentType = self::contentTypes['webKeyServiceCreateWebKey'][0])
+    public function createWebKey(    $webKeyServiceCreateWebKeyRequest,string $contentType = self::contentTypes['createWebKey'][0])
     {
-        $request = $this->webKeyServiceCreateWebKeyRequest($webKeyServiceCreateWebKeyRequest, $contentType);
+        $request = $this->createWebKeyRequest($webKeyServiceCreateWebKeyRequest, $contentType);
 
         $responseTypes = [
-            200 => '\Zitadel\Client\Model\WebKeyServiceBetaCreateWebKeyResponse',
-            400 => 'object',
-            403 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            200 => '\Zitadel\Client\Model\WebKeyServiceCreateWebKeyResponse',
+            'default' => '\Zitadel\Client\Model\WebKeyServiceConnectError',
         ];
-        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceBetaCreateWebKeyResponse';
+        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceCreateWebKeyResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'webKeyServiceCreateWebKey'
+     * Create request for operation 'createWebKey'
      *
      * @param  \Zitadel\Client\Model\WebKeyServiceCreateWebKeyRequest $webKeyServiceCreateWebKeyRequest (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceCreateWebKey'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createWebKey'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function webKeyServiceCreateWebKeyRequest($webKeyServiceCreateWebKeyRequest, string $contentType = self::contentTypes['webKeyServiceCreateWebKey'][0])
+    private function createWebKeyRequest($webKeyServiceCreateWebKeyRequest, string $contentType = self::contentTypes['createWebKey'][0])
     {
 
         if ($webKeyServiceCreateWebKeyRequest === null || (is_array($webKeyServiceCreateWebKeyRequest) && count($webKeyServiceCreateWebKeyRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $webKeyServiceCreateWebKeyRequest when calling webKeyServiceCreateWebKey'
+                'Missing the required parameter $webKeyServiceCreateWebKeyRequest when calling createWebKey'
             );
         }
 
 
-        $resourcePath = '/v2beta/web_keys';
+        $resourcePath = '/zitadel.webkey.v2.WebKeyService/CreateWebKey';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -673,51 +667,48 @@ class WebKeyServiceApi
     }
 
     /**
-     * Operation webKeyServiceDeleteWebKey
+     * Operation deleteWebKey
      *
-     * Delete Web Key
+     * DeleteWebKey
      *
-     * @param  string $id id (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceDeleteWebKey'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\WebKeyServiceDeleteWebKeyRequest $webKeyServiceDeleteWebKeyRequest webKeyServiceDeleteWebKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteWebKey'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\WebKeyServiceBetaDeleteWebKeyResponse
+     * @return \Zitadel\Client\Model\WebKeyServiceDeleteWebKeyResponse
      * @throws ApiException
      */
-    public function webKeyServiceDeleteWebKey($id, string $contentType = self::contentTypes['webKeyServiceDeleteWebKey'][0])
+    public function deleteWebKey(    $webKeyServiceDeleteWebKeyRequest,string $contentType = self::contentTypes['deleteWebKey'][0])
     {
-        $request = $this->webKeyServiceDeleteWebKeyRequest($id, $contentType);
+        $request = $this->deleteWebKeyRequest($webKeyServiceDeleteWebKeyRequest, $contentType);
 
         $responseTypes = [
-            200 => '\Zitadel\Client\Model\WebKeyServiceBetaDeleteWebKeyResponse',
-            400 => 'object',
-            403 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            200 => '\Zitadel\Client\Model\WebKeyServiceDeleteWebKeyResponse',
+            'default' => '\Zitadel\Client\Model\WebKeyServiceConnectError',
         ];
-        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceBetaDeleteWebKeyResponse';
+        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceDeleteWebKeyResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'webKeyServiceDeleteWebKey'
+     * Create request for operation 'deleteWebKey'
      *
-     * @param  string $id (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceDeleteWebKey'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\WebKeyServiceDeleteWebKeyRequest $webKeyServiceDeleteWebKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteWebKey'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function webKeyServiceDeleteWebKeyRequest($id, string $contentType = self::contentTypes['webKeyServiceDeleteWebKey'][0])
+    private function deleteWebKeyRequest($webKeyServiceDeleteWebKeyRequest, string $contentType = self::contentTypes['deleteWebKey'][0])
     {
 
-        if ($id === null || (is_array($id) && count($id) === 0)) {
+        if ($webKeyServiceDeleteWebKeyRequest === null || (is_array($webKeyServiceDeleteWebKeyRequest) && count($webKeyServiceDeleteWebKeyRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $id when calling webKeyServiceDeleteWebKey'
+                'Missing the required parameter $webKeyServiceDeleteWebKeyRequest when calling deleteWebKey'
             );
         }
 
 
-        $resourcePath = '/v2beta/web_keys/{id}';
+        $resourcePath = '/zitadel.webkey.v2.WebKeyService/DeleteWebKey';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -726,13 +717,6 @@ class WebKeyServiceApi
 
 
 
-        if ($id !== null) {
-            $resourcePath = str_replace(
-                '{' . 'id' . '}',
-                ObjectSerializer::toPathValue($id),
-                $resourcePath
-            );
-        }
 
 
         $headers = $this->selectHeaders(
@@ -740,7 +724,14 @@ class WebKeyServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($webKeyServiceDeleteWebKeyRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($webKeyServiceDeleteWebKeyRequest));
+            } else {
+                $httpBody = $webKeyServiceDeleteWebKeyRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -780,7 +771,7 @@ class WebKeyServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'DELETE',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -788,43 +779,48 @@ class WebKeyServiceApi
     }
 
     /**
-     * Operation webKeyServiceListWebKeys
+     * Operation listWebKeys
      *
-     * List Web Keys
+     * ListWebKeys
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceListWebKeys'] to see the possible values for this operation
+     * @param  object $body body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listWebKeys'] to see the possible values for this operation
      *
-     * @return \Zitadel\Client\Model\WebKeyServiceBetaListWebKeysResponse
+     * @return \Zitadel\Client\Model\WebKeyServiceListWebKeysResponse
      * @throws ApiException
      */
-    public function webKeyServiceListWebKeys(string $contentType = self::contentTypes['webKeyServiceListWebKeys'][0])
+    public function listWebKeys(    $body = new \stdClass(),string $contentType = self::contentTypes['listWebKeys'][0])
     {
-        $request = $this->webKeyServiceListWebKeysRequest($contentType);
+        $request = $this->listWebKeysRequest($body, $contentType);
 
         $responseTypes = [
-            200 => '\Zitadel\Client\Model\WebKeyServiceBetaListWebKeysResponse',
-            400 => 'object',
-            403 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\WebKeyServiceRpcStatus',
+            200 => '\Zitadel\Client\Model\WebKeyServiceListWebKeysResponse',
+            'default' => '\Zitadel\Client\Model\WebKeyServiceConnectError',
         ];
-        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceBetaListWebKeysResponse';
+        $defaultSignatureType = '\Zitadel\Client\Model\WebKeyServiceListWebKeysResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'webKeyServiceListWebKeys'
+     * Create request for operation 'listWebKeys'
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['webKeyServiceListWebKeys'] to see the possible values for this operation
+     * @param  object $body (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listWebKeys'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function webKeyServiceListWebKeysRequest(string $contentType = self::contentTypes['webKeyServiceListWebKeys'][0])
+    private function listWebKeysRequest($body, string $contentType = self::contentTypes['listWebKeys'][0])
     {
 
+        if ($body === null || (is_array($body) && count($body) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $body when calling listWebKeys'
+            );
+        }
 
-        $resourcePath = '/v2beta/web_keys';
+
+        $resourcePath = '/zitadel.webkey.v2.WebKeyService/ListWebKeys';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -840,7 +836,14 @@ class WebKeyServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($body)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+            } else {
+                $httpBody = $body;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -880,7 +883,7 @@ class WebKeyServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody

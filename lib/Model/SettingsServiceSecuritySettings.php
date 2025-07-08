@@ -336,7 +336,7 @@ class SettingsServiceSecuritySettings implements ModelInterface, ArrayAccess, \J
     /**
      * Sets enableImpersonation
      *
-     * @param bool|null $enableImpersonation default language for the current context
+     * @param bool|null $enableImpersonation enableImpersonation
      *
      * @return self
      */

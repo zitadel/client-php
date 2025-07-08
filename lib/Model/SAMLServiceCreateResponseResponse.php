@@ -59,8 +59,8 @@ class SAMLServiceCreateResponseResponse implements ModelInterface, ArrayAccess, 
     protected static $openAPITypes = [
         'details' => '\Zitadel\Client\Model\SAMLServiceDetails',
         'url' => 'string',
-        'redirect' => 'object',
-        'post' => '\Zitadel\Client\Model\SAMLServicePostResponse'
+        'post' => '\Zitadel\Client\Model\SAMLServicePostResponse',
+        'redirect' => 'object'
     ];
 
     /**
@@ -73,8 +73,8 @@ class SAMLServiceCreateResponseResponse implements ModelInterface, ArrayAccess, 
     protected static $openAPIFormats = [
         'details' => null,
         'url' => null,
-        'redirect' => null,
-        'post' => null
+        'post' => null,
+        'redirect' => null
     ];
 
     /**
@@ -85,8 +85,8 @@ class SAMLServiceCreateResponseResponse implements ModelInterface, ArrayAccess, 
     protected static array $openAPINullables = [
         'details' => false,
         'url' => false,
-        'redirect' => false,
-        'post' => false
+        'post' => false,
+        'redirect' => false
     ];
 
     /**
@@ -177,8 +177,8 @@ class SAMLServiceCreateResponseResponse implements ModelInterface, ArrayAccess, 
     protected static $attributeMap = [
         'details' => 'details',
         'url' => 'url',
-        'redirect' => 'redirect',
-        'post' => 'post'
+        'post' => 'post',
+        'redirect' => 'redirect'
     ];
 
     /**
@@ -189,8 +189,8 @@ class SAMLServiceCreateResponseResponse implements ModelInterface, ArrayAccess, 
     protected static $setters = [
         'details' => 'setDetails',
         'url' => 'setUrl',
-        'redirect' => 'setRedirect',
-        'post' => 'setPost'
+        'post' => 'setPost',
+        'redirect' => 'setRedirect'
     ];
 
     /**
@@ -201,8 +201,8 @@ class SAMLServiceCreateResponseResponse implements ModelInterface, ArrayAccess, 
     protected static $getters = [
         'details' => 'getDetails',
         'url' => 'getUrl',
-        'redirect' => 'getRedirect',
-        'post' => 'getPost'
+        'post' => 'getPost',
+        'redirect' => 'getRedirect'
     ];
 
     /**
@@ -264,8 +264,8 @@ class SAMLServiceCreateResponseResponse implements ModelInterface, ArrayAccess, 
     {
         $this->setIfExists('details', $data ?? [], null);
         $this->setIfExists('url', $data ?? [], null);
-        $this->setIfExists('redirect', $data ?? [], null);
         $this->setIfExists('post', $data ?? [], null);
+        $this->setIfExists('redirect', $data ?? [], null);
     }
 
     /**
@@ -365,33 +365,6 @@ class SAMLServiceCreateResponseResponse implements ModelInterface, ArrayAccess, 
     }
 
     /**
-     * Gets redirect
-     *
-     * @return object|null
-     */
-    public function getRedirect()
-    {
-        return $this->container['redirect'];
-    }
-
-    /**
-     * Sets redirect
-     *
-     * @param object|null $redirect redirect
-     *
-     * @return self
-     */
-    public function setRedirect($redirect)
-    {
-        if (is_null($redirect)) {
-            throw new \InvalidArgumentException('non-nullable redirect cannot be null');
-        }
-        $this->container['redirect'] = $redirect;
-
-        return $this;
-    }
-
-    /**
      * Gets post
      *
      * @return \Zitadel\Client\Model\SAMLServicePostResponse|null
@@ -414,6 +387,33 @@ class SAMLServiceCreateResponseResponse implements ModelInterface, ArrayAccess, 
             throw new \InvalidArgumentException('non-nullable post cannot be null');
         }
         $this->container['post'] = $post;
+
+        return $this;
+    }
+
+    /**
+     * Gets redirect
+     *
+     * @return object|null
+     */
+    public function getRedirect()
+    {
+        return $this->container['redirect'];
+    }
+
+    /**
+     * Sets redirect
+     *
+     * @param object|null $redirect redirect
+     *
+     * @return self
+     */
+    public function setRedirect($redirect)
+    {
+        if (is_null($redirect)) {
+            throw new \InvalidArgumentException('non-nullable redirect cannot be null');
+        }
+        $this->container['redirect'] = $redirect;
 
         return $this;
     }

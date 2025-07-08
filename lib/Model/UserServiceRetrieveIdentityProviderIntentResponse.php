@@ -377,7 +377,7 @@ class UserServiceRetrieveIdentityProviderIntentResponse implements ModelInterfac
     /**
      * Sets userId
      *
-     * @param string|null $userId ID of the user in ZITADEL if external user is linked
+     * @param string|null $userId userId
      *
      * @return self
      */

@@ -57,7 +57,7 @@ class SessionServiceCheckWebAuthN implements ModelInterface, ArrayAccess, \JsonS
       * @var string[]
       */
     protected static $openAPITypes = [
-        'credentialAssertionData' => 'object'
+        'credentialAssertionData' => 'array<string,mixed>'
     ];
 
     /**
@@ -295,7 +295,7 @@ class SessionServiceCheckWebAuthN implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Gets credentialAssertionData
      *
-     * @return object
+     * @return array<string,mixed>
      */
     public function getCredentialAssertionData()
     {
@@ -305,7 +305,7 @@ class SessionServiceCheckWebAuthN implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Sets credentialAssertionData
      *
-     * @param object $credentialAssertionData JSON representation of public key credential issued by the webAuthN client
+     * @param array<string,mixed> $credentialAssertionData `Struct` represents a structured data value, consisting of fields  which map to dynamically typed values. In some languages, `Struct`  might be supported by a native representation. For example, in  scripting languages like JS a struct is represented as an  object. The details of that representation are described together  with the proto support for the language.   The JSON representation for `Struct` is JSON object.
      *
      * @return self
      */
@@ -314,8 +314,6 @@ class SessionServiceCheckWebAuthN implements ModelInterface, ArrayAccess, \JsonS
         if (is_null($credentialAssertionData)) {
             throw new \InvalidArgumentException('non-nullable credentialAssertionData cannot be null');
         }
-
-
         $this->container['credentialAssertionData'] = $credentialAssertionData;
 
         return $this;

@@ -59,12 +59,9 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
     protected static $openAPITypes = [
         'details' => '\Zitadel\Client\Model\FeatureServiceDetails',
         'loginDefaultOrg' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
-        'oidcTriggerIntrospectionProjections' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
-        'oidcLegacyIntrospection' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'userSchema' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'oidcTokenExchange' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'improvedPerformance' => '\Zitadel\Client\Model\FeatureServiceImprovedPerformanceFeatureFlag',
-        'webKey' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'debugOidcParentError' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'oidcSingleV1SessionTermination' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'disableUserTokenEvent' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
@@ -84,12 +81,9 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
     protected static $openAPIFormats = [
         'details' => null,
         'loginDefaultOrg' => null,
-        'oidcTriggerIntrospectionProjections' => null,
-        'oidcLegacyIntrospection' => null,
         'userSchema' => null,
         'oidcTokenExchange' => null,
         'improvedPerformance' => null,
-        'webKey' => null,
         'debugOidcParentError' => null,
         'oidcSingleV1SessionTermination' => null,
         'disableUserTokenEvent' => null,
@@ -107,12 +101,9 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
     protected static array $openAPINullables = [
         'details' => false,
         'loginDefaultOrg' => false,
-        'oidcTriggerIntrospectionProjections' => false,
-        'oidcLegacyIntrospection' => false,
         'userSchema' => false,
         'oidcTokenExchange' => false,
         'improvedPerformance' => false,
-        'webKey' => false,
         'debugOidcParentError' => false,
         'oidcSingleV1SessionTermination' => false,
         'disableUserTokenEvent' => false,
@@ -210,12 +201,9 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
     protected static $attributeMap = [
         'details' => 'details',
         'loginDefaultOrg' => 'loginDefaultOrg',
-        'oidcTriggerIntrospectionProjections' => 'oidcTriggerIntrospectionProjections',
-        'oidcLegacyIntrospection' => 'oidcLegacyIntrospection',
         'userSchema' => 'userSchema',
         'oidcTokenExchange' => 'oidcTokenExchange',
         'improvedPerformance' => 'improvedPerformance',
-        'webKey' => 'webKey',
         'debugOidcParentError' => 'debugOidcParentError',
         'oidcSingleV1SessionTermination' => 'oidcSingleV1SessionTermination',
         'disableUserTokenEvent' => 'disableUserTokenEvent',
@@ -233,12 +221,9 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
     protected static $setters = [
         'details' => 'setDetails',
         'loginDefaultOrg' => 'setLoginDefaultOrg',
-        'oidcTriggerIntrospectionProjections' => 'setOidcTriggerIntrospectionProjections',
-        'oidcLegacyIntrospection' => 'setOidcLegacyIntrospection',
         'userSchema' => 'setUserSchema',
         'oidcTokenExchange' => 'setOidcTokenExchange',
         'improvedPerformance' => 'setImprovedPerformance',
-        'webKey' => 'setWebKey',
         'debugOidcParentError' => 'setDebugOidcParentError',
         'oidcSingleV1SessionTermination' => 'setOidcSingleV1SessionTermination',
         'disableUserTokenEvent' => 'setDisableUserTokenEvent',
@@ -256,12 +241,9 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
     protected static $getters = [
         'details' => 'getDetails',
         'loginDefaultOrg' => 'getLoginDefaultOrg',
-        'oidcTriggerIntrospectionProjections' => 'getOidcTriggerIntrospectionProjections',
-        'oidcLegacyIntrospection' => 'getOidcLegacyIntrospection',
         'userSchema' => 'getUserSchema',
         'oidcTokenExchange' => 'getOidcTokenExchange',
         'improvedPerformance' => 'getImprovedPerformance',
-        'webKey' => 'getWebKey',
         'debugOidcParentError' => 'getDebugOidcParentError',
         'oidcSingleV1SessionTermination' => 'getOidcSingleV1SessionTermination',
         'disableUserTokenEvent' => 'getDisableUserTokenEvent',
@@ -330,12 +312,9 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
     {
         $this->setIfExists('details', $data ?? [], null);
         $this->setIfExists('loginDefaultOrg', $data ?? [], null);
-        $this->setIfExists('oidcTriggerIntrospectionProjections', $data ?? [], null);
-        $this->setIfExists('oidcLegacyIntrospection', $data ?? [], null);
         $this->setIfExists('userSchema', $data ?? [], null);
         $this->setIfExists('oidcTokenExchange', $data ?? [], null);
         $this->setIfExists('improvedPerformance', $data ?? [], null);
-        $this->setIfExists('webKey', $data ?? [], null);
         $this->setIfExists('debugOidcParentError', $data ?? [], null);
         $this->setIfExists('oidcSingleV1SessionTermination', $data ?? [], null);
         $this->setIfExists('disableUserTokenEvent', $data ?? [], null);
@@ -442,60 +421,6 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
     }
 
     /**
-     * Gets oidcTriggerIntrospectionProjections
-     *
-     * @return \Zitadel\Client\Model\FeatureServiceFeatureFlag|null
-     */
-    public function getOidcTriggerIntrospectionProjections()
-    {
-        return $this->container['oidcTriggerIntrospectionProjections'];
-    }
-
-    /**
-     * Sets oidcTriggerIntrospectionProjections
-     *
-     * @param \Zitadel\Client\Model\FeatureServiceFeatureFlag|null $oidcTriggerIntrospectionProjections oidcTriggerIntrospectionProjections
-     *
-     * @return self
-     */
-    public function setOidcTriggerIntrospectionProjections($oidcTriggerIntrospectionProjections)
-    {
-        if (is_null($oidcTriggerIntrospectionProjections)) {
-            throw new \InvalidArgumentException('non-nullable oidcTriggerIntrospectionProjections cannot be null');
-        }
-        $this->container['oidcTriggerIntrospectionProjections'] = $oidcTriggerIntrospectionProjections;
-
-        return $this;
-    }
-
-    /**
-     * Gets oidcLegacyIntrospection
-     *
-     * @return \Zitadel\Client\Model\FeatureServiceFeatureFlag|null
-     */
-    public function getOidcLegacyIntrospection()
-    {
-        return $this->container['oidcLegacyIntrospection'];
-    }
-
-    /**
-     * Sets oidcLegacyIntrospection
-     *
-     * @param \Zitadel\Client\Model\FeatureServiceFeatureFlag|null $oidcLegacyIntrospection oidcLegacyIntrospection
-     *
-     * @return self
-     */
-    public function setOidcLegacyIntrospection($oidcLegacyIntrospection)
-    {
-        if (is_null($oidcLegacyIntrospection)) {
-            throw new \InvalidArgumentException('non-nullable oidcLegacyIntrospection cannot be null');
-        }
-        $this->container['oidcLegacyIntrospection'] = $oidcLegacyIntrospection;
-
-        return $this;
-    }
-
-    /**
      * Gets userSchema
      *
      * @return \Zitadel\Client\Model\FeatureServiceFeatureFlag|null
@@ -572,33 +497,6 @@ class FeatureServiceGetInstanceFeaturesResponse implements ModelInterface, Array
             throw new \InvalidArgumentException('non-nullable improvedPerformance cannot be null');
         }
         $this->container['improvedPerformance'] = $improvedPerformance;
-
-        return $this;
-    }
-
-    /**
-     * Gets webKey
-     *
-     * @return \Zitadel\Client\Model\FeatureServiceFeatureFlag|null
-     */
-    public function getWebKey()
-    {
-        return $this->container['webKey'];
-    }
-
-    /**
-     * Sets webKey
-     *
-     * @param \Zitadel\Client\Model\FeatureServiceFeatureFlag|null $webKey webKey
-     *
-     * @return self
-     */
-    public function setWebKey($webKey)
-    {
-        if (is_null($webKey)) {
-            throw new \InvalidArgumentException('non-nullable webKey cannot be null');
-        }
-        $this->container['webKey'] = $webKey;
 
         return $this;
     }

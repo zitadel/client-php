@@ -57,8 +57,9 @@ class UserServiceResendEmailCodeRequest implements ModelInterface, ArrayAccess, 
       * @var string[]
       */
     protected static $openAPITypes = [
-        'sendCode' => '\Zitadel\Client\Model\UserServiceSendEmailVerificationCode',
-        'returnCode' => 'object'
+        'userId' => 'string',
+        'returnCode' => 'object',
+        'sendCode' => '\Zitadel\Client\Model\UserServiceSendEmailVerificationCode'
     ];
 
     /**
@@ -69,8 +70,9 @@ class UserServiceResendEmailCodeRequest implements ModelInterface, ArrayAccess, 
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'sendCode' => null,
-        'returnCode' => null
+        'userId' => null,
+        'returnCode' => null,
+        'sendCode' => null
     ];
 
     /**
@@ -79,8 +81,9 @@ class UserServiceResendEmailCodeRequest implements ModelInterface, ArrayAccess, 
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'sendCode' => false,
-        'returnCode' => false
+        'userId' => false,
+        'returnCode' => false,
+        'sendCode' => false
     ];
 
     /**
@@ -169,8 +172,9 @@ class UserServiceResendEmailCodeRequest implements ModelInterface, ArrayAccess, 
      * @var string[]
      */
     protected static $attributeMap = [
-        'sendCode' => 'sendCode',
-        'returnCode' => 'returnCode'
+        'userId' => 'userId',
+        'returnCode' => 'returnCode',
+        'sendCode' => 'sendCode'
     ];
 
     /**
@@ -179,8 +183,9 @@ class UserServiceResendEmailCodeRequest implements ModelInterface, ArrayAccess, 
      * @var string[]
      */
     protected static $setters = [
-        'sendCode' => 'setSendCode',
-        'returnCode' => 'setReturnCode'
+        'userId' => 'setUserId',
+        'returnCode' => 'setReturnCode',
+        'sendCode' => 'setSendCode'
     ];
 
     /**
@@ -189,8 +194,9 @@ class UserServiceResendEmailCodeRequest implements ModelInterface, ArrayAccess, 
      * @var string[]
      */
     protected static $getters = [
-        'sendCode' => 'getSendCode',
-        'returnCode' => 'getReturnCode'
+        'userId' => 'getUserId',
+        'returnCode' => 'getReturnCode',
+        'sendCode' => 'getSendCode'
     ];
 
     /**
@@ -250,8 +256,9 @@ class UserServiceResendEmailCodeRequest implements ModelInterface, ArrayAccess, 
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('sendCode', $data ?? [], null);
+        $this->setIfExists('userId', $data ?? [], null);
         $this->setIfExists('returnCode', $data ?? [], null);
+        $this->setIfExists('sendCode', $data ?? [], null);
     }
 
     /**
@@ -281,6 +288,9 @@ class UserServiceResendEmailCodeRequest implements ModelInterface, ArrayAccess, 
     {
         $invalidProperties = [];
 
+        if ($this->container['userId'] === null) {
+            $invalidProperties[] = "'userId' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -297,28 +307,28 @@ class UserServiceResendEmailCodeRequest implements ModelInterface, ArrayAccess, 
 
 
     /**
-     * Gets sendCode
+     * Gets userId
      *
-     * @return \Zitadel\Client\Model\UserServiceSendEmailVerificationCode|null
+     * @return string
      */
-    public function getSendCode()
+    public function getUserId()
     {
-        return $this->container['sendCode'];
+        return $this->container['userId'];
     }
 
     /**
-     * Sets sendCode
+     * Sets userId
      *
-     * @param \Zitadel\Client\Model\UserServiceSendEmailVerificationCode|null $sendCode sendCode
+     * @param string $userId userId
      *
      * @return self
      */
-    public function setSendCode($sendCode)
+    public function setUserId($userId)
     {
-        if (is_null($sendCode)) {
-            throw new \InvalidArgumentException('non-nullable sendCode cannot be null');
+        if (is_null($userId)) {
+            throw new \InvalidArgumentException('non-nullable userId cannot be null');
         }
-        $this->container['sendCode'] = $sendCode;
+        $this->container['userId'] = $userId;
 
         return $this;
     }
@@ -346,6 +356,33 @@ class UserServiceResendEmailCodeRequest implements ModelInterface, ArrayAccess, 
             throw new \InvalidArgumentException('non-nullable returnCode cannot be null');
         }
         $this->container['returnCode'] = $returnCode;
+
+        return $this;
+    }
+
+    /**
+     * Gets sendCode
+     *
+     * @return \Zitadel\Client\Model\UserServiceSendEmailVerificationCode|null
+     */
+    public function getSendCode()
+    {
+        return $this->container['sendCode'];
+    }
+
+    /**
+     * Sets sendCode
+     *
+     * @param \Zitadel\Client\Model\UserServiceSendEmailVerificationCode|null $sendCode sendCode
+     *
+     * @return self
+     */
+    public function setSendCode($sendCode)
+    {
+        if (is_null($sendCode)) {
+            throw new \InvalidArgumentException('non-nullable sendCode cannot be null');
+        }
+        $this->container['sendCode'] = $sendCode;
 
         return $this;
     }

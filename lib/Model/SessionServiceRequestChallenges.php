@@ -57,9 +57,9 @@ class SessionServiceRequestChallenges implements ModelInterface, ArrayAccess, \J
       * @var string[]
       */
     protected static $openAPITypes = [
-        'webAuthN' => '\Zitadel\Client\Model\SessionServiceRequestChallengesWebAuthN',
-        'otpSms' => '\Zitadel\Client\Model\SessionServiceRequestChallengesOTPSMS',
-        'otpEmail' => '\Zitadel\Client\Model\SessionServiceRequestChallengesOTPEmail'
+        'webAuthN' => '\Zitadel\Client\Model\SessionServiceWebAuthN',
+        'otpSms' => '\Zitadel\Client\Model\SessionServiceOTPSMS',
+        'otpEmail' => '\Zitadel\Client\Model\SessionServiceOTPEmail'
     ];
 
     /**
@@ -306,7 +306,7 @@ class SessionServiceRequestChallenges implements ModelInterface, ArrayAccess, \J
     /**
      * Gets webAuthN
      *
-     * @return \Zitadel\Client\Model\SessionServiceRequestChallengesWebAuthN|null
+     * @return \Zitadel\Client\Model\SessionServiceWebAuthN|null
      */
     public function getWebAuthN()
     {
@@ -316,7 +316,7 @@ class SessionServiceRequestChallenges implements ModelInterface, ArrayAccess, \J
     /**
      * Sets webAuthN
      *
-     * @param \Zitadel\Client\Model\SessionServiceRequestChallengesWebAuthN|null $webAuthN webAuthN
+     * @param \Zitadel\Client\Model\SessionServiceWebAuthN|null $webAuthN webAuthN
      *
      * @return self
      */
@@ -333,7 +333,7 @@ class SessionServiceRequestChallenges implements ModelInterface, ArrayAccess, \J
     /**
      * Gets otpSms
      *
-     * @return \Zitadel\Client\Model\SessionServiceRequestChallengesOTPSMS|null
+     * @return \Zitadel\Client\Model\SessionServiceOTPSMS|null
      */
     public function getOtpSms()
     {
@@ -343,7 +343,7 @@ class SessionServiceRequestChallenges implements ModelInterface, ArrayAccess, \J
     /**
      * Sets otpSms
      *
-     * @param \Zitadel\Client\Model\SessionServiceRequestChallengesOTPSMS|null $otpSms otpSms
+     * @param \Zitadel\Client\Model\SessionServiceOTPSMS|null $otpSms otpSms
      *
      * @return self
      */
@@ -360,7 +360,7 @@ class SessionServiceRequestChallenges implements ModelInterface, ArrayAccess, \J
     /**
      * Gets otpEmail
      *
-     * @return \Zitadel\Client\Model\SessionServiceRequestChallengesOTPEmail|null
+     * @return \Zitadel\Client\Model\SessionServiceOTPEmail|null
      */
     public function getOtpEmail()
     {
@@ -370,7 +370,7 @@ class SessionServiceRequestChallenges implements ModelInterface, ArrayAccess, \J
     /**
      * Sets otpEmail
      *
-     * @param \Zitadel\Client\Model\SessionServiceRequestChallengesOTPEmail|null $otpEmail otpEmail
+     * @param \Zitadel\Client\Model\SessionServiceOTPEmail|null $otpEmail otpEmail
      *
      * @return self
      */

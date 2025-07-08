@@ -57,9 +57,9 @@ class WebKeyServiceCreateWebKeyRequest implements ModelInterface, ArrayAccess, \
       * @var string[]
       */
     protected static $openAPITypes = [
-        'rsa' => '\Zitadel\Client\Model\WebKeyServiceBetaRSA',
-        'ecdsa' => '\Zitadel\Client\Model\WebKeyServiceBetaECDSA',
-        'ed25519' => 'object'
+        'ecdsa' => '\Zitadel\Client\Model\WebKeyServiceECDSA',
+        'ed25519' => 'object',
+        'rsa' => '\Zitadel\Client\Model\WebKeyServiceRSA'
     ];
 
     /**
@@ -70,9 +70,9 @@ class WebKeyServiceCreateWebKeyRequest implements ModelInterface, ArrayAccess, \
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'rsa' => null,
         'ecdsa' => null,
-        'ed25519' => null
+        'ed25519' => null,
+        'rsa' => null
     ];
 
     /**
@@ -81,9 +81,9 @@ class WebKeyServiceCreateWebKeyRequest implements ModelInterface, ArrayAccess, \
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'rsa' => false,
         'ecdsa' => false,
-        'ed25519' => false
+        'ed25519' => false,
+        'rsa' => false
     ];
 
     /**
@@ -172,9 +172,9 @@ class WebKeyServiceCreateWebKeyRequest implements ModelInterface, ArrayAccess, \
      * @var string[]
      */
     protected static $attributeMap = [
-        'rsa' => 'rsa',
         'ecdsa' => 'ecdsa',
-        'ed25519' => 'ed25519'
+        'ed25519' => 'ed25519',
+        'rsa' => 'rsa'
     ];
 
     /**
@@ -183,9 +183,9 @@ class WebKeyServiceCreateWebKeyRequest implements ModelInterface, ArrayAccess, \
      * @var string[]
      */
     protected static $setters = [
-        'rsa' => 'setRsa',
         'ecdsa' => 'setEcdsa',
-        'ed25519' => 'setEd25519'
+        'ed25519' => 'setEd25519',
+        'rsa' => 'setRsa'
     ];
 
     /**
@@ -194,9 +194,9 @@ class WebKeyServiceCreateWebKeyRequest implements ModelInterface, ArrayAccess, \
      * @var string[]
      */
     protected static $getters = [
-        'rsa' => 'getRsa',
         'ecdsa' => 'getEcdsa',
-        'ed25519' => 'getEd25519'
+        'ed25519' => 'getEd25519',
+        'rsa' => 'getRsa'
     ];
 
     /**
@@ -256,9 +256,9 @@ class WebKeyServiceCreateWebKeyRequest implements ModelInterface, ArrayAccess, \
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('rsa', $data ?? [], null);
         $this->setIfExists('ecdsa', $data ?? [], null);
         $this->setIfExists('ed25519', $data ?? [], null);
+        $this->setIfExists('rsa', $data ?? [], null);
     }
 
     /**
@@ -304,36 +304,9 @@ class WebKeyServiceCreateWebKeyRequest implements ModelInterface, ArrayAccess, \
 
 
     /**
-     * Gets rsa
-     *
-     * @return \Zitadel\Client\Model\WebKeyServiceBetaRSA|null
-     */
-    public function getRsa()
-    {
-        return $this->container['rsa'];
-    }
-
-    /**
-     * Sets rsa
-     *
-     * @param \Zitadel\Client\Model\WebKeyServiceBetaRSA|null $rsa rsa
-     *
-     * @return self
-     */
-    public function setRsa($rsa)
-    {
-        if (is_null($rsa)) {
-            throw new \InvalidArgumentException('non-nullable rsa cannot be null');
-        }
-        $this->container['rsa'] = $rsa;
-
-        return $this;
-    }
-
-    /**
      * Gets ecdsa
      *
-     * @return \Zitadel\Client\Model\WebKeyServiceBetaECDSA|null
+     * @return \Zitadel\Client\Model\WebKeyServiceECDSA|null
      */
     public function getEcdsa()
     {
@@ -343,7 +316,7 @@ class WebKeyServiceCreateWebKeyRequest implements ModelInterface, ArrayAccess, \
     /**
      * Sets ecdsa
      *
-     * @param \Zitadel\Client\Model\WebKeyServiceBetaECDSA|null $ecdsa ecdsa
+     * @param \Zitadel\Client\Model\WebKeyServiceECDSA|null $ecdsa ecdsa
      *
      * @return self
      */
@@ -380,6 +353,33 @@ class WebKeyServiceCreateWebKeyRequest implements ModelInterface, ArrayAccess, \
             throw new \InvalidArgumentException('non-nullable ed25519 cannot be null');
         }
         $this->container['ed25519'] = $ed25519;
+
+        return $this;
+    }
+
+    /**
+     * Gets rsa
+     *
+     * @return \Zitadel\Client\Model\WebKeyServiceRSA|null
+     */
+    public function getRsa()
+    {
+        return $this->container['rsa'];
+    }
+
+    /**
+     * Sets rsa
+     *
+     * @param \Zitadel\Client\Model\WebKeyServiceRSA|null $rsa rsa
+     *
+     * @return self
+     */
+    public function setRsa($rsa)
+    {
+        if (is_null($rsa)) {
+            throw new \InvalidArgumentException('non-nullable rsa cannot be null');
+        }
+        $this->container['rsa'] = $rsa;
 
         return $this;
     }

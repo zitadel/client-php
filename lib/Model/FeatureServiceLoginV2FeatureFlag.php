@@ -82,7 +82,7 @@ class FeatureServiceLoginV2FeatureFlag implements ModelInterface, ArrayAccess, \
       */
     protected static array $openAPINullables = [
         'required' => false,
-        'baseUri' => false,
+        'baseUri' => true,
         'source' => false
     ];
 
@@ -350,7 +350,14 @@ class FeatureServiceLoginV2FeatureFlag implements ModelInterface, ArrayAccess, \
     public function setBaseUri($baseUri)
     {
         if (is_null($baseUri)) {
-            throw new \InvalidArgumentException('non-nullable baseUri cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'baseUri');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('baseUri', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['baseUri'] = $baseUri;
 

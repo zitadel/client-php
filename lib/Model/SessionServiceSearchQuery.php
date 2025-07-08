@@ -57,11 +57,11 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
       * @var string[]
       */
     protected static $openAPITypes = [
-        'idsQuery' => '\Zitadel\Client\Model\SessionServiceIDsQuery',
-        'userIdQuery' => '\Zitadel\Client\Model\SessionServiceUserIDQuery',
         'creationDateQuery' => '\Zitadel\Client\Model\SessionServiceCreationDateQuery',
         'creatorQuery' => '\Zitadel\Client\Model\SessionServiceCreatorQuery',
-        'userAgentQuery' => '\Zitadel\Client\Model\SessionServiceUserAgentQuery'
+        'idsQuery' => '\Zitadel\Client\Model\SessionServiceIDsQuery',
+        'userAgentQuery' => '\Zitadel\Client\Model\SessionServiceUserAgentQuery',
+        'userIdQuery' => '\Zitadel\Client\Model\SessionServiceUserIDQuery'
     ];
 
     /**
@@ -72,11 +72,11 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'idsQuery' => null,
-        'userIdQuery' => null,
         'creationDateQuery' => null,
         'creatorQuery' => null,
-        'userAgentQuery' => null
+        'idsQuery' => null,
+        'userAgentQuery' => null,
+        'userIdQuery' => null
     ];
 
     /**
@@ -85,11 +85,11 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'idsQuery' => false,
-        'userIdQuery' => false,
         'creationDateQuery' => false,
         'creatorQuery' => false,
-        'userAgentQuery' => false
+        'idsQuery' => false,
+        'userAgentQuery' => false,
+        'userIdQuery' => false
     ];
 
     /**
@@ -178,11 +178,11 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
      * @var string[]
      */
     protected static $attributeMap = [
-        'idsQuery' => 'idsQuery',
-        'userIdQuery' => 'userIdQuery',
         'creationDateQuery' => 'creationDateQuery',
         'creatorQuery' => 'creatorQuery',
-        'userAgentQuery' => 'userAgentQuery'
+        'idsQuery' => 'idsQuery',
+        'userAgentQuery' => 'userAgentQuery',
+        'userIdQuery' => 'userIdQuery'
     ];
 
     /**
@@ -191,11 +191,11 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
      * @var string[]
      */
     protected static $setters = [
-        'idsQuery' => 'setIdsQuery',
-        'userIdQuery' => 'setUserIdQuery',
         'creationDateQuery' => 'setCreationDateQuery',
         'creatorQuery' => 'setCreatorQuery',
-        'userAgentQuery' => 'setUserAgentQuery'
+        'idsQuery' => 'setIdsQuery',
+        'userAgentQuery' => 'setUserAgentQuery',
+        'userIdQuery' => 'setUserIdQuery'
     ];
 
     /**
@@ -204,11 +204,11 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
      * @var string[]
      */
     protected static $getters = [
-        'idsQuery' => 'getIdsQuery',
-        'userIdQuery' => 'getUserIdQuery',
         'creationDateQuery' => 'getCreationDateQuery',
         'creatorQuery' => 'getCreatorQuery',
-        'userAgentQuery' => 'getUserAgentQuery'
+        'idsQuery' => 'getIdsQuery',
+        'userAgentQuery' => 'getUserAgentQuery',
+        'userIdQuery' => 'getUserIdQuery'
     ];
 
     /**
@@ -268,11 +268,11 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('idsQuery', $data ?? [], null);
-        $this->setIfExists('userIdQuery', $data ?? [], null);
         $this->setIfExists('creationDateQuery', $data ?? [], null);
         $this->setIfExists('creatorQuery', $data ?? [], null);
+        $this->setIfExists('idsQuery', $data ?? [], null);
         $this->setIfExists('userAgentQuery', $data ?? [], null);
+        $this->setIfExists('userIdQuery', $data ?? [], null);
     }
 
     /**
@@ -316,60 +316,6 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
         return count($this->listInvalidProperties()) === 0;
     }
 
-
-    /**
-     * Gets idsQuery
-     *
-     * @return \Zitadel\Client\Model\SessionServiceIDsQuery|null
-     */
-    public function getIdsQuery()
-    {
-        return $this->container['idsQuery'];
-    }
-
-    /**
-     * Sets idsQuery
-     *
-     * @param \Zitadel\Client\Model\SessionServiceIDsQuery|null $idsQuery idsQuery
-     *
-     * @return self
-     */
-    public function setIdsQuery($idsQuery)
-    {
-        if (is_null($idsQuery)) {
-            throw new \InvalidArgumentException('non-nullable idsQuery cannot be null');
-        }
-        $this->container['idsQuery'] = $idsQuery;
-
-        return $this;
-    }
-
-    /**
-     * Gets userIdQuery
-     *
-     * @return \Zitadel\Client\Model\SessionServiceUserIDQuery|null
-     */
-    public function getUserIdQuery()
-    {
-        return $this->container['userIdQuery'];
-    }
-
-    /**
-     * Sets userIdQuery
-     *
-     * @param \Zitadel\Client\Model\SessionServiceUserIDQuery|null $userIdQuery userIdQuery
-     *
-     * @return self
-     */
-    public function setUserIdQuery($userIdQuery)
-    {
-        if (is_null($userIdQuery)) {
-            throw new \InvalidArgumentException('non-nullable userIdQuery cannot be null');
-        }
-        $this->container['userIdQuery'] = $userIdQuery;
-
-        return $this;
-    }
 
     /**
      * Gets creationDateQuery
@@ -426,6 +372,33 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
     }
 
     /**
+     * Gets idsQuery
+     *
+     * @return \Zitadel\Client\Model\SessionServiceIDsQuery|null
+     */
+    public function getIdsQuery()
+    {
+        return $this->container['idsQuery'];
+    }
+
+    /**
+     * Sets idsQuery
+     *
+     * @param \Zitadel\Client\Model\SessionServiceIDsQuery|null $idsQuery idsQuery
+     *
+     * @return self
+     */
+    public function setIdsQuery($idsQuery)
+    {
+        if (is_null($idsQuery)) {
+            throw new \InvalidArgumentException('non-nullable idsQuery cannot be null');
+        }
+        $this->container['idsQuery'] = $idsQuery;
+
+        return $this;
+    }
+
+    /**
      * Gets userAgentQuery
      *
      * @return \Zitadel\Client\Model\SessionServiceUserAgentQuery|null
@@ -448,6 +421,33 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
             throw new \InvalidArgumentException('non-nullable userAgentQuery cannot be null');
         }
         $this->container['userAgentQuery'] = $userAgentQuery;
+
+        return $this;
+    }
+
+    /**
+     * Gets userIdQuery
+     *
+     * @return \Zitadel\Client\Model\SessionServiceUserIDQuery|null
+     */
+    public function getUserIdQuery()
+    {
+        return $this->container['userIdQuery'];
+    }
+
+    /**
+     * Sets userIdQuery
+     *
+     * @param \Zitadel\Client\Model\SessionServiceUserIDQuery|null $userIdQuery userIdQuery
+     *
+     * @return self
+     */
+    public function setUserIdQuery($userIdQuery)
+    {
+        if (is_null($userIdQuery)) {
+            throw new \InvalidArgumentException('non-nullable userIdQuery cannot be null');
+        }
+        $this->container['userIdQuery'] = $userIdQuery;
 
         return $this;
     }

@@ -66,7 +66,7 @@ class IdentityProviderServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'identityProviderServiceGetIDPByID' => [
+        'getIDPByID' => [
             'application/json',
         ],
     ];
@@ -434,50 +434,48 @@ class IdentityProviderServiceApi
     }
 
     /**
-     * Operation identityProviderServiceGetIDPByID
+     * Operation getIDPByID
      *
-     * Get identity provider (IdP) by ID
+     * GetIDPByID
      *
-     * @param  string $id id (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProviderServiceGetIDPByID'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\IdentityProviderServiceGetIDPByIDRequest $identityProviderServiceGetIDPByIDRequest identityProviderServiceGetIDPByIDRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getIDPByID'] to see the possible values for this operation
      *
      * @return \Zitadel\Client\Model\IdentityProviderServiceGetIDPByIDResponse
      * @throws ApiException
      */
-    public function identityProviderServiceGetIDPByID($id, string $contentType = self::contentTypes['identityProviderServiceGetIDPByID'][0])
+    public function getIDPByID(    $identityProviderServiceGetIDPByIDRequest,string $contentType = self::contentTypes['getIDPByID'][0])
     {
-        $request = $this->identityProviderServiceGetIDPByIDRequest($id, $contentType);
+        $request = $this->getIDPByIDRequest($identityProviderServiceGetIDPByIDRequest, $contentType);
 
         $responseTypes = [
             200 => '\Zitadel\Client\Model\IdentityProviderServiceGetIDPByIDResponse',
-            403 => '\Zitadel\Client\Model\IdentityProviderServiceRpcStatus',
-            404 => '\Zitadel\Client\Model\IdentityProviderServiceRpcStatus',
-            'default' => '\Zitadel\Client\Model\IdentityProviderServiceRpcStatus',
+            'default' => '\Zitadel\Client\Model\IdentityProviderServiceConnectError',
         ];
         $defaultSignatureType = '\Zitadel\Client\Model\IdentityProviderServiceGetIDPByIDResponse';
         return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
     }
 
     /**
-     * Create request for operation 'identityProviderServiceGetIDPByID'
+     * Create request for operation 'getIDPByID'
      *
-     * @param  string $id (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProviderServiceGetIDPByID'] to see the possible values for this operation
+     * @param  \Zitadel\Client\Model\IdentityProviderServiceGetIDPByIDRequest $identityProviderServiceGetIDPByIDRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getIDPByID'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    private function identityProviderServiceGetIDPByIDRequest($id, string $contentType = self::contentTypes['identityProviderServiceGetIDPByID'][0])
+    private function getIDPByIDRequest($identityProviderServiceGetIDPByIDRequest, string $contentType = self::contentTypes['getIDPByID'][0])
     {
 
-        if ($id === null || (is_array($id) && count($id) === 0)) {
+        if ($identityProviderServiceGetIDPByIDRequest === null || (is_array($identityProviderServiceGetIDPByIDRequest) && count($identityProviderServiceGetIDPByIDRequest) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $id when calling identityProviderServiceGetIDPByID'
+                'Missing the required parameter $identityProviderServiceGetIDPByIDRequest when calling getIDPByID'
             );
         }
 
 
-        $resourcePath = '/v2/idps/{id}';
+        $resourcePath = '/zitadel.idp.v2.IdentityProviderService/GetIDPByID';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -486,13 +484,6 @@ class IdentityProviderServiceApi
 
 
 
-        if ($id !== null) {
-            $resourcePath = str_replace(
-                '{' . 'id' . '}',
-                ObjectSerializer::toPathValue($id),
-                $resourcePath
-            );
-        }
 
 
         $headers = $this->selectHeaders(
@@ -500,7 +491,14 @@ class IdentityProviderServiceApi
             $contentType,
             $multipart
         );
-        if (count($formParams) > 0) {
+        if (isset($identityProviderServiceGetIDPByIDRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($identityProviderServiceGetIDPByIDRequest));
+            } else {
+                $httpBody = $identityProviderServiceGetIDPByIDRequest;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -540,7 +538,7 @@ class IdentityProviderServiceApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
