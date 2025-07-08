@@ -57,8 +57,9 @@ class OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest implements ModelInter
       * @var string[]
       */
     protected static $openAPITypes = [
-        'session' => '\Zitadel\Client\Model\OIDCServiceSession',
-        'deny' => 'object'
+        'deviceAuthorizationId' => 'string',
+        'deny' => 'object',
+        'session' => '\Zitadel\Client\Model\OIDCServiceSession'
     ];
 
     /**
@@ -69,8 +70,9 @@ class OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest implements ModelInter
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'session' => null,
-        'deny' => null
+        'deviceAuthorizationId' => null,
+        'deny' => null,
+        'session' => null
     ];
 
     /**
@@ -79,8 +81,9 @@ class OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest implements ModelInter
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'session' => false,
-        'deny' => false
+        'deviceAuthorizationId' => false,
+        'deny' => false,
+        'session' => false
     ];
 
     /**
@@ -169,8 +172,9 @@ class OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest implements ModelInter
      * @var string[]
      */
     protected static $attributeMap = [
-        'session' => 'session',
-        'deny' => 'deny'
+        'deviceAuthorizationId' => 'deviceAuthorizationId',
+        'deny' => 'deny',
+        'session' => 'session'
     ];
 
     /**
@@ -179,8 +183,9 @@ class OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest implements ModelInter
      * @var string[]
      */
     protected static $setters = [
-        'session' => 'setSession',
-        'deny' => 'setDeny'
+        'deviceAuthorizationId' => 'setDeviceAuthorizationId',
+        'deny' => 'setDeny',
+        'session' => 'setSession'
     ];
 
     /**
@@ -189,8 +194,9 @@ class OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest implements ModelInter
      * @var string[]
      */
     protected static $getters = [
-        'session' => 'getSession',
-        'deny' => 'getDeny'
+        'deviceAuthorizationId' => 'getDeviceAuthorizationId',
+        'deny' => 'getDeny',
+        'session' => 'getSession'
     ];
 
     /**
@@ -250,8 +256,9 @@ class OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest implements ModelInter
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('session', $data ?? [], null);
+        $this->setIfExists('deviceAuthorizationId', $data ?? [], null);
         $this->setIfExists('deny', $data ?? [], null);
+        $this->setIfExists('session', $data ?? [], null);
     }
 
     /**
@@ -297,28 +304,28 @@ class OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest implements ModelInter
 
 
     /**
-     * Gets session
+     * Gets deviceAuthorizationId
      *
-     * @return \Zitadel\Client\Model\OIDCServiceSession|null
+     * @return string|null
      */
-    public function getSession()
+    public function getDeviceAuthorizationId()
     {
-        return $this->container['session'];
+        return $this->container['deviceAuthorizationId'];
     }
 
     /**
-     * Sets session
+     * Sets deviceAuthorizationId
      *
-     * @param \Zitadel\Client\Model\OIDCServiceSession|null $session session
+     * @param string|null $deviceAuthorizationId The device authorization id returned when submitting the user code.
      *
      * @return self
      */
-    public function setSession($session)
+    public function setDeviceAuthorizationId($deviceAuthorizationId)
     {
-        if (is_null($session)) {
-            throw new \InvalidArgumentException('non-nullable session cannot be null');
+        if (is_null($deviceAuthorizationId)) {
+            throw new \InvalidArgumentException('non-nullable deviceAuthorizationId cannot be null');
         }
-        $this->container['session'] = $session;
+        $this->container['deviceAuthorizationId'] = $deviceAuthorizationId;
 
         return $this;
     }
@@ -346,6 +353,33 @@ class OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest implements ModelInter
             throw new \InvalidArgumentException('non-nullable deny cannot be null');
         }
         $this->container['deny'] = $deny;
+
+        return $this;
+    }
+
+    /**
+     * Gets session
+     *
+     * @return \Zitadel\Client\Model\OIDCServiceSession|null
+     */
+    public function getSession()
+    {
+        return $this->container['session'];
+    }
+
+    /**
+     * Sets session
+     *
+     * @param \Zitadel\Client\Model\OIDCServiceSession|null $session session
+     *
+     * @return self
+     */
+    public function setSession($session)
+    {
+        if (is_null($session)) {
+            throw new \InvalidArgumentException('non-nullable session cannot be null');
+        }
+        $this->container['session'] = $session;
 
         return $this;
     }

@@ -57,8 +57,9 @@ class UserServiceCreatePasskeyRegistrationLinkRequest implements ModelInterface,
       * @var string[]
       */
     protected static $openAPITypes = [
-        'sendLink' => '\Zitadel\Client\Model\UserServiceSendPasskeyRegistrationLink',
-        'returnCode' => 'object'
+        'userId' => 'string',
+        'returnCode' => 'object',
+        'sendLink' => '\Zitadel\Client\Model\UserServiceSendPasskeyRegistrationLink'
     ];
 
     /**
@@ -69,8 +70,9 @@ class UserServiceCreatePasskeyRegistrationLinkRequest implements ModelInterface,
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'sendLink' => null,
-        'returnCode' => null
+        'userId' => null,
+        'returnCode' => null,
+        'sendLink' => null
     ];
 
     /**
@@ -79,8 +81,9 @@ class UserServiceCreatePasskeyRegistrationLinkRequest implements ModelInterface,
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'sendLink' => false,
-        'returnCode' => false
+        'userId' => false,
+        'returnCode' => false,
+        'sendLink' => false
     ];
 
     /**
@@ -169,8 +172,9 @@ class UserServiceCreatePasskeyRegistrationLinkRequest implements ModelInterface,
      * @var string[]
      */
     protected static $attributeMap = [
-        'sendLink' => 'sendLink',
-        'returnCode' => 'returnCode'
+        'userId' => 'userId',
+        'returnCode' => 'returnCode',
+        'sendLink' => 'sendLink'
     ];
 
     /**
@@ -179,8 +183,9 @@ class UserServiceCreatePasskeyRegistrationLinkRequest implements ModelInterface,
      * @var string[]
      */
     protected static $setters = [
-        'sendLink' => 'setSendLink',
-        'returnCode' => 'setReturnCode'
+        'userId' => 'setUserId',
+        'returnCode' => 'setReturnCode',
+        'sendLink' => 'setSendLink'
     ];
 
     /**
@@ -189,8 +194,9 @@ class UserServiceCreatePasskeyRegistrationLinkRequest implements ModelInterface,
      * @var string[]
      */
     protected static $getters = [
-        'sendLink' => 'getSendLink',
-        'returnCode' => 'getReturnCode'
+        'userId' => 'getUserId',
+        'returnCode' => 'getReturnCode',
+        'sendLink' => 'getSendLink'
     ];
 
     /**
@@ -250,8 +256,9 @@ class UserServiceCreatePasskeyRegistrationLinkRequest implements ModelInterface,
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('sendLink', $data ?? [], null);
+        $this->setIfExists('userId', $data ?? [], null);
         $this->setIfExists('returnCode', $data ?? [], null);
+        $this->setIfExists('sendLink', $data ?? [], null);
     }
 
     /**
@@ -281,6 +288,9 @@ class UserServiceCreatePasskeyRegistrationLinkRequest implements ModelInterface,
     {
         $invalidProperties = [];
 
+        if ($this->container['userId'] === null) {
+            $invalidProperties[] = "'userId' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -297,28 +307,28 @@ class UserServiceCreatePasskeyRegistrationLinkRequest implements ModelInterface,
 
 
     /**
-     * Gets sendLink
+     * Gets userId
      *
-     * @return \Zitadel\Client\Model\UserServiceSendPasskeyRegistrationLink|null
+     * @return string
      */
-    public function getSendLink()
+    public function getUserId()
     {
-        return $this->container['sendLink'];
+        return $this->container['userId'];
     }
 
     /**
-     * Sets sendLink
+     * Sets userId
      *
-     * @param \Zitadel\Client\Model\UserServiceSendPasskeyRegistrationLink|null $sendLink sendLink
+     * @param string $userId userId
      *
      * @return self
      */
-    public function setSendLink($sendLink)
+    public function setUserId($userId)
     {
-        if (is_null($sendLink)) {
-            throw new \InvalidArgumentException('non-nullable sendLink cannot be null');
+        if (is_null($userId)) {
+            throw new \InvalidArgumentException('non-nullable userId cannot be null');
         }
-        $this->container['sendLink'] = $sendLink;
+        $this->container['userId'] = $userId;
 
         return $this;
     }
@@ -346,6 +356,33 @@ class UserServiceCreatePasskeyRegistrationLinkRequest implements ModelInterface,
             throw new \InvalidArgumentException('non-nullable returnCode cannot be null');
         }
         $this->container['returnCode'] = $returnCode;
+
+        return $this;
+    }
+
+    /**
+     * Gets sendLink
+     *
+     * @return \Zitadel\Client\Model\UserServiceSendPasskeyRegistrationLink|null
+     */
+    public function getSendLink()
+    {
+        return $this->container['sendLink'];
+    }
+
+    /**
+     * Sets sendLink
+     *
+     * @param \Zitadel\Client\Model\UserServiceSendPasskeyRegistrationLink|null $sendLink sendLink
+     *
+     * @return self
+     */
+    public function setSendLink($sendLink)
+    {
+        if (is_null($sendLink)) {
+            throw new \InvalidArgumentException('non-nullable sendLink cannot be null');
+        }
+        $this->container['sendLink'] = $sendLink;
 
         return $this;
     }

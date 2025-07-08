@@ -330,7 +330,7 @@ class SettingsServiceOptions implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets isLinkingAllowed
      *
-     * @param bool|null $isLinkingAllowed Enable if users should be able to link an existing ZITADEL user with an external account.
+     * @param bool|null $isLinkingAllowed Enable if users should be able to link an existing ZITADEL user with an  external account.
      *
      * @return self
      */
@@ -357,7 +357,7 @@ class SettingsServiceOptions implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets isCreationAllowed
      *
-     * @param bool|null $isCreationAllowed Enable if users should be able to create a new account in ZITADEL when using an external account.
+     * @param bool|null $isCreationAllowed Enable if users should be able to create a new account in ZITADEL when  using an external account.
      *
      * @return self
      */
@@ -384,7 +384,7 @@ class SettingsServiceOptions implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets isAutoCreation
      *
-     * @param bool|null $isAutoCreation Enable if a new account in ZITADEL should be created automatically when login with an external account.
+     * @param bool|null $isAutoCreation Enable if a new account in ZITADEL should be created automatically when  login with an external account.
      *
      * @return self
      */
@@ -411,7 +411,7 @@ class SettingsServiceOptions implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets isAutoUpdate
      *
-     * @param bool|null $isAutoUpdate Enable if a the ZITADEL account fields should be updated automatically on each login.
+     * @param bool|null $isAutoUpdate Enable if a the ZITADEL account fields should be updated automatically on  each login.
      *
      * @return self
      */

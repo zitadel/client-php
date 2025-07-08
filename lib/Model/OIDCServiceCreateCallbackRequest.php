@@ -57,8 +57,9 @@ class OIDCServiceCreateCallbackRequest implements ModelInterface, ArrayAccess, \
       * @var string[]
       */
     protected static $openAPITypes = [
-        'session' => '\Zitadel\Client\Model\OIDCServiceSession',
-        'error' => '\Zitadel\Client\Model\OIDCServiceAuthorizationError'
+        'authRequestId' => 'string',
+        'error' => '\Zitadel\Client\Model\OIDCServiceAuthorizationError',
+        'session' => '\Zitadel\Client\Model\OIDCServiceSession'
     ];
 
     /**
@@ -69,8 +70,9 @@ class OIDCServiceCreateCallbackRequest implements ModelInterface, ArrayAccess, \
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'session' => null,
-        'error' => null
+        'authRequestId' => null,
+        'error' => null,
+        'session' => null
     ];
 
     /**
@@ -79,8 +81,9 @@ class OIDCServiceCreateCallbackRequest implements ModelInterface, ArrayAccess, \
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'session' => false,
-        'error' => false
+        'authRequestId' => false,
+        'error' => false,
+        'session' => false
     ];
 
     /**
@@ -169,8 +172,9 @@ class OIDCServiceCreateCallbackRequest implements ModelInterface, ArrayAccess, \
      * @var string[]
      */
     protected static $attributeMap = [
-        'session' => 'session',
-        'error' => 'error'
+        'authRequestId' => 'authRequestId',
+        'error' => 'error',
+        'session' => 'session'
     ];
 
     /**
@@ -179,8 +183,9 @@ class OIDCServiceCreateCallbackRequest implements ModelInterface, ArrayAccess, \
      * @var string[]
      */
     protected static $setters = [
-        'session' => 'setSession',
-        'error' => 'setError'
+        'authRequestId' => 'setAuthRequestId',
+        'error' => 'setError',
+        'session' => 'setSession'
     ];
 
     /**
@@ -189,8 +194,9 @@ class OIDCServiceCreateCallbackRequest implements ModelInterface, ArrayAccess, \
      * @var string[]
      */
     protected static $getters = [
-        'session' => 'getSession',
-        'error' => 'getError'
+        'authRequestId' => 'getAuthRequestId',
+        'error' => 'getError',
+        'session' => 'getSession'
     ];
 
     /**
@@ -250,8 +256,9 @@ class OIDCServiceCreateCallbackRequest implements ModelInterface, ArrayAccess, \
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('session', $data ?? [], null);
+        $this->setIfExists('authRequestId', $data ?? [], null);
         $this->setIfExists('error', $data ?? [], null);
+        $this->setIfExists('session', $data ?? [], null);
     }
 
     /**
@@ -297,28 +304,28 @@ class OIDCServiceCreateCallbackRequest implements ModelInterface, ArrayAccess, \
 
 
     /**
-     * Gets session
+     * Gets authRequestId
      *
-     * @return \Zitadel\Client\Model\OIDCServiceSession|null
+     * @return string|null
      */
-    public function getSession()
+    public function getAuthRequestId()
     {
-        return $this->container['session'];
+        return $this->container['authRequestId'];
     }
 
     /**
-     * Sets session
+     * Sets authRequestId
      *
-     * @param \Zitadel\Client\Model\OIDCServiceSession|null $session session
+     * @param string|null $authRequestId authRequestId
      *
      * @return self
      */
-    public function setSession($session)
+    public function setAuthRequestId($authRequestId)
     {
-        if (is_null($session)) {
-            throw new \InvalidArgumentException('non-nullable session cannot be null');
+        if (is_null($authRequestId)) {
+            throw new \InvalidArgumentException('non-nullable authRequestId cannot be null');
         }
-        $this->container['session'] = $session;
+        $this->container['authRequestId'] = $authRequestId;
 
         return $this;
     }
@@ -346,6 +353,33 @@ class OIDCServiceCreateCallbackRequest implements ModelInterface, ArrayAccess, \
             throw new \InvalidArgumentException('non-nullable error cannot be null');
         }
         $this->container['error'] = $error;
+
+        return $this;
+    }
+
+    /**
+     * Gets session
+     *
+     * @return \Zitadel\Client\Model\OIDCServiceSession|null
+     */
+    public function getSession()
+    {
+        return $this->container['session'];
+    }
+
+    /**
+     * Sets session
+     *
+     * @param \Zitadel\Client\Model\OIDCServiceSession|null $session session
+     *
+     * @return self
+     */
+    public function setSession($session)
+    {
+        if (is_null($session)) {
+            throw new \InvalidArgumentException('non-nullable session cannot be null');
+        }
+        $this->container['session'] = $session;
 
         return $this;
     }

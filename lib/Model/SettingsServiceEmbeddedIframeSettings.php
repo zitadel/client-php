@@ -309,7 +309,7 @@ class SettingsServiceEmbeddedIframeSettings implements ModelInterface, ArrayAcce
     /**
      * Sets enabled
      *
-     * @param bool|null $enabled states if iframe embedding is enabled or disabled
+     * @param bool|null $enabled enabled
      *
      * @return self
      */
@@ -336,7 +336,7 @@ class SettingsServiceEmbeddedIframeSettings implements ModelInterface, ArrayAcce
     /**
      * Sets allowedOrigins
      *
-     * @param string[]|null $allowedOrigins origins allowed loading ZITADEL in an iframe if enabled.
+     * @param string[]|null $allowedOrigins allowedOrigins
      *
      * @return self
      */
