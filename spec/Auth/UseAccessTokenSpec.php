@@ -28,7 +28,7 @@ class UseAccessTokenSpec extends AbstractIntegrationTest
     public function testRetrievesGeneralSettingsWithValidAuth(): void
     {
         $client = Zitadel::withAccessToken(self::getBaseUrl(), self::getAuthToken());
-        $client->settings->settingsServiceGetGeneralSettings();
+        $client->settings->getGeneralSettings();
     }
 
     /**
@@ -40,6 +40,6 @@ class UseAccessTokenSpec extends AbstractIntegrationTest
         $invalid = Zitadel::withAccessToken(self::getBaseUrl(), 'invalid');
 
         $this->expectException(ZitadelException::class);
-        $invalid->settings->settingsServiceGetGeneralSettings();
+        $invalid->settings->getGeneralSettings();
     }
 }
