@@ -6,10 +6,7 @@ namespace Zitadel\Client;
 
 use DateTime;
 use Exception;
-use GuzzleHttp\Psr7\Utils;
 use InvalidArgumentException;
-use Psr\Http\Message\StreamInterface;
-use SplFileObject;
 use Zitadel\Client\Model\ModelInterface;
 
 /**
@@ -22,17 +19,6 @@ class ObjectSerializer
      * @noinspection PhpClassConstantAccessedViaChildClassInspection
      */
     private static $dateTimeFormat = DateTime::ATOM;
-
-    /**
-     * Change the date format
-     *
-     * @param string $format the new date format to use
-     * @noinspection PhpMissingReturnTypeInspection
-     */
-    public static function setDateTimeFormat($format)
-    {
-        self::$dateTimeFormat = $format;
-    }
 
     /**
      * Serialize data
@@ -95,19 +81,6 @@ class ObjectSerializer
         }
     }
 
-    /**
-     * Take value and turn it into a string suitable for inclusion in
-     * the path, by url-encoding.
-     *
-     * @param string $value a string which will be part of the path
-     *
-     * @return string the serialized object
-     * @noinspection PhpMissingReturnTypeInspection
-     */
-    public static function toPathValue($value)
-    {
-        return rawurlencode(self::toString($value));
-    }
 
     /**
      * Take value and turn it into a string suitable for inclusion in
@@ -120,7 +93,7 @@ class ObjectSerializer
      * @return string the header string
      * @noinspection PhpMissingReturnTypeInspection
      */
-    public static function toString($value)
+    private static function toString($value)
     {
         if ($value instanceof DateTime) { // datetime in ISO8601 format
             return $value->format(self::$dateTimeFormat);
@@ -131,202 +104,6 @@ class ObjectSerializer
         }
     }
 
-    /**
-     * Take query parameter properties and turn it into an array suitable for
-     * native http_build_query or GuzzleHttp\Psr7\Query::build.
-     *
-     * @param mixed $value Parameter value
-     * @param string $paramName Parameter name
-     * @param string $openApiType OpenAPIType eg. array or object
-     * @param string $style Parameter serialization style
-     * @param bool $explode Parameter explode option
-     * @param bool $required Whether query param is required or not
-     *
-     * @return array
-     */
-    public static function toQueryValue(
-        $value,
-        string $paramName,
-        string $openApiType = 'string',
-        string $style = 'form',
-        bool $explode = true,
-        bool $required = true
-    ): array {
-
-        # Check if we should omit this parameter from the query. This should only happen when:
-        #  - Parameter is NOT required; AND
-        #  - its value is set to a value that is equivalent to "empty", depending on its OpenAPI type. For
-        #    example, 0 as "int" or "boolean" is NOT an empty value.
-        if (self::isEmptyValue($value, $openApiType)) {
-            if ($required) {
-                return ["$paramName" => ''];
-            } else {
-                return [];
-            }
-        }
-
-        # Handle DateTime objects in query
-        if ($openApiType === "\\DateTime" && $value instanceof DateTime) {
-            return ["$paramName" => $value->format(self::$dateTimeFormat)];
-        }
-
-        $query = [];
-        $value = (in_array($openApiType, ['object', 'array'], true)) ? (array)$value : $value;
-
-        // since \GuzzleHttp\Psr7\Query::build fails with nested arrays
-        // need to flatten array first
-        $flattenArray = function ($arr, $name, &$result = []) use (&$flattenArray, $style, $explode) {
-            if (!is_array($arr)) {
-                return $arr;
-            }
-
-            foreach ($arr as $k => $v) {
-                $prop = ($style === 'deepObject') ? $prop = "{$name}[$k]" : $k;
-
-                if (is_array($v)) {
-                    $flattenArray($v, $prop, $result);
-                } else {
-                    if ($style !== 'deepObject' && !$explode) {
-                        // push key itself
-                        $result[] = $prop;
-                    }
-                    $result[$prop] = $v;
-                }
-            }
-            return $result;
-        };
-
-        $value = $flattenArray($value, $paramName);
-
-        // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#style-values
-        if ($openApiType === 'array' && $style === 'deepObject' && $explode) {
-            return $value;
-        }
-
-        if ($openApiType === 'object' && ($style === 'deepObject' || $explode)) {
-            return $value;
-        }
-
-        if ('boolean' === $openApiType && is_bool($value)) {
-            $value = self::convertBoolToQueryStringFormat($value);
-        }
-
-        // handle style in serializeCollection
-        $query[$paramName] = ($explode) ? $value : self::serializeCollection((array)$value, $style);
-
-        return $query;
-    }
-
-    /**
-     * Checks if a value is empty, based on its OpenAPI type.
-     *
-     * @param mixed $value
-     * @param string $openApiType
-     *
-     * @return bool true if $value is empty
-     */
-    private static function isEmptyValue($value, string $openApiType): bool
-    {
-        # If empty() returns false, it is not empty regardless of its type.
-        if (!empty($value)) {
-            return false;
-        }
-
-        # Null is always empty, as we cannot send a real "null" value in a query parameter.
-        if ($value === null) {
-            return true;
-        }
-
-        return match ($openApiType) {
-            'int', 'integer' => $value !== 0,
-            'number', 'float' => $value !== 0 && $value !== 0.0,
-            'bool', 'boolean' => !in_array($value, [false, 0], true),
-            'string' => $value === '',
-            default => true,
-        };
-    }
-
-    /**
-     * Convert boolean value to format for query string.
-     *
-     * @param bool $value Boolean value
-     *
-     * @return int|string Boolean value in format
-     * @noinspection PhpMissingReturnTypeInspection
-     */
-    public static function convertBoolToQueryStringFormat(bool $value)
-    {
-        if (Configuration::BOOLEAN_FORMAT_STRING == Configuration::getDefaultConfiguration()->getBooleanFormatForQueryString()) {
-            return $value ? 'true' : 'false';
-        }
-
-        return (int)$value;
-    }
-
-    /**
-     * Serialize an array to a string.
-     *
-     * @param array $collection collection to serialize to a string
-     * @param string $style the format use for serialization (csv,
-     * ssv, tsv, pipes, multi)
-     * @param bool $allowCollectionFormatMulti allow collection format to be a multidimensional array
-     *
-     * @return string
-     * @noinspection PhpMissingReturnTypeInspection
-     */
-    public static function serializeCollection(array $collection, $style, $allowCollectionFormatMulti = false)
-    {
-        if ($allowCollectionFormatMulti && ('multi' === $style)) {
-            // http_build_query() almost does the job for us. We just
-            // need to fix the result of multidimensional arrays.
-            return preg_replace('/%5B[0-9]+%5D=/', '=', http_build_query($collection, '', '&'));
-        }
-        return match ($style) {
-            'pipeDelimited', 'pipes' => implode('|', $collection),
-            'tsv' => implode("\t", $collection),
-            'spaceDelimited', 'ssv' => implode(' ', $collection),
-            default => implode(',', $collection),
-        };
-    }
-
-    /**
-     * Take value and turn it into a string suitable for inclusion in
-     * the header. If it's a string, pass through unchanged
-     * If it's a datetime object, format it in ISO8601
-     *
-     * @param string $value a string which will be part of the header
-     *
-     * @return string the header string
-     * @noinspection PhpMissingReturnTypeInspection
-     */
-    public static function toHeaderValue($value)
-    {
-        $callable = [$value, 'toHeaderValue'];
-        if (is_callable($callable)) {
-            return $callable();
-        }
-
-        return self::toString($value);
-    }
-
-    /**
-     * Take value and turn it into a string suitable for inclusion in
-     * the http body (form parameter). If it's a string, pass through unchanged
-     * If it's a datetime object, format it in ISO8601
-     *
-     * @param string|SplFileObject $value the value of the form parameter
-     *
-     * @return string the form string
-     * @noinspection PhpMissingReturnTypeInspection
-     */
-    public static function toFormValue($value)
-    {
-        if ($value instanceof SplFileObject) {
-            return $value->getRealPath();
-        } else {
-            return self::toString($value);
-        }
-    }
 
     /**
      * Deserialize a JSON string into an object
@@ -406,31 +183,6 @@ class ObjectSerializer
             }
         }
 
-        if ($class === '\SplFileObject') {
-            $data = Utils::streamFor($data);
-
-            /** @var StreamInterface $data */
-
-            // determine file name
-            if (
-                is_array($httpHeaders)
-                && array_key_exists('Content-Disposition', $httpHeaders)
-                && preg_match('/inline; filename=[\'"]?([^\'"\s]+)[\'"]?$/i', $httpHeaders['Content-Disposition'], $match)
-            ) {
-                $filename = Configuration::getDefaultConfiguration()->getTempFolderPath() . DIRECTORY_SEPARATOR . self::sanitizeFilename($match[1]);
-            } else {
-                $filename = tempnam(Configuration::getDefaultConfiguration()->getTempFolderPath(), '');
-            }
-
-            $file = fopen($filename, 'w');
-            while ($chunk = $data->read(200)) {
-                fwrite($file, $chunk);
-            }
-            fclose($file);
-
-            return new SplFileObject($filename, 'r');
-        }
-
         /** @psalm-suppress ParadoxicalCondition */
         if (in_array($class, ['\DateTime', '\SplFileObject', 'array', 'bool', 'boolean', 'byte', 'float', 'int', 'integer', 'mixed', 'number', 'object', 'string', 'void'], true)) {
             settype($data, $class);
@@ -492,31 +244,13 @@ class ObjectSerializer
      * @return string the shorten timestamp
      * @noinspection PhpMissingReturnTypeInspection
      */
-    public static function sanitizeTimestamp($timestamp)
+    private static function sanitizeTimestamp($timestamp)
     {
         if (!is_string($timestamp)) {
             return $timestamp;
         }
 
         return preg_replace('/(:\d{2}.\d{6})\d*/', '$1', $timestamp);
-    }
-
-    /**
-     * Sanitize filename by removing path.
-     * e.g. ../../sun.gif becomes sun.gif
-     *
-     * @param string $filename filename to be sanitized
-     *
-     * @return string the sanitized filename
-     * @noinspection PhpMissingReturnTypeInspection
-     */
-    public static function sanitizeFilename($filename)
-    {
-        if (preg_match("/.*[\/\\\\](.*)$/", $filename, $match)) {
-            return $match[1];
-        } else {
-            return $filename;
-        }
     }
 
     /**
@@ -550,7 +284,7 @@ class ObjectSerializer
             throw new InvalidArgumentException('Invalid type');
         }
 
-        $castBool = Configuration::BOOLEAN_FORMAT_INT == Configuration::getDefaultConfiguration()->getBooleanFormatForQueryString()
+        $castBool = true
             ? fn ($v) => (int)$v
             : (fn ($v) => $v ? 'true' : 'false');
 

@@ -3,86 +3,34 @@
 namespace Zitadel\Client;
 
 use Zitadel\Client\Auth\Authenticator;
-use Zitadel\Client\Auth\NoAuthAuthenticator;
 
 class Configuration
 {
-    public const BOOLEAN_FORMAT_INT = 'int';
-    public const BOOLEAN_FORMAT_STRING = 'string';
     /**
-     * @var Configuration
-     */
-    private static Configuration $defaultConfiguration;
-    /**
-     * Boolean format for query string
-     *
-     * @var string
-     */
-    protected string $booleanFormatForQueryString = self::BOOLEAN_FORMAT_INT;
-    /**
-     * User agent of the HTTP request, set to "OpenAPI-Generator/{version}/PHP" by default
+     * User agent of the HTTP request.
      *
      * @var string
      */
     protected string $userAgent;
-    /**
-     * Debug switch (default set to false)
-     *
-     * @var bool
-     */
-    protected bool $debug = false;
-    /**
-     * Debug file location (log to STDOUT by default)
-     *
-     * @var string
-     */
-    protected string $debugFile = 'php://output';
-    /**
-     * Debug file location (log to STDOUT by default)
-     *
-     * @var string
-     */
-    protected string $tempFolderPath;
 
     /**
-     * Constructor
+     * Initializes a new instance of the API client.
+     *
+     * @param Authenticator $authenticator The authenticator for signing requests.
+     * @param int $timeout The total request timeout in seconds.
+     * @param int $connectTimeout The connection timeout in seconds.
      */
-    public function __construct(protected Authenticator $authenticator)
-    {
-        $this->tempFolderPath = sys_get_temp_dir();
+    public function __construct(
+        protected Authenticator $authenticator,
+        private readonly int $timeout = 30,
+        private readonly int $connectTimeout = 5
+    ) {
         $this->userAgent = self::myUserAgent();
     }
 
     public static function myUserAgent(): string
     {
         return sprintf('zitadel-client/%s (lang=php; lang_version=%s; os=%s; arch=%s)', Version::VERSION, PHP_VERSION, strtolower(PHP_OS_FAMILY), strtolower(php_uname('m')));
-    }
-
-    /**
-     * Gets the default configuration instance
-     *
-     * @return Configuration
-     */
-    public static function getDefaultConfiguration(): Configuration
-    {
-        if (!isset(self::$defaultConfiguration)) {
-            self::$defaultConfiguration = new Configuration(new NoAuthAuthenticator());
-        }
-
-        return self::$defaultConfiguration;
-    }
-
-    /**
-     * Sets the default configuration instance
-     *
-     * @param Configuration $config An instance of the Configuration Object
-     *
-     * @return void
-     * @noinspection PhpUnused
-     */
-    public static function setDefaultConfiguration(Configuration $config): void
-    {
-        self::$defaultConfiguration = $config;
     }
 
     /**
@@ -96,28 +44,13 @@ class Configuration
     }
 
     /**
-     * Gets boolean format for query string.
+     * Gets the boolean format for query string.
      *
      * @return string Boolean format for query string
      */
     public function getBooleanFormatForQueryString(): string
     {
-        return $this->booleanFormatForQueryString;
-    }
-
-    /**
-     * Sets boolean format for query string.
-     *
-     * @param string $booleanFormat Boolean format for query string
-     *
-     * @return $this
-     * @noinspection PhpUnused
-     */
-    public function setBooleanFormatForQueryString(string $booleanFormat): Configuration
-    {
-        $this->booleanFormatForQueryString = $booleanFormat;
-
-        return $this;
+        return 'int';
     }
 
     /**
@@ -162,69 +95,32 @@ class Configuration
      */
     public function getDebug(): bool
     {
-        return $this->debug;
+        return false;
     }
 
     /**
-     * Sets debug flag
+     * Gets the connection timeout.
      *
-     * @param bool $debug Debug flag
+     * Specifies the number of seconds to wait while trying to connect to a
+     * server.
      *
-     * @return $this
-     * @noinspection PhpUnused
+     * @return int The connection timeout in seconds.
      */
-    public function setDebug(bool $debug): Configuration
+    public function getConnectTimeout(): int
     {
-        $this->debug = $debug;
-        return $this;
+        return $this->connectTimeout;
     }
 
     /**
-     * Gets the debug file
+     * Gets the total request timeout.
      *
-     * @return string
+     * Specifies the maximum number of seconds that the entire request is
+     * allowed to take.
+     *
+     * @return int The total timeout in seconds.
      */
-    public function getDebugFile(): string
+    public function getTimeout(): int
     {
-        return $this->debugFile;
+        return $this->timeout;
     }
-
-    /**
-     * Sets the debug file
-     *
-     * @param string $debugFile Debug file
-     *
-     * @return $this
-     * @noinspection PhpUnused
-     */
-    public function setDebugFile(string $debugFile): Configuration
-    {
-        $this->debugFile = $debugFile;
-        return $this;
-    }
-
-    /**
-     * Gets the temp folder path
-     *
-     * @return string Temp folder path
-     */
-    public function getTempFolderPath(): string
-    {
-        return $this->tempFolderPath;
-    }
-
-    /**
-     * Sets the temp folder path
-     *
-     * @param string $tempFolderPath Temp folder path
-     *
-     * @return $this
-     * @noinspection PhpUnused
-     */
-    public function setTempFolderPath(string $tempFolderPath): Configuration
-    {
-        $this->tempFolderPath = $tempFolderPath;
-        return $this;
-    }
-
 }
