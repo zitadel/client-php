@@ -20,7 +20,7 @@ final class ClientCredentialsAuthenticatorBuilder extends OAuthAuthenticatorBuil
      * @param string $clientSecret The OAuth2 client secret.
      * @throws Exception
      */
-    public function __construct(string $host, private string $clientId, private string $clientSecret)
+    public function __construct(string $host, private readonly string $clientId, private readonly string $clientSecret)
     {
         parent::__construct($host);
     }

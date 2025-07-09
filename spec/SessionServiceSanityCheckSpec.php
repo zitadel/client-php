@@ -68,7 +68,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
 
         $response = self::$client->sessions->listSessions($request);
         $ids = array_map(
-            fn ($session) => $session->getId(),
+            fn($session) => $session->getId(),
             $response->getSessions()
         );
 
@@ -119,16 +119,16 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
                     ->setEmail('johndoe' . uniqid() . '@example.com')
             );
 
-        $user = self::$client->users->addHumanUser($request);
-        $request = new SessionServiceCreateSessionRequest();
-        $request->setChecks(
-            (new SessionServiceChecks())
-                ->setUser(
-                    (new SessionServiceCheckUser())
-                        ->setLoginName($id)
-                )
-        );
-        $request->setLifetime('18000s');
+        self::$client->users->addHumanUser($request);
+        $request = (new SessionServiceCreateSessionRequest())
+            ->setChecks(
+                (new SessionServiceChecks())
+                    ->setUser(
+                        (new SessionServiceCheckUser())
+                            ->setLoginName($id)
+                    )
+            )
+            ->setLifetime('18000s');
 
         $response = self::$client->sessions->createSession($request);
         $this->sessionId = $response->getSessionId();

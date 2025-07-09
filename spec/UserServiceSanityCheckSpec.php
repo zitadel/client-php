@@ -109,7 +109,6 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
     {
         $this->expectException(ApiException::class);
         self::$client->users->getUserByID((new UserServiceGetUserByIDRequest())->setUserId(uniqid()));
-        ;
     }
 
     /**
