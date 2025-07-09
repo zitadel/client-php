@@ -68,7 +68,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
 
         $response = self::$client->sessions->listSessions($request);
         $ids = array_map(
-            fn($session) => $session->getId(),
+            fn ($session) => $session->getId(),
             $response->getSessions()
         );
 
