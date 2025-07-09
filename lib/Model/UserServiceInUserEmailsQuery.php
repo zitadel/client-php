@@ -303,7 +303,7 @@ class UserServiceInUserEmailsQuery implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets userEmails
      *
-     * @param string[]|null $userEmails the emails of the users to include
+     * @param string[]|null $userEmails userEmails
      *
      * @return self
      */

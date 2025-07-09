@@ -15,10 +15,10 @@ class PersonalAccessAuthenticator extends Authenticator
      * @param string $host The base URL for the API endpoints.
      * @param string $token The personal access token.
      */
-    public function __construct(string         $host, /**
+    public function __construct(string $host, /**
      * The personal access token.
      */
-        private string $token)
+        private readonly string        $token)
     {
         parent::__construct($host);
     }

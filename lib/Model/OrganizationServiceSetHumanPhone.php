@@ -58,9 +58,9 @@ class OrganizationServiceSetHumanPhone implements ModelInterface, ArrayAccess, \
       */
     protected static $openAPITypes = [
         'phone' => 'string',
-        'sendCode' => 'object',
+        'isVerified' => 'bool',
         'returnCode' => 'object',
-        'isVerified' => 'bool'
+        'sendCode' => 'object'
     ];
 
     /**
@@ -72,9 +72,9 @@ class OrganizationServiceSetHumanPhone implements ModelInterface, ArrayAccess, \
       */
     protected static $openAPIFormats = [
         'phone' => null,
-        'sendCode' => null,
+        'isVerified' => null,
         'returnCode' => null,
-        'isVerified' => null
+        'sendCode' => null
     ];
 
     /**
@@ -84,9 +84,9 @@ class OrganizationServiceSetHumanPhone implements ModelInterface, ArrayAccess, \
       */
     protected static array $openAPINullables = [
         'phone' => false,
-        'sendCode' => false,
+        'isVerified' => false,
         'returnCode' => false,
-        'isVerified' => false
+        'sendCode' => false
     ];
 
     /**
@@ -176,9 +176,9 @@ class OrganizationServiceSetHumanPhone implements ModelInterface, ArrayAccess, \
      */
     protected static $attributeMap = [
         'phone' => 'phone',
-        'sendCode' => 'sendCode',
+        'isVerified' => 'isVerified',
         'returnCode' => 'returnCode',
-        'isVerified' => 'isVerified'
+        'sendCode' => 'sendCode'
     ];
 
     /**
@@ -188,9 +188,9 @@ class OrganizationServiceSetHumanPhone implements ModelInterface, ArrayAccess, \
      */
     protected static $setters = [
         'phone' => 'setPhone',
-        'sendCode' => 'setSendCode',
+        'isVerified' => 'setIsVerified',
         'returnCode' => 'setReturnCode',
-        'isVerified' => 'setIsVerified'
+        'sendCode' => 'setSendCode'
     ];
 
     /**
@@ -200,9 +200,9 @@ class OrganizationServiceSetHumanPhone implements ModelInterface, ArrayAccess, \
      */
     protected static $getters = [
         'phone' => 'getPhone',
-        'sendCode' => 'getSendCode',
+        'isVerified' => 'getIsVerified',
         'returnCode' => 'getReturnCode',
-        'isVerified' => 'getIsVerified'
+        'sendCode' => 'getSendCode'
     ];
 
     /**
@@ -263,9 +263,9 @@ class OrganizationServiceSetHumanPhone implements ModelInterface, ArrayAccess, \
     public function __construct(?array $data = null)
     {
         $this->setIfExists('phone', $data ?? [], null);
-        $this->setIfExists('sendCode', $data ?? [], null);
-        $this->setIfExists('returnCode', $data ?? [], null);
         $this->setIfExists('isVerified', $data ?? [], null);
+        $this->setIfExists('returnCode', $data ?? [], null);
+        $this->setIfExists('sendCode', $data ?? [], null);
     }
 
     /**
@@ -294,10 +294,6 @@ class OrganizationServiceSetHumanPhone implements ModelInterface, ArrayAccess, \
     public function listInvalidProperties()
     {
         $invalidProperties = [];
-
-        if (!is_null($this->container['phone']) && (mb_strlen($this->container['phone']) > 200)) {
-            $invalidProperties[] = "invalid value for 'phone', the character length must be smaller than or equal to 200.";
-        }
 
         return $invalidProperties;
     }
@@ -336,38 +332,34 @@ class OrganizationServiceSetHumanPhone implements ModelInterface, ArrayAccess, \
         if (is_null($phone)) {
             throw new \InvalidArgumentException('non-nullable phone cannot be null');
         }
-        if ((mb_strlen($phone) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $phone when calling OrganizationServiceSetHumanPhone., must be smaller than or equal to 200.');
-        }
-
         $this->container['phone'] = $phone;
 
         return $this;
     }
 
     /**
-     * Gets sendCode
+     * Gets isVerified
      *
-     * @return object|null
+     * @return bool|null
      */
-    public function getSendCode()
+    public function getIsVerified()
     {
-        return $this->container['sendCode'];
+        return $this->container['isVerified'];
     }
 
     /**
-     * Sets sendCode
+     * Sets isVerified
      *
-     * @param object|null $sendCode sendCode
+     * @param bool|null $isVerified isVerified
      *
      * @return self
      */
-    public function setSendCode($sendCode)
+    public function setIsVerified($isVerified)
     {
-        if (is_null($sendCode)) {
-            throw new \InvalidArgumentException('non-nullable sendCode cannot be null');
+        if (is_null($isVerified)) {
+            throw new \InvalidArgumentException('non-nullable isVerified cannot be null');
         }
-        $this->container['sendCode'] = $sendCode;
+        $this->container['isVerified'] = $isVerified;
 
         return $this;
     }
@@ -400,28 +392,28 @@ class OrganizationServiceSetHumanPhone implements ModelInterface, ArrayAccess, \
     }
 
     /**
-     * Gets isVerified
+     * Gets sendCode
      *
-     * @return bool|null
+     * @return object|null
      */
-    public function getIsVerified()
+    public function getSendCode()
     {
-        return $this->container['isVerified'];
+        return $this->container['sendCode'];
     }
 
     /**
-     * Sets isVerified
+     * Sets sendCode
      *
-     * @param bool|null $isVerified isVerified
+     * @param object|null $sendCode sendCode
      *
      * @return self
      */
-    public function setIsVerified($isVerified)
+    public function setSendCode($sendCode)
     {
-        if (is_null($isVerified)) {
-            throw new \InvalidArgumentException('non-nullable isVerified cannot be null');
+        if (is_null($sendCode)) {
+            throw new \InvalidArgumentException('non-nullable sendCode cannot be null');
         }
-        $this->container['isVerified'] = $isVerified;
+        $this->container['sendCode'] = $sendCode;
 
         return $this;
     }

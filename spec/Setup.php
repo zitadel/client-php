@@ -95,7 +95,7 @@ class Setup extends Printer implements TestListener
      * @param null|mixed $out
      * @throws DOMException
      */
-    public function __construct($out = null, private bool $reportRiskyTests = false)
+    public function __construct($out = null, private readonly bool $reportRiskyTests = false)
     {
         $this->document = new DOMDocument('1.0', 'UTF-8');
         $this->document->formatOutput = true;

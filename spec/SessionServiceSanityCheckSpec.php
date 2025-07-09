@@ -7,6 +7,7 @@ use Zitadel\Client\Model\SessionServiceChecks;
 use Zitadel\Client\Model\SessionServiceCheckUser;
 use Zitadel\Client\Model\SessionServiceCreateSessionRequest;
 use Zitadel\Client\Model\SessionServiceDeleteSessionRequest;
+use Zitadel\Client\Model\SessionServiceGetSessionRequest;
 use Zitadel\Client\Model\SessionServiceListSessionsRequest;
 use Zitadel\Client\Model\SessionServiceSetSessionRequest;
 use Zitadel\Client\Model\UserServiceAddHumanUserRequest;
@@ -45,8 +46,11 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
      */
     public function testRetrievesTheSessionDetailsById(): void
     {
-        $response = self::$client->sessions->sessionServiceGetSession(
-            $this->sessionId,
+        $request = (new SessionServiceGetSessionRequest())
+            ->setSessionId($this->sessionId);
+
+        $response = self::$client->sessions->getSession(
+            $request,
         );
         $this->assertSame(
             $this->sessionId,
@@ -62,7 +66,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
         $request = (new SessionServiceListSessionsRequest())
             ->setQueries([]);
 
-        $response = self::$client->sessions->sessionServiceListSessions($request);
+        $response = self::$client->sessions->listSessions($request);
         $ids = array_map(
             fn ($session) => $session->getId(),
             $response->getSessions()
@@ -77,10 +81,10 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
     public function testUpdatesTheSessionLifetimeAndReturnsANewToken(): void
     {
         $request = (new SessionServiceSetSessionRequest())
+            ->setSessionId($this->sessionId)
             ->setLifetime('36000s');
 
-        $response = self::$client->sessions->sessionServiceSetSession(
-            $this->sessionId,
+        $response = self::$client->sessions->setSession(
             $request
         );
         $this->assertIsString($response->getSessionToken());
@@ -88,9 +92,12 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
 
     public function testRaisesAnApiExceptionWhenRetrievingANonExistentSession(): void
     {
+        $request = (new SessionServiceGetSessionRequest())
+            ->setSessionId(uniqid());
+
         $this->expectException(ApiException::class);
-        self::$client->sessions->sessionServiceGetSession(
-            uniqid()
+        self::$client->sessions->getSession(
+            $request,
         );
     }
 
@@ -112,27 +119,28 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
                     ->setEmail('johndoe' . uniqid() . '@example.com')
             );
 
-        $user = self::$client->users->userServiceAddHumanUser($request);
-        $request = new SessionServiceCreateSessionRequest();
-        $request->setChecks(
-            (new SessionServiceChecks())
-                ->setUser(
-                    (new SessionServiceCheckUser())
-                        ->setLoginName($id)
-                )
-        );
-        $request->setLifetime('18000s');
+        self::$client->users->addHumanUser($request);
+        $request = (new SessionServiceCreateSessionRequest())
+            ->setChecks(
+                (new SessionServiceChecks())
+                    ->setUser(
+                        (new SessionServiceCheckUser())
+                            ->setLoginName($id)
+                    )
+            )
+            ->setLifetime('18000s');
 
-        $response = self::$client->sessions->sessionServiceCreateSession($request);
+        $response = self::$client->sessions->createSession($request);
         $this->sessionId = $response->getSessionId();
     }
 
     protected function tearDown(): void
     {
-        $request = new SessionServiceDeleteSessionRequest();
+        $request = (new SessionServiceDeleteSessionRequest())
+            ->setSessionId($this->sessionId);
+
         try {
-            self::$client->sessions->sessionServiceDeleteSession(
-                $this->sessionId,
+            self::$client->sessions->deleteSession(
                 $request
             );
         } catch (ApiException) {

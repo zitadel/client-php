@@ -350,7 +350,7 @@ class SessionServiceCreateSessionResponse implements ModelInterface, ArrayAccess
     /**
      * Sets sessionId
      *
-     * @param string|null $sessionId \"id of the session\"
+     * @param string|null $sessionId sessionId
      *
      * @return self
      */
@@ -377,7 +377,7 @@ class SessionServiceCreateSessionResponse implements ModelInterface, ArrayAccess
     /**
      * Sets sessionToken
      *
-     * @param string|null $sessionToken \"The current token of the session, which is required for delete session, get session or the request of other resources.\"
+     * @param string|null $sessionToken sessionToken
      *
      * @return self
      */

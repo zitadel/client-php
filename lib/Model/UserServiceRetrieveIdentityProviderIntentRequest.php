@@ -57,6 +57,7 @@ class UserServiceRetrieveIdentityProviderIntentRequest implements ModelInterface
       * @var string[]
       */
     protected static $openAPITypes = [
+        'idpIntentId' => 'string',
         'idpIntentToken' => 'string'
     ];
 
@@ -68,6 +69,7 @@ class UserServiceRetrieveIdentityProviderIntentRequest implements ModelInterface
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
+        'idpIntentId' => null,
         'idpIntentToken' => null
     ];
 
@@ -77,6 +79,7 @@ class UserServiceRetrieveIdentityProviderIntentRequest implements ModelInterface
       * @var boolean[]
       */
     protected static array $openAPINullables = [
+        'idpIntentId' => false,
         'idpIntentToken' => false
     ];
 
@@ -166,6 +169,7 @@ class UserServiceRetrieveIdentityProviderIntentRequest implements ModelInterface
      * @var string[]
      */
     protected static $attributeMap = [
+        'idpIntentId' => 'idpIntentId',
         'idpIntentToken' => 'idpIntentToken'
     ];
 
@@ -175,6 +179,7 @@ class UserServiceRetrieveIdentityProviderIntentRequest implements ModelInterface
      * @var string[]
      */
     protected static $setters = [
+        'idpIntentId' => 'setIdpIntentId',
         'idpIntentToken' => 'setIdpIntentToken'
     ];
 
@@ -184,6 +189,7 @@ class UserServiceRetrieveIdentityProviderIntentRequest implements ModelInterface
      * @var string[]
      */
     protected static $getters = [
+        'idpIntentId' => 'getIdpIntentId',
         'idpIntentToken' => 'getIdpIntentToken'
     ];
 
@@ -244,6 +250,7 @@ class UserServiceRetrieveIdentityProviderIntentRequest implements ModelInterface
      */
     public function __construct(?array $data = null)
     {
+        $this->setIfExists('idpIntentId', $data ?? [], null);
         $this->setIfExists('idpIntentToken', $data ?? [], null);
     }
 
@@ -274,14 +281,6 @@ class UserServiceRetrieveIdentityProviderIntentRequest implements ModelInterface
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['idpIntentToken']) && (mb_strlen($this->container['idpIntentToken']) > 200)) {
-            $invalidProperties[] = "invalid value for 'idpIntentToken', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['idpIntentToken']) && (mb_strlen($this->container['idpIntentToken']) < 1)) {
-            $invalidProperties[] = "invalid value for 'idpIntentToken', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -298,6 +297,33 @@ class UserServiceRetrieveIdentityProviderIntentRequest implements ModelInterface
 
 
     /**
+     * Gets idpIntentId
+     *
+     * @return string|null
+     */
+    public function getIdpIntentId()
+    {
+        return $this->container['idpIntentId'];
+    }
+
+    /**
+     * Sets idpIntentId
+     *
+     * @param string|null $idpIntentId idpIntentId
+     *
+     * @return self
+     */
+    public function setIdpIntentId($idpIntentId)
+    {
+        if (is_null($idpIntentId)) {
+            throw new \InvalidArgumentException('non-nullable idpIntentId cannot be null');
+        }
+        $this->container['idpIntentId'] = $idpIntentId;
+
+        return $this;
+    }
+
+    /**
      * Gets idpIntentToken
      *
      * @return string|null
@@ -310,7 +336,7 @@ class UserServiceRetrieveIdentityProviderIntentRequest implements ModelInterface
     /**
      * Sets idpIntentToken
      *
-     * @param string|null $idpIntentToken token of the idp intent, previously returned on the success response of the IDP callback
+     * @param string|null $idpIntentToken idpIntentToken
      *
      * @return self
      */
@@ -319,13 +345,6 @@ class UserServiceRetrieveIdentityProviderIntentRequest implements ModelInterface
         if (is_null($idpIntentToken)) {
             throw new \InvalidArgumentException('non-nullable idpIntentToken cannot be null');
         }
-        if ((mb_strlen($idpIntentToken) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $idpIntentToken when calling UserServiceRetrieveIdentityProviderIntentRequest., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($idpIntentToken) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $idpIntentToken when calling UserServiceRetrieveIdentityProviderIntentRequest., must be bigger than or equal to 1.');
-        }
-
         $this->container['idpIntentToken'] = $idpIntentToken;
 
         return $this;

@@ -20,7 +20,7 @@
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.",
         "ext-curl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
@@ -70,6 +70,7 @@
     "config": {
         "allow-plugins": {
             "php-http/discovery": true
-        }
+        },
+        "process-timeout": 600
     }
 }

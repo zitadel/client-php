@@ -288,30 +288,6 @@ class UserServiceIDPLink implements ModelInterface, ArrayAccess, \JsonSerializab
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['idpId']) && (mb_strlen($this->container['idpId']) > 200)) {
-            $invalidProperties[] = "invalid value for 'idpId', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['idpId']) && (mb_strlen($this->container['idpId']) < 1)) {
-            $invalidProperties[] = "invalid value for 'idpId', the character length must be bigger than or equal to 1.";
-        }
-
-        if (!is_null($this->container['userId']) && (mb_strlen($this->container['userId']) > 200)) {
-            $invalidProperties[] = "invalid value for 'userId', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['userId']) && (mb_strlen($this->container['userId']) < 1)) {
-            $invalidProperties[] = "invalid value for 'userId', the character length must be bigger than or equal to 1.";
-        }
-
-        if (!is_null($this->container['userName']) && (mb_strlen($this->container['userName']) > 200)) {
-            $invalidProperties[] = "invalid value for 'userName', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['userName']) && (mb_strlen($this->container['userName']) < 1)) {
-            $invalidProperties[] = "invalid value for 'userName', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -340,7 +316,7 @@ class UserServiceIDPLink implements ModelInterface, ArrayAccess, \JsonSerializab
     /**
      * Sets idpId
      *
-     * @param string|null $idpId ID of the identity provider
+     * @param string|null $idpId idpId
      *
      * @return self
      */
@@ -349,13 +325,6 @@ class UserServiceIDPLink implements ModelInterface, ArrayAccess, \JsonSerializab
         if (is_null($idpId)) {
             throw new \InvalidArgumentException('non-nullable idpId cannot be null');
         }
-        if ((mb_strlen($idpId) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $idpId when calling UserServiceIDPLink., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($idpId) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $idpId when calling UserServiceIDPLink., must be bigger than or equal to 1.');
-        }
-
         $this->container['idpId'] = $idpId;
 
         return $this;
@@ -374,7 +343,7 @@ class UserServiceIDPLink implements ModelInterface, ArrayAccess, \JsonSerializab
     /**
      * Sets userId
      *
-     * @param string|null $userId ID of the user of the identity provider
+     * @param string|null $userId userId
      *
      * @return self
      */
@@ -383,13 +352,6 @@ class UserServiceIDPLink implements ModelInterface, ArrayAccess, \JsonSerializab
         if (is_null($userId)) {
             throw new \InvalidArgumentException('non-nullable userId cannot be null');
         }
-        if ((mb_strlen($userId) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $userId when calling UserServiceIDPLink., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($userId) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $userId when calling UserServiceIDPLink., must be bigger than or equal to 1.');
-        }
-
         $this->container['userId'] = $userId;
 
         return $this;
@@ -408,7 +370,7 @@ class UserServiceIDPLink implements ModelInterface, ArrayAccess, \JsonSerializab
     /**
      * Sets userName
      *
-     * @param string|null $userName username of the user of the identity provider
+     * @param string|null $userName userName
      *
      * @return self
      */
@@ -417,13 +379,6 @@ class UserServiceIDPLink implements ModelInterface, ArrayAccess, \JsonSerializab
         if (is_null($userName)) {
             throw new \InvalidArgumentException('non-nullable userName cannot be null');
         }
-        if ((mb_strlen($userName) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $userName when calling UserServiceIDPLink., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($userName) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $userName when calling UserServiceIDPLink., must be bigger than or equal to 1.');
-        }
-
         $this->container['userName'] = $userName;
 
         return $this;

@@ -57,10 +57,11 @@ class UserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \JsonSe
       * @var string[]
       */
     protected static $openAPITypes = [
+        'userId' => 'string',
         'phone' => 'string',
-        'sendCode' => 'object',
+        'isVerified' => 'bool',
         'returnCode' => 'object',
-        'isVerified' => 'bool'
+        'sendCode' => 'object'
     ];
 
     /**
@@ -71,10 +72,11 @@ class UserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \JsonSe
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
+        'userId' => null,
         'phone' => null,
-        'sendCode' => null,
+        'isVerified' => null,
         'returnCode' => null,
-        'isVerified' => null
+        'sendCode' => null
     ];
 
     /**
@@ -83,10 +85,11 @@ class UserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \JsonSe
       * @var boolean[]
       */
     protected static array $openAPINullables = [
+        'userId' => false,
         'phone' => false,
-        'sendCode' => false,
+        'isVerified' => false,
         'returnCode' => false,
-        'isVerified' => false
+        'sendCode' => false
     ];
 
     /**
@@ -175,10 +178,11 @@ class UserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \JsonSe
      * @var string[]
      */
     protected static $attributeMap = [
+        'userId' => 'userId',
         'phone' => 'phone',
-        'sendCode' => 'sendCode',
+        'isVerified' => 'isVerified',
         'returnCode' => 'returnCode',
-        'isVerified' => 'isVerified'
+        'sendCode' => 'sendCode'
     ];
 
     /**
@@ -187,10 +191,11 @@ class UserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \JsonSe
      * @var string[]
      */
     protected static $setters = [
+        'userId' => 'setUserId',
         'phone' => 'setPhone',
-        'sendCode' => 'setSendCode',
+        'isVerified' => 'setIsVerified',
         'returnCode' => 'setReturnCode',
-        'isVerified' => 'setIsVerified'
+        'sendCode' => 'setSendCode'
     ];
 
     /**
@@ -199,10 +204,11 @@ class UserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \JsonSe
      * @var string[]
      */
     protected static $getters = [
+        'userId' => 'getUserId',
         'phone' => 'getPhone',
-        'sendCode' => 'getSendCode',
+        'isVerified' => 'getIsVerified',
         'returnCode' => 'getReturnCode',
-        'isVerified' => 'getIsVerified'
+        'sendCode' => 'getSendCode'
     ];
 
     /**
@@ -262,10 +268,11 @@ class UserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \JsonSe
      */
     public function __construct(?array $data = null)
     {
+        $this->setIfExists('userId', $data ?? [], null);
         $this->setIfExists('phone', $data ?? [], null);
-        $this->setIfExists('sendCode', $data ?? [], null);
-        $this->setIfExists('returnCode', $data ?? [], null);
         $this->setIfExists('isVerified', $data ?? [], null);
+        $this->setIfExists('returnCode', $data ?? [], null);
+        $this->setIfExists('sendCode', $data ?? [], null);
     }
 
     /**
@@ -295,17 +302,12 @@ class UserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \JsonSe
     {
         $invalidProperties = [];
 
+        if ($this->container['userId'] === null) {
+            $invalidProperties[] = "'userId' can't be null";
+        }
         if ($this->container['phone'] === null) {
             $invalidProperties[] = "'phone' can't be null";
         }
-        if ((mb_strlen($this->container['phone']) > 200)) {
-            $invalidProperties[] = "invalid value for 'phone', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['phone']) < 1)) {
-            $invalidProperties[] = "invalid value for 'phone', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -320,6 +322,33 @@ class UserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \JsonSe
         return count($this->listInvalidProperties()) === 0;
     }
 
+
+    /**
+     * Gets userId
+     *
+     * @return string
+     */
+    public function getUserId()
+    {
+        return $this->container['userId'];
+    }
+
+    /**
+     * Sets userId
+     *
+     * @param string $userId userId
+     *
+     * @return self
+     */
+    public function setUserId($userId)
+    {
+        if (is_null($userId)) {
+            throw new \InvalidArgumentException('non-nullable userId cannot be null');
+        }
+        $this->container['userId'] = $userId;
+
+        return $this;
+    }
 
     /**
      * Gets phone
@@ -343,41 +372,34 @@ class UserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \JsonSe
         if (is_null($phone)) {
             throw new \InvalidArgumentException('non-nullable phone cannot be null');
         }
-        if ((mb_strlen($phone) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $phone when calling UserServiceSetPhoneRequest., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($phone) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $phone when calling UserServiceSetPhoneRequest., must be bigger than or equal to 1.');
-        }
-
         $this->container['phone'] = $phone;
 
         return $this;
     }
 
     /**
-     * Gets sendCode
+     * Gets isVerified
      *
-     * @return object|null
+     * @return bool|null
      */
-    public function getSendCode()
+    public function getIsVerified()
     {
-        return $this->container['sendCode'];
+        return $this->container['isVerified'];
     }
 
     /**
-     * Sets sendCode
+     * Sets isVerified
      *
-     * @param object|null $sendCode sendCode
+     * @param bool|null $isVerified isVerified
      *
      * @return self
      */
-    public function setSendCode($sendCode)
+    public function setIsVerified($isVerified)
     {
-        if (is_null($sendCode)) {
-            throw new \InvalidArgumentException('non-nullable sendCode cannot be null');
+        if (is_null($isVerified)) {
+            throw new \InvalidArgumentException('non-nullable isVerified cannot be null');
         }
-        $this->container['sendCode'] = $sendCode;
+        $this->container['isVerified'] = $isVerified;
 
         return $this;
     }
@@ -410,28 +432,28 @@ class UserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \JsonSe
     }
 
     /**
-     * Gets isVerified
+     * Gets sendCode
      *
-     * @return bool|null
+     * @return object|null
      */
-    public function getIsVerified()
+    public function getSendCode()
     {
-        return $this->container['isVerified'];
+        return $this->container['sendCode'];
     }
 
     /**
-     * Sets isVerified
+     * Sets sendCode
      *
-     * @param bool|null $isVerified isVerified
+     * @param object|null $sendCode sendCode
      *
      * @return self
      */
-    public function setIsVerified($isVerified)
+    public function setSendCode($sendCode)
     {
-        if (is_null($isVerified)) {
-            throw new \InvalidArgumentException('non-nullable isVerified cannot be null');
+        if (is_null($sendCode)) {
+            throw new \InvalidArgumentException('non-nullable sendCode cannot be null');
         }
-        $this->container['isVerified'] = $isVerified;
+        $this->container['sendCode'] = $sendCode;
 
         return $this;
     }

@@ -76,7 +76,7 @@ abstract class AbstractIntegrationTest extends TestCase
         $jwtKeyFilePath = self::$composeFileDir . DIRECTORY_SEPARATOR
             . 'zitadel_output/sa-key.json';
         if (!file_exists($jwtKeyFilePath)) {
-            throw new Exception("JWT Key file not found at path: {$jwtKeyFilePath}");
+            throw new Exception("JWT Key file not found at path: $jwtKeyFilePath");
         }
         self::$jwtKey = $jwtKeyFilePath;
         echo "Loaded JWT_KEY path: " . self::$jwtKey . "\n";
@@ -98,6 +98,7 @@ abstract class AbstractIntegrationTest extends TestCase
      * @param string $propertyName The name of the static property (e.g.,
      * 'authToken') to assign the content to.
      * @throws Exception If the file is not found or cannot be read.
+     * @noinspection PhpSameParameterValueInspection
      */
     private static function loadFileContentIntoProperty(
         string $relativePath,
@@ -109,14 +110,14 @@ abstract class AbstractIntegrationTest extends TestCase
             $content = file_get_contents($filePath);
             if ($content !== false) {
                 self::$$propertyName = trim($content);
-                echo "Loaded {$filePath} content into property: {$propertyName}\n";
+                echo "Loaded $filePath content into property: $propertyName\n";
             } else {
                 throw new Exception("Could not read content of file: $filePath for "
-                    . "property '{$propertyName}'");
+                    . "property '$propertyName'");
             }
         } else {
             throw new Exception("File not found for property '$propertyName': "
-                . "{$filePath}");
+                . "$filePath");
         }
     }
 

@@ -57,7 +57,7 @@ class UserServiceIDPLDAPAccessInformation implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $openAPITypes = [
-        'attributes' => 'object'
+        'attributes' => 'array<string,mixed>'
     ];
 
     /**
@@ -292,7 +292,7 @@ class UserServiceIDPLDAPAccessInformation implements ModelInterface, ArrayAccess
     /**
      * Gets attributes
      *
-     * @return object|null
+     * @return array<string,mixed>|null
      */
     public function getAttributes()
     {
@@ -302,7 +302,7 @@ class UserServiceIDPLDAPAccessInformation implements ModelInterface, ArrayAccess
     /**
      * Sets attributes
      *
-     * @param object|null $attributes attributes
+     * @param array<string,mixed>|null $attributes `Struct` represents a structured data value, consisting of fields  which map to dynamically typed values. In some languages, `Struct`  might be supported by a native representation. For example, in  scripting languages like JS a struct is represented as an  object. The details of that representation are described together  with the proto support for the language.   The JSON representation for `Struct` is JSON object.
      *
      * @return self
      */

@@ -281,22 +281,6 @@ class OIDCServiceSession implements ModelInterface, ArrayAccess, \JsonSerializab
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['sessionId']) && (mb_strlen($this->container['sessionId']) > 200)) {
-            $invalidProperties[] = "invalid value for 'sessionId', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['sessionId']) && (mb_strlen($this->container['sessionId']) < 1)) {
-            $invalidProperties[] = "invalid value for 'sessionId', the character length must be bigger than or equal to 1.";
-        }
-
-        if (!is_null($this->container['sessionToken']) && (mb_strlen($this->container['sessionToken']) > 200)) {
-            $invalidProperties[] = "invalid value for 'sessionToken', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['sessionToken']) && (mb_strlen($this->container['sessionToken']) < 1)) {
-            $invalidProperties[] = "invalid value for 'sessionToken', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -325,7 +309,7 @@ class OIDCServiceSession implements ModelInterface, ArrayAccess, \JsonSerializab
     /**
      * Sets sessionId
      *
-     * @param string|null $sessionId ID of the session, used to login the user. Connects the session to the Auth Request.
+     * @param string|null $sessionId sessionId
      *
      * @return self
      */
@@ -334,13 +318,6 @@ class OIDCServiceSession implements ModelInterface, ArrayAccess, \JsonSerializab
         if (is_null($sessionId)) {
             throw new \InvalidArgumentException('non-nullable sessionId cannot be null');
         }
-        if ((mb_strlen($sessionId) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $sessionId when calling OIDCServiceSession., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($sessionId) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $sessionId when calling OIDCServiceSession., must be bigger than or equal to 1.');
-        }
-
         $this->container['sessionId'] = $sessionId;
 
         return $this;
@@ -359,7 +336,7 @@ class OIDCServiceSession implements ModelInterface, ArrayAccess, \JsonSerializab
     /**
      * Sets sessionToken
      *
-     * @param string|null $sessionToken Token to verify the session is valid
+     * @param string|null $sessionToken sessionToken
      *
      * @return self
      */
@@ -368,13 +345,6 @@ class OIDCServiceSession implements ModelInterface, ArrayAccess, \JsonSerializab
         if (is_null($sessionToken)) {
             throw new \InvalidArgumentException('non-nullable sessionToken cannot be null');
         }
-        if ((mb_strlen($sessionToken) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $sessionToken when calling OIDCServiceSession., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($sessionToken) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $sessionToken when calling OIDCServiceSession., must be bigger than or equal to 1.');
-        }
-
         $this->container['sessionToken'] = $sessionToken;
 
         return $this;

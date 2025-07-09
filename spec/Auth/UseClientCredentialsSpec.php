@@ -92,7 +92,7 @@ class UseClientCredentialsSpec extends AbstractIntegrationTest
         $credentials = $this->generateUserSecret(self::getAuthToken());
         $client = Zitadel::withClientCredentials(self::getBaseUrl(), $credentials['clientId'], $credentials['clientSecret']);
 
-        $client->settings->settingsServiceGetGeneralSettings();
+        $client->settings->getGeneralSettings();
     }
 
     /**
@@ -104,6 +104,6 @@ class UseClientCredentialsSpec extends AbstractIntegrationTest
         $invalid = Zitadel::withClientCredentials(self::getBaseUrl(), 'invalid', 'invalid');
 
         $this->expectException(ZitadelException::class);
-        $invalid->settings->settingsServiceGetGeneralSettings();
+        $invalid->settings->getGeneralSettings();
     }
 }

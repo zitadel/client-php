@@ -64,10 +64,10 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
         'email' => '\Zitadel\Client\Model\UserServiceSetHumanEmail',
         'phone' => '\Zitadel\Client\Model\UserServiceSetHumanPhone',
         'metadata' => '\Zitadel\Client\Model\UserServiceSetMetadataEntry[]',
-        'password' => '\Zitadel\Client\Model\UserServicePassword',
-        'hashedPassword' => '\Zitadel\Client\Model\UserServiceHashedPassword',
         'idpLinks' => '\Zitadel\Client\Model\UserServiceIDPLink[]',
-        'totpSecret' => 'string'
+        'totpSecret' => 'string',
+        'hashedPassword' => '\Zitadel\Client\Model\UserServiceHashedPassword',
+        'password' => '\Zitadel\Client\Model\UserServicePassword'
     ];
 
     /**
@@ -85,10 +85,10 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
         'email' => null,
         'phone' => null,
         'metadata' => null,
-        'password' => null,
-        'hashedPassword' => null,
         'idpLinks' => null,
-        'totpSecret' => null
+        'totpSecret' => null,
+        'hashedPassword' => null,
+        'password' => null
     ];
 
     /**
@@ -97,17 +97,17 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'userId' => false,
-        'username' => false,
+        'userId' => true,
+        'username' => true,
         'organization' => false,
         'profile' => false,
         'email' => false,
         'phone' => false,
         'metadata' => false,
-        'password' => false,
-        'hashedPassword' => false,
         'idpLinks' => false,
-        'totpSecret' => false
+        'totpSecret' => true,
+        'hashedPassword' => false,
+        'password' => false
     ];
 
     /**
@@ -203,10 +203,10 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
         'email' => 'email',
         'phone' => 'phone',
         'metadata' => 'metadata',
-        'password' => 'password',
-        'hashedPassword' => 'hashedPassword',
         'idpLinks' => 'idpLinks',
-        'totpSecret' => 'totpSecret'
+        'totpSecret' => 'totpSecret',
+        'hashedPassword' => 'hashedPassword',
+        'password' => 'password'
     ];
 
     /**
@@ -222,10 +222,10 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
         'email' => 'setEmail',
         'phone' => 'setPhone',
         'metadata' => 'setMetadata',
-        'password' => 'setPassword',
-        'hashedPassword' => 'setHashedPassword',
         'idpLinks' => 'setIdpLinks',
-        'totpSecret' => 'setTotpSecret'
+        'totpSecret' => 'setTotpSecret',
+        'hashedPassword' => 'setHashedPassword',
+        'password' => 'setPassword'
     ];
 
     /**
@@ -241,10 +241,10 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
         'email' => 'getEmail',
         'phone' => 'getPhone',
         'metadata' => 'getMetadata',
-        'password' => 'getPassword',
-        'hashedPassword' => 'getHashedPassword',
         'idpLinks' => 'getIdpLinks',
-        'totpSecret' => 'getTotpSecret'
+        'totpSecret' => 'getTotpSecret',
+        'hashedPassword' => 'getHashedPassword',
+        'password' => 'getPassword'
     ];
 
     /**
@@ -311,10 +311,10 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
         $this->setIfExists('email', $data ?? [], null);
         $this->setIfExists('phone', $data ?? [], null);
         $this->setIfExists('metadata', $data ?? [], null);
-        $this->setIfExists('password', $data ?? [], null);
-        $this->setIfExists('hashedPassword', $data ?? [], null);
         $this->setIfExists('idpLinks', $data ?? [], null);
         $this->setIfExists('totpSecret', $data ?? [], null);
+        $this->setIfExists('hashedPassword', $data ?? [], null);
+        $this->setIfExists('password', $data ?? [], null);
     }
 
     /**
@@ -344,36 +344,12 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
     {
         $invalidProperties = [];
 
-        if (!is_null($this->container['userId']) && (mb_strlen($this->container['userId']) > 200)) {
-            $invalidProperties[] = "invalid value for 'userId', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['userId']) && (mb_strlen($this->container['userId']) < 1)) {
-            $invalidProperties[] = "invalid value for 'userId', the character length must be bigger than or equal to 1.";
-        }
-
-        if (!is_null($this->container['username']) && (mb_strlen($this->container['username']) > 200)) {
-            $invalidProperties[] = "invalid value for 'username', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['username']) && (mb_strlen($this->container['username']) < 1)) {
-            $invalidProperties[] = "invalid value for 'username', the character length must be bigger than or equal to 1.";
-        }
-
         if ($this->container['profile'] === null) {
             $invalidProperties[] = "'profile' can't be null";
         }
         if ($this->container['email'] === null) {
             $invalidProperties[] = "'email' can't be null";
         }
-        if (!is_null($this->container['totpSecret']) && (mb_strlen($this->container['totpSecret']) > 200)) {
-            $invalidProperties[] = "invalid value for 'totpSecret', the character length must be smaller than or equal to 200.";
-        }
-
-        if (!is_null($this->container['totpSecret']) && (mb_strlen($this->container['totpSecret']) < 1)) {
-            $invalidProperties[] = "invalid value for 'totpSecret', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -409,15 +385,15 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
     public function setUserId($userId)
     {
         if (is_null($userId)) {
-            throw new \InvalidArgumentException('non-nullable userId cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'userId');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('userId', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
-        if ((mb_strlen($userId) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $userId when calling UserServiceAddHumanUserRequest., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($userId) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $userId when calling UserServiceAddHumanUserRequest., must be bigger than or equal to 1.');
-        }
-
         $this->container['userId'] = $userId;
 
         return $this;
@@ -443,15 +419,15 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
     public function setUsername($username)
     {
         if (is_null($username)) {
-            throw new \InvalidArgumentException('non-nullable username cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'username');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('username', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
-        if ((mb_strlen($username) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $username when calling UserServiceAddHumanUserRequest., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($username) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $username when calling UserServiceAddHumanUserRequest., must be bigger than or equal to 1.');
-        }
-
         $this->container['username'] = $username;
 
         return $this;
@@ -593,60 +569,6 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
     }
 
     /**
-     * Gets password
-     *
-     * @return \Zitadel\Client\Model\UserServicePassword|null
-     */
-    public function getPassword()
-    {
-        return $this->container['password'];
-    }
-
-    /**
-     * Sets password
-     *
-     * @param \Zitadel\Client\Model\UserServicePassword|null $password password
-     *
-     * @return self
-     */
-    public function setPassword($password)
-    {
-        if (is_null($password)) {
-            throw new \InvalidArgumentException('non-nullable password cannot be null');
-        }
-        $this->container['password'] = $password;
-
-        return $this;
-    }
-
-    /**
-     * Gets hashedPassword
-     *
-     * @return \Zitadel\Client\Model\UserServiceHashedPassword|null
-     */
-    public function getHashedPassword()
-    {
-        return $this->container['hashedPassword'];
-    }
-
-    /**
-     * Sets hashedPassword
-     *
-     * @param \Zitadel\Client\Model\UserServiceHashedPassword|null $hashedPassword hashedPassword
-     *
-     * @return self
-     */
-    public function setHashedPassword($hashedPassword)
-    {
-        if (is_null($hashedPassword)) {
-            throw new \InvalidArgumentException('non-nullable hashedPassword cannot be null');
-        }
-        $this->container['hashedPassword'] = $hashedPassword;
-
-        return $this;
-    }
-
-    /**
      * Gets idpLinks
      *
      * @return \Zitadel\Client\Model\UserServiceIDPLink[]|null
@@ -686,23 +608,77 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets totpSecret
      *
-     * @param string|null $totpSecret An Implementation of RFC 6238 is used, with HMAC-SHA-1 and time-step of 30 seconds. Currently no other options are supported, and if anything different is used the validation will fail.
+     * @param string|null $totpSecret An Implementation of RFC 6238 is used, with HMAC-SHA-1 and time-step of 30 seconds.  Currently no other options are supported, and if anything different is used the validation will fail.
      *
      * @return self
      */
     public function setTotpSecret($totpSecret)
     {
         if (is_null($totpSecret)) {
-            throw new \InvalidArgumentException('non-nullable totpSecret cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'totpSecret');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('totpSecret', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
-        if ((mb_strlen($totpSecret) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $totpSecret when calling UserServiceAddHumanUserRequest., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($totpSecret) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $totpSecret when calling UserServiceAddHumanUserRequest., must be bigger than or equal to 1.');
-        }
-
         $this->container['totpSecret'] = $totpSecret;
+
+        return $this;
+    }
+
+    /**
+     * Gets hashedPassword
+     *
+     * @return \Zitadel\Client\Model\UserServiceHashedPassword|null
+     */
+    public function getHashedPassword()
+    {
+        return $this->container['hashedPassword'];
+    }
+
+    /**
+     * Sets hashedPassword
+     *
+     * @param \Zitadel\Client\Model\UserServiceHashedPassword|null $hashedPassword hashedPassword
+     *
+     * @return self
+     */
+    public function setHashedPassword($hashedPassword)
+    {
+        if (is_null($hashedPassword)) {
+            throw new \InvalidArgumentException('non-nullable hashedPassword cannot be null');
+        }
+        $this->container['hashedPassword'] = $hashedPassword;
+
+        return $this;
+    }
+
+    /**
+     * Gets password
+     *
+     * @return \Zitadel\Client\Model\UserServicePassword|null
+     */
+    public function getPassword()
+    {
+        return $this->container['password'];
+    }
+
+    /**
+     * Sets password
+     *
+     * @param \Zitadel\Client\Model\UserServicePassword|null $password password
+     *
+     * @return self
+     */
+    public function setPassword($password)
+    {
+        if (is_null($password)) {
+            throw new \InvalidArgumentException('non-nullable password cannot be null');
+        }
+        $this->container['password'] = $password;
 
         return $this;
     }

@@ -32,34 +32,34 @@ class WebTokenAuthenticator extends OAuthAuthenticator
      * @param string|null $keyId
      */
     public function __construct(
-        OpenId               $hostName,
-        string               $clientId,
-        string               $scope,
+        OpenId                  $hostName,
+        string                  $clientId,
+        string                  $scope,
         /**
          * The issuer claim for the JWT.
          */
-        private string       $jwtIssuer,
+        private readonly string $jwtIssuer,
         /**
          * The subject claim for the JWT.
          */
-        private string       $jwtSubject,
+        private readonly string $jwtSubject,
         /**
          * The audience claim for the JWT.
          */
-        private string       $jwtAudience,
+        private readonly string $jwtAudience,
         /**
          * The private key used to sign the JWT.
          */
-        private string       $privateKey,
+        private readonly string $privateKey,
         /**
          * Lifetime of the JWT in seconds.
          */
-        private DateInterval $jwtLifetime,
+        private readonly DateInterval $jwtLifetime,
         /**
          * The signing algorithm.
          */
-        private string       $jwtAlgorithm = 'RS256',
-        private ?string      $keyId = null
+        private readonly string       $jwtAlgorithm = 'RS256',
+        private readonly ?string      $keyId = null
     ) {
         parent::__construct($hostName, $clientId, $scope, new GenericProvider([
             'clientId' => $clientId,

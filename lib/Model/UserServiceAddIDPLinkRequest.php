@@ -57,6 +57,7 @@ class UserServiceAddIDPLinkRequest implements ModelInterface, ArrayAccess, \Json
       * @var string[]
       */
     protected static $openAPITypes = [
+        'userId' => 'string',
         'idpLink' => '\Zitadel\Client\Model\UserServiceIDPLink'
     ];
 
@@ -68,6 +69,7 @@ class UserServiceAddIDPLinkRequest implements ModelInterface, ArrayAccess, \Json
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
+        'userId' => null,
         'idpLink' => null
     ];
 
@@ -77,6 +79,7 @@ class UserServiceAddIDPLinkRequest implements ModelInterface, ArrayAccess, \Json
       * @var boolean[]
       */
     protected static array $openAPINullables = [
+        'userId' => false,
         'idpLink' => false
     ];
 
@@ -166,6 +169,7 @@ class UserServiceAddIDPLinkRequest implements ModelInterface, ArrayAccess, \Json
      * @var string[]
      */
     protected static $attributeMap = [
+        'userId' => 'userId',
         'idpLink' => 'idpLink'
     ];
 
@@ -175,6 +179,7 @@ class UserServiceAddIDPLinkRequest implements ModelInterface, ArrayAccess, \Json
      * @var string[]
      */
     protected static $setters = [
+        'userId' => 'setUserId',
         'idpLink' => 'setIdpLink'
     ];
 
@@ -184,6 +189,7 @@ class UserServiceAddIDPLinkRequest implements ModelInterface, ArrayAccess, \Json
      * @var string[]
      */
     protected static $getters = [
+        'userId' => 'getUserId',
         'idpLink' => 'getIdpLink'
     ];
 
@@ -244,6 +250,7 @@ class UserServiceAddIDPLinkRequest implements ModelInterface, ArrayAccess, \Json
      */
     public function __construct(?array $data = null)
     {
+        $this->setIfExists('userId', $data ?? [], null);
         $this->setIfExists('idpLink', $data ?? [], null);
     }
 
@@ -274,6 +281,9 @@ class UserServiceAddIDPLinkRequest implements ModelInterface, ArrayAccess, \Json
     {
         $invalidProperties = [];
 
+        if ($this->container['userId'] === null) {
+            $invalidProperties[] = "'userId' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -288,6 +298,33 @@ class UserServiceAddIDPLinkRequest implements ModelInterface, ArrayAccess, \Json
         return count($this->listInvalidProperties()) === 0;
     }
 
+
+    /**
+     * Gets userId
+     *
+     * @return string
+     */
+    public function getUserId()
+    {
+        return $this->container['userId'];
+    }
+
+    /**
+     * Sets userId
+     *
+     * @param string $userId userId
+     *
+     * @return self
+     */
+    public function setUserId($userId)
+    {
+        if (is_null($userId)) {
+            throw new \InvalidArgumentException('non-nullable userId cannot be null');
+        }
+        $this->container['userId'] = $userId;
+
+        return $this;
+    }
 
     /**
      * Gets idpLink

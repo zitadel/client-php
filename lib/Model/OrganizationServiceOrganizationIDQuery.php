@@ -277,14 +277,6 @@ class OrganizationServiceOrganizationIDQuery implements ModelInterface, ArrayAcc
         if ($this->container['id'] === null) {
             $invalidProperties[] = "'id' can't be null";
         }
-        if ((mb_strlen($this->container['id']) > 200)) {
-            $invalidProperties[] = "invalid value for 'id', the character length must be smaller than or equal to 200.";
-        }
-
-        if ((mb_strlen($this->container['id']) < 1)) {
-            $invalidProperties[] = "invalid value for 'id', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -322,13 +314,6 @@ class OrganizationServiceOrganizationIDQuery implements ModelInterface, ArrayAcc
         if (is_null($id)) {
             throw new \InvalidArgumentException('non-nullable id cannot be null');
         }
-        if ((mb_strlen($id) > 200)) {
-            throw new \InvalidArgumentException('invalid length for $id when calling OrganizationServiceOrganizationIDQuery., must be smaller than or equal to 200.');
-        }
-        if ((mb_strlen($id) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $id when calling OrganizationServiceOrganizationIDQuery., must be bigger than or equal to 1.');
-        }
-
         $this->container['id'] = $id;
 
         return $this;

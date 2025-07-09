@@ -39,7 +39,7 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
      * @param string $privateKey The PEM-formatted private key used to sign the JWT.
      * @throws Exception
      */
-    public function __construct(string $host, private string $jwtIssuer, private string $jwtSubject, private string $jwtAudience, private string $privateKey)
+    public function __construct(string $host, private readonly string $jwtIssuer, private readonly string $jwtSubject, private readonly string $jwtAudience, private readonly string $privateKey)
     {
         parent::__construct($host);
         $this->jwtLifetime = new DateInterval('PT1H');

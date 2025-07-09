@@ -57,9 +57,9 @@ class SettingsServiceLockoutSettings implements ModelInterface, ArrayAccess, \Js
       * @var string[]
       */
     protected static $openAPITypes = [
-        'maxPasswordAttempts' => 'string',
+        'maxPasswordAttempts' => 'mixed',
         'resourceOwnerType' => '\Zitadel\Client\Model\SettingsServiceResourceOwnerType',
-        'maxOtpAttempts' => 'string'
+        'maxOtpAttempts' => 'mixed'
     ];
 
     /**
@@ -70,9 +70,9 @@ class SettingsServiceLockoutSettings implements ModelInterface, ArrayAccess, \Js
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'maxPasswordAttempts' => 'uint64',
+        'maxPasswordAttempts' => 'int64',
         'resourceOwnerType' => null,
-        'maxOtpAttempts' => 'uint64'
+        'maxOtpAttempts' => 'int64'
     ];
 
     /**
@@ -81,9 +81,9 @@ class SettingsServiceLockoutSettings implements ModelInterface, ArrayAccess, \Js
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'maxPasswordAttempts' => false,
+        'maxPasswordAttempts' => true,
         'resourceOwnerType' => false,
-        'maxOtpAttempts' => false
+        'maxOtpAttempts' => true
     ];
 
     /**
@@ -306,7 +306,7 @@ class SettingsServiceLockoutSettings implements ModelInterface, ArrayAccess, \Js
     /**
      * Gets maxPasswordAttempts
      *
-     * @return string|null
+     * @return mixed|null
      */
     public function getMaxPasswordAttempts()
     {
@@ -316,14 +316,21 @@ class SettingsServiceLockoutSettings implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets maxPasswordAttempts
      *
-     * @param string|null $maxPasswordAttempts Maximum password check attempts before the account gets locked. Attempts are reset as soon as the password is entered correctly or the password is reset. If set to 0 the account will never be locked.
+     * @param mixed|null $maxPasswordAttempts maxPasswordAttempts
      *
      * @return self
      */
     public function setMaxPasswordAttempts($maxPasswordAttempts)
     {
         if (is_null($maxPasswordAttempts)) {
-            throw new \InvalidArgumentException('non-nullable maxPasswordAttempts cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'maxPasswordAttempts');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('maxPasswordAttempts', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['maxPasswordAttempts'] = $maxPasswordAttempts;
 
@@ -360,7 +367,7 @@ class SettingsServiceLockoutSettings implements ModelInterface, ArrayAccess, \Js
     /**
      * Gets maxOtpAttempts
      *
-     * @return string|null
+     * @return mixed|null
      */
     public function getMaxOtpAttempts()
     {
@@ -370,14 +377,21 @@ class SettingsServiceLockoutSettings implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets maxOtpAttempts
      *
-     * @param string|null $maxOtpAttempts Maximum failed attempts for a single OTP type (TOTP, SMS, Email) before the account gets locked. Attempts are reset as soon as the OTP is entered correctly. If set to 0 the account will never be locked.
+     * @param mixed|null $maxOtpAttempts maxOtpAttempts
      *
      * @return self
      */
     public function setMaxOtpAttempts($maxOtpAttempts)
     {
         if (is_null($maxOtpAttempts)) {
-            throw new \InvalidArgumentException('non-nullable maxOtpAttempts cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'maxOtpAttempts');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('maxOtpAttempts', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['maxOtpAttempts'] = $maxOtpAttempts;
 

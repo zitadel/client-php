@@ -111,21 +111,26 @@ which is then used to authenticate.
 **Example:**
 
 ```php
-use \Zitadel\Client\Zitadel;
+use Zitadel\Client\Zitadel;
+use Zitadel\Client\Model\UserServiceAddHumanUserRequest;
+use \Zitadel\Client\Model\UserServiceAddHumanUserRequest;
+use \Zitadel\Client\Model\UserServiceSetHumanProfile;
+use \Zitadel\Client\Model\UserServiceSetHumanEmail;
 
 $zitadel = Zitadel::withClientCredentials("https://example.us1.zitadel.cloud", "id", "secret");
 
 try {
-    $response = $zitadel->users->userServiceAddHumanUser([
-        'username' => 'john.doe',
-        'profile'  => [
-            'givenName'  => 'John',
-            'familyName' => 'Doe'
-        ],
-        'email' => [
-            'email' => 'john@doe.com'
-        ]
-    ]);
+    $response = $zitadel->users->addHumanUser((new UserServiceAddHumanUserRequest())
+        ->setUsername('john.doe')
+        ->setProfile(
+            (new UserServiceSetHumanProfile())
+                ->setGivenName('John')
+                ->setFamilyName('Doe')
+        )
+        ->setEmail(
+            (new UserServiceSetHumanEmail())
+                ->setEmail('john@doe.com')
+        ));
     echo "User created: " . print_r($response, true);
 } catch (ApiException $e) {
     echo "Error: " . $e->getMessage();
@@ -152,20 +157,28 @@ authenticate without exchanging credentials every time.
 
 ```php
 use \Zitadel\Client\Zitadel;
+use Zitadel\Client\Zitadel;
+use Zitadel\Client\Model\UserServiceAddHumanUserRequest;
+use \Zitadel\Client\Model\UserServiceAddHumanUserRequest;
+use \Zitadel\Client\Model\UserServiceSetHumanProfile;
+use \Zitadel\Client\Model\UserServiceSetHumanEmail;
 
 $zitadel = Zitadel::withAccessToken("https://example.us1.zitadel.cloud", "token");
 
 try {
-    $response = $zitadel->users->userServiceAddHumanUser([
-        'username' => 'john.doe',
-        'profile'  => [
-            'givenName'  => 'John',
-            'familyName' => 'Doe'
-        ],
-        'email' => [
-            'email' => 'john@doe.com'
-        ]
-    ]);
+    $response = $zitadel->users->addHumanUser(
+        (new UserServiceAddHumanUserRequest())
+            ->setUsername('john.doe')
+            ->setProfile(
+                (new UserServiceSetHumanProfile())
+                    ->setGivenName('John')
+                    ->setFamilyName('Doe')
+            )
+            ->setEmail(
+                (new UserServiceSetHumanEmail())
+                    ->setEmail('john@doe.com')
+            )
+    );
     echo "User created: " . print_r($response, true);
 } catch (ApiException $e) {
     echo "Error: " . $e->getMessage();
@@ -177,20 +190,6 @@ try {
 Choose the authentication method that best suits your needs based on your
 environment and security requirements. For more details, please refer to the
 [Zitadel documentation on authenticating service users](https://zitadel.com/docs/guides/integrate/service-users/authenticate-service-users).
-
-### Debugging
-
-The SDK supports debug logging, which can be enabled for troubleshooting
-and debugging purposes. You can enable debug logging by setting the `debug`
-flag to `true` when initializing the `Zitadel` client, like this:
-
-```php
-$zitadel = new Zitadel('your-zitadel-base-url', 'your-valid-token', fn($config) => $config->setDebug(true));
-```
-
-When enabled, the SDK will log additional information, such as HTTP request
-and response details, which can be useful for identifying issues in the
-integration or troubleshooting unexpected behavior.
 
 ## Design and Dependencies
 
