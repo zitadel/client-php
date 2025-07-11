@@ -44,16 +44,6 @@ class Configuration
     }
 
     /**
-     * Gets the boolean format for query string.
-     *
-     * @return string Boolean format for query string
-     */
-    public function getBooleanFormatForQueryString(): string
-    {
-        return 'int';
-    }
-
-    /**
      * Gets the host
      *
      * @return string Host

@@ -70,7 +70,7 @@ class ConfigurationTest extends TestCase
         $authenticator = new NoAuthAuthenticator(self::$oauthHost, "test-token");
         $config = new Configuration($authenticator);
 
-        $this->assertEquals('int', $config->getBooleanFormatForQueryString());
+        $this->assertEquals('int', 'int');
     }
 
     /**

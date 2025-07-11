@@ -18,13 +18,8 @@ use Zitadel\Client\Model\ModelInterface;
 
 class ErrorModel implements ModelInterface
 {
-    public ?string $errorCode;
-    public ?string $field;
-
-    public function __construct(?string $errorCode = null, ?string $field = null)
+    public function __construct(public ?string $errorCode = null, public ?string $field = null)
     {
-        $this->errorCode = $errorCode;
-        $this->field = $field;
     }
 
     public function getModelName(): string
@@ -32,6 +27,9 @@ class ErrorModel implements ModelInterface
         return 'ErrorModel';
     }
 
+    /**
+     * @return string[] // Array of strings
+     */
     public static function openAPITypes(): array
     {
         return [
@@ -40,14 +38,20 @@ class ErrorModel implements ModelInterface
         ];
     }
 
+    /**
+     * @return string[] // Array of nullable strings
+     */
     public static function openAPIFormats(): array
     {
         return [
-            'errorCode' => null,
-            'field' => null,
+            'errorCode' => 'string',
+            'field' => 'string',
         ];
     }
 
+    /**
+     * @return string[] // Array of attribute mappings
+     */
     public static function attributeMap(): array
     {
         return [
@@ -56,6 +60,9 @@ class ErrorModel implements ModelInterface
         ];
     }
 
+    /**
+     * @return string[] // Array of setter mappings
+     */
     public static function setters(): array
     {
         return [
@@ -64,6 +71,9 @@ class ErrorModel implements ModelInterface
         ];
     }
 
+    /**
+     * @return string[] // Array of getter mappings
+     */
     public static function getters(): array
     {
         return [
@@ -72,6 +82,9 @@ class ErrorModel implements ModelInterface
         ];
     }
 
+    /**
+     * @return string[] // List of invalid properties
+     */
     public function listInvalidProperties(): array
     {
         return [];
@@ -119,18 +132,12 @@ class ErrorModel implements ModelInterface
 class SuccessModel implements ModelInterface
 {
     /**
-     * @var string|null The status of the response.
-     */
-    public ?string $status;
-
-    /**
      * SuccessModel constructor.
      *
      * @param string|null $status The status of the response.
      */
-    public function __construct(?string $status = null)
+    public function __construct(public ?string $status = null)
     {
-        $this->status = $status;
     }
 
     /**
@@ -144,9 +151,7 @@ class SuccessModel implements ModelInterface
     }
 
     /**
-     * Array of property to type mappings. Used for (de)serialization
-     *
-     * @return array
+     * @return string[] // Array of strings
      */
     public static function openAPITypes(): array
     {
@@ -156,21 +161,17 @@ class SuccessModel implements ModelInterface
     }
 
     /**
-     * Array of property to format mappings. Used for (de)serialization
-     *
-     * @return array
+     * @return string[] // Array of nullable strings
      */
     public static function openAPIFormats(): array
     {
         return [
-            'status' => null
+            'status' => 'string'
         ];
     }
 
     /**
-     * Array of attributes where the key is the local name, and the value is the original name
-     *
-     * @return array
+     * @return string[] // Array of attribute mappings
      */
     public static function attributeMap(): array
     {
@@ -180,9 +181,7 @@ class SuccessModel implements ModelInterface
     }
 
     /**
-     * Array of attributes to setter functions (for deserialization of responses)
-     *
-     * @return array
+     * @return string[] // Array of setter mappings
      */
     public static function setters(): array
     {
@@ -192,9 +191,7 @@ class SuccessModel implements ModelInterface
     }
 
     /**
-     * Array of attributes to getter functions (for serialization of requests)
-     *
-     * @return array
+     * @return string[] // Array of getter mappings
      */
     public static function getters(): array
     {
@@ -204,9 +201,7 @@ class SuccessModel implements ModelInterface
     }
 
     /**
-     * Show all the invalid properties with reasons.
-     *
-     * @return array
+     * @return string[] // List of invalid properties
      */
     public function listInvalidProperties(): array
     {
