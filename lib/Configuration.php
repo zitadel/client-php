@@ -74,21 +74,6 @@ class Configuration
     }
 
     /**
-     * Sets the user agent of the api client
-     *
-     * @param string $userAgent the user agent of the api client
-     *
-     * @return $this
-     * @noinspection PhpUnused*@throws \InvalidArgumentException
-     */
-    public function setUserAgent(string $userAgent): Configuration
-    {
-
-        $this->userAgent = $userAgent;
-        return $this;
-    }
-
-    /**
      * Gets the debug flag
      *
      * @return bool

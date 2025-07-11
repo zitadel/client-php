@@ -11,7 +11,7 @@ use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
  * This test verifies that the client credentials authenticator correctly refreshes its token
  * and returns the proper Authorization header.
  */
-class ClientCredentialsAuthenticatorTest extends OAuthAuthenticatorTest
+class ClientCredentialsAuthenticatorTest extends OAuthAuthenticatorTestCase
 {
     /**
      * @throws Exception

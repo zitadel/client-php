@@ -5,7 +5,7 @@ namespace Zitadel\Client\Test\Auth;
 use Exception;
 use Zitadel\Client\Auth\WebTokenAuthenticator;
 
-class WebTokenAuthenticatorTest extends OAuthAuthenticatorTest
+class WebTokenAuthenticatorTest extends OAuthAuthenticatorTestCase
 {
     /**
      * @throws Exception

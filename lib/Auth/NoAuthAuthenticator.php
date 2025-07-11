@@ -13,19 +13,20 @@ class NoAuthAuthenticator extends Authenticator
      * NoAuthAuthenticator constructor.
      *
      * @param string $host The base URL for all authentication endpoints.
+     * @param string $token The token to be used for authentication.
      */
-    public function __construct(string $host = 'localhost')
+    public function __construct(string $host = 'localhost', private readonly string $token = '')
     {
         parent::__construct($host);
     }
 
     /**
-     * Retrieve the authentication token needed for API requests.
+     * Retrieves the authentication token needed for API requests.
      *
-     * @return string The authentication token
+     * @return string The authentication token.
      */
     public function getAuthToken(): string
     {
-        return "";
+        return $this->token;
     }
 }

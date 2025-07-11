@@ -16,6 +16,35 @@ use RuntimeException;
 /**
  * A self-contained, Guzzle-based API client implementation.
  *
+ *
+ * This client supports custom Guzzle configuration via an optional callable,
+ * allowing proxy settings, additional headers, middleware, etc.
+ *
+ * Example:
+ * <code>
+ * use GuzzleHttp\RequestOptions;
+ * use Zitadel\Client\Configuration;
+ * use Zitadel\Client\Auth\PersonalAccessAuthenticator;
+ * use Zitadel\Client\DefaultApiClient;
+ *
+ * $config = new Configuration(new PersonalAccessAuthenticator('https://api.example.com', 'test-token'));
+ *
+ * $clientConfigurator = function (array $guzzleConfig): array {
+ *     $guzzleConfig[RequestOptions::PROXY] = [
+ *         'http'  => 'http://username:password@proxy.example.com:3128',
+ *         'https' => 'http://username:password@proxy.example.com:3128',
+ *     ];
+ *
+ *     $guzzleConfig[RequestOptions::HEADERS]['X-My-Custom-Header'] = 'custom-value';
+ *     $guzzleConfig[RequestOptions::VERIFY] = false;
+ *
+ *     Return $guzzleConfig;
+ * };
+ *
+ * // 3) Instantiate DefaultApiClient with the configurator
+ * $apiClient = new DefaultApiClient($config, $clientConfigurator);
+ * </code>
+ *
  * @template T of object
  * @implements IApiClient<T>
  */
@@ -85,7 +114,7 @@ final class DefaultApiClient implements IApiClient
         $request = new Request($method, $uri, $headers, $httpBody);
 
         try {
-            $response = $this->client->send($request);
+            $response = $this->client->send($request, [RequestOptions::HTTP_ERRORS => false]);
         } catch (GuzzleException $e) {
             throw new RuntimeException("[$operationId] API Request failed.", $e->getCode(), $e);
         }

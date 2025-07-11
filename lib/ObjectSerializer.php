@@ -125,7 +125,7 @@ class ObjectSerializer
         }
 
         if (strcasecmp(substr($class, -2), '[]') === 0) {
-            $data = is_string($data) ? json_decode($data) : $data;
+            $data = is_string($data) ? json_decode($data, false, 512, JSON_THROW_ON_ERROR) : $data;
 
             if (!is_array($data)) {
                 throw new InvalidArgumentException("Invalid array '$class'");
@@ -140,7 +140,7 @@ class ObjectSerializer
         }
 
         if (preg_match('/^(array<|map\[)/', $class)) { // for associative array e.g. array<string,int>
-            $data = is_string($data) ? json_decode($data) : $data;
+            $data = is_string($data) ? json_decode($data, false, 512, JSON_THROW_ON_ERROR) : $data;
             settype($data, 'array');
             $inner = substr($class, 4, -1);
             $deserialized = [];
@@ -197,14 +197,24 @@ class ObjectSerializer
             }
             return $data;
         } else {
-            $data = is_string($data) ? json_decode($data) : $data;
+            $data = is_string($data) ? json_decode($data, false, 512, JSON_THROW_ON_ERROR) : $data;
 
             if (is_array($data)) {
                 $data = (object)$data;
             }
 
             // If a discriminator is defined and points to a valid subclass, use it.
-            $discriminator = $class::DISCRIMINATOR;
+            if (is_string($class) && class_exists($class)) {
+                if (defined($class . '::DISCRIMINATOR')) {
+                    $discriminator = $class::DISCRIMINATOR;
+                }
+            } elseif ($class instanceof \ReflectionClass) {
+                // If $class is an instance of ReflectionClass, use getConstant
+                if ($class->hasConstant('DISCRIMINATOR')) {
+                    $discriminator = $class->getConstant('DISCRIMINATOR');
+                }
+            }
+
             if (!empty($discriminator) && isset($data->{$discriminator}) && is_string($data->{$discriminator})) {
                 $subclass = '\Zitadel\Client\Model\\' . $data->{$discriminator};
                 if (is_subclass_of($subclass, $class)) {

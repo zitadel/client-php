@@ -15,7 +15,7 @@ use Testcontainers\Wait\WaitForHttp;
  *
  * @package YourPackageName
  */
-abstract class OAuthAuthenticatorTest extends TestCase
+abstract class OAuthAuthenticatorTestCase extends TestCase
 {
     /**
      * @var string Holds the OAuth host URL constructed from the container's host and mapped port.

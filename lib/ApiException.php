@@ -16,7 +16,7 @@ class ApiException extends ZitadelException
      *
      * @var stdClass|string|null
      */
-    protected stdClass|string|null $responseBody;
+    protected object|string|null $responseBody;
 
     /**
      * The HTTP headers of the server response.
@@ -31,9 +31,9 @@ class ApiException extends ZitadelException
      * @param string $message Error message
      * @param int $code HTTP status code
      * @param string[][] $responseHeaders HTTP response headers
-     * @param string|stdClass|null $responseBody HTTP response body (string, decoded JSON, or object)
+     * @param object|string|null $responseBody HTTP response body (string, decoded JSON, or object)
      */
-    public function __construct(string $message, int $code, $responseHeaders = [], stdClass|string|null $responseBody = null)
+    public function __construct(string $message, int $code, $responseHeaders = [], object|string|null $responseBody = null)
     {
         parent::__construct($message, $code);
         $this->responseHeaders = $responseHeaders;
