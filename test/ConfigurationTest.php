@@ -4,7 +4,6 @@
 
 namespace Zitadel\Client\Test;
 
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Zitadel\Client\Auth\NoAuthAuthenticator;
 use Zitadel\Client\Configuration;
@@ -58,19 +57,6 @@ class ConfigurationTest extends TestCase
         $config = new Configuration($authenticator);
 
         $this->assertEquals(self::$oauthHost, $config->getHost());
-    }
-
-    /**
-     * Test boolean format for query string.
-     *
-     * @return void
-     */
-    public function testGetBooleanFormatForQueryString(): void
-    {
-        $authenticator = new NoAuthAuthenticator(self::$oauthHost, "test-token");
-        $config = new Configuration($authenticator);
-
-        $this->assertEquals('int', 'int');
     }
 
     /**

@@ -105,6 +105,7 @@ class ErrorModel implements ModelInterface
         return $this->$property === null;
     }
 
+    /** @noinspection PhpUnused */
     public function setErrorCode(?string $code): void
     {
         $this->errorCode = $code;
@@ -310,7 +311,6 @@ class DefaultApiClientTest extends TestCase
         /** @noinspection HttpUrlsUsage */
         self::$oauthHost = "http://" . self::$mockOAuth2Server->getHost() . ":" . self::$mockOAuth2Server->getMappedPort(8080);
 
-        // Load and post mappings from api.json file to the mock server
         $stubs = file_get_contents(__DIR__ . '/resources/api.json');
         $mappings = json_decode($stubs, true)['mappings'];
 

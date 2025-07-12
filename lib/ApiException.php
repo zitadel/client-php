@@ -14,7 +14,7 @@ class ApiException extends ZitadelException
     /**
      * The HTTP body of the server response (string, decoded JSON, or object).
      *
-     * @var stdClass|string|null
+     * @var object|string|null
      */
     protected object|string|null $responseBody;
 
