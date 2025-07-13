@@ -15,8 +15,9 @@ interface IApiClient
      * @param array<string, mixed> $queryParams
      * @param array<string, string|string[]> $headerParams
      * @param object|null $body
-     * @param array<int|string, class-string<T>> $responseTypes
-     * @return object|null
+     * @param class-string<T>|null $successType The expected response type for a successful (2xx) response.
+     * @param array<int|string, class-string>|null $errorTypes A map of status codes (e.g., 404, "4XX", "default") to error response types.
+     * @return T|null
      */
     public function invokeAPI(
         string  $operationId,
@@ -26,6 +27,7 @@ interface IApiClient
         array   $queryParams,
         array   $headerParams,
         ?object $body,
-        array   $responseTypes
+        ?string $successType = null,
+        ?array  $errorTypes = null
     ): ?object;
 }

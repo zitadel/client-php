@@ -356,6 +356,7 @@ class DefaultApiClientTest extends TestCase
             [],
             [],
             null,
+            SuccessModel::class,
             [
                 200 => SuccessModel::class
             ]
@@ -388,6 +389,7 @@ class DefaultApiClientTest extends TestCase
             [],
             [],
             (object)['name' => 'John'],
+            SuccessModel::class,
             $responseTypes
         );
 
@@ -416,6 +418,7 @@ class DefaultApiClientTest extends TestCase
                 'X-Request-ID' => 'test-uuid-123'
             ],
             new stdClass(),
+            SuccessModel::class,
             [
                 200 => SuccessModel::class
             ]
@@ -444,6 +447,7 @@ class DefaultApiClientTest extends TestCase
             [],
             [],
             null,
+            SuccessModel::class
             []
         );
 
@@ -470,6 +474,7 @@ class DefaultApiClientTest extends TestCase
             [],
             [],
             null,
+            SuccessModel::class
             []
         );
     }
@@ -494,6 +499,7 @@ class DefaultApiClientTest extends TestCase
             [],
             [],
             new stdClass(),
+            SuccessModel::class,
             [
                 400 => ErrorModel::class
             ]
@@ -522,6 +528,7 @@ class DefaultApiClientTest extends TestCase
             [],
             [],
             null,
+            SuccessModel::class,
             [
                 200 => SuccessModel::class
             ]

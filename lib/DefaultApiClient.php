@@ -56,7 +56,8 @@ final class DefaultApiClient implements IApiClient
     public function __construct(
         private readonly Configuration $config,
         ?callable                      $clientConfigurator = null
-    ) {
+    )
+    {
         $guzzleConfig = [
             RequestOptions::TIMEOUT => $this->config->getTimeout(),
             RequestOptions::CONNECT_TIMEOUT => $this->config->getConnectTimeout(),
@@ -77,8 +78,10 @@ final class DefaultApiClient implements IApiClient
         array   $queryParams,
         array   $headerParams,
         ?object $body,
-        array   $responseTypes
-    ): ?object {
+        ?string $successType = null,
+        ?array  $errorTypes = null
+    ): ?object
+    {
         if (!in_array($method, self::VALID_METHODS, true)) {
             throw new InvalidArgumentException("Invalid HTTP method: $method");
         }
@@ -121,12 +124,11 @@ final class DefaultApiClient implements IApiClient
 
         $statusCode = $response->getStatusCode();
         $responseBody = $response->getBody()->getContents();
-        $responseClass = $responseTypes[$statusCode] ?? null;
 
         if ($statusCode >= 200 && $statusCode < 300) {
-            if ($responseClass) {
+            if ($successType) {
                 try {
-                    return ObjectSerializer::deserialize($responseBody, $responseClass);
+                    return ObjectSerializer::deserialize($responseBody, $successType);
                 } catch (Exception $e) {
                     throw new RuntimeException("[$operationId] Failed to deserialize successful response.", $e->getCode(), $e);
                 }
@@ -134,18 +136,22 @@ final class DefaultApiClient implements IApiClient
             return null;
         }
 
+        $errorClass = $this->findErrorType($statusCode, $errorTypes);
         $errorBody = null;
-        if ($responseClass) {
+
+        if ($errorClass) {
             try {
-                $errorBody = ObjectSerializer::deserialize($responseBody, $responseClass);
+                $errorBody = ObjectSerializer::deserialize($responseBody, $errorClass);
             } catch (Exception) {
+                // Fallback will be used if deserialization fails
             }
         }
         if ($errorBody === null) {
             try {
                 $errorBody = json_decode($responseBody, flags: JSON_THROW_ON_ERROR);
             } catch (Exception) {
-                $errorBody = null;
+                // Final fallback to the raw response body string
+                $errorBody = $responseBody;
             }
         }
         throw new ApiException("[$operationId] API Error", $statusCode, $response->getHeaders(), $errorBody);
@@ -168,5 +174,38 @@ final class DefaultApiClient implements IApiClient
             $result = str_replace('{' . $key . '}', urlencode((string)$value), $result);
         }
         return $result;
+    }
+
+    /**
+     * Finds the appropriate error class for a given HTTP status code based on the error types map.
+     * The lookup follows a specific order of precedence:
+     * 1. The exact status code (e.g., 404).
+     * 2. The status code family (e.g., "4XX" for a 404 status code).
+     * 3. A "default" key.
+     *
+     * @param int $statusCode The HTTP status code.
+     * @param array<int|string, class-string>|null $errorTypes A map of status codes to class strings.
+     * @return class-string|null The found class string or null if no match is found.
+     */
+    private function findErrorType(int $statusCode, ?array $errorTypes): ?string
+    {
+        if ($errorTypes === null) {
+            return null;
+        }
+
+        if (isset($errorTypes[$statusCode])) {
+            return $errorTypes[$statusCode];
+        }
+
+        $family = (int)($statusCode / 100) . 'XX';
+        if (isset($errorTypes[$family])) {
+            return $errorTypes[$family];
+        }
+
+        if (isset($errorTypes['default'])) {
+            return $errorTypes['default'];
+        }
+
+        return null;
     }
 }
