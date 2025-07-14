@@ -60,19 +60,6 @@ class ConfigurationTest extends TestCase
     }
 
     /**
-     * Test debug flag.
-     *
-     * @return void
-     */
-    public function testGetDebug(): void
-    {
-        $authenticator = new NoAuthAuthenticator(self::$oauthHost, "test-token");
-        $config = new Configuration($authenticator);
-
-        $this->assertFalse($config->getDebug());
-    }
-
-    /**
      * Test connection timeout.
      *
      * @return void

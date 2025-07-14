@@ -2049,12 +2049,7 @@ class BetaOrganizationServiceApi
     protected function createHttpClientOption()
     {
         $options = [];
-        if ($this->config->getDebug()) {
-            $options[RequestOptions::DEBUG] = fopen('php://output', 'a');
-            if (!$options[RequestOptions::DEBUG]) {
-                throw new \RuntimeException('Failed to open the debug file: ' . 'php://output');
-            }
-        }
+
 
         return $options;
     }

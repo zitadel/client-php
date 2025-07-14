@@ -10,6 +10,9 @@ use InvalidArgumentException;
 use Zitadel\Client\Model\ModelInterface;
 
 /**
+ * A utility class to handle serialization and deserialization of API models.
+ * It converts model objects to hashes and JSON strings back to typed objects.
+ *
  * @internal
  */
 class ObjectSerializer

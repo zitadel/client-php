@@ -56,8 +56,7 @@ final class DefaultApiClient implements IApiClient
     public function __construct(
         private readonly Configuration $config,
         ?callable                      $clientConfigurator = null
-    )
-    {
+    ) {
         $guzzleConfig = [
             RequestOptions::TIMEOUT => $this->config->getTimeout(),
             RequestOptions::CONNECT_TIMEOUT => $this->config->getConnectTimeout(),
@@ -80,8 +79,7 @@ final class DefaultApiClient implements IApiClient
         ?object $body,
         ?string $successType = null,
         ?array  $errorTypes = null
-    ): ?object
-    {
+    ): ?object {
         if (!in_array($method, self::VALID_METHODS, true)) {
             throw new InvalidArgumentException("Invalid HTTP method: $method");
         }
@@ -198,14 +196,7 @@ final class DefaultApiClient implements IApiClient
         }
 
         $family = (int)($statusCode / 100) . 'XX';
-        if (isset($errorTypes[$family])) {
-            return $errorTypes[$family];
-        }
 
-        if (isset($errorTypes['default'])) {
-            return $errorTypes['default'];
-        }
-
-        return null;
+        return $errorTypes[$family] ?? $errorTypes['default'] ?? null;
     }
 }

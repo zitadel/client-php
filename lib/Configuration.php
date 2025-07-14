@@ -64,16 +64,6 @@ class Configuration
     }
 
     /**
-     * Gets the debug flag
-     *
-     * @return bool
-     */
-    public function getDebug(): bool
-    {
-        return false;
-    }
-
-    /**
      * Gets the connection timeout.
      *
      * Specifies the number of seconds to wait while trying to connect to a

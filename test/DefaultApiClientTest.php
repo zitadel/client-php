@@ -447,7 +447,7 @@ class DefaultApiClientTest extends TestCase
             [],
             [],
             null,
-            SuccessModel::class
+            SuccessModel::class,
             []
         );
 
@@ -474,7 +474,7 @@ class DefaultApiClientTest extends TestCase
             [],
             [],
             null,
-            SuccessModel::class
+            SuccessModel::class,
             []
         );
     }
