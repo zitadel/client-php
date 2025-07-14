@@ -21,7 +21,7 @@ class Configuration
      * @param int $connectTimeout The connection timeout in seconds.
      */
     public function __construct(
-        protected Authenticator $authenticator,
+        private readonly Authenticator $authenticator,
         private readonly int $timeout = 30,
         private readonly int $connectTimeout = 5
     ) {
