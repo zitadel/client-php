@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 namespace Zitadel\Client\Test;
 
@@ -9,6 +8,7 @@ use JsonSerializable;
 use PHPUnit\Framework\TestCase;
 use Zitadel\Client\Model\ModelInterface;
 use Zitadel\Client\ObjectSerializer;
+use Stringable;
 
 class ObjectSerializerTest extends TestCase
 {
@@ -27,7 +27,7 @@ class ObjectSerializerTest extends TestCase
     }
 }
 
-class SerdeModel implements ModelInterface, ArrayAccess, JsonSerializable
+class SerdeModel implements ModelInterface, ArrayAccess, JsonSerializable, Stringable
 {
     protected static $openAPITypes = [
         'some_string' => 'string',
@@ -88,7 +88,7 @@ class SerdeModel implements ModelInterface, ArrayAccess, JsonSerializable
 
     public function __construct(?array $data = null)
     {
-        $data = $data ?? [];
+        $data ??= [];
         if (empty(self::$attributeMap)) {
             foreach (self::$openAPITypes as $p => $t) {
                 self::$attributeMap[$p] = $p;
@@ -190,7 +190,7 @@ class SerdeModel implements ModelInterface, ArrayAccess, JsonSerializable
 
     public function __toString(): string
     {
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_PRETTY_PRINT);
+        return (string)json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_PRETTY_PRINT);
     }
 
     public function toHeaderValue(): string
@@ -200,11 +200,11 @@ class SerdeModel implements ModelInterface, ArrayAccess, JsonSerializable
 
     public function __call($name, $args)
     {
-        if (strpos($name, 'get') === 0) {
+        if (str_starts_with($name, 'get')) {
             $prop = lcfirst(substr($name, 3));
             return $this->container[$prop] ?? null;
         }
-        if (strpos($name, 'set') === 0) {
+        if (str_starts_with($name, 'set')) {
             $prop = lcfirst(substr($name, 3));
             $this->container[$prop] = $args[0] ?? null;
             return $this;

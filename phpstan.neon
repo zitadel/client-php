@@ -8,3 +8,4 @@ parameters:
     - lib/Model/*
     - lib/Api/*
     - lib/ObjectSerializer.php
+    - test/ObjectSerializerTest.php
