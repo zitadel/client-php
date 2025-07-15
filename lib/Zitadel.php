@@ -87,30 +87,31 @@ class Zitadel
             // No mutation by default.
         };
         $mutateConfig($config);
+        $apiClient = new DefaultApiClient($config);
 
-        $this->betaProjects = new BetaProjectServiceApi(null, $config);
-        $this->betaApps = new BetaAppServiceApi(null, $config);
-        $this->betaOidc = new BetaOIDCServiceApi(null, $config);
-        $this->betaUsers = new BetaUserServiceApi(null, $config);
-        $this->betaOrganizations = new BetaOrganizationServiceApi(null, $config);
-        $this->betaSettings = new BetaSettingsServiceApi(null, $config);
-        $this->betaPermissions = new BetaInternalPermissionServiceApi(null, $config);
-        $this->betaAuthorizations = new BetaAuthorizationServiceApi(null, $config);
-        $this->betaSessions = new BetaSessionServiceApi(null, $config);
-        $this->betaInstance = new BetaInstanceServiceApi(null, $config);
-        $this->betaTelemetry = new BetaTelemetryServiceApi(null, $config);
-        $this->betaFeatures = new BetaFeatureServiceApi(null, $config);
-        $this->betaWebkeys = new BetaWebKeyServiceApi(null, $config);
-        $this->betaActions = new BetaActionServiceApi(null, $config);
-        $this->features = new FeatureServiceApi(null, $config);
-        $this->idps = new IdentityProviderServiceApi(null, $config);
-        $this->oidc = new OIDCServiceApi(null, $config);
-        $this->organizations = new OrganizationServiceApi(null, $config);
-        $this->saml = new SAMLServiceApi(null, $config);
-        $this->sessions = new SessionServiceApi(null, $config);
-        $this->settings = new SettingsServiceApi(null, $config);
-        $this->users = new UserServiceApi(null, $config);
-        $this->webkeys = new WebKeyServiceApi(null, $config);
+        $this->betaProjects = new BetaProjectServiceApi($apiClient);
+        $this->betaApps = new BetaAppServiceApi($apiClient);
+        $this->betaOidc = new BetaOIDCServiceApi($apiClient);
+        $this->betaUsers = new BetaUserServiceApi($apiClient);
+        $this->betaOrganizations = new BetaOrganizationServiceApi($apiClient);
+        $this->betaSettings = new BetaSettingsServiceApi($apiClient);
+        $this->betaPermissions = new BetaInternalPermissionServiceApi($apiClient);
+        $this->betaAuthorizations = new BetaAuthorizationServiceApi($apiClient);
+        $this->betaSessions = new BetaSessionServiceApi($apiClient);
+        $this->betaInstance = new BetaInstanceServiceApi($apiClient);
+        $this->betaTelemetry = new BetaTelemetryServiceApi($apiClient);
+        $this->betaFeatures = new BetaFeatureServiceApi($apiClient);
+        $this->betaWebkeys = new BetaWebKeyServiceApi($apiClient);
+        $this->betaActions = new BetaActionServiceApi($apiClient);
+        $this->features = new FeatureServiceApi($apiClient);
+        $this->idps = new IdentityProviderServiceApi($apiClient);
+        $this->oidc = new OIDCServiceApi($apiClient);
+        $this->organizations = new OrganizationServiceApi($apiClient);
+        $this->saml = new SAMLServiceApi($apiClient);
+        $this->sessions = new SessionServiceApi($apiClient);
+        $this->settings = new SettingsServiceApi($apiClient);
+        $this->users = new UserServiceApi($apiClient);
+        $this->webkeys = new WebKeyServiceApi($apiClient);
     }
 
     /**
