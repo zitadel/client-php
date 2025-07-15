@@ -418,10 +418,8 @@ class DefaultApiClientTest extends TestCase
                 'X-Request-ID' => 'test-uuid-123'
             ],
             new stdClass(),
-            SuccessModel::class,
-            [
-                200 => SuccessModel::class
-            ]
+            null,
+            []
         );
 
         $this->expectNotToPerformAssertions();
@@ -447,7 +445,7 @@ class DefaultApiClientTest extends TestCase
             [],
             [],
             null,
-            SuccessModel::class,
+            null,
             []
         );
 
