@@ -10,6 +10,7 @@ use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Utils;
 use InvalidArgumentException;
 use RuntimeException;
+use stdClass;
 
 /** @noinspection PhpUnused */
 
@@ -69,6 +70,58 @@ final class DefaultApiClient implements IApiClient
         $this->client = new Client($guzzleConfig);
     }
 
+    /**
+     * @param string $operationId
+     * @param string $pathTemplate
+     * @param string $method
+     * @param array<string, scalar|null> $pathParams
+     * @param array<string, mixed> $queryParams
+     * @param array<string, string|string[]> $headerParams
+     * @param object|null $body
+     * @param array<int|string, class-string>|null $errorTypes A map of status codes (e.g., 404, "4XX", "default") to error response types.
+     * @return void
+     * @throws ZitadelException
+     */
+    public function invokeAPINoResponse(
+        string  $operationId,
+        string  $pathTemplate,
+        string  $method,
+        array   $pathParams,
+        array   $queryParams,
+        array   $headerParams,
+        ?object $body,
+        ?array  $errorTypes = null
+    ): void {
+        $response = $this->invokeAPI(
+            $operationId,
+            $pathTemplate,
+            $method,
+            $pathParams,
+            $queryParams,
+            $headerParams,
+            $body,
+            stdClass::class,
+            $errorTypes
+        );
+
+        if (!empty(((array) $response))) {
+            throw new RuntimeException();
+        }
+    }
+
+    /**
+     * @param string $operationId
+     * @param string $pathTemplate
+     * @param string $method
+     * @param array<string, scalar|null> $pathParams
+     * @param array<string, mixed> $queryParams
+     * @param array<string, string|string[]> $headerParams
+     * @param object|null $body
+     * @param class-string<T>|null $successType The expected response type for a successful (2xx) response.
+     * @param array<int|string, class-string>|null $errorTypes A map of status codes (e.g., 404, "4XX", "default") to error response types.
+     * @return object
+     * @throws ZitadelException
+     */
     public function invokeAPI(
         string  $operationId,
         string  $pathTemplate,
@@ -79,7 +132,7 @@ final class DefaultApiClient implements IApiClient
         ?object $body,
         ?string $successType = null,
         ?array  $errorTypes = null
-    ): ?object {
+    ): object {
         if (!in_array($method, self::VALID_METHODS, true)) {
             throw new InvalidArgumentException("Invalid HTTP method: $method");
         }
@@ -124,14 +177,14 @@ final class DefaultApiClient implements IApiClient
         $responseBody = $response->getBody()->getContents();
 
         if ($statusCode >= 200 && $statusCode < 300) {
-            if ($successType) {
+            if ($successType && $responseBody) {
                 try {
                     return ObjectSerializer::deserialize($responseBody, $successType);
                 } catch (Exception $e) {
                     throw new RuntimeException("[$operationId] Failed to deserialize successful response.", $e->getCode(), $e);
                 }
             }
-            return null;
+            return new stdClass();
         }
 
         $errorClass = $this->findErrorType($statusCode, $errorTypes);

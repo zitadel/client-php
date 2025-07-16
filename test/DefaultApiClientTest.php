@@ -15,6 +15,7 @@ use Zitadel\Client\Auth\NoAuthAuthenticator;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
 use Zitadel\Client\Model\ModelInterface;
+use Zitadel\Client\ZitadelException;
 
 class ErrorModel implements ModelInterface
 {
@@ -28,7 +29,7 @@ class ErrorModel implements ModelInterface
     }
 
     /**
-     * @return string[] // Array of strings
+     * @return string[]
      */
     public static function openAPITypes(): array
     {
@@ -39,7 +40,7 @@ class ErrorModel implements ModelInterface
     }
 
     /**
-     * @return string[] // Array of nullable strings
+     * @return string[]
      */
     public static function openAPIFormats(): array
     {
@@ -50,7 +51,7 @@ class ErrorModel implements ModelInterface
     }
 
     /**
-     * @return string[] // Array of attribute mappings
+     * @return string[]
      */
     public static function attributeMap(): array
     {
@@ -61,7 +62,7 @@ class ErrorModel implements ModelInterface
     }
 
     /**
-     * @return string[] // Array of setter mappings
+     * @return string[]
      */
     public static function setters(): array
     {
@@ -72,7 +73,7 @@ class ErrorModel implements ModelInterface
     }
 
     /**
-     * @return string[] // Array of getter mappings
+     * @return string[]
      */
     public static function getters(): array
     {
@@ -83,7 +84,7 @@ class ErrorModel implements ModelInterface
     }
 
     /**
-     * @return string[] // List of invalid properties
+     * @return string[]
      */
     public function listInvalidProperties(): array
     {
@@ -152,7 +153,7 @@ class SuccessModel implements ModelInterface
     }
 
     /**
-     * @return string[] // Array of strings
+     * @return string[]
      */
     public static function openAPITypes(): array
     {
@@ -162,7 +163,7 @@ class SuccessModel implements ModelInterface
     }
 
     /**
-     * @return string[] // Array of nullable strings
+     * @return string[]
      */
     public static function openAPIFormats(): array
     {
@@ -172,7 +173,7 @@ class SuccessModel implements ModelInterface
     }
 
     /**
-     * @return string[] // Array of attribute mappings
+     * @return string[]
      */
     public static function attributeMap(): array
     {
@@ -182,7 +183,7 @@ class SuccessModel implements ModelInterface
     }
 
     /**
-     * @return string[] // Array of setter mappings
+     * @return string[]
      */
     public static function setters(): array
     {
@@ -192,7 +193,7 @@ class SuccessModel implements ModelInterface
     }
 
     /**
-     * @return string[] // Array of getter mappings
+     * @return string[]
      */
     public static function getters(): array
     {
@@ -202,7 +203,7 @@ class SuccessModel implements ModelInterface
     }
 
     /**
-     * @return string[] // List of invalid properties
+     * @return string[]
      */
     public function listInvalidProperties(): array
     {
@@ -232,7 +233,7 @@ class SuccessModel implements ModelInterface
      */
     public static function isNullable(string $property): bool
     {
-        $nullableProperties = ['status'];  // example, can be extended if needed
+        $nullableProperties = ['status'];
         return in_array($property, $nullableProperties, true);
     }
 
@@ -340,8 +341,7 @@ class DefaultApiClientTest extends TestCase
      * Test GET request is successful.
      *
      * @return void
-     * @throws ApiException
-     * @throws ApiException
+     * @throws ZitadelException
      */
     public function testGetRequest(): void
     {
@@ -369,8 +369,7 @@ class DefaultApiClientTest extends TestCase
      * Test POST request is successful.
      *
      * @return void
-     * @throws ApiException
-     * @throws ApiException
+     * @throws ZitadelException
      */
     public function testPostRequest(): void
     {
@@ -400,15 +399,14 @@ class DefaultApiClientTest extends TestCase
      * Test PUT request sends custom headers.
      *
      * @return void
-     * @throws ApiException
-     * @throws ApiException
+     * @throws ZitadelException
      */
     public function testSendsCustomHeaders(): void
     {
         $config = new Configuration(new NoAuthAuthenticator(self::$oauthHost, "test-token"));
         $apiClient = new DefaultApiClient($config);
 
-        $apiClient->invokeAPI(
+        $apiClient->invokeAPINoResponse(
             'testCustomHeaders',
             '/users/123',
             'PUT',
@@ -418,7 +416,6 @@ class DefaultApiClientTest extends TestCase
                 'X-Request-ID' => 'test-uuid-123'
             ],
             new stdClass(),
-            null,
             []
         );
 
@@ -429,15 +426,14 @@ class DefaultApiClientTest extends TestCase
      * Test DELETE request returns void.
      *
      * @return void
-     * @throws ApiException
-     * @throws ApiException
+     * @throws ZitadelException
      */
     public function testDeleteRequest(): void
     {
         $config = new Configuration(new NoAuthAuthenticator(self::$oauthHost, "test-token"));
         $apiClient = new DefaultApiClient($config);
 
-        $response = $apiClient->invokeAPI(
+        $apiClient->invokeAPINoResponse(
             'testVoid',
             '/users/123',
             'DELETE',
@@ -445,17 +441,17 @@ class DefaultApiClientTest extends TestCase
             [],
             [],
             null,
-            null,
             []
         );
 
-        $this->assertNull($response);
+        $this->expectNotToPerformAssertions();
     }
 
     /**
      * Test handling of 404 Not Found error.
      *
      * @return void
+     * @throws ZitadelException
      */
     public function testApiClientErrorResponse(): void
     {
@@ -481,6 +477,7 @@ class DefaultApiClientTest extends TestCase
      * Test handling of 400 Bad Request with a typed error model.
      *
      * @return void
+     * @throws ZitadelException
      */
     public function testTypedClientErrorResponse(): void
     {
@@ -508,8 +505,7 @@ class DefaultApiClientTest extends TestCase
      * Test handling of malformed JSON response.
      *
      * @return void
-     * @throws ApiException
-     * @throws ApiException
+     * @throws ZitadelException
      */
     public function testDeserializationFailure(): void
     {
