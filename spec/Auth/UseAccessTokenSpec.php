@@ -22,7 +22,7 @@ class UseAccessTokenSpec extends AbstractIntegrationTest
     /**
      * Validate retrieval of general settings with a valid PAT.
      *
-     * @throws ApiException on API error
+     * @throws ApiException|ZitadelException on API error
      * @doesNotPerformAssertions
      */
     public function testRetrievesGeneralSettingsWithValidAuth(): void

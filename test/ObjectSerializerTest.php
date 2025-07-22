@@ -29,7 +29,7 @@ class ObjectSerializerTest extends TestCase
 
 class SerdeModel implements ModelInterface, ArrayAccess, JsonSerializable, Stringable
 {
-    protected static $openAPITypes = [
+    protected static array $openAPITypes = [
         'some_string' => 'string',
         'some_binary' => 'string',
         'some_byte' => 'string',
@@ -59,7 +59,7 @@ class SerdeModel implements ModelInterface, ArrayAccess, JsonSerializable, Strin
         'some_array_of_objects' => 'mixed[]',
         'some_nullable_field' => 'mixed'
     ];
-    protected static $openAPIFormats = [
+    protected static array $openAPIFormats = [
         'some_binary' => 'binary',
         'some_byte' => 'byte',
         'some_date' => 'date',
@@ -80,11 +80,11 @@ class SerdeModel implements ModelInterface, ArrayAccess, JsonSerializable, Strin
         'some_int64' => 'int64'
     ];
     protected static array $openAPINullables = ['some_nullable_field' => true];
-    protected $openAPINullablesSetToNull = [];
-    protected static $attributeMap = [];
-    protected static $setters = [];
-    protected static $getters = [];
-    protected $container = [];
+    protected array $openAPINullablesSetToNull = [];
+    protected static array $attributeMap = [];
+    protected static array $setters = [];
+    protected static array $getters = [];
+    protected array $container = [];
 
     public function __construct(?array $data = null)
     {
@@ -149,11 +149,13 @@ class SerdeModel implements ModelInterface, ArrayAccess, JsonSerializable, Strin
         return count($this->listInvalidProperties()) === 0;
     }
 
+    /** @noinspection PhpParameterNameChangedDuringInheritanceInspection */
     public static function isNullable(string $prop): bool
     {
         return self::$openAPINullables[$prop] ?? false;
     }
 
+    /** @noinspection PhpParameterNameChangedDuringInheritanceInspection */
     public function isNullableSetToNull(string $prop): bool
     {
         return in_array($prop, $this->openAPINullablesSetToNull, true);
@@ -209,5 +211,6 @@ class SerdeModel implements ModelInterface, ArrayAccess, JsonSerializable, Strin
             $this->container[$prop] = $args[0] ?? null;
             return $this;
         }
+        return null;
     }
 }

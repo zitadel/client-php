@@ -14,6 +14,7 @@ use Zitadel\Client\Model\UserServiceAddHumanUserRequest;
 use Zitadel\Client\Model\UserServiceSetHumanEmail;
 use Zitadel\Client\Model\UserServiceSetHumanProfile;
 use Zitadel\Client\Zitadel;
+use Zitadel\Client\ZitadelException;
 
 /**
  * SessionService Integration Tests
@@ -42,7 +43,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
     }
 
     /**
-     * @throws ApiException
+     * * @throws ApiException|ZitadelException
      */
     public function testRetrievesTheSessionDetailsById(): void
     {
@@ -59,7 +60,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
     }
 
     /**
-     * @throws ApiException
+     * @throws ApiException|ZitadelException
      */
     public function testIncludesTheCreatedSessionWhenListingAllSessions(): void
     {
@@ -76,7 +77,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
     }
 
     /**
-     * @throws ApiException
+     * @throws ApiException|ZitadelException
      */
     public function testUpdatesTheSessionLifetimeAndReturnsANewToken(): void
     {
@@ -90,6 +91,9 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
         $this->assertIsString($response->getSessionToken());
     }
 
+    /**
+     * @throws ZitadelException
+     */
     public function testRaisesAnApiExceptionWhenRetrievingANonExistentSession(): void
     {
         $request = (new SessionServiceGetSessionRequest())
@@ -103,6 +107,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
 
     /**
      * @throws ApiException
+     * @throws ZitadelException
      */
     protected function setUp(): void
     {
@@ -143,7 +148,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
             self::$client->sessions->deleteSession(
                 $request
             );
-        } catch (ApiException) {
+        } catch (ZitadelException) {
             // Ignore cleanup errors
         }
     }

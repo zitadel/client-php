@@ -13,6 +13,7 @@ use Zitadel\Client\Model\UserServiceSetHumanProfile;
 use Zitadel\Client\Model\UserServiceUpdateHumanUserRequest;
 use Zitadel\Client\Model\UserServiceUser;
 use Zitadel\Client\Zitadel;
+use Zitadel\Client\ZitadelException;
 
 /**
  * UserService Integration Tests
@@ -43,7 +44,7 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
     /**
      * Retrieve the user by ID and verify the returned ID matches.
      *
-     * @throws ApiException on API error
+     * @throws ZitadelException
      */
     public function testRetrievesTheUserDetailsById(): void
     {
@@ -60,7 +61,7 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
     /**
      * List all human users and verify the created user appears in the list.
      *
-     * @throws ApiException on API error
+     * @throws ApiException|ZitadelException on API error
      */
     public function testIncludesTheCreatedUserWhenListingAllUsers(): void
     {
@@ -80,7 +81,7 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
     /**
      * Update the user's email and verify via a get call that the change was applied.
      *
-     * @throws ApiException on API error
+     * @throws ApiException|ZitadelException on API error
      */
     public function testUpdatesTheUserEmailAndReflectsInGet(): void
     {
@@ -104,6 +105,7 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
 
     /**
      * Attempt to retrieve a non-existent user and expect an ApiException.
+     * @throws ZitadelException
      */
     public function testRaisesAnApiExceptionWhenRetrievingNonExistentUser(): void
     {
@@ -114,7 +116,7 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
     /**
      * Create a new human user before each test.
      *
-     * @throws ApiException on API error
+     * @throws ApiException|ZitadelException on API error
      */
     protected function setUp(): void
     {
@@ -135,6 +137,7 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
 
     /**
      * Remove the created human user after each test.
+     * @throws ZitadelException
      */
     protected function tearDown(): void
     {
