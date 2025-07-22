@@ -22,7 +22,10 @@ user authentication across various platforms like web, mobile, or other
 client environments.
 
 > [!IMPORTANT]
-> Please be aware that this SDK is currently in an incubating stage. We are releasing it to the community to gather feedback and learn how it is being used. While you are welcome to use it, please note that the API and functionality may evolve based on community input. We encourage you to try it out and share your experiences, but advise caution when considering it for production environments as future updates may introduce changes.
+> Please be aware that this SDK is currently in an incubating stage. We are releasing it to the community to gather
+> feedback and learn how it is being used. While you are welcome to use it, please note that the API and functionality may
+> evolve based on community input. We encourage you to try it out and share your experiences, but advise caution when
+> considering it for production environments as future updates may introduce changes.
 
 ## Getting Started
 
@@ -76,20 +79,20 @@ use \Zitadel\Client\Zitadel;
 $zitadel = Zitadel::withPrivateKey("https://example.us1.zitadel.cloud", "path/to/jwt-key.json");
 
 try {
-    $response = $zitadel->users->userServiceAddHumanUser([
-        'username' => 'john.doe',
-        'profile'  => [
-            'givenName'  => 'John',
-            'familyName' => 'Doe'
-        ],
-        'email' => [
-            'email' => 'john@doe.com'
-        ]
-    ]);
+    $response = $zitadel->users->addHumanUser((new UserServiceAddHumanUserRequest())
+        ->setUsername('john.doe')
+        ->setProfile(
+            (new UserServiceSetHumanProfile())
+                ->setGivenName('John')
+                ->setFamilyName('Doe')
+        )
+        ->setEmail(
+            (new UserServiceSetHumanEmail())
+                ->setEmail('john@doe.com')
+        ));
     echo "User created: " . print_r($response, true);
 } catch (ApiException $e) {
     echo "Error: " . $e->getMessage();
-}
 ```
 
 #### 2. Client Credentials Grant
@@ -201,7 +204,9 @@ in terms of request handling and error management.
 
 ## Versioning
 
-A key aspect of our strategy is that the SDK's major version is synchronized with the ZITADEL core project's major version to ensure compatibility. For a detailed explanation of this policy and our release schedule, please see our [Versioning Guide](VERSIONING.md).
+A key aspect of our strategy is that the SDK's major version is synchronized with the ZITADEL core project's major
+version to ensure compatibility. For a detailed explanation of this policy and our release schedule, please see
+our [Versioning Guide](VERSIONING.md).
 
 ## Contributing
 

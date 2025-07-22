@@ -2,9 +2,6 @@ name: Pipeline
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
 
 permissions:
   contents: write
@@ -79,7 +76,7 @@ jobs:
     name: Check Build Status
     runs-on: ubuntu-latest
     needs:
-      #      - lint-commits
+      - lint-commits
       - code-style
       - auto-fix
       - compat-check
