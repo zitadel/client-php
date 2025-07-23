@@ -40,7 +40,8 @@
         "vlucas/phpdotenv": "^5.6",
         "rector/rector": "^2.0",
         "phpstan/phpstan": "^2.1",
-        "phpdocumentor/phpdocumentor": "^3.7"
+        "phpdocumentor/phpdocumentor": "^3.7",
+        "icanhazstring/composer-unused": "^0.9.3"
     },
     "autoload": {
         "psr-4": {
