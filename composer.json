@@ -65,7 +65,8 @@
         "rector": "rector process",
         "phpstan": "phpstan analyse --memory-limit=-1",
         "format": "php-cs-fixer fix",
-        "docgen": "phpdoc --config=phpdoc.xml"
+        "docgen": "phpdoc --config=phpdoc.xml",
+        "depcheck": "composer-unused"
     },
     "config": {
         "allow-plugins": {
