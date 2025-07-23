@@ -30,6 +30,9 @@
       ],
       "docgen": [
         "composer docgen"
+      ],
+      "depcheck": [
+        "composer depcheck"
       ]
     }
   }
