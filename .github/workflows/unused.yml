@@ -29,7 +29,8 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
 
+      - name: Install Dependencies
+        run: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader
+
       - name: Inspect Dependencies
         uses: mridang/action-dependency-insight@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
