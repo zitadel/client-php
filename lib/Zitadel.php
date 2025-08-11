@@ -3,6 +3,7 @@
 namespace Zitadel\Client;
 
 use Exception;
+use Zitadel\Client\Api\ActionServiceApi;
 use Zitadel\Client\Api\BetaActionServiceApi;
 use Zitadel\Client\Api\BetaAppServiceApi;
 use Zitadel\Client\Api\BetaAuthorizationServiceApi;
@@ -61,6 +62,8 @@ class Zitadel
     public BetaWebKeyServiceApi $betaWebkeys;
     /** @var BetaActionServiceApi */
     public BetaActionServiceApi $betaActions;
+    /** @var ActionServiceApi */
+    public ActionServiceApi $actions;
     /** @var FeatureServiceApi */
     public FeatureServiceApi $features;
     /** @var IdentityProviderServiceApi */
@@ -102,6 +105,7 @@ class Zitadel
         $this->betaFeatures = new BetaFeatureServiceApi(null, $config);
         $this->betaWebkeys = new BetaWebKeyServiceApi(null, $config);
         $this->betaActions = new BetaActionServiceApi(null, $config);
+        $this->actions = new ActionServiceApi(null, $config);
         $this->features = new FeatureServiceApi(null, $config);
         $this->idps = new IdentityProviderServiceApi(null, $config);
         $this->oidc = new OIDCServiceApi(null, $config);
