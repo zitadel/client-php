@@ -281,12 +281,6 @@ class SessionServiceWebAuthN implements ModelInterface, ArrayAccess, \JsonSerial
     {
         $invalidProperties = [];
 
-        if ($this->container['domain'] === null) {
-            $invalidProperties[] = "'domain' can't be null";
-        }
-        if ($this->container['userVerificationRequirement'] === null) {
-            $invalidProperties[] = "'userVerificationRequirement' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -305,7 +299,7 @@ class SessionServiceWebAuthN implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Gets domain
      *
-     * @return string
+     * @return string|null
      */
     public function getDomain()
     {
@@ -315,7 +309,7 @@ class SessionServiceWebAuthN implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets domain
      *
-     * @param string $domain domain
+     * @param string|null $domain domain
      *
      * @return self
      */
@@ -332,7 +326,7 @@ class SessionServiceWebAuthN implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Gets userVerificationRequirement
      *
-     * @return \Zitadel\Client\Model\SessionServiceUserVerificationRequirement
+     * @return \Zitadel\Client\Model\SessionServiceUserVerificationRequirement|null
      */
     public function getUserVerificationRequirement()
     {
@@ -342,7 +336,7 @@ class SessionServiceWebAuthN implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets userVerificationRequirement
      *
-     * @param \Zitadel\Client\Model\SessionServiceUserVerificationRequirement $userVerificationRequirement userVerificationRequirement
+     * @param \Zitadel\Client\Model\SessionServiceUserVerificationRequirement|null $userVerificationRequirement userVerificationRequirement
      *
      * @return self
      */

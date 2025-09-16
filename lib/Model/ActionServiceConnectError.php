@@ -60,7 +60,7 @@ class ActionServiceConnectError implements ModelInterface, ArrayAccess, \JsonSer
     protected static $openAPITypes = [
         'code' => 'string',
         'message' => 'string',
-        'detail' => '\Zitadel\Client\Model\ActionServiceAny'
+        'details' => '\Zitadel\Client\Model\ActionServiceAny[]'
     ];
 
     /**
@@ -73,7 +73,7 @@ class ActionServiceConnectError implements ModelInterface, ArrayAccess, \JsonSer
     protected static $openAPIFormats = [
         'code' => null,
         'message' => null,
-        'detail' => null
+        'details' => null
     ];
 
     /**
@@ -84,7 +84,7 @@ class ActionServiceConnectError implements ModelInterface, ArrayAccess, \JsonSer
     protected static array $openAPINullables = [
         'code' => false,
         'message' => false,
-        'detail' => false
+        'details' => false
     ];
 
     /**
@@ -175,7 +175,7 @@ class ActionServiceConnectError implements ModelInterface, ArrayAccess, \JsonSer
     protected static $attributeMap = [
         'code' => 'code',
         'message' => 'message',
-        'detail' => 'detail'
+        'details' => 'details'
     ];
 
     /**
@@ -186,7 +186,7 @@ class ActionServiceConnectError implements ModelInterface, ArrayAccess, \JsonSer
     protected static $setters = [
         'code' => 'setCode',
         'message' => 'setMessage',
-        'detail' => 'setDetail'
+        'details' => 'setDetails'
     ];
 
     /**
@@ -197,7 +197,7 @@ class ActionServiceConnectError implements ModelInterface, ArrayAccess, \JsonSer
     protected static $getters = [
         'code' => 'getCode',
         'message' => 'getMessage',
-        'detail' => 'getDetail'
+        'details' => 'getDetails'
     ];
 
     /**
@@ -302,7 +302,7 @@ class ActionServiceConnectError implements ModelInterface, ArrayAccess, \JsonSer
     {
         $this->setIfExists('code', $data ?? [], null);
         $this->setIfExists('message', $data ?? [], null);
-        $this->setIfExists('detail', $data ?? [], null);
+        $this->setIfExists('details', $data ?? [], null);
     }
 
     /**
@@ -421,28 +421,28 @@ class ActionServiceConnectError implements ModelInterface, ArrayAccess, \JsonSer
     }
 
     /**
-     * Gets detail
+     * Gets details
      *
-     * @return \Zitadel\Client\Model\ActionServiceAny|null
+     * @return \Zitadel\Client\Model\ActionServiceAny[]|null
      */
-    public function getDetail()
+    public function getDetails()
     {
-        return $this->container['detail'];
+        return $this->container['details'];
     }
 
     /**
-     * Sets detail
+     * Sets details
      *
-     * @param \Zitadel\Client\Model\ActionServiceAny|null $detail detail
+     * @param \Zitadel\Client\Model\ActionServiceAny[]|null $details A list of messages that carry the error details. There is no limit on the number of messages.
      *
      * @return self
      */
-    public function setDetail($detail)
+    public function setDetails($details)
     {
-        if (is_null($detail)) {
-            throw new \InvalidArgumentException('non-nullable detail cannot be null');
+        if (is_null($details)) {
+            throw new \InvalidArgumentException('non-nullable details cannot be null');
         }
-        $this->container['detail'] = $detail;
+        $this->container['details'] = $details;
 
         return $this;
     }

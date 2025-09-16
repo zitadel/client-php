@@ -281,12 +281,6 @@ class BetaUserServiceVerifyTOTPRegistrationRequest implements ModelInterface, Ar
     {
         $invalidProperties = [];
 
-        if ($this->container['userId'] === null) {
-            $invalidProperties[] = "'userId' can't be null";
-        }
-        if ($this->container['code'] === null) {
-            $invalidProperties[] = "'code' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -305,7 +299,7 @@ class BetaUserServiceVerifyTOTPRegistrationRequest implements ModelInterface, Ar
     /**
      * Gets userId
      *
-     * @return string
+     * @return string|null
      */
     public function getUserId()
     {
@@ -315,7 +309,7 @@ class BetaUserServiceVerifyTOTPRegistrationRequest implements ModelInterface, Ar
     /**
      * Sets userId
      *
-     * @param string $userId userId
+     * @param string|null $userId userId
      *
      * @return self
      */
@@ -332,7 +326,7 @@ class BetaUserServiceVerifyTOTPRegistrationRequest implements ModelInterface, Ar
     /**
      * Gets code
      *
-     * @return string
+     * @return string|null
      */
     public function getCode()
     {
@@ -342,7 +336,7 @@ class BetaUserServiceVerifyTOTPRegistrationRequest implements ModelInterface, Ar
     /**
      * Sets code
      *
-     * @param string $code code
+     * @param string|null $code code
      *
      * @return self
      */

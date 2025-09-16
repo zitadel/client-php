@@ -535,7 +535,7 @@ class BetaUserServiceApi
     /**
      * Operation addHumanUser
      *
-     * AddHumanUser
+     * Create a new human user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceAddHumanUserRequest $betaUserServiceAddHumanUserRequest betaUserServiceAddHumanUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addHumanUser'] to see the possible values for this operation
@@ -543,7 +543,7 @@ class BetaUserServiceApi
      * @return \Zitadel\Client\Model\BetaUserServiceAddHumanUserResponse
      * @throws ApiException
      */
-    public function addHumanUser(    $betaUserServiceAddHumanUserRequest,string $contentType = self::contentTypes['addHumanUser'][0])
+    public function addHumanUser(    $betaUserServiceAddHumanUserRequest = new \stdClass(),string $contentType = self::contentTypes['addHumanUser'][0])
     {
         $request = $this->addHumanUserRequest($betaUserServiceAddHumanUserRequest, $contentType);
 
@@ -647,7 +647,7 @@ class BetaUserServiceApi
     /**
      * Operation addIDPLink
      *
-     * AddIDPLink
+     * Add link to an identity provider to an user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceAddIDPLinkRequest $betaUserServiceAddIDPLinkRequest betaUserServiceAddIDPLinkRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addIDPLink'] to see the possible values for this operation
@@ -759,7 +759,7 @@ class BetaUserServiceApi
     /**
      * Operation addOTPEmail
      *
-     * AddOTPEmail
+     * Add OTP Email for a user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceAddOTPEmailRequest $betaUserServiceAddOTPEmailRequest betaUserServiceAddOTPEmailRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOTPEmail'] to see the possible values for this operation
@@ -871,7 +871,7 @@ class BetaUserServiceApi
     /**
      * Operation addOTPSMS
      *
-     * AddOTPSMS
+     * Add OTP SMS for a user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceAddOTPSMSRequest $betaUserServiceAddOTPSMSRequest betaUserServiceAddOTPSMSRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOTPSMS'] to see the possible values for this operation
@@ -983,7 +983,7 @@ class BetaUserServiceApi
     /**
      * Operation createPasskeyRegistrationLink
      *
-     * CreatePasskeyRegistrationLink
+     * Create a passkey registration link for a user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceCreatePasskeyRegistrationLinkRequest $betaUserServiceCreatePasskeyRegistrationLinkRequest betaUserServiceCreatePasskeyRegistrationLinkRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createPasskeyRegistrationLink'] to see the possible values for this operation
@@ -991,7 +991,7 @@ class BetaUserServiceApi
      * @return \Zitadel\Client\Model\BetaUserServiceCreatePasskeyRegistrationLinkResponse
      * @throws ApiException
      */
-    public function createPasskeyRegistrationLink(    $betaUserServiceCreatePasskeyRegistrationLinkRequest,string $contentType = self::contentTypes['createPasskeyRegistrationLink'][0])
+    public function createPasskeyRegistrationLink(    $betaUserServiceCreatePasskeyRegistrationLinkRequest = new \stdClass(),string $contentType = self::contentTypes['createPasskeyRegistrationLink'][0])
     {
         $request = $this->createPasskeyRegistrationLinkRequest($betaUserServiceCreatePasskeyRegistrationLinkRequest, $contentType);
 
@@ -1095,7 +1095,7 @@ class BetaUserServiceApi
     /**
      * Operation deactivateUser
      *
-     * DeactivateUser
+     * Deactivate user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceDeactivateUserRequest $betaUserServiceDeactivateUserRequest betaUserServiceDeactivateUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deactivateUser'] to see the possible values for this operation
@@ -1207,7 +1207,7 @@ class BetaUserServiceApi
     /**
      * Operation deleteUser
      *
-     * DeleteUser
+     * Delete user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceDeleteUserRequest $betaUserServiceDeleteUserRequest betaUserServiceDeleteUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteUser'] to see the possible values for this operation
@@ -1319,7 +1319,7 @@ class BetaUserServiceApi
     /**
      * Operation getUserByID
      *
-     * GetUserByID
+     * User by ID
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceGetUserByIDRequest $betaUserServiceGetUserByIDRequest betaUserServiceGetUserByIDRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserByID'] to see the possible values for this operation
@@ -1431,7 +1431,7 @@ class BetaUserServiceApi
     /**
      * Operation listAuthenticationMethodTypes
      *
-     * ListAuthenticationMethodTypes
+     * List all possible authentication methods of a user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceListAuthenticationMethodTypesRequest $betaUserServiceListAuthenticationMethodTypesRequest betaUserServiceListAuthenticationMethodTypesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listAuthenticationMethodTypes'] to see the possible values for this operation
@@ -1543,7 +1543,7 @@ class BetaUserServiceApi
     /**
      * Operation listUsers
      *
-     * ListUsers
+     * Search Users
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceListUsersRequest $betaUserServiceListUsersRequest betaUserServiceListUsersRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listUsers'] to see the possible values for this operation
@@ -1655,7 +1655,7 @@ class BetaUserServiceApi
     /**
      * Operation lockUser
      *
-     * LockUser
+     * Lock user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceLockUserRequest $betaUserServiceLockUserRequest betaUserServiceLockUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['lockUser'] to see the possible values for this operation
@@ -1767,7 +1767,7 @@ class BetaUserServiceApi
     /**
      * Operation passwordReset
      *
-     * PasswordReset
+     * Request a code to reset a password
      *
      * @param  \Zitadel\Client\Model\BetaUserServicePasswordResetRequest $betaUserServicePasswordResetRequest betaUserServicePasswordResetRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['passwordReset'] to see the possible values for this operation
@@ -1775,7 +1775,7 @@ class BetaUserServiceApi
      * @return \Zitadel\Client\Model\BetaUserServicePasswordResetResponse
      * @throws ApiException
      */
-    public function passwordReset(    $betaUserServicePasswordResetRequest,string $contentType = self::contentTypes['passwordReset'][0])
+    public function passwordReset(    $betaUserServicePasswordResetRequest = new \stdClass(),string $contentType = self::contentTypes['passwordReset'][0])
     {
         $request = $this->passwordResetRequest($betaUserServicePasswordResetRequest, $contentType);
 
@@ -1879,7 +1879,7 @@ class BetaUserServiceApi
     /**
      * Operation reactivateUser
      *
-     * ReactivateUser
+     * Reactivate user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceReactivateUserRequest $betaUserServiceReactivateUserRequest betaUserServiceReactivateUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['reactivateUser'] to see the possible values for this operation
@@ -1991,7 +1991,7 @@ class BetaUserServiceApi
     /**
      * Operation registerPasskey
      *
-     * RegisterPasskey
+     * Start the registration of passkey for a user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceRegisterPasskeyRequest $betaUserServiceRegisterPasskeyRequest betaUserServiceRegisterPasskeyRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['registerPasskey'] to see the possible values for this operation
@@ -2103,7 +2103,7 @@ class BetaUserServiceApi
     /**
      * Operation registerTOTP
      *
-     * RegisterTOTP
+     * Start the registration of a TOTP generator for a user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceRegisterTOTPRequest $betaUserServiceRegisterTOTPRequest betaUserServiceRegisterTOTPRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['registerTOTP'] to see the possible values for this operation
@@ -2215,7 +2215,7 @@ class BetaUserServiceApi
     /**
      * Operation registerU2F
      *
-     * RegisterU2F
+     * Start the registration of a u2f token for a user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceRegisterU2FRequest $betaUserServiceRegisterU2FRequest betaUserServiceRegisterU2FRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['registerU2F'] to see the possible values for this operation
@@ -2327,7 +2327,7 @@ class BetaUserServiceApi
     /**
      * Operation removeOTPEmail
      *
-     * RemoveOTPEmail
+     * Remove One-Time Password (OTP) Email from a user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceRemoveOTPEmailRequest $betaUserServiceRemoveOTPEmailRequest betaUserServiceRemoveOTPEmailRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removeOTPEmail'] to see the possible values for this operation
@@ -2439,7 +2439,7 @@ class BetaUserServiceApi
     /**
      * Operation removeOTPSMS
      *
-     * RemoveOTPSMS
+     * Remove One-Time Password (OTP) SMS from a user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceRemoveOTPSMSRequest $betaUserServiceRemoveOTPSMSRequest betaUserServiceRemoveOTPSMSRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removeOTPSMS'] to see the possible values for this operation
@@ -2551,7 +2551,7 @@ class BetaUserServiceApi
     /**
      * Operation removePhone
      *
-     * RemovePhone
+     * Remove the user phone
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceRemovePhoneRequest $betaUserServiceRemovePhoneRequest betaUserServiceRemovePhoneRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removePhone'] to see the possible values for this operation
@@ -2663,7 +2663,7 @@ class BetaUserServiceApi
     /**
      * Operation removeTOTP
      *
-     * RemoveTOTP
+     * Remove TOTP generator from a user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceRemoveTOTPRequest $betaUserServiceRemoveTOTPRequest betaUserServiceRemoveTOTPRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removeTOTP'] to see the possible values for this operation
@@ -2775,7 +2775,7 @@ class BetaUserServiceApi
     /**
      * Operation resendEmailCode
      *
-     * ResendEmailCode
+     * Resend code to verify user email
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceResendEmailCodeRequest $betaUserServiceResendEmailCodeRequest betaUserServiceResendEmailCodeRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resendEmailCode'] to see the possible values for this operation
@@ -2783,7 +2783,7 @@ class BetaUserServiceApi
      * @return \Zitadel\Client\Model\BetaUserServiceResendEmailCodeResponse
      * @throws ApiException
      */
-    public function resendEmailCode(    $betaUserServiceResendEmailCodeRequest,string $contentType = self::contentTypes['resendEmailCode'][0])
+    public function resendEmailCode(    $betaUserServiceResendEmailCodeRequest = new \stdClass(),string $contentType = self::contentTypes['resendEmailCode'][0])
     {
         $request = $this->resendEmailCodeRequest($betaUserServiceResendEmailCodeRequest, $contentType);
 
@@ -2887,7 +2887,7 @@ class BetaUserServiceApi
     /**
      * Operation resendPhoneCode
      *
-     * ResendPhoneCode
+     * Resend code to verify user phone
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceResendPhoneCodeRequest $betaUserServiceResendPhoneCodeRequest betaUserServiceResendPhoneCodeRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resendPhoneCode'] to see the possible values for this operation
@@ -2895,7 +2895,7 @@ class BetaUserServiceApi
      * @return \Zitadel\Client\Model\BetaUserServiceResendPhoneCodeResponse
      * @throws ApiException
      */
-    public function resendPhoneCode(    $betaUserServiceResendPhoneCodeRequest,string $contentType = self::contentTypes['resendPhoneCode'][0])
+    public function resendPhoneCode(    $betaUserServiceResendPhoneCodeRequest = new \stdClass(),string $contentType = self::contentTypes['resendPhoneCode'][0])
     {
         $request = $this->resendPhoneCodeRequest($betaUserServiceResendPhoneCodeRequest, $contentType);
 
@@ -2999,7 +2999,7 @@ class BetaUserServiceApi
     /**
      * Operation retrieveIdentityProviderIntent
      *
-     * RetrieveIdentityProviderIntent
+     * Retrieve the information returned by the identity provider
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceRetrieveIdentityProviderIntentRequest $betaUserServiceRetrieveIdentityProviderIntentRequest betaUserServiceRetrieveIdentityProviderIntentRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['retrieveIdentityProviderIntent'] to see the possible values for this operation
@@ -3111,7 +3111,7 @@ class BetaUserServiceApi
     /**
      * Operation setEmail
      *
-     * SetEmail
+     * Change the user email
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceSetEmailRequest $betaUserServiceSetEmailRequest betaUserServiceSetEmailRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setEmail'] to see the possible values for this operation
@@ -3119,7 +3119,7 @@ class BetaUserServiceApi
      * @return \Zitadel\Client\Model\BetaUserServiceSetEmailResponse
      * @throws ApiException
      */
-    public function setEmail(    $betaUserServiceSetEmailRequest,string $contentType = self::contentTypes['setEmail'][0])
+    public function setEmail(    $betaUserServiceSetEmailRequest = new \stdClass(),string $contentType = self::contentTypes['setEmail'][0])
     {
         $request = $this->setEmailRequest($betaUserServiceSetEmailRequest, $contentType);
 
@@ -3223,7 +3223,7 @@ class BetaUserServiceApi
     /**
      * Operation setPassword
      *
-     * SetPassword
+     * Change password
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceSetPasswordRequest $betaUserServiceSetPasswordRequest betaUserServiceSetPasswordRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setPassword'] to see the possible values for this operation
@@ -3231,7 +3231,7 @@ class BetaUserServiceApi
      * @return \Zitadel\Client\Model\BetaUserServiceSetPasswordResponse
      * @throws ApiException
      */
-    public function setPassword(    $betaUserServiceSetPasswordRequest,string $contentType = self::contentTypes['setPassword'][0])
+    public function setPassword(    $betaUserServiceSetPasswordRequest = new \stdClass(),string $contentType = self::contentTypes['setPassword'][0])
     {
         $request = $this->setPasswordRequest($betaUserServiceSetPasswordRequest, $contentType);
 
@@ -3335,7 +3335,7 @@ class BetaUserServiceApi
     /**
      * Operation setPhone
      *
-     * SetPhone
+     * Set the user phone
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceSetPhoneRequest $betaUserServiceSetPhoneRequest betaUserServiceSetPhoneRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setPhone'] to see the possible values for this operation
@@ -3343,7 +3343,7 @@ class BetaUserServiceApi
      * @return \Zitadel\Client\Model\BetaUserServiceSetPhoneResponse
      * @throws ApiException
      */
-    public function setPhone(    $betaUserServiceSetPhoneRequest,string $contentType = self::contentTypes['setPhone'][0])
+    public function setPhone(    $betaUserServiceSetPhoneRequest = new \stdClass(),string $contentType = self::contentTypes['setPhone'][0])
     {
         $request = $this->setPhoneRequest($betaUserServiceSetPhoneRequest, $contentType);
 
@@ -3447,7 +3447,7 @@ class BetaUserServiceApi
     /**
      * Operation startIdentityProviderIntent
      *
-     * StartIdentityProviderIntent
+     * Start flow with an identity provider
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceStartIdentityProviderIntentRequest $betaUserServiceStartIdentityProviderIntentRequest betaUserServiceStartIdentityProviderIntentRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['startIdentityProviderIntent'] to see the possible values for this operation
@@ -3455,7 +3455,7 @@ class BetaUserServiceApi
      * @return \Zitadel\Client\Model\BetaUserServiceStartIdentityProviderIntentResponse
      * @throws ApiException
      */
-    public function startIdentityProviderIntent(    $betaUserServiceStartIdentityProviderIntentRequest,string $contentType = self::contentTypes['startIdentityProviderIntent'][0])
+    public function startIdentityProviderIntent(    $betaUserServiceStartIdentityProviderIntentRequest = new \stdClass(),string $contentType = self::contentTypes['startIdentityProviderIntent'][0])
     {
         $request = $this->startIdentityProviderIntentRequest($betaUserServiceStartIdentityProviderIntentRequest, $contentType);
 
@@ -3559,7 +3559,7 @@ class BetaUserServiceApi
     /**
      * Operation unlockUser
      *
-     * UnlockUser
+     * Unlock user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceUnlockUserRequest $betaUserServiceUnlockUserRequest betaUserServiceUnlockUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['unlockUser'] to see the possible values for this operation
@@ -3671,7 +3671,7 @@ class BetaUserServiceApi
     /**
      * Operation updateHumanUser
      *
-     * UpdateHumanUser
+     * Update User
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceUpdateHumanUserRequest $betaUserServiceUpdateHumanUserRequest betaUserServiceUpdateHumanUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['updateHumanUser'] to see the possible values for this operation
@@ -3783,7 +3783,7 @@ class BetaUserServiceApi
     /**
      * Operation verifyEmail
      *
-     * VerifyEmail
+     * Verify the email
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceVerifyEmailRequest $betaUserServiceVerifyEmailRequest betaUserServiceVerifyEmailRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyEmail'] to see the possible values for this operation
@@ -3895,7 +3895,7 @@ class BetaUserServiceApi
     /**
      * Operation verifyPasskeyRegistration
      *
-     * VerifyPasskeyRegistration
+     * Verify a passkey for a user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceVerifyPasskeyRegistrationRequest $betaUserServiceVerifyPasskeyRegistrationRequest betaUserServiceVerifyPasskeyRegistrationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyPasskeyRegistration'] to see the possible values for this operation
@@ -4007,7 +4007,7 @@ class BetaUserServiceApi
     /**
      * Operation verifyPhone
      *
-     * VerifyPhone
+     * Verify the phone
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceVerifyPhoneRequest $betaUserServiceVerifyPhoneRequest betaUserServiceVerifyPhoneRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyPhone'] to see the possible values for this operation
@@ -4119,7 +4119,7 @@ class BetaUserServiceApi
     /**
      * Operation verifyTOTPRegistration
      *
-     * VerifyTOTPRegistration
+     * Verify a TOTP generator for a user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceVerifyTOTPRegistrationRequest $betaUserServiceVerifyTOTPRegistrationRequest betaUserServiceVerifyTOTPRegistrationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyTOTPRegistration'] to see the possible values for this operation
@@ -4231,7 +4231,7 @@ class BetaUserServiceApi
     /**
      * Operation verifyU2FRegistration
      *
-     * VerifyU2FRegistration
+     * Verify a u2f token for a user
      *
      * @param  \Zitadel\Client\Model\BetaUserServiceVerifyU2FRegistrationRequest $betaUserServiceVerifyU2FRegistrationRequest betaUserServiceVerifyU2FRegistrationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyU2FRegistration'] to see the possible values for this operation

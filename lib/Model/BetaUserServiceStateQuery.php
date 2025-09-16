@@ -275,9 +275,6 @@ class BetaUserServiceStateQuery implements ModelInterface, ArrayAccess, \JsonSer
     {
         $invalidProperties = [];
 
-        if ($this->container['state'] === null) {
-            $invalidProperties[] = "'state' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -296,7 +293,7 @@ class BetaUserServiceStateQuery implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Gets state
      *
-     * @return \Zitadel\Client\Model\BetaUserServiceUserState
+     * @return \Zitadel\Client\Model\BetaUserServiceUserState|null
      */
     public function getState()
     {
@@ -306,7 +303,7 @@ class BetaUserServiceStateQuery implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets state
      *
-     * @param \Zitadel\Client\Model\BetaUserServiceUserState $state state
+     * @param \Zitadel\Client\Model\BetaUserServiceUserState|null $state state
      *
      * @return self
      */

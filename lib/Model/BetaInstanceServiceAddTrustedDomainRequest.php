@@ -281,9 +281,6 @@ class BetaInstanceServiceAddTrustedDomainRequest implements ModelInterface, Arra
     {
         $invalidProperties = [];
 
-        if ($this->container['domain'] === null) {
-            $invalidProperties[] = "'domain' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -329,7 +326,7 @@ class BetaInstanceServiceAddTrustedDomainRequest implements ModelInterface, Arra
     /**
      * Gets domain
      *
-     * @return string
+     * @return string|null
      */
     public function getDomain()
     {
@@ -339,7 +336,7 @@ class BetaInstanceServiceAddTrustedDomainRequest implements ModelInterface, Arra
     /**
      * Sets domain
      *
-     * @param string $domain domain
+     * @param string|null $domain domain
      *
      * @return self
      */

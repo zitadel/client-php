@@ -274,9 +274,6 @@ class WebKeyServiceActivateWebKeyRequest implements ModelInterface, ArrayAccess,
     {
         $invalidProperties = [];
 
-        if ($this->container['id'] === null) {
-            $invalidProperties[] = "'id' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -295,7 +292,7 @@ class WebKeyServiceActivateWebKeyRequest implements ModelInterface, ArrayAccess,
     /**
      * Gets id
      *
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
@@ -305,7 +302,7 @@ class WebKeyServiceActivateWebKeyRequest implements ModelInterface, ArrayAccess,
     /**
      * Sets id
      *
-     * @param string $id id
+     * @param string|null $id id
      *
      * @return self
      */

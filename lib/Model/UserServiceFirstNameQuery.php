@@ -282,9 +282,6 @@ class UserServiceFirstNameQuery implements ModelInterface, ArrayAccess, \JsonSer
     {
         $invalidProperties = [];
 
-        if ($this->container['firstName'] === null) {
-            $invalidProperties[] = "'firstName' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -303,7 +300,7 @@ class UserServiceFirstNameQuery implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Gets firstName
      *
-     * @return string
+     * @return string|null
      */
     public function getFirstName()
     {
@@ -313,7 +310,7 @@ class UserServiceFirstNameQuery implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets firstName
      *
-     * @param string $firstName firstName
+     * @param string|null $firstName firstName
      *
      * @return self
      */

@@ -463,7 +463,7 @@ class BetaActionServiceApi
     /**
      * Operation createTarget
      *
-     * CreateTarget
+     * Create Target
      *
      * @param  \Zitadel\Client\Model\BetaActionServiceCreateTargetRequest $betaActionServiceCreateTargetRequest betaActionServiceCreateTargetRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createTarget'] to see the possible values for this operation
@@ -471,7 +471,7 @@ class BetaActionServiceApi
      * @return \Zitadel\Client\Model\BetaActionServiceCreateTargetResponse
      * @throws ApiException
      */
-    public function createTarget(    $betaActionServiceCreateTargetRequest,string $contentType = self::contentTypes['createTarget'][0])
+    public function createTarget(    $betaActionServiceCreateTargetRequest = new \stdClass(),string $contentType = self::contentTypes['createTarget'][0])
     {
         $request = $this->createTargetRequest($betaActionServiceCreateTargetRequest, $contentType);
 
@@ -575,7 +575,7 @@ class BetaActionServiceApi
     /**
      * Operation deleteTarget
      *
-     * DeleteTarget
+     * Delete Target
      *
      * @param  \Zitadel\Client\Model\BetaActionServiceDeleteTargetRequest $betaActionServiceDeleteTargetRequest betaActionServiceDeleteTargetRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteTarget'] to see the possible values for this operation
@@ -687,7 +687,7 @@ class BetaActionServiceApi
     /**
      * Operation getTarget
      *
-     * GetTarget
+     * Get Target
      *
      * @param  \Zitadel\Client\Model\BetaActionServiceGetTargetRequest $betaActionServiceGetTargetRequest betaActionServiceGetTargetRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getTarget'] to see the possible values for this operation
@@ -799,7 +799,7 @@ class BetaActionServiceApi
     /**
      * Operation listExecutionFunctions
      *
-     * ListExecutionFunctions
+     * List Execution Functions
      *
      * @param  object $body body (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listExecutionFunctions'] to see the possible values for this operation
@@ -911,7 +911,7 @@ class BetaActionServiceApi
     /**
      * Operation listExecutionMethods
      *
-     * ListExecutionMethods
+     * List Execution Methods
      *
      * @param  object $body body (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listExecutionMethods'] to see the possible values for this operation
@@ -1023,7 +1023,7 @@ class BetaActionServiceApi
     /**
      * Operation listExecutionServices
      *
-     * ListExecutionServices
+     * List Execution Services
      *
      * @param  object $body body (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listExecutionServices'] to see the possible values for this operation
@@ -1135,7 +1135,7 @@ class BetaActionServiceApi
     /**
      * Operation listExecutions
      *
-     * ListExecutions
+     * List Executions
      *
      * @param  \Zitadel\Client\Model\BetaActionServiceListExecutionsRequest $betaActionServiceListExecutionsRequest betaActionServiceListExecutionsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listExecutions'] to see the possible values for this operation
@@ -1247,7 +1247,7 @@ class BetaActionServiceApi
     /**
      * Operation listTargets
      *
-     * ListTargets
+     * List targets
      *
      * @param  \Zitadel\Client\Model\BetaActionServiceListTargetsRequest $betaActionServiceListTargetsRequest betaActionServiceListTargetsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listTargets'] to see the possible values for this operation
@@ -1359,7 +1359,7 @@ class BetaActionServiceApi
     /**
      * Operation setExecution
      *
-     * SetExecution
+     * Set Execution
      *
      * @param  \Zitadel\Client\Model\BetaActionServiceSetExecutionRequest $betaActionServiceSetExecutionRequest betaActionServiceSetExecutionRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setExecution'] to see the possible values for this operation
@@ -1471,7 +1471,7 @@ class BetaActionServiceApi
     /**
      * Operation updateTarget
      *
-     * UpdateTarget
+     * Update Target
      *
      * @param  \Zitadel\Client\Model\BetaActionServiceUpdateTargetRequest $betaActionServiceUpdateTargetRequest betaActionServiceUpdateTargetRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['updateTarget'] to see the possible values for this operation
@@ -1479,7 +1479,7 @@ class BetaActionServiceApi
      * @return \Zitadel\Client\Model\BetaActionServiceUpdateTargetResponse
      * @throws ApiException
      */
-    public function updateTarget(    $betaActionServiceUpdateTargetRequest,string $contentType = self::contentTypes['updateTarget'][0])
+    public function updateTarget(    $betaActionServiceUpdateTargetRequest = new \stdClass(),string $contentType = self::contentTypes['updateTarget'][0])
     {
         $request = $this->updateTargetRequest($betaActionServiceUpdateTargetRequest, $contentType);
 

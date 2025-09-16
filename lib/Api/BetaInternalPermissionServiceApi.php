@@ -445,7 +445,7 @@ class BetaInternalPermissionServiceApi
     /**
      * Operation createAdministrator
      *
-     * CreateAdministrator
+     * CreateAdministrator grants a administrator role to a user for a specific resource.
      *
      * @param  \Zitadel\Client\Model\BetaInternalPermissionServiceCreateAdministratorRequest $betaInternalPermissionServiceCreateAdministratorRequest betaInternalPermissionServiceCreateAdministratorRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createAdministrator'] to see the possible values for this operation
@@ -557,7 +557,7 @@ class BetaInternalPermissionServiceApi
     /**
      * Operation deleteAdministrator
      *
-     * DeleteAdministrator
+     * DeleteAdministrator revokes a administrator role from a user.
      *
      * @param  \Zitadel\Client\Model\BetaInternalPermissionServiceDeleteAdministratorRequest $betaInternalPermissionServiceDeleteAdministratorRequest betaInternalPermissionServiceDeleteAdministratorRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteAdministrator'] to see the possible values for this operation
@@ -669,7 +669,7 @@ class BetaInternalPermissionServiceApi
     /**
      * Operation listAdministrators
      *
-     * ListAdministrators
+     * ListAdministrators returns all administrators and its roles matching the request and necessary permissions.
      *
      * @param  \Zitadel\Client\Model\BetaInternalPermissionServiceListAdministratorsRequest $betaInternalPermissionServiceListAdministratorsRequest betaInternalPermissionServiceListAdministratorsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listAdministrators'] to see the possible values for this operation
@@ -781,7 +781,7 @@ class BetaInternalPermissionServiceApi
     /**
      * Operation updateAdministrator
      *
-     * UpdateAdministrator
+     * UpdateAdministrator updates the specific administrator role.
      *
      * @param  \Zitadel\Client\Model\BetaInternalPermissionServiceUpdateAdministratorRequest $betaInternalPermissionServiceUpdateAdministratorRequest betaInternalPermissionServiceUpdateAdministratorRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['updateAdministrator'] to see the possible values for this operation

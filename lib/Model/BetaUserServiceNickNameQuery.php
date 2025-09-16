@@ -282,9 +282,6 @@ class BetaUserServiceNickNameQuery implements ModelInterface, ArrayAccess, \Json
     {
         $invalidProperties = [];
 
-        if ($this->container['nickName'] === null) {
-            $invalidProperties[] = "'nickName' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -303,7 +300,7 @@ class BetaUserServiceNickNameQuery implements ModelInterface, ArrayAccess, \Json
     /**
      * Gets nickName
      *
-     * @return string
+     * @return string|null
      */
     public function getNickName()
     {
@@ -313,7 +310,7 @@ class BetaUserServiceNickNameQuery implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets nickName
      *
-     * @param string $nickName nickName
+     * @param string|null $nickName nickName
      *
      * @return self
      */

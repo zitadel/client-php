@@ -309,12 +309,6 @@ class UserServiceSetHumanProfile implements ModelInterface, ArrayAccess, \JsonSe
     {
         $invalidProperties = [];
 
-        if ($this->container['givenName'] === null) {
-            $invalidProperties[] = "'givenName' can't be null";
-        }
-        if ($this->container['familyName'] === null) {
-            $invalidProperties[] = "'familyName' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -333,7 +327,7 @@ class UserServiceSetHumanProfile implements ModelInterface, ArrayAccess, \JsonSe
     /**
      * Gets givenName
      *
-     * @return string
+     * @return string|null
      */
     public function getGivenName()
     {
@@ -343,7 +337,7 @@ class UserServiceSetHumanProfile implements ModelInterface, ArrayAccess, \JsonSe
     /**
      * Sets givenName
      *
-     * @param string $givenName givenName
+     * @param string|null $givenName givenName
      *
      * @return self
      */
@@ -360,7 +354,7 @@ class UserServiceSetHumanProfile implements ModelInterface, ArrayAccess, \JsonSe
     /**
      * Gets familyName
      *
-     * @return string
+     * @return string|null
      */
     public function getFamilyName()
     {
@@ -370,7 +364,7 @@ class UserServiceSetHumanProfile implements ModelInterface, ArrayAccess, \JsonSe
     /**
      * Sets familyName
      *
-     * @param string $familyName familyName
+     * @param string|null $familyName familyName
      *
      * @return self
      */

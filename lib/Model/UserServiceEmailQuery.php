@@ -282,9 +282,6 @@ class UserServiceEmailQuery implements ModelInterface, ArrayAccess, \JsonSeriali
     {
         $invalidProperties = [];
 
-        if ($this->container['emailAddress'] === null) {
-            $invalidProperties[] = "'emailAddress' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -303,7 +300,7 @@ class UserServiceEmailQuery implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Gets emailAddress
      *
-     * @return string
+     * @return string|null
      */
     public function getEmailAddress()
     {
@@ -313,7 +310,7 @@ class UserServiceEmailQuery implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Sets emailAddress
      *
-     * @param string $emailAddress emailAddress
+     * @param string|null $emailAddress emailAddress
      *
      * @return self
      */

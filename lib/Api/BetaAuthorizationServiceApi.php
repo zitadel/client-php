@@ -451,7 +451,7 @@ class BetaAuthorizationServiceApi
     /**
      * Operation activateAuthorization
      *
-     * ActivateAuthorization
+     * Activate Authorization
      *
      * @param  \Zitadel\Client\Model\BetaAuthorizationServiceActivateAuthorizationRequest $betaAuthorizationServiceActivateAuthorizationRequest betaAuthorizationServiceActivateAuthorizationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['activateAuthorization'] to see the possible values for this operation
@@ -563,7 +563,7 @@ class BetaAuthorizationServiceApi
     /**
      * Operation createAuthorization
      *
-     * CreateAuthorization
+     * Create Authorization
      *
      * @param  \Zitadel\Client\Model\BetaAuthorizationServiceCreateAuthorizationRequest $betaAuthorizationServiceCreateAuthorizationRequest betaAuthorizationServiceCreateAuthorizationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createAuthorization'] to see the possible values for this operation
@@ -675,7 +675,7 @@ class BetaAuthorizationServiceApi
     /**
      * Operation deactivateAuthorization
      *
-     * DeactivateAuthorization
+     * Deactivate Authorization
      *
      * @param  \Zitadel\Client\Model\BetaAuthorizationServiceDeactivateAuthorizationRequest $betaAuthorizationServiceDeactivateAuthorizationRequest betaAuthorizationServiceDeactivateAuthorizationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deactivateAuthorization'] to see the possible values for this operation
@@ -787,7 +787,7 @@ class BetaAuthorizationServiceApi
     /**
      * Operation deleteAuthorization
      *
-     * DeleteAuthorization
+     * Delete Authorization
      *
      * @param  \Zitadel\Client\Model\BetaAuthorizationServiceDeleteAuthorizationRequest $betaAuthorizationServiceDeleteAuthorizationRequest betaAuthorizationServiceDeleteAuthorizationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteAuthorization'] to see the possible values for this operation
@@ -899,7 +899,7 @@ class BetaAuthorizationServiceApi
     /**
      * Operation listAuthorizations
      *
-     * ListAuthorizations
+     * List Authorizations
      *
      * @param  \Zitadel\Client\Model\BetaAuthorizationServiceListAuthorizationsRequest $betaAuthorizationServiceListAuthorizationsRequest betaAuthorizationServiceListAuthorizationsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listAuthorizations'] to see the possible values for this operation
@@ -1011,7 +1011,7 @@ class BetaAuthorizationServiceApi
     /**
      * Operation updateAuthorization
      *
-     * UpdateAuthorization
+     * Update Authorization
      *
      * @param  \Zitadel\Client\Model\BetaAuthorizationServiceUpdateAuthorizationRequest $betaAuthorizationServiceUpdateAuthorizationRequest betaAuthorizationServiceUpdateAuthorizationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['updateAuthorization'] to see the possible values for this operation

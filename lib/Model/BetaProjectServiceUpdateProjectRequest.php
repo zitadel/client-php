@@ -309,9 +309,6 @@ class BetaProjectServiceUpdateProjectRequest implements ModelInterface, ArrayAcc
     {
         $invalidProperties = [];
 
-        if ($this->container['id'] === null) {
-            $invalidProperties[] = "'id' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -330,7 +327,7 @@ class BetaProjectServiceUpdateProjectRequest implements ModelInterface, ArrayAcc
     /**
      * Gets id
      *
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
@@ -340,7 +337,7 @@ class BetaProjectServiceUpdateProjectRequest implements ModelInterface, ArrayAcc
     /**
      * Sets id
      *
-     * @param string $id id
+     * @param string|null $id id
      *
      * @return self
      */

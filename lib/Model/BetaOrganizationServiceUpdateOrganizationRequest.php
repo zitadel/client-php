@@ -281,12 +281,6 @@ class BetaOrganizationServiceUpdateOrganizationRequest implements ModelInterface
     {
         $invalidProperties = [];
 
-        if ($this->container['id'] === null) {
-            $invalidProperties[] = "'id' can't be null";
-        }
-        if ($this->container['name'] === null) {
-            $invalidProperties[] = "'name' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -305,7 +299,7 @@ class BetaOrganizationServiceUpdateOrganizationRequest implements ModelInterface
     /**
      * Gets id
      *
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
@@ -315,7 +309,7 @@ class BetaOrganizationServiceUpdateOrganizationRequest implements ModelInterface
     /**
      * Sets id
      *
-     * @param string $id Organization Id for the Organization to be updated
+     * @param string|null $id Organization Id for the Organization to be updated
      *
      * @return self
      */
@@ -332,7 +326,7 @@ class BetaOrganizationServiceUpdateOrganizationRequest implements ModelInterface
     /**
      * Gets name
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -342,7 +336,7 @@ class BetaOrganizationServiceUpdateOrganizationRequest implements ModelInterface
     /**
      * Sets name
      *
-     * @param string $name New Name for the Organization to be updated
+     * @param string|null $name New Name for the Organization to be updated
      *
      * @return self
      */

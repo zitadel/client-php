@@ -282,9 +282,6 @@ class BetaUserServiceLastNameQuery implements ModelInterface, ArrayAccess, \Json
     {
         $invalidProperties = [];
 
-        if ($this->container['lastName'] === null) {
-            $invalidProperties[] = "'lastName' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -303,7 +300,7 @@ class BetaUserServiceLastNameQuery implements ModelInterface, ArrayAccess, \Json
     /**
      * Gets lastName
      *
-     * @return string
+     * @return string|null
      */
     public function getLastName()
     {
@@ -313,7 +310,7 @@ class BetaUserServiceLastNameQuery implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets lastName
      *
-     * @param string $lastName lastName
+     * @param string|null $lastName lastName
      *
      * @return self
      */

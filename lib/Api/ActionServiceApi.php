@@ -463,7 +463,7 @@ class ActionServiceApi
     /**
      * Operation createTarget
      *
-     * CreateTarget
+     * Create Target
      *
      * @param  \Zitadel\Client\Model\ActionServiceCreateTargetRequest $actionServiceCreateTargetRequest actionServiceCreateTargetRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createTarget'] to see the possible values for this operation
@@ -471,7 +471,7 @@ class ActionServiceApi
      * @return \Zitadel\Client\Model\ActionServiceCreateTargetResponse
      * @throws ApiException
      */
-    public function createTarget(    $actionServiceCreateTargetRequest,string $contentType = self::contentTypes['createTarget'][0])
+    public function createTarget(    $actionServiceCreateTargetRequest = new \stdClass(),string $contentType = self::contentTypes['createTarget'][0])
     {
         $request = $this->createTargetRequest($actionServiceCreateTargetRequest, $contentType);
 
@@ -575,7 +575,7 @@ class ActionServiceApi
     /**
      * Operation deleteTarget
      *
-     * DeleteTarget
+     * Delete Target
      *
      * @param  \Zitadel\Client\Model\ActionServiceDeleteTargetRequest $actionServiceDeleteTargetRequest actionServiceDeleteTargetRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteTarget'] to see the possible values for this operation
@@ -687,7 +687,7 @@ class ActionServiceApi
     /**
      * Operation getTarget
      *
-     * GetTarget
+     * Get Target
      *
      * @param  \Zitadel\Client\Model\ActionServiceGetTargetRequest $actionServiceGetTargetRequest actionServiceGetTargetRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getTarget'] to see the possible values for this operation
@@ -799,7 +799,7 @@ class ActionServiceApi
     /**
      * Operation listExecutionFunctions
      *
-     * ListExecutionFunctions
+     * List Execution Functions
      *
      * @param  object $body body (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listExecutionFunctions'] to see the possible values for this operation
@@ -911,7 +911,7 @@ class ActionServiceApi
     /**
      * Operation listExecutionMethods
      *
-     * ListExecutionMethods
+     * List Execution Methods
      *
      * @param  object $body body (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listExecutionMethods'] to see the possible values for this operation
@@ -1023,7 +1023,7 @@ class ActionServiceApi
     /**
      * Operation listExecutionServices
      *
-     * ListExecutionServices
+     * List Execution Services
      *
      * @param  object $body body (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listExecutionServices'] to see the possible values for this operation
@@ -1135,7 +1135,7 @@ class ActionServiceApi
     /**
      * Operation listExecutions
      *
-     * ListExecutions
+     * List Executions
      *
      * @param  \Zitadel\Client\Model\ActionServiceListExecutionsRequest $actionServiceListExecutionsRequest actionServiceListExecutionsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listExecutions'] to see the possible values for this operation
@@ -1247,7 +1247,7 @@ class ActionServiceApi
     /**
      * Operation listTargets
      *
-     * ListTargets
+     * List targets
      *
      * @param  \Zitadel\Client\Model\ActionServiceListTargetsRequest $actionServiceListTargetsRequest actionServiceListTargetsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listTargets'] to see the possible values for this operation
@@ -1359,7 +1359,7 @@ class ActionServiceApi
     /**
      * Operation setExecution
      *
-     * SetExecution
+     * Set Execution
      *
      * @param  \Zitadel\Client\Model\ActionServiceSetExecutionRequest $actionServiceSetExecutionRequest actionServiceSetExecutionRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setExecution'] to see the possible values for this operation
@@ -1471,7 +1471,7 @@ class ActionServiceApi
     /**
      * Operation updateTarget
      *
-     * UpdateTarget
+     * Update Target
      *
      * @param  \Zitadel\Client\Model\ActionServiceUpdateTargetRequest $actionServiceUpdateTargetRequest actionServiceUpdateTargetRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['updateTarget'] to see the possible values for this operation
@@ -1479,7 +1479,7 @@ class ActionServiceApi
      * @return \Zitadel\Client\Model\ActionServiceUpdateTargetResponse
      * @throws ApiException
      */
-    public function updateTarget(    $actionServiceUpdateTargetRequest,string $contentType = self::contentTypes['updateTarget'][0])
+    public function updateTarget(    $actionServiceUpdateTargetRequest = new \stdClass(),string $contentType = self::contentTypes['updateTarget'][0])
     {
         $request = $this->updateTargetRequest($actionServiceUpdateTargetRequest, $contentType);
 

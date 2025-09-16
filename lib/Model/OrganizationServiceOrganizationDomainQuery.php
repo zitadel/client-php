@@ -281,9 +281,6 @@ class OrganizationServiceOrganizationDomainQuery implements ModelInterface, Arra
     {
         $invalidProperties = [];
 
-        if ($this->container['domain'] === null) {
-            $invalidProperties[] = "'domain' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -302,7 +299,7 @@ class OrganizationServiceOrganizationDomainQuery implements ModelInterface, Arra
     /**
      * Gets domain
      *
-     * @return string
+     * @return string|null
      */
     public function getDomain()
     {
@@ -312,7 +309,7 @@ class OrganizationServiceOrganizationDomainQuery implements ModelInterface, Arra
     /**
      * Sets domain
      *
-     * @param string $domain Domain used in organization, not necessary primary domain.
+     * @param string|null $domain Domain used in organization, not necessary primary domain.
      *
      * @return self
      */

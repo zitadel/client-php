@@ -281,9 +281,6 @@ class OrganizationServicePassword implements ModelInterface, ArrayAccess, \JsonS
     {
         $invalidProperties = [];
 
-        if ($this->container['password'] === null) {
-            $invalidProperties[] = "'password' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -302,7 +299,7 @@ class OrganizationServicePassword implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Gets password
      *
-     * @return string
+     * @return string|null
      */
     public function getPassword()
     {
@@ -312,7 +309,7 @@ class OrganizationServicePassword implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Sets password
      *
-     * @param string $password password
+     * @param string|null $password password
      *
      * @return self
      */

@@ -282,9 +282,6 @@ class BetaUserServiceDisplayNameQuery implements ModelInterface, ArrayAccess, \J
     {
         $invalidProperties = [];
 
-        if ($this->container['displayName'] === null) {
-            $invalidProperties[] = "'displayName' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -303,7 +300,7 @@ class BetaUserServiceDisplayNameQuery implements ModelInterface, ArrayAccess, \J
     /**
      * Gets displayName
      *
-     * @return string
+     * @return string|null
      */
     public function getDisplayName()
     {
@@ -313,7 +310,7 @@ class BetaUserServiceDisplayNameQuery implements ModelInterface, ArrayAccess, \J
     /**
      * Sets displayName
      *
-     * @param string $displayName displayName
+     * @param string|null $displayName displayName
      *
      * @return self
      */

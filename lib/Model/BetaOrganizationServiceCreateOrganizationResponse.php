@@ -288,9 +288,6 @@ class BetaOrganizationServiceCreateOrganizationResponse implements ModelInterfac
     {
         $invalidProperties = [];
 
-        if ($this->container['id'] === null) {
-            $invalidProperties[] = "'id' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -336,7 +333,7 @@ class BetaOrganizationServiceCreateOrganizationResponse implements ModelInterfac
     /**
      * Gets id
      *
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
@@ -346,7 +343,7 @@ class BetaOrganizationServiceCreateOrganizationResponse implements ModelInterfac
     /**
      * Sets id
      *
-     * @param string $id Organization ID of the newly created organization.
+     * @param string|null $id Organization ID of the newly created organization.
      *
      * @return self
      */

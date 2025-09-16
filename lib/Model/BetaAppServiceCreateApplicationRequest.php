@@ -309,9 +309,6 @@ class BetaAppServiceCreateApplicationRequest implements ModelInterface, ArrayAcc
     {
         $invalidProperties = [];
 
-        if ($this->container['name'] === null) {
-            $invalidProperties[] = "'name' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -384,7 +381,7 @@ class BetaAppServiceCreateApplicationRequest implements ModelInterface, ArrayAcc
     /**
      * Gets name
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -394,7 +391,7 @@ class BetaAppServiceCreateApplicationRequest implements ModelInterface, ArrayAcc
     /**
      * Sets name
      *
-     * @param string $name name
+     * @param string|null $name name
      *
      * @return self
      */

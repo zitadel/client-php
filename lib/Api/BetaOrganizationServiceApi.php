@@ -475,7 +475,7 @@ class BetaOrganizationServiceApi
     /**
      * Operation activateOrganization
      *
-     * ActivateOrganization
+     * Activate Organization
      *
      * @param  \Zitadel\Client\Model\BetaOrganizationServiceActivateOrganizationRequest $betaOrganizationServiceActivateOrganizationRequest betaOrganizationServiceActivateOrganizationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['activateOrganization'] to see the possible values for this operation
@@ -587,7 +587,7 @@ class BetaOrganizationServiceApi
     /**
      * Operation addOrganizationDomain
      *
-     * AddOrganizationDomain
+     * Add Organization Domain
      *
      * @param  \Zitadel\Client\Model\BetaOrganizationServiceAddOrganizationDomainRequest $betaOrganizationServiceAddOrganizationDomainRequest betaOrganizationServiceAddOrganizationDomainRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOrganizationDomain'] to see the possible values for this operation
@@ -699,7 +699,7 @@ class BetaOrganizationServiceApi
     /**
      * Operation createOrganization
      *
-     * CreateOrganization
+     * Create Organization
      *
      * @param  \Zitadel\Client\Model\BetaOrganizationServiceCreateOrganizationRequest $betaOrganizationServiceCreateOrganizationRequest betaOrganizationServiceCreateOrganizationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createOrganization'] to see the possible values for this operation
@@ -811,7 +811,7 @@ class BetaOrganizationServiceApi
     /**
      * Operation deactivateOrganization
      *
-     * DeactivateOrganization
+     * Deactivate Organization
      *
      * @param  \Zitadel\Client\Model\BetaOrganizationServiceDeactivateOrganizationRequest $betaOrganizationServiceDeactivateOrganizationRequest betaOrganizationServiceDeactivateOrganizationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deactivateOrganization'] to see the possible values for this operation
@@ -923,7 +923,7 @@ class BetaOrganizationServiceApi
     /**
      * Operation deleteOrganization
      *
-     * DeleteOrganization
+     * Delete Organization
      *
      * @param  \Zitadel\Client\Model\BetaOrganizationServiceDeleteOrganizationRequest $betaOrganizationServiceDeleteOrganizationRequest betaOrganizationServiceDeleteOrganizationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteOrganization'] to see the possible values for this operation
@@ -1035,7 +1035,7 @@ class BetaOrganizationServiceApi
     /**
      * Operation deleteOrganizationDomain
      *
-     * DeleteOrganizationDomain
+     * Delete Organization Domain
      *
      * @param  \Zitadel\Client\Model\BetaOrganizationServiceDeleteOrganizationDomainRequest $betaOrganizationServiceDeleteOrganizationDomainRequest betaOrganizationServiceDeleteOrganizationDomainRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteOrganizationDomain'] to see the possible values for this operation
@@ -1147,7 +1147,7 @@ class BetaOrganizationServiceApi
     /**
      * Operation deleteOrganizationMetadata
      *
-     * DeleteOrganizationMetadata
+     * Delete Organization Metadata
      *
      * @param  \Zitadel\Client\Model\BetaOrganizationServiceDeleteOrganizationMetadataRequest $betaOrganizationServiceDeleteOrganizationMetadataRequest betaOrganizationServiceDeleteOrganizationMetadataRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteOrganizationMetadata'] to see the possible values for this operation
@@ -1259,7 +1259,7 @@ class BetaOrganizationServiceApi
     /**
      * Operation generateOrganizationDomainValidation
      *
-     * GenerateOrganizationDomainValidation
+     * Generate Organization Domain Validation
      *
      * @param  \Zitadel\Client\Model\BetaOrganizationServiceGenerateOrganizationDomainValidationRequest $betaOrganizationServiceGenerateOrganizationDomainValidationRequest betaOrganizationServiceGenerateOrganizationDomainValidationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['generateOrganizationDomainValidation'] to see the possible values for this operation
@@ -1371,7 +1371,7 @@ class BetaOrganizationServiceApi
     /**
      * Operation listOrganizationDomains
      *
-     * ListOrganizationDomains
+     * List Organization Domains
      *
      * @param  \Zitadel\Client\Model\BetaOrganizationServiceListOrganizationDomainsRequest $betaOrganizationServiceListOrganizationDomainsRequest betaOrganizationServiceListOrganizationDomainsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizationDomains'] to see the possible values for this operation
@@ -1483,7 +1483,7 @@ class BetaOrganizationServiceApi
     /**
      * Operation listOrganizationMetadata
      *
-     * ListOrganizationMetadata
+     * List Organization Metadata
      *
      * @param  \Zitadel\Client\Model\BetaOrganizationServiceListOrganizationMetadataRequest $betaOrganizationServiceListOrganizationMetadataRequest betaOrganizationServiceListOrganizationMetadataRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizationMetadata'] to see the possible values for this operation
@@ -1595,7 +1595,7 @@ class BetaOrganizationServiceApi
     /**
      * Operation listOrganizations
      *
-     * ListOrganizations
+     * List Organizations
      *
      * @param  \Zitadel\Client\Model\BetaOrganizationServiceListOrganizationsRequest $betaOrganizationServiceListOrganizationsRequest betaOrganizationServiceListOrganizationsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizations'] to see the possible values for this operation
@@ -1707,7 +1707,7 @@ class BetaOrganizationServiceApi
     /**
      * Operation setOrganizationMetadata
      *
-     * SetOrganizationMetadata
+     * Set Organization Metadata
      *
      * @param  \Zitadel\Client\Model\BetaOrganizationServiceSetOrganizationMetadataRequest $betaOrganizationServiceSetOrganizationMetadataRequest betaOrganizationServiceSetOrganizationMetadataRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setOrganizationMetadata'] to see the possible values for this operation
@@ -1819,7 +1819,7 @@ class BetaOrganizationServiceApi
     /**
      * Operation updateOrganization
      *
-     * UpdateOrganization
+     * Update Organization
      *
      * @param  \Zitadel\Client\Model\BetaOrganizationServiceUpdateOrganizationRequest $betaOrganizationServiceUpdateOrganizationRequest betaOrganizationServiceUpdateOrganizationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['updateOrganization'] to see the possible values for this operation
@@ -1931,7 +1931,7 @@ class BetaOrganizationServiceApi
     /**
      * Operation verifyOrganizationDomain
      *
-     * VerifyOrganizationDomain
+     * Verify Organization Domain
      *
      * @param  \Zitadel\Client\Model\BetaOrganizationServiceVerifyOrganizationDomainRequest $betaOrganizationServiceVerifyOrganizationDomainRequest betaOrganizationServiceVerifyOrganizationDomainRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyOrganizationDomain'] to see the possible values for this operation

@@ -288,9 +288,6 @@ class BetaOrganizationServiceListOrganizationMetadataRequest implements ModelInt
     {
         $invalidProperties = [];
 
-        if ($this->container['organizationId'] === null) {
-            $invalidProperties[] = "'organizationId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -309,7 +306,7 @@ class BetaOrganizationServiceListOrganizationMetadataRequest implements ModelInt
     /**
      * Gets organizationId
      *
-     * @return string
+     * @return string|null
      */
     public function getOrganizationId()
     {
@@ -319,7 +316,7 @@ class BetaOrganizationServiceListOrganizationMetadataRequest implements ModelInt
     /**
      * Sets organizationId
      *
-     * @param string $organizationId Organization ID of Orgalization which metadata is to be listed.
+     * @param string|null $organizationId Organization ID of Orgalization which metadata is to be listed.
      *
      * @return self
      */

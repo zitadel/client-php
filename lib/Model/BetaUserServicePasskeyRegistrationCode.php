@@ -281,12 +281,6 @@ class BetaUserServicePasskeyRegistrationCode implements ModelInterface, ArrayAcc
     {
         $invalidProperties = [];
 
-        if ($this->container['id'] === null) {
-            $invalidProperties[] = "'id' can't be null";
-        }
-        if ($this->container['code'] === null) {
-            $invalidProperties[] = "'code' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -305,7 +299,7 @@ class BetaUserServicePasskeyRegistrationCode implements ModelInterface, ArrayAcc
     /**
      * Gets id
      *
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
@@ -315,7 +309,7 @@ class BetaUserServicePasskeyRegistrationCode implements ModelInterface, ArrayAcc
     /**
      * Sets id
      *
-     * @param string $id id
+     * @param string|null $id id
      *
      * @return self
      */
@@ -332,7 +326,7 @@ class BetaUserServicePasskeyRegistrationCode implements ModelInterface, ArrayAcc
     /**
      * Gets code
      *
-     * @return string
+     * @return string|null
      */
     public function getCode()
     {
@@ -342,7 +336,7 @@ class BetaUserServicePasskeyRegistrationCode implements ModelInterface, ArrayAcc
     /**
      * Sets code
      *
-     * @param string $code code
+     * @param string|null $code code
      *
      * @return self
      */

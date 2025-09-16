@@ -282,9 +282,6 @@ class UserServiceLastNameQuery implements ModelInterface, ArrayAccess, \JsonSeri
     {
         $invalidProperties = [];
 
-        if ($this->container['lastName'] === null) {
-            $invalidProperties[] = "'lastName' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -303,7 +300,7 @@ class UserServiceLastNameQuery implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Gets lastName
      *
-     * @return string
+     * @return string|null
      */
     public function getLastName()
     {
@@ -313,7 +310,7 @@ class UserServiceLastNameQuery implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Sets lastName
      *
-     * @param string $lastName lastName
+     * @param string|null $lastName lastName
      *
      * @return self
      */

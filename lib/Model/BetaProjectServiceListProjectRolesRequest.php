@@ -295,9 +295,6 @@ class BetaProjectServiceListProjectRolesRequest implements ModelInterface, Array
     {
         $invalidProperties = [];
 
-        if ($this->container['projectId'] === null) {
-            $invalidProperties[] = "'projectId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -316,7 +313,7 @@ class BetaProjectServiceListProjectRolesRequest implements ModelInterface, Array
     /**
      * Gets projectId
      *
-     * @return string
+     * @return string|null
      */
     public function getProjectId()
     {
@@ -326,7 +323,7 @@ class BetaProjectServiceListProjectRolesRequest implements ModelInterface, Array
     /**
      * Sets projectId
      *
-     * @param string $projectId ID of the project.
+     * @param string|null $projectId ID of the project.
      *
      * @return self
      */

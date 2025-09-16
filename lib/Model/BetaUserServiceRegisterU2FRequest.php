@@ -281,9 +281,6 @@ class BetaUserServiceRegisterU2FRequest implements ModelInterface, ArrayAccess, 
     {
         $invalidProperties = [];
 
-        if ($this->container['userId'] === null) {
-            $invalidProperties[] = "'userId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -302,7 +299,7 @@ class BetaUserServiceRegisterU2FRequest implements ModelInterface, ArrayAccess, 
     /**
      * Gets userId
      *
-     * @return string
+     * @return string|null
      */
     public function getUserId()
     {
@@ -312,7 +309,7 @@ class BetaUserServiceRegisterU2FRequest implements ModelInterface, ArrayAccess, 
     /**
      * Sets userId
      *
-     * @param string $userId userId
+     * @param string|null $userId userId
      *
      * @return self
      */

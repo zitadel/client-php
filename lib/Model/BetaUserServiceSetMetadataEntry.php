@@ -281,12 +281,6 @@ class BetaUserServiceSetMetadataEntry implements ModelInterface, ArrayAccess, \J
     {
         $invalidProperties = [];
 
-        if ($this->container['key'] === null) {
-            $invalidProperties[] = "'key' can't be null";
-        }
-        if ($this->container['value'] === null) {
-            $invalidProperties[] = "'value' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -305,7 +299,7 @@ class BetaUserServiceSetMetadataEntry implements ModelInterface, ArrayAccess, \J
     /**
      * Gets key
      *
-     * @return string
+     * @return string|null
      */
     public function getKey()
     {
@@ -315,7 +309,7 @@ class BetaUserServiceSetMetadataEntry implements ModelInterface, ArrayAccess, \J
     /**
      * Sets key
      *
-     * @param string $key key
+     * @param string|null $key key
      *
      * @return self
      */
@@ -332,7 +326,7 @@ class BetaUserServiceSetMetadataEntry implements ModelInterface, ArrayAccess, \J
     /**
      * Gets value
      *
-     * @return string
+     * @return string|null
      */
     public function getValue()
     {
@@ -342,7 +336,7 @@ class BetaUserServiceSetMetadataEntry implements ModelInterface, ArrayAccess, \J
     /**
      * Sets value
      *
-     * @param string $value value
+     * @param string|null $value value
      *
      * @return self
      */

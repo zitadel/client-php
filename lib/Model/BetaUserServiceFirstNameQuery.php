@@ -282,9 +282,6 @@ class BetaUserServiceFirstNameQuery implements ModelInterface, ArrayAccess, \Jso
     {
         $invalidProperties = [];
 
-        if ($this->container['firstName'] === null) {
-            $invalidProperties[] = "'firstName' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -303,7 +300,7 @@ class BetaUserServiceFirstNameQuery implements ModelInterface, ArrayAccess, \Jso
     /**
      * Gets firstName
      *
-     * @return string
+     * @return string|null
      */
     public function getFirstName()
     {
@@ -313,7 +310,7 @@ class BetaUserServiceFirstNameQuery implements ModelInterface, ArrayAccess, \Jso
     /**
      * Sets firstName
      *
-     * @param string $firstName firstName
+     * @param string|null $firstName firstName
      *
      * @return self
      */

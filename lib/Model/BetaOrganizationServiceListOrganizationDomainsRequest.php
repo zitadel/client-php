@@ -288,9 +288,6 @@ class BetaOrganizationServiceListOrganizationDomainsRequest implements ModelInte
     {
         $invalidProperties = [];
 
-        if ($this->container['organizationId'] === null) {
-            $invalidProperties[] = "'organizationId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -309,7 +306,7 @@ class BetaOrganizationServiceListOrganizationDomainsRequest implements ModelInte
     /**
      * Gets organizationId
      *
-     * @return string
+     * @return string|null
      */
     public function getOrganizationId()
     {
@@ -319,7 +316,7 @@ class BetaOrganizationServiceListOrganizationDomainsRequest implements ModelInte
     /**
      * Sets organizationId
      *
-     * @param string $organizationId Organization Id for the Organization which domains are to be listed.
+     * @param string|null $organizationId Organization Id for the Organization which domains are to be listed.
      *
      * @return self
      */

@@ -1,6 +1,6 @@
 <?php
 /**
- * BetaProjectServiceDeleteProjectGrantRequest
+ * BetaProjectServiceAdmin
  *
  * PHP version 8.1
  *
@@ -32,7 +32,7 @@ use \ArrayAccess;
 use \Zitadel\Client\ObjectSerializer;
 
 /**
- * BetaProjectServiceDeleteProjectGrantRequest Class Doc Comment
+ * BetaProjectServiceAdmin Class Doc Comment
  *
  * @category Class
  * @package  Zitadel\Client
@@ -40,7 +40,7 @@ use \Zitadel\Client\ObjectSerializer;
  * @link     https://openapi-generator.tech
  * @implements \ArrayAccess<string, mixed>
  */
-class BetaProjectServiceDeleteProjectGrantRequest implements ModelInterface, ArrayAccess, \JsonSerializable
+class BetaProjectServiceAdmin implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class BetaProjectServiceDeleteProjectGrantRequest implements ModelInterface, Arr
       *
       * @var string
       */
-    protected static $openAPIModelName = 'BetaProjectServiceDeleteProjectGrantRequest';
+    protected static $openAPIModelName = 'BetaProjectServiceAdmin';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,8 +57,8 @@ class BetaProjectServiceDeleteProjectGrantRequest implements ModelInterface, Arr
       * @var string[]
       */
     protected static $openAPITypes = [
-        'projectId' => 'string',
-        'grantedOrganizationId' => 'string'
+        'userId' => 'string',
+        'roles' => 'string[]'
     ];
 
     /**
@@ -69,8 +69,8 @@ class BetaProjectServiceDeleteProjectGrantRequest implements ModelInterface, Arr
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'projectId' => null,
-        'grantedOrganizationId' => null
+        'userId' => null,
+        'roles' => null
     ];
 
     /**
@@ -79,8 +79,8 @@ class BetaProjectServiceDeleteProjectGrantRequest implements ModelInterface, Arr
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'projectId' => false,
-        'grantedOrganizationId' => false
+        'userId' => false,
+        'roles' => false
     ];
 
     /**
@@ -169,8 +169,8 @@ class BetaProjectServiceDeleteProjectGrantRequest implements ModelInterface, Arr
      * @var string[]
      */
     protected static $attributeMap = [
-        'projectId' => 'projectId',
-        'grantedOrganizationId' => 'grantedOrganizationId'
+        'userId' => 'userId',
+        'roles' => 'roles'
     ];
 
     /**
@@ -179,8 +179,8 @@ class BetaProjectServiceDeleteProjectGrantRequest implements ModelInterface, Arr
      * @var string[]
      */
     protected static $setters = [
-        'projectId' => 'setProjectId',
-        'grantedOrganizationId' => 'setGrantedOrganizationId'
+        'userId' => 'setUserId',
+        'roles' => 'setRoles'
     ];
 
     /**
@@ -189,8 +189,8 @@ class BetaProjectServiceDeleteProjectGrantRequest implements ModelInterface, Arr
      * @var string[]
      */
     protected static $getters = [
-        'projectId' => 'getProjectId',
-        'grantedOrganizationId' => 'getGrantedOrganizationId'
+        'userId' => 'getUserId',
+        'roles' => 'getRoles'
     ];
 
     /**
@@ -250,8 +250,8 @@ class BetaProjectServiceDeleteProjectGrantRequest implements ModelInterface, Arr
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('projectId', $data ?? [], null);
-        $this->setIfExists('grantedOrganizationId', $data ?? [], null);
+        $this->setIfExists('userId', $data ?? [], null);
+        $this->setIfExists('roles', $data ?? [], null);
     }
 
     /**
@@ -297,55 +297,55 @@ class BetaProjectServiceDeleteProjectGrantRequest implements ModelInterface, Arr
 
 
     /**
-     * Gets projectId
+     * Gets userId
      *
      * @return string|null
      */
-    public function getProjectId()
+    public function getUserId()
     {
-        return $this->container['projectId'];
+        return $this->container['userId'];
     }
 
     /**
-     * Sets projectId
+     * Sets userId
      *
-     * @param string|null $projectId ID of the project.
+     * @param string|null $userId userId
      *
      * @return self
      */
-    public function setProjectId($projectId)
+    public function setUserId($userId)
     {
-        if (is_null($projectId)) {
-            throw new \InvalidArgumentException('non-nullable projectId cannot be null');
+        if (is_null($userId)) {
+            throw new \InvalidArgumentException('non-nullable userId cannot be null');
         }
-        $this->container['projectId'] = $projectId;
+        $this->container['userId'] = $userId;
 
         return $this;
     }
 
     /**
-     * Gets grantedOrganizationId
+     * Gets roles
      *
-     * @return string|null
+     * @return string[]|null
      */
-    public function getGrantedOrganizationId()
+    public function getRoles()
     {
-        return $this->container['grantedOrganizationId'];
+        return $this->container['roles'];
     }
 
     /**
-     * Sets grantedOrganizationId
+     * Sets roles
      *
-     * @param string|null $grantedOrganizationId Organization the project is granted to.
+     * @param string[]|null $roles specify the Project Member Roles for the provided user (default is PROJECT_OWNER if roles are empty
      *
      * @return self
      */
-    public function setGrantedOrganizationId($grantedOrganizationId)
+    public function setRoles($roles)
     {
-        if (is_null($grantedOrganizationId)) {
-            throw new \InvalidArgumentException('non-nullable grantedOrganizationId cannot be null');
+        if (is_null($roles)) {
+            throw new \InvalidArgumentException('non-nullable roles cannot be null');
         }
-        $this->container['grantedOrganizationId'] = $grantedOrganizationId;
+        $this->container['roles'] = $roles;
 
         return $this;
     }

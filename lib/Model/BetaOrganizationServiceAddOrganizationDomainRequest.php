@@ -281,12 +281,6 @@ class BetaOrganizationServiceAddOrganizationDomainRequest implements ModelInterf
     {
         $invalidProperties = [];
 
-        if ($this->container['organizationId'] === null) {
-            $invalidProperties[] = "'organizationId' can't be null";
-        }
-        if ($this->container['domain'] === null) {
-            $invalidProperties[] = "'domain' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -305,7 +299,7 @@ class BetaOrganizationServiceAddOrganizationDomainRequest implements ModelInterf
     /**
      * Gets organizationId
      *
-     * @return string
+     * @return string|null
      */
     public function getOrganizationId()
     {
@@ -315,7 +309,7 @@ class BetaOrganizationServiceAddOrganizationDomainRequest implements ModelInterf
     /**
      * Sets organizationId
      *
-     * @param string $organizationId Organization Id for the Organization for which the domain is to be added to.
+     * @param string|null $organizationId Organization Id for the Organization for which the domain is to be added to.
      *
      * @return self
      */
@@ -332,7 +326,7 @@ class BetaOrganizationServiceAddOrganizationDomainRequest implements ModelInterf
     /**
      * Gets domain
      *
-     * @return string
+     * @return string|null
      */
     public function getDomain()
     {
@@ -342,7 +336,7 @@ class BetaOrganizationServiceAddOrganizationDomainRequest implements ModelInterf
     /**
      * Sets domain
      *
-     * @param string $domain The domain you want to add to the organization.
+     * @param string|null $domain The domain you want to add to the organization.
      *
      * @return self
      */

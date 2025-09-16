@@ -282,9 +282,6 @@ class UserServiceLoginNameQuery implements ModelInterface, ArrayAccess, \JsonSer
     {
         $invalidProperties = [];
 
-        if ($this->container['loginName'] === null) {
-            $invalidProperties[] = "'loginName' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -303,7 +300,7 @@ class UserServiceLoginNameQuery implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Gets loginName
      *
-     * @return string
+     * @return string|null
      */
     public function getLoginName()
     {
@@ -313,7 +310,7 @@ class UserServiceLoginNameQuery implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets loginName
      *
-     * @param string $loginName loginName
+     * @param string|null $loginName loginName
      *
      * @return self
      */

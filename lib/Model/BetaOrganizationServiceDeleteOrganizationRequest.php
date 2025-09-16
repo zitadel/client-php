@@ -274,9 +274,6 @@ class BetaOrganizationServiceDeleteOrganizationRequest implements ModelInterface
     {
         $invalidProperties = [];
 
-        if ($this->container['id'] === null) {
-            $invalidProperties[] = "'id' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -295,7 +292,7 @@ class BetaOrganizationServiceDeleteOrganizationRequest implements ModelInterface
     /**
      * Gets id
      *
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
@@ -305,7 +302,7 @@ class BetaOrganizationServiceDeleteOrganizationRequest implements ModelInterface
     /**
      * Sets id
      *
-     * @param string $id Organization Id for the Organization to be deleted
+     * @param string|null $id Organization Id for the Organization to be deleted
      *
      * @return self
      */

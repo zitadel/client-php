@@ -281,9 +281,6 @@ class BetaOrganizationServicePassword implements ModelInterface, ArrayAccess, \J
     {
         $invalidProperties = [];
 
-        if ($this->container['password'] === null) {
-            $invalidProperties[] = "'password' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -302,7 +299,7 @@ class BetaOrganizationServicePassword implements ModelInterface, ArrayAccess, \J
     /**
      * Gets password
      *
-     * @return string
+     * @return string|null
      */
     public function getPassword()
     {
@@ -312,7 +309,7 @@ class BetaOrganizationServicePassword implements ModelInterface, ArrayAccess, \J
     /**
      * Sets password
      *
-     * @param string $password password
+     * @param string|null $password password
      *
      * @return self
      */

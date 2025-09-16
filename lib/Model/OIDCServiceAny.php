@@ -35,7 +35,7 @@ use \Zitadel\Client\ObjectSerializer;
  * OIDCServiceAny Class Doc Comment
  *
  * @category Class
- * @description Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+ * @description Contains an arbitrary serialized message along with a @type that describes the type of the serialized message, with an additional debug field for ConnectRPC error details.
  * @package  Zitadel\Client
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
@@ -60,7 +60,7 @@ class OIDCServiceAny implements ModelInterface, ArrayAccess, \JsonSerializable
     protected static $openAPITypes = [
         'type' => 'string',
         'value' => '\SplFileObject',
-        'debug' => 'array<string,mixed>'
+        'debug' => 'mixed'
     ];
 
     /**
@@ -84,7 +84,7 @@ class OIDCServiceAny implements ModelInterface, ArrayAccess, \JsonSerializable
     protected static array $openAPINullables = [
         'type' => false,
         'value' => false,
-        'debug' => false
+        'debug' => true
     ];
 
     /**
@@ -317,7 +317,7 @@ class OIDCServiceAny implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Sets type
      *
-     * @param string|null $type type
+     * @param string|null $type A URL that acts as a globally unique identifier for the type of the serialized message. For example: `type.googleapis.com/google.rpc.ErrorInfo`. This is used to determine the schema of the data in the `value` field and is the discriminator for the `debug` field.
      *
      * @return self
      */
@@ -344,7 +344,7 @@ class OIDCServiceAny implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Sets value
      *
-     * @param \SplFileObject|null $value value
+     * @param \SplFileObject|null $value The Protobuf message, serialized as bytes and base64-encoded. The specific message type is identified by the `type` field.
      *
      * @return self
      */
@@ -361,7 +361,7 @@ class OIDCServiceAny implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Gets debug
      *
-     * @return array<string,mixed>|null
+     * @return mixed|null
      */
     public function getDebug()
     {
@@ -371,14 +371,21 @@ class OIDCServiceAny implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Sets debug
      *
-     * @param array<string,mixed>|null $debug debug
+     * @param mixed|null $debug Deserialized error detail payload. The 'type' field indicates the schema. This field is for easier debugging and should not be relied upon for application logic.
      *
      * @return self
      */
     public function setDebug($debug)
     {
         if (is_null($debug)) {
-            throw new \InvalidArgumentException('non-nullable debug cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'debug');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('debug', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['debug'] = $debug;
 

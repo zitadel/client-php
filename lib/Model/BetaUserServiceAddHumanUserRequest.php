@@ -344,12 +344,6 @@ class BetaUserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess,
     {
         $invalidProperties = [];
 
-        if ($this->container['profile'] === null) {
-            $invalidProperties[] = "'profile' can't be null";
-        }
-        if ($this->container['email'] === null) {
-            $invalidProperties[] = "'email' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -463,7 +457,7 @@ class BetaUserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess,
     /**
      * Gets profile
      *
-     * @return \Zitadel\Client\Model\BetaUserServiceSetHumanProfile
+     * @return \Zitadel\Client\Model\BetaUserServiceSetHumanProfile|null
      */
     public function getProfile()
     {
@@ -473,7 +467,7 @@ class BetaUserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess,
     /**
      * Sets profile
      *
-     * @param \Zitadel\Client\Model\BetaUserServiceSetHumanProfile $profile profile
+     * @param \Zitadel\Client\Model\BetaUserServiceSetHumanProfile|null $profile profile
      *
      * @return self
      */
@@ -490,7 +484,7 @@ class BetaUserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess,
     /**
      * Gets email
      *
-     * @return \Zitadel\Client\Model\BetaUserServiceSetHumanEmail
+     * @return \Zitadel\Client\Model\BetaUserServiceSetHumanEmail|null
      */
     public function getEmail()
     {
@@ -500,7 +494,7 @@ class BetaUserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess,
     /**
      * Sets email
      *
-     * @param \Zitadel\Client\Model\BetaUserServiceSetHumanEmail $email email
+     * @param \Zitadel\Client\Model\BetaUserServiceSetHumanEmail|null $email email
      *
      * @return self
      */
