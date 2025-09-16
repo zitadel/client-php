@@ -65,6 +65,8 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
         'inUserIdsQuery' => '\Zitadel\Client\Model\UserServiceInUserIDQuery',
         'lastNameQuery' => '\Zitadel\Client\Model\UserServiceLastNameQuery',
         'loginNameQuery' => '\Zitadel\Client\Model\UserServiceLoginNameQuery',
+        'metadataKeyFilter' => '\Zitadel\Client\Model\UserServiceMetadataKeyFilter',
+        'metadataValueFilter' => '\Zitadel\Client\Model\UserServiceMetadataValueFilter',
         'nickNameQuery' => '\Zitadel\Client\Model\UserServiceNickNameQuery',
         'notQuery' => '\Zitadel\Client\Model\UserServiceNotQuery',
         'orQuery' => '\Zitadel\Client\Model\UserServiceOrQuery',
@@ -91,6 +93,8 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
         'inUserIdsQuery' => null,
         'lastNameQuery' => null,
         'loginNameQuery' => null,
+        'metadataKeyFilter' => null,
+        'metadataValueFilter' => null,
         'nickNameQuery' => null,
         'notQuery' => null,
         'orQuery' => null,
@@ -115,6 +119,8 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
         'inUserIdsQuery' => false,
         'lastNameQuery' => false,
         'loginNameQuery' => false,
+        'metadataKeyFilter' => false,
+        'metadataValueFilter' => false,
         'nickNameQuery' => false,
         'notQuery' => false,
         'orQuery' => false,
@@ -219,6 +225,8 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
         'inUserIdsQuery' => 'inUserIdsQuery',
         'lastNameQuery' => 'lastNameQuery',
         'loginNameQuery' => 'loginNameQuery',
+        'metadataKeyFilter' => 'metadataKeyFilter',
+        'metadataValueFilter' => 'metadataValueFilter',
         'nickNameQuery' => 'nickNameQuery',
         'notQuery' => 'notQuery',
         'orQuery' => 'orQuery',
@@ -243,6 +251,8 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
         'inUserIdsQuery' => 'setInUserIdsQuery',
         'lastNameQuery' => 'setLastNameQuery',
         'loginNameQuery' => 'setLoginNameQuery',
+        'metadataKeyFilter' => 'setMetadataKeyFilter',
+        'metadataValueFilter' => 'setMetadataValueFilter',
         'nickNameQuery' => 'setNickNameQuery',
         'notQuery' => 'setNotQuery',
         'orQuery' => 'setOrQuery',
@@ -267,6 +277,8 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
         'inUserIdsQuery' => 'getInUserIdsQuery',
         'lastNameQuery' => 'getLastNameQuery',
         'loginNameQuery' => 'getLoginNameQuery',
+        'metadataKeyFilter' => 'getMetadataKeyFilter',
+        'metadataValueFilter' => 'getMetadataValueFilter',
         'nickNameQuery' => 'getNickNameQuery',
         'notQuery' => 'getNotQuery',
         'orQuery' => 'getOrQuery',
@@ -342,6 +354,8 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
         $this->setIfExists('inUserIdsQuery', $data ?? [], null);
         $this->setIfExists('lastNameQuery', $data ?? [], null);
         $this->setIfExists('loginNameQuery', $data ?? [], null);
+        $this->setIfExists('metadataKeyFilter', $data ?? [], null);
+        $this->setIfExists('metadataValueFilter', $data ?? [], null);
         $this->setIfExists('nickNameQuery', $data ?? [], null);
         $this->setIfExists('notQuery', $data ?? [], null);
         $this->setIfExists('orQuery', $data ?? [], null);
@@ -606,6 +620,60 @@ class UserServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerial
             throw new \InvalidArgumentException('non-nullable loginNameQuery cannot be null');
         }
         $this->container['loginNameQuery'] = $loginNameQuery;
+
+        return $this;
+    }
+
+    /**
+     * Gets metadataKeyFilter
+     *
+     * @return \Zitadel\Client\Model\UserServiceMetadataKeyFilter|null
+     */
+    public function getMetadataKeyFilter()
+    {
+        return $this->container['metadataKeyFilter'];
+    }
+
+    /**
+     * Sets metadataKeyFilter
+     *
+     * @param \Zitadel\Client\Model\UserServiceMetadataKeyFilter|null $metadataKeyFilter metadataKeyFilter
+     *
+     * @return self
+     */
+    public function setMetadataKeyFilter($metadataKeyFilter)
+    {
+        if (is_null($metadataKeyFilter)) {
+            throw new \InvalidArgumentException('non-nullable metadataKeyFilter cannot be null');
+        }
+        $this->container['metadataKeyFilter'] = $metadataKeyFilter;
+
+        return $this;
+    }
+
+    /**
+     * Gets metadataValueFilter
+     *
+     * @return \Zitadel\Client\Model\UserServiceMetadataValueFilter|null
+     */
+    public function getMetadataValueFilter()
+    {
+        return $this->container['metadataValueFilter'];
+    }
+
+    /**
+     * Sets metadataValueFilter
+     *
+     * @param \Zitadel\Client\Model\UserServiceMetadataValueFilter|null $metadataValueFilter metadataValueFilter
+     *
+     * @return self
+     */
+    public function setMetadataValueFilter($metadataValueFilter)
+    {
+        if (is_null($metadataValueFilter)) {
+            throw new \InvalidArgumentException('non-nullable metadataValueFilter cannot be null');
+        }
+        $this->container['metadataValueFilter'] = $metadataValueFilter;
 
         return $this;
     }

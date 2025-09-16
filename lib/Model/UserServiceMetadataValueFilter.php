@@ -1,6 +1,6 @@
 <?php
 /**
- * SessionServiceSearchQuery
+ * UserServiceMetadataValueFilter
  *
  * PHP version 8.1
  *
@@ -32,7 +32,7 @@ use \ArrayAccess;
 use \Zitadel\Client\ObjectSerializer;
 
 /**
- * SessionServiceSearchQuery Class Doc Comment
+ * UserServiceMetadataValueFilter Class Doc Comment
  *
  * @category Class
  * @package  Zitadel\Client
@@ -40,7 +40,7 @@ use \Zitadel\Client\ObjectSerializer;
  * @link     https://openapi-generator.tech
  * @implements \ArrayAccess<string, mixed>
  */
-class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSerializable
+class UserServiceMetadataValueFilter implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
       *
       * @var string
       */
-    protected static $openAPIModelName = 'SessionServiceSearchQuery';
+    protected static $openAPIModelName = 'UserServiceMetadataValueFilter';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,12 +57,8 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
       * @var string[]
       */
     protected static $openAPITypes = [
-        'creationDateQuery' => '\Zitadel\Client\Model\SessionServiceCreationDateQuery',
-        'creatorQuery' => '\Zitadel\Client\Model\SessionServiceCreatorQuery',
-        'expirationDateQuery' => '\Zitadel\Client\Model\SessionServiceExpirationDateQuery',
-        'idsQuery' => '\Zitadel\Client\Model\SessionServiceIDsQuery',
-        'userAgentQuery' => '\Zitadel\Client\Model\SessionServiceUserAgentQuery',
-        'userIdQuery' => '\Zitadel\Client\Model\SessionServiceUserIDQuery'
+        'value' => 'string',
+        'method' => '\Zitadel\Client\Model\UserServiceByteFilterMethod'
     ];
 
     /**
@@ -73,12 +69,8 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'creationDateQuery' => null,
-        'creatorQuery' => null,
-        'expirationDateQuery' => null,
-        'idsQuery' => null,
-        'userAgentQuery' => null,
-        'userIdQuery' => null
+        'value' => 'byte',
+        'method' => null
     ];
 
     /**
@@ -87,12 +79,8 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'creationDateQuery' => false,
-        'creatorQuery' => false,
-        'expirationDateQuery' => false,
-        'idsQuery' => false,
-        'userAgentQuery' => false,
-        'userIdQuery' => false
+        'value' => false,
+        'method' => false
     ];
 
     /**
@@ -181,12 +169,8 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
      * @var string[]
      */
     protected static $attributeMap = [
-        'creationDateQuery' => 'creationDateQuery',
-        'creatorQuery' => 'creatorQuery',
-        'expirationDateQuery' => 'expirationDateQuery',
-        'idsQuery' => 'idsQuery',
-        'userAgentQuery' => 'userAgentQuery',
-        'userIdQuery' => 'userIdQuery'
+        'value' => 'value',
+        'method' => 'method'
     ];
 
     /**
@@ -195,12 +179,8 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
      * @var string[]
      */
     protected static $setters = [
-        'creationDateQuery' => 'setCreationDateQuery',
-        'creatorQuery' => 'setCreatorQuery',
-        'expirationDateQuery' => 'setExpirationDateQuery',
-        'idsQuery' => 'setIdsQuery',
-        'userAgentQuery' => 'setUserAgentQuery',
-        'userIdQuery' => 'setUserIdQuery'
+        'value' => 'setValue',
+        'method' => 'setMethod'
     ];
 
     /**
@@ -209,12 +189,8 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
      * @var string[]
      */
     protected static $getters = [
-        'creationDateQuery' => 'getCreationDateQuery',
-        'creatorQuery' => 'getCreatorQuery',
-        'expirationDateQuery' => 'getExpirationDateQuery',
-        'idsQuery' => 'getIdsQuery',
-        'userAgentQuery' => 'getUserAgentQuery',
-        'userIdQuery' => 'getUserIdQuery'
+        'value' => 'getValue',
+        'method' => 'getMethod'
     ];
 
     /**
@@ -274,12 +250,8 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('creationDateQuery', $data ?? [], null);
-        $this->setIfExists('creatorQuery', $data ?? [], null);
-        $this->setIfExists('expirationDateQuery', $data ?? [], null);
-        $this->setIfExists('idsQuery', $data ?? [], null);
-        $this->setIfExists('userAgentQuery', $data ?? [], null);
-        $this->setIfExists('userIdQuery', $data ?? [], null);
+        $this->setIfExists('value', $data ?? [], null);
+        $this->setIfExists('method', $data ?? [], null);
     }
 
     /**
@@ -325,163 +297,55 @@ class SessionServiceSearchQuery implements ModelInterface, ArrayAccess, \JsonSer
 
 
     /**
-     * Gets creationDateQuery
+     * Gets value
      *
-     * @return \Zitadel\Client\Model\SessionServiceCreationDateQuery|null
+     * @return string|null
      */
-    public function getCreationDateQuery()
+    public function getValue()
     {
-        return $this->container['creationDateQuery'];
+        return $this->container['value'];
     }
 
     /**
-     * Sets creationDateQuery
+     * Sets value
      *
-     * @param \Zitadel\Client\Model\SessionServiceCreationDateQuery|null $creationDateQuery creationDateQuery
+     * @param string|null $value value
      *
      * @return self
      */
-    public function setCreationDateQuery($creationDateQuery)
+    public function setValue($value)
     {
-        if (is_null($creationDateQuery)) {
-            throw new \InvalidArgumentException('non-nullable creationDateQuery cannot be null');
+        if (is_null($value)) {
+            throw new \InvalidArgumentException('non-nullable value cannot be null');
         }
-        $this->container['creationDateQuery'] = $creationDateQuery;
+        $this->container['value'] = $value;
 
         return $this;
     }
 
     /**
-     * Gets creatorQuery
+     * Gets method
      *
-     * @return \Zitadel\Client\Model\SessionServiceCreatorQuery|null
+     * @return \Zitadel\Client\Model\UserServiceByteFilterMethod|null
      */
-    public function getCreatorQuery()
+    public function getMethod()
     {
-        return $this->container['creatorQuery'];
+        return $this->container['method'];
     }
 
     /**
-     * Sets creatorQuery
+     * Sets method
      *
-     * @param \Zitadel\Client\Model\SessionServiceCreatorQuery|null $creatorQuery creatorQuery
+     * @param \Zitadel\Client\Model\UserServiceByteFilterMethod|null $method method
      *
      * @return self
      */
-    public function setCreatorQuery($creatorQuery)
+    public function setMethod($method)
     {
-        if (is_null($creatorQuery)) {
-            throw new \InvalidArgumentException('non-nullable creatorQuery cannot be null');
+        if (is_null($method)) {
+            throw new \InvalidArgumentException('non-nullable method cannot be null');
         }
-        $this->container['creatorQuery'] = $creatorQuery;
-
-        return $this;
-    }
-
-    /**
-     * Gets expirationDateQuery
-     *
-     * @return \Zitadel\Client\Model\SessionServiceExpirationDateQuery|null
-     */
-    public function getExpirationDateQuery()
-    {
-        return $this->container['expirationDateQuery'];
-    }
-
-    /**
-     * Sets expirationDateQuery
-     *
-     * @param \Zitadel\Client\Model\SessionServiceExpirationDateQuery|null $expirationDateQuery expirationDateQuery
-     *
-     * @return self
-     */
-    public function setExpirationDateQuery($expirationDateQuery)
-    {
-        if (is_null($expirationDateQuery)) {
-            throw new \InvalidArgumentException('non-nullable expirationDateQuery cannot be null');
-        }
-        $this->container['expirationDateQuery'] = $expirationDateQuery;
-
-        return $this;
-    }
-
-    /**
-     * Gets idsQuery
-     *
-     * @return \Zitadel\Client\Model\SessionServiceIDsQuery|null
-     */
-    public function getIdsQuery()
-    {
-        return $this->container['idsQuery'];
-    }
-
-    /**
-     * Sets idsQuery
-     *
-     * @param \Zitadel\Client\Model\SessionServiceIDsQuery|null $idsQuery idsQuery
-     *
-     * @return self
-     */
-    public function setIdsQuery($idsQuery)
-    {
-        if (is_null($idsQuery)) {
-            throw new \InvalidArgumentException('non-nullable idsQuery cannot be null');
-        }
-        $this->container['idsQuery'] = $idsQuery;
-
-        return $this;
-    }
-
-    /**
-     * Gets userAgentQuery
-     *
-     * @return \Zitadel\Client\Model\SessionServiceUserAgentQuery|null
-     */
-    public function getUserAgentQuery()
-    {
-        return $this->container['userAgentQuery'];
-    }
-
-    /**
-     * Sets userAgentQuery
-     *
-     * @param \Zitadel\Client\Model\SessionServiceUserAgentQuery|null $userAgentQuery userAgentQuery
-     *
-     * @return self
-     */
-    public function setUserAgentQuery($userAgentQuery)
-    {
-        if (is_null($userAgentQuery)) {
-            throw new \InvalidArgumentException('non-nullable userAgentQuery cannot be null');
-        }
-        $this->container['userAgentQuery'] = $userAgentQuery;
-
-        return $this;
-    }
-
-    /**
-     * Gets userIdQuery
-     *
-     * @return \Zitadel\Client\Model\SessionServiceUserIDQuery|null
-     */
-    public function getUserIdQuery()
-    {
-        return $this->container['userIdQuery'];
-    }
-
-    /**
-     * Sets userIdQuery
-     *
-     * @param \Zitadel\Client\Model\SessionServiceUserIDQuery|null $userIdQuery userIdQuery
-     *
-     * @return self
-     */
-    public function setUserIdQuery($userIdQuery)
-    {
-        if (is_null($userIdQuery)) {
-            throw new \InvalidArgumentException('non-nullable userIdQuery cannot be null');
-        }
-        $this->container['userIdQuery'] = $userIdQuery;
+        $this->container['method'] = $method;
 
         return $this;
     }
