@@ -281,12 +281,6 @@ class UserServiceRemoveU2FRequest implements ModelInterface, ArrayAccess, \JsonS
     {
         $invalidProperties = [];
 
-        if ($this->container['userId'] === null) {
-            $invalidProperties[] = "'userId' can't be null";
-        }
-        if ($this->container['u2fId'] === null) {
-            $invalidProperties[] = "'u2fId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -305,7 +299,7 @@ class UserServiceRemoveU2FRequest implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Gets userId
      *
-     * @return string
+     * @return string|null
      */
     public function getUserId()
     {
@@ -315,7 +309,7 @@ class UserServiceRemoveU2FRequest implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Sets userId
      *
-     * @param string $userId userId
+     * @param string|null $userId userId
      *
      * @return self
      */
@@ -332,7 +326,7 @@ class UserServiceRemoveU2FRequest implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Gets u2fId
      *
-     * @return string
+     * @return string|null
      */
     public function getU2fId()
     {
@@ -342,7 +336,7 @@ class UserServiceRemoveU2FRequest implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Sets u2fId
      *
-     * @param string $u2fId u2fId
+     * @param string|null $u2fId u2fId
      *
      * @return self
      */

@@ -281,9 +281,6 @@ class BetaOrganizationServiceDeleteOrganizationMetadataRequest implements ModelI
     {
         $invalidProperties = [];
 
-        if ($this->container['organizationId'] === null) {
-            $invalidProperties[] = "'organizationId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -302,7 +299,7 @@ class BetaOrganizationServiceDeleteOrganizationMetadataRequest implements ModelI
     /**
      * Gets organizationId
      *
-     * @return string
+     * @return string|null
      */
     public function getOrganizationId()
     {
@@ -312,7 +309,7 @@ class BetaOrganizationServiceDeleteOrganizationMetadataRequest implements ModelI
     /**
      * Sets organizationId
      *
-     * @param string $organizationId Organization ID of Orgalization which metadata is to be deleted is stored on.
+     * @param string|null $organizationId Organization ID of Orgalization which metadata is to be deleted is stored on.
      *
      * @return self
      */

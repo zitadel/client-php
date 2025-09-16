@@ -281,12 +281,6 @@ class BetaProjectServiceActivateProjectGrantRequest implements ModelInterface, A
     {
         $invalidProperties = [];
 
-        if ($this->container['projectId'] === null) {
-            $invalidProperties[] = "'projectId' can't be null";
-        }
-        if ($this->container['grantedOrganizationId'] === null) {
-            $invalidProperties[] = "'grantedOrganizationId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -305,7 +299,7 @@ class BetaProjectServiceActivateProjectGrantRequest implements ModelInterface, A
     /**
      * Gets projectId
      *
-     * @return string
+     * @return string|null
      */
     public function getProjectId()
     {
@@ -315,7 +309,7 @@ class BetaProjectServiceActivateProjectGrantRequest implements ModelInterface, A
     /**
      * Sets projectId
      *
-     * @param string $projectId ID of the project.
+     * @param string|null $projectId ID of the project.
      *
      * @return self
      */
@@ -332,7 +326,7 @@ class BetaProjectServiceActivateProjectGrantRequest implements ModelInterface, A
     /**
      * Gets grantedOrganizationId
      *
-     * @return string
+     * @return string|null
      */
     public function getGrantedOrganizationId()
     {
@@ -342,7 +336,7 @@ class BetaProjectServiceActivateProjectGrantRequest implements ModelInterface, A
     /**
      * Sets grantedOrganizationId
      *
-     * @param string $grantedOrganizationId Organization the project is granted to.
+     * @param string|null $grantedOrganizationId Organization the project is granted to.
      *
      * @return self
      */

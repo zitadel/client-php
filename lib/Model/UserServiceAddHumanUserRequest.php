@@ -344,12 +344,6 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
     {
         $invalidProperties = [];
 
-        if ($this->container['profile'] === null) {
-            $invalidProperties[] = "'profile' can't be null";
-        }
-        if ($this->container['email'] === null) {
-            $invalidProperties[] = "'email' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -463,7 +457,7 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
     /**
      * Gets profile
      *
-     * @return \Zitadel\Client\Model\UserServiceSetHumanProfile
+     * @return \Zitadel\Client\Model\UserServiceSetHumanProfile|null
      */
     public function getProfile()
     {
@@ -473,7 +467,7 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets profile
      *
-     * @param \Zitadel\Client\Model\UserServiceSetHumanProfile $profile profile
+     * @param \Zitadel\Client\Model\UserServiceSetHumanProfile|null $profile profile
      *
      * @return self
      */
@@ -490,7 +484,7 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
     /**
      * Gets email
      *
-     * @return \Zitadel\Client\Model\UserServiceSetHumanEmail
+     * @return \Zitadel\Client\Model\UserServiceSetHumanEmail|null
      */
     public function getEmail()
     {
@@ -500,7 +494,7 @@ class UserServiceAddHumanUserRequest implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets email
      *
-     * @param \Zitadel\Client\Model\UserServiceSetHumanEmail $email email
+     * @param \Zitadel\Client\Model\UserServiceSetHumanEmail|null $email email
      *
      * @return self
      */

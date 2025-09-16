@@ -448,7 +448,7 @@ class BetaSessionServiceApi
     /**
      * Operation createSession
      *
-     * CreateSession
+     * Create a new session
      *
      * @param  \Zitadel\Client\Model\BetaSessionServiceCreateSessionRequest $betaSessionServiceCreateSessionRequest betaSessionServiceCreateSessionRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createSession'] to see the possible values for this operation
@@ -560,7 +560,7 @@ class BetaSessionServiceApi
     /**
      * Operation deleteSession
      *
-     * DeleteSession
+     * Terminate a session
      *
      * @param  \Zitadel\Client\Model\BetaSessionServiceDeleteSessionRequest $betaSessionServiceDeleteSessionRequest betaSessionServiceDeleteSessionRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteSession'] to see the possible values for this operation
@@ -672,7 +672,7 @@ class BetaSessionServiceApi
     /**
      * Operation getSession
      *
-     * GetSession
+     * GetSession a session
      *
      * @param  \Zitadel\Client\Model\BetaSessionServiceGetSessionRequest $betaSessionServiceGetSessionRequest betaSessionServiceGetSessionRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSession'] to see the possible values for this operation
@@ -784,7 +784,7 @@ class BetaSessionServiceApi
     /**
      * Operation listSessions
      *
-     * ListSessions
+     * Search sessions
      *
      * @param  \Zitadel\Client\Model\BetaSessionServiceListSessionsRequest $betaSessionServiceListSessionsRequest betaSessionServiceListSessionsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listSessions'] to see the possible values for this operation
@@ -896,7 +896,7 @@ class BetaSessionServiceApi
     /**
      * Operation setSession
      *
-     * SetSession
+     * Update a session
      *
      * @param  \Zitadel\Client\Model\BetaSessionServiceSetSessionRequest $betaSessionServiceSetSessionRequest betaSessionServiceSetSessionRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSession'] to see the possible values for this operation

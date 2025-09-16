@@ -281,9 +281,6 @@ class UserServiceSetUserMetadataRequest implements ModelInterface, ArrayAccess, 
     {
         $invalidProperties = [];
 
-        if ($this->container['userId'] === null) {
-            $invalidProperties[] = "'userId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -302,7 +299,7 @@ class UserServiceSetUserMetadataRequest implements ModelInterface, ArrayAccess, 
     /**
      * Gets userId
      *
-     * @return string
+     * @return string|null
      */
     public function getUserId()
     {
@@ -312,7 +309,7 @@ class UserServiceSetUserMetadataRequest implements ModelInterface, ArrayAccess, 
     /**
      * Sets userId
      *
-     * @param string $userId ID of the user under which the metadata gets set.
+     * @param string|null $userId ID of the user under which the metadata gets set.
      *
      * @return self
      */

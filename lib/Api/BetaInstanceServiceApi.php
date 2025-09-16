@@ -463,7 +463,7 @@ class BetaInstanceServiceApi
     /**
      * Operation addCustomDomain
      *
-     * AddCustomDomain
+     * Add Custom Domain
      *
      * @param  \Zitadel\Client\Model\BetaInstanceServiceAddCustomDomainRequest $betaInstanceServiceAddCustomDomainRequest betaInstanceServiceAddCustomDomainRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addCustomDomain'] to see the possible values for this operation
@@ -575,7 +575,7 @@ class BetaInstanceServiceApi
     /**
      * Operation addTrustedDomain
      *
-     * AddTrustedDomain
+     * Add Trusted Domain
      *
      * @param  \Zitadel\Client\Model\BetaInstanceServiceAddTrustedDomainRequest $betaInstanceServiceAddTrustedDomainRequest betaInstanceServiceAddTrustedDomainRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addTrustedDomain'] to see the possible values for this operation
@@ -687,7 +687,7 @@ class BetaInstanceServiceApi
     /**
      * Operation deleteInstance
      *
-     * DeleteInstance
+     * Delete Instance
      *
      * @param  \Zitadel\Client\Model\BetaInstanceServiceDeleteInstanceRequest $betaInstanceServiceDeleteInstanceRequest betaInstanceServiceDeleteInstanceRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteInstance'] to see the possible values for this operation
@@ -799,7 +799,7 @@ class BetaInstanceServiceApi
     /**
      * Operation getInstance
      *
-     * GetInstance
+     * Get Instance
      *
      * @param  \Zitadel\Client\Model\BetaInstanceServiceGetInstanceRequest $betaInstanceServiceGetInstanceRequest betaInstanceServiceGetInstanceRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getInstance'] to see the possible values for this operation
@@ -911,7 +911,7 @@ class BetaInstanceServiceApi
     /**
      * Operation listCustomDomains
      *
-     * ListCustomDomains
+     * List Custom Domains
      *
      * @param  \Zitadel\Client\Model\BetaInstanceServiceListCustomDomainsRequest $betaInstanceServiceListCustomDomainsRequest betaInstanceServiceListCustomDomainsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listCustomDomains'] to see the possible values for this operation
@@ -1023,7 +1023,7 @@ class BetaInstanceServiceApi
     /**
      * Operation listInstances
      *
-     * ListInstances
+     * List Instances
      *
      * @param  \Zitadel\Client\Model\BetaInstanceServiceListInstancesRequest $betaInstanceServiceListInstancesRequest betaInstanceServiceListInstancesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listInstances'] to see the possible values for this operation
@@ -1135,7 +1135,7 @@ class BetaInstanceServiceApi
     /**
      * Operation listTrustedDomains
      *
-     * ListTrustedDomains
+     * List Trusted Domains
      *
      * @param  \Zitadel\Client\Model\BetaInstanceServiceListTrustedDomainsRequest $betaInstanceServiceListTrustedDomainsRequest betaInstanceServiceListTrustedDomainsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listTrustedDomains'] to see the possible values for this operation
@@ -1247,7 +1247,7 @@ class BetaInstanceServiceApi
     /**
      * Operation removeCustomDomain
      *
-     * RemoveCustomDomain
+     * Remove Custom Domain
      *
      * @param  \Zitadel\Client\Model\BetaInstanceServiceRemoveCustomDomainRequest $betaInstanceServiceRemoveCustomDomainRequest betaInstanceServiceRemoveCustomDomainRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removeCustomDomain'] to see the possible values for this operation
@@ -1359,7 +1359,7 @@ class BetaInstanceServiceApi
     /**
      * Operation removeTrustedDomain
      *
-     * RemoveTrustedDomain
+     * Remove Trusted Domain
      *
      * @param  \Zitadel\Client\Model\BetaInstanceServiceRemoveTrustedDomainRequest $betaInstanceServiceRemoveTrustedDomainRequest betaInstanceServiceRemoveTrustedDomainRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removeTrustedDomain'] to see the possible values for this operation
@@ -1471,7 +1471,7 @@ class BetaInstanceServiceApi
     /**
      * Operation updateInstance
      *
-     * UpdateInstance
+     * Update Instance
      *
      * @param  \Zitadel\Client\Model\BetaInstanceServiceUpdateInstanceRequest $betaInstanceServiceUpdateInstanceRequest betaInstanceServiceUpdateInstanceRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['updateInstance'] to see the possible values for this operation

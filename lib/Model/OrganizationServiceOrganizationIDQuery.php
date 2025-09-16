@@ -274,9 +274,6 @@ class OrganizationServiceOrganizationIDQuery implements ModelInterface, ArrayAcc
     {
         $invalidProperties = [];
 
-        if ($this->container['id'] === null) {
-            $invalidProperties[] = "'id' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -295,7 +292,7 @@ class OrganizationServiceOrganizationIDQuery implements ModelInterface, ArrayAcc
     /**
      * Gets id
      *
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
@@ -305,7 +302,7 @@ class OrganizationServiceOrganizationIDQuery implements ModelInterface, ArrayAcc
     /**
      * Sets id
      *
-     * @param string $id Unique identifier of the organization.
+     * @param string|null $id Unique identifier of the organization.
      *
      * @return self
      */

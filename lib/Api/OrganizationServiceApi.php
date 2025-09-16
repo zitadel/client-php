@@ -439,7 +439,7 @@ class OrganizationServiceApi
     /**
      * Operation addOrganization
      *
-     * AddOrganization
+     * Create an Organization
      *
      * @param  \Zitadel\Client\Model\OrganizationServiceAddOrganizationRequest $organizationServiceAddOrganizationRequest organizationServiceAddOrganizationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOrganization'] to see the possible values for this operation
@@ -551,7 +551,7 @@ class OrganizationServiceApi
     /**
      * Operation listOrganizations
      *
-     * ListOrganizations
+     * Search Organizations
      *
      * @param  \Zitadel\Client\Model\OrganizationServiceListOrganizationsRequest $organizationServiceListOrganizationsRequest organizationServiceListOrganizationsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizations'] to see the possible values for this operation

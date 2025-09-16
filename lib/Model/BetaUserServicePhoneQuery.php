@@ -282,9 +282,6 @@ class BetaUserServicePhoneQuery implements ModelInterface, ArrayAccess, \JsonSer
     {
         $invalidProperties = [];
 
-        if ($this->container['number'] === null) {
-            $invalidProperties[] = "'number' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -303,7 +300,7 @@ class BetaUserServicePhoneQuery implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Gets number
      *
-     * @return string
+     * @return string|null
      */
     public function getNumber()
     {
@@ -313,7 +310,7 @@ class BetaUserServicePhoneQuery implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets number
      *
-     * @param string $number number
+     * @param string|null $number number
      *
      * @return self
      */

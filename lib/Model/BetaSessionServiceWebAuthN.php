@@ -281,12 +281,6 @@ class BetaSessionServiceWebAuthN implements ModelInterface, ArrayAccess, \JsonSe
     {
         $invalidProperties = [];
 
-        if ($this->container['domain'] === null) {
-            $invalidProperties[] = "'domain' can't be null";
-        }
-        if ($this->container['userVerificationRequirement'] === null) {
-            $invalidProperties[] = "'userVerificationRequirement' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -305,7 +299,7 @@ class BetaSessionServiceWebAuthN implements ModelInterface, ArrayAccess, \JsonSe
     /**
      * Gets domain
      *
-     * @return string
+     * @return string|null
      */
     public function getDomain()
     {
@@ -315,7 +309,7 @@ class BetaSessionServiceWebAuthN implements ModelInterface, ArrayAccess, \JsonSe
     /**
      * Sets domain
      *
-     * @param string $domain domain
+     * @param string|null $domain domain
      *
      * @return self
      */
@@ -332,7 +326,7 @@ class BetaSessionServiceWebAuthN implements ModelInterface, ArrayAccess, \JsonSe
     /**
      * Gets userVerificationRequirement
      *
-     * @return \Zitadel\Client\Model\BetaSessionServiceUserVerificationRequirement
+     * @return \Zitadel\Client\Model\BetaSessionServiceUserVerificationRequirement|null
      */
     public function getUserVerificationRequirement()
     {
@@ -342,7 +336,7 @@ class BetaSessionServiceWebAuthN implements ModelInterface, ArrayAccess, \JsonSe
     /**
      * Sets userVerificationRequirement
      *
-     * @param \Zitadel\Client\Model\BetaSessionServiceUserVerificationRequirement $userVerificationRequirement userVerificationRequirement
+     * @param \Zitadel\Client\Model\BetaSessionServiceUserVerificationRequirement|null $userVerificationRequirement userVerificationRequirement
      *
      * @return self
      */

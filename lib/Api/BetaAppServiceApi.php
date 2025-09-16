@@ -469,7 +469,7 @@ class BetaAppServiceApi
     /**
      * Operation createApplication
      *
-     * CreateApplication
+     * Create Application
      *
      * @param  \Zitadel\Client\Model\BetaAppServiceCreateApplicationRequest $betaAppServiceCreateApplicationRequest betaAppServiceCreateApplicationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createApplication'] to see the possible values for this operation
@@ -477,7 +477,7 @@ class BetaAppServiceApi
      * @return \Zitadel\Client\Model\BetaAppServiceCreateApplicationResponse
      * @throws ApiException
      */
-    public function createApplication(    $betaAppServiceCreateApplicationRequest,string $contentType = self::contentTypes['createApplication'][0])
+    public function createApplication(    $betaAppServiceCreateApplicationRequest = new \stdClass(),string $contentType = self::contentTypes['createApplication'][0])
     {
         $request = $this->createApplicationRequest($betaAppServiceCreateApplicationRequest, $contentType);
 
@@ -581,7 +581,7 @@ class BetaAppServiceApi
     /**
      * Operation createApplicationKey
      *
-     * CreateApplicationKey
+     * Create Application Key
      *
      * @param  \Zitadel\Client\Model\BetaAppServiceCreateApplicationKeyRequest $betaAppServiceCreateApplicationKeyRequest betaAppServiceCreateApplicationKeyRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createApplicationKey'] to see the possible values for this operation
@@ -693,7 +693,7 @@ class BetaAppServiceApi
     /**
      * Operation deactivateApplication
      *
-     * DeactivateApplication
+     * Deactivate Application
      *
      * @param  \Zitadel\Client\Model\BetaAppServiceDeactivateApplicationRequest $betaAppServiceDeactivateApplicationRequest betaAppServiceDeactivateApplicationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deactivateApplication'] to see the possible values for this operation
@@ -805,7 +805,7 @@ class BetaAppServiceApi
     /**
      * Operation deleteApplication
      *
-     * DeleteApplication
+     * Delete Application
      *
      * @param  \Zitadel\Client\Model\BetaAppServiceDeleteApplicationRequest $betaAppServiceDeleteApplicationRequest betaAppServiceDeleteApplicationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteApplication'] to see the possible values for this operation
@@ -917,7 +917,7 @@ class BetaAppServiceApi
     /**
      * Operation deleteApplicationKey
      *
-     * DeleteApplicationKey
+     * Delete Application Key
      *
      * @param  \Zitadel\Client\Model\BetaAppServiceDeleteApplicationKeyRequest $betaAppServiceDeleteApplicationKeyRequest betaAppServiceDeleteApplicationKeyRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteApplicationKey'] to see the possible values for this operation
@@ -1029,7 +1029,7 @@ class BetaAppServiceApi
     /**
      * Operation getApplication
      *
-     * GetApplication
+     * Get Application
      *
      * @param  \Zitadel\Client\Model\BetaAppServiceGetApplicationRequest $betaAppServiceGetApplicationRequest betaAppServiceGetApplicationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getApplication'] to see the possible values for this operation
@@ -1141,7 +1141,7 @@ class BetaAppServiceApi
     /**
      * Operation getApplicationKey
      *
-     * GetApplicationKey
+     * Get Application Key
      *
      * @param  \Zitadel\Client\Model\BetaAppServiceGetApplicationKeyRequest $betaAppServiceGetApplicationKeyRequest betaAppServiceGetApplicationKeyRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getApplicationKey'] to see the possible values for this operation
@@ -1253,7 +1253,7 @@ class BetaAppServiceApi
     /**
      * Operation listApplicationKeys
      *
-     * ListApplicationKeys
+     * List Application Keys
      *
      * @param  \Zitadel\Client\Model\BetaAppServiceListApplicationKeysRequest $betaAppServiceListApplicationKeysRequest betaAppServiceListApplicationKeysRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listApplicationKeys'] to see the possible values for this operation
@@ -1261,7 +1261,7 @@ class BetaAppServiceApi
      * @return \Zitadel\Client\Model\BetaAppServiceListApplicationKeysResponse
      * @throws ApiException
      */
-    public function listApplicationKeys(    $betaAppServiceListApplicationKeysRequest,string $contentType = self::contentTypes['listApplicationKeys'][0])
+    public function listApplicationKeys(    $betaAppServiceListApplicationKeysRequest = new \stdClass(),string $contentType = self::contentTypes['listApplicationKeys'][0])
     {
         $request = $this->listApplicationKeysRequest($betaAppServiceListApplicationKeysRequest, $contentType);
 
@@ -1365,7 +1365,7 @@ class BetaAppServiceApi
     /**
      * Operation listApplications
      *
-     * ListApplications
+     * List Applications
      *
      * @param  \Zitadel\Client\Model\BetaAppServiceListApplicationsRequest $betaAppServiceListApplicationsRequest betaAppServiceListApplicationsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listApplications'] to see the possible values for this operation
@@ -1477,7 +1477,7 @@ class BetaAppServiceApi
     /**
      * Operation reactivateApplication
      *
-     * ReactivateApplication
+     * Reactivate Application
      *
      * @param  \Zitadel\Client\Model\BetaAppServiceReactivateApplicationRequest $betaAppServiceReactivateApplicationRequest betaAppServiceReactivateApplicationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['reactivateApplication'] to see the possible values for this operation
@@ -1589,7 +1589,7 @@ class BetaAppServiceApi
     /**
      * Operation regenerateClientSecret
      *
-     * RegenerateClientSecret
+     * Regenerate Client Secret
      *
      * @param  \Zitadel\Client\Model\BetaAppServiceRegenerateClientSecretRequest $betaAppServiceRegenerateClientSecretRequest betaAppServiceRegenerateClientSecretRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['regenerateClientSecret'] to see the possible values for this operation
@@ -1597,7 +1597,7 @@ class BetaAppServiceApi
      * @return \Zitadel\Client\Model\BetaAppServiceRegenerateClientSecretResponse
      * @throws ApiException
      */
-    public function regenerateClientSecret(    $betaAppServiceRegenerateClientSecretRequest,string $contentType = self::contentTypes['regenerateClientSecret'][0])
+    public function regenerateClientSecret(    $betaAppServiceRegenerateClientSecretRequest = new \stdClass(),string $contentType = self::contentTypes['regenerateClientSecret'][0])
     {
         $request = $this->regenerateClientSecretRequest($betaAppServiceRegenerateClientSecretRequest, $contentType);
 
@@ -1701,7 +1701,7 @@ class BetaAppServiceApi
     /**
      * Operation updateApplication
      *
-     * UpdateApplication
+     * Update Application
      *
      * @param  \Zitadel\Client\Model\BetaAppServiceUpdateApplicationRequest $betaAppServiceUpdateApplicationRequest betaAppServiceUpdateApplicationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['updateApplication'] to see the possible values for this operation
@@ -1709,7 +1709,7 @@ class BetaAppServiceApi
      * @return \Zitadel\Client\Model\BetaAppServiceUpdateApplicationResponse
      * @throws ApiException
      */
-    public function updateApplication(    $betaAppServiceUpdateApplicationRequest,string $contentType = self::contentTypes['updateApplication'][0])
+    public function updateApplication(    $betaAppServiceUpdateApplicationRequest = new \stdClass(),string $contentType = self::contentTypes['updateApplication'][0])
     {
         $request = $this->updateApplicationRequest($betaAppServiceUpdateApplicationRequest, $contentType);
 

@@ -274,9 +274,6 @@ class BetaProjectServiceDeleteProjectRequest implements ModelInterface, ArrayAcc
     {
         $invalidProperties = [];
 
-        if ($this->container['id'] === null) {
-            $invalidProperties[] = "'id' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -295,7 +292,7 @@ class BetaProjectServiceDeleteProjectRequest implements ModelInterface, ArrayAcc
     /**
      * Gets id
      *
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
@@ -305,7 +302,7 @@ class BetaProjectServiceDeleteProjectRequest implements ModelInterface, ArrayAcc
     /**
      * Sets id
      *
-     * @param string $id The unique identifier of the project.
+     * @param string|null $id The unique identifier of the project.
      *
      * @return self
      */

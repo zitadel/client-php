@@ -275,9 +275,6 @@ class UserServiceStateQuery implements ModelInterface, ArrayAccess, \JsonSeriali
     {
         $invalidProperties = [];
 
-        if ($this->container['state'] === null) {
-            $invalidProperties[] = "'state' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -296,7 +293,7 @@ class UserServiceStateQuery implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Gets state
      *
-     * @return \Zitadel\Client\Model\UserServiceUserState
+     * @return \Zitadel\Client\Model\UserServiceUserState|null
      */
     public function getState()
     {
@@ -306,7 +303,7 @@ class UserServiceStateQuery implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Sets state
      *
-     * @param \Zitadel\Client\Model\UserServiceUserState $state state
+     * @param \Zitadel\Client\Model\UserServiceUserState|null $state state
      *
      * @return self
      */

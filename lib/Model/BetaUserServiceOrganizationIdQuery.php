@@ -275,9 +275,6 @@ class BetaUserServiceOrganizationIdQuery implements ModelInterface, ArrayAccess,
     {
         $invalidProperties = [];
 
-        if ($this->container['organizationId'] === null) {
-            $invalidProperties[] = "'organizationId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -296,7 +293,7 @@ class BetaUserServiceOrganizationIdQuery implements ModelInterface, ArrayAccess,
     /**
      * Gets organizationId
      *
-     * @return string
+     * @return string|null
      */
     public function getOrganizationId()
     {
@@ -306,7 +303,7 @@ class BetaUserServiceOrganizationIdQuery implements ModelInterface, ArrayAccess,
     /**
      * Sets organizationId
      *
-     * @param string $organizationId organizationId
+     * @param string|null $organizationId organizationId
      *
      * @return self
      */

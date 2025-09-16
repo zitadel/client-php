@@ -281,12 +281,6 @@ class UserServiceVerifyInviteCodeRequest implements ModelInterface, ArrayAccess,
     {
         $invalidProperties = [];
 
-        if ($this->container['userId'] === null) {
-            $invalidProperties[] = "'userId' can't be null";
-        }
-        if ($this->container['verificationCode'] === null) {
-            $invalidProperties[] = "'verificationCode' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -305,7 +299,7 @@ class UserServiceVerifyInviteCodeRequest implements ModelInterface, ArrayAccess,
     /**
      * Gets userId
      *
-     * @return string
+     * @return string|null
      */
     public function getUserId()
     {
@@ -315,7 +309,7 @@ class UserServiceVerifyInviteCodeRequest implements ModelInterface, ArrayAccess,
     /**
      * Sets userId
      *
-     * @param string $userId userId
+     * @param string|null $userId userId
      *
      * @return self
      */
@@ -332,7 +326,7 @@ class UserServiceVerifyInviteCodeRequest implements ModelInterface, ArrayAccess,
     /**
      * Gets verificationCode
      *
-     * @return string
+     * @return string|null
      */
     public function getVerificationCode()
     {
@@ -342,7 +336,7 @@ class UserServiceVerifyInviteCodeRequest implements ModelInterface, ArrayAccess,
     /**
      * Sets verificationCode
      *
-     * @param string $verificationCode verificationCode
+     * @param string|null $verificationCode verificationCode
      *
      * @return self
      */

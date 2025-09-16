@@ -484,7 +484,7 @@ class BetaProjectServiceApi
     /**
      * Operation activateProject
      *
-     * ActivateProject
+     * Activate Project
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceActivateProjectRequest $betaProjectServiceActivateProjectRequest betaProjectServiceActivateProjectRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['activateProject'] to see the possible values for this operation
@@ -596,7 +596,7 @@ class BetaProjectServiceApi
     /**
      * Operation activateProjectGrant
      *
-     * ActivateProjectGrant
+     * Activate Project Grant
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceActivateProjectGrantRequest $betaProjectServiceActivateProjectGrantRequest betaProjectServiceActivateProjectGrantRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['activateProjectGrant'] to see the possible values for this operation
@@ -708,7 +708,7 @@ class BetaProjectServiceApi
     /**
      * Operation addProjectRole
      *
-     * AddProjectRole
+     * Add Project Role
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceAddProjectRoleRequest $betaProjectServiceAddProjectRoleRequest betaProjectServiceAddProjectRoleRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addProjectRole'] to see the possible values for this operation
@@ -820,7 +820,7 @@ class BetaProjectServiceApi
     /**
      * Operation createProject
      *
-     * CreateProject
+     * Create Project
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceCreateProjectRequest $betaProjectServiceCreateProjectRequest betaProjectServiceCreateProjectRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createProject'] to see the possible values for this operation
@@ -932,7 +932,7 @@ class BetaProjectServiceApi
     /**
      * Operation createProjectGrant
      *
-     * CreateProjectGrant
+     * Create Project Grant
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceCreateProjectGrantRequest $betaProjectServiceCreateProjectGrantRequest betaProjectServiceCreateProjectGrantRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createProjectGrant'] to see the possible values for this operation
@@ -1044,7 +1044,7 @@ class BetaProjectServiceApi
     /**
      * Operation deactivateProject
      *
-     * DeactivateProject
+     * Deactivate Project
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceDeactivateProjectRequest $betaProjectServiceDeactivateProjectRequest betaProjectServiceDeactivateProjectRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deactivateProject'] to see the possible values for this operation
@@ -1156,7 +1156,7 @@ class BetaProjectServiceApi
     /**
      * Operation deactivateProjectGrant
      *
-     * DeactivateProjectGrant
+     * Deactivate Project Grant
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceDeactivateProjectGrantRequest $betaProjectServiceDeactivateProjectGrantRequest betaProjectServiceDeactivateProjectGrantRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deactivateProjectGrant'] to see the possible values for this operation
@@ -1268,7 +1268,7 @@ class BetaProjectServiceApi
     /**
      * Operation deleteProject
      *
-     * DeleteProject
+     * Delete Project
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceDeleteProjectRequest $betaProjectServiceDeleteProjectRequest betaProjectServiceDeleteProjectRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteProject'] to see the possible values for this operation
@@ -1380,7 +1380,7 @@ class BetaProjectServiceApi
     /**
      * Operation deleteProjectGrant
      *
-     * DeleteProjectGrant
+     * Delete Project Grant
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceDeleteProjectGrantRequest $betaProjectServiceDeleteProjectGrantRequest betaProjectServiceDeleteProjectGrantRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteProjectGrant'] to see the possible values for this operation
@@ -1492,7 +1492,7 @@ class BetaProjectServiceApi
     /**
      * Operation getProject
      *
-     * GetProject
+     * Get Project
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceGetProjectRequest $betaProjectServiceGetProjectRequest betaProjectServiceGetProjectRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getProject'] to see the possible values for this operation
@@ -1604,7 +1604,7 @@ class BetaProjectServiceApi
     /**
      * Operation listProjectGrants
      *
-     * ListProjectGrants
+     * List Project Grants
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceListProjectGrantsRequest $betaProjectServiceListProjectGrantsRequest betaProjectServiceListProjectGrantsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listProjectGrants'] to see the possible values for this operation
@@ -1716,7 +1716,7 @@ class BetaProjectServiceApi
     /**
      * Operation listProjectRoles
      *
-     * ListProjectRoles
+     * List Project Roles
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceListProjectRolesRequest $betaProjectServiceListProjectRolesRequest betaProjectServiceListProjectRolesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listProjectRoles'] to see the possible values for this operation
@@ -1828,7 +1828,7 @@ class BetaProjectServiceApi
     /**
      * Operation listProjects
      *
-     * ListProjects
+     * List Projects
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceListProjectsRequest $betaProjectServiceListProjectsRequest betaProjectServiceListProjectsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listProjects'] to see the possible values for this operation
@@ -1940,7 +1940,7 @@ class BetaProjectServiceApi
     /**
      * Operation removeProjectRole
      *
-     * RemoveProjectRole
+     * Remove Project Role
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceRemoveProjectRoleRequest $betaProjectServiceRemoveProjectRoleRequest betaProjectServiceRemoveProjectRoleRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removeProjectRole'] to see the possible values for this operation
@@ -2052,7 +2052,7 @@ class BetaProjectServiceApi
     /**
      * Operation updateProject
      *
-     * UpdateProject
+     * Update Project
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceUpdateProjectRequest $betaProjectServiceUpdateProjectRequest betaProjectServiceUpdateProjectRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['updateProject'] to see the possible values for this operation
@@ -2164,7 +2164,7 @@ class BetaProjectServiceApi
     /**
      * Operation updateProjectGrant
      *
-     * UpdateProjectGrant
+     * Update Project Grant
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceUpdateProjectGrantRequest $betaProjectServiceUpdateProjectGrantRequest betaProjectServiceUpdateProjectGrantRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['updateProjectGrant'] to see the possible values for this operation
@@ -2276,7 +2276,7 @@ class BetaProjectServiceApi
     /**
      * Operation updateProjectRole
      *
-     * UpdateProjectRole
+     * Update Project Role
      *
      * @param  \Zitadel\Client\Model\BetaProjectServiceUpdateProjectRoleRequest $betaProjectServiceUpdateProjectRoleRequest betaProjectServiceUpdateProjectRoleRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['updateProjectRole'] to see the possible values for this operation

@@ -302,12 +302,6 @@ class BetaUserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \Js
     {
         $invalidProperties = [];
 
-        if ($this->container['userId'] === null) {
-            $invalidProperties[] = "'userId' can't be null";
-        }
-        if ($this->container['phone'] === null) {
-            $invalidProperties[] = "'phone' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -326,7 +320,7 @@ class BetaUserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \Js
     /**
      * Gets userId
      *
-     * @return string
+     * @return string|null
      */
     public function getUserId()
     {
@@ -336,7 +330,7 @@ class BetaUserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets userId
      *
-     * @param string $userId userId
+     * @param string|null $userId userId
      *
      * @return self
      */
@@ -353,7 +347,7 @@ class BetaUserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \Js
     /**
      * Gets phone
      *
-     * @return string
+     * @return string|null
      */
     public function getPhone()
     {
@@ -363,7 +357,7 @@ class BetaUserServiceSetPhoneRequest implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets phone
      *
-     * @param string $phone phone
+     * @param string|null $phone phone
      *
      * @return self
      */

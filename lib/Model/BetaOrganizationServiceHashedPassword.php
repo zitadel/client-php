@@ -281,9 +281,6 @@ class BetaOrganizationServiceHashedPassword implements ModelInterface, ArrayAcce
     {
         $invalidProperties = [];
 
-        if ($this->container['hash'] === null) {
-            $invalidProperties[] = "'hash' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -302,7 +299,7 @@ class BetaOrganizationServiceHashedPassword implements ModelInterface, ArrayAcce
     /**
      * Gets hash
      *
-     * @return string
+     * @return string|null
      */
     public function getHash()
     {
@@ -312,7 +309,7 @@ class BetaOrganizationServiceHashedPassword implements ModelInterface, ArrayAcce
     /**
      * Sets hash
      *
-     * @param string $hash hash
+     * @param string|null $hash hash
      *
      * @return self
      */

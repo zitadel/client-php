@@ -281,9 +281,6 @@ class OrganizationServiceOrganizationNameQuery implements ModelInterface, ArrayA
     {
         $invalidProperties = [];
 
-        if ($this->container['name'] === null) {
-            $invalidProperties[] = "'name' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -302,7 +299,7 @@ class OrganizationServiceOrganizationNameQuery implements ModelInterface, ArrayA
     /**
      * Gets name
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -312,7 +309,7 @@ class OrganizationServiceOrganizationNameQuery implements ModelInterface, ArrayA
     /**
      * Sets name
      *
-     * @param string $name Name of the organization.
+     * @param string|null $name Name of the organization.
      *
      * @return self
      */

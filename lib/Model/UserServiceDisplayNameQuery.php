@@ -282,9 +282,6 @@ class UserServiceDisplayNameQuery implements ModelInterface, ArrayAccess, \JsonS
     {
         $invalidProperties = [];
 
-        if ($this->container['displayName'] === null) {
-            $invalidProperties[] = "'displayName' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -303,7 +300,7 @@ class UserServiceDisplayNameQuery implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Gets displayName
      *
-     * @return string
+     * @return string|null
      */
     public function getDisplayName()
     {
@@ -313,7 +310,7 @@ class UserServiceDisplayNameQuery implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Sets displayName
      *
-     * @param string $displayName displayName
+     * @param string|null $displayName displayName
      *
      * @return self
      */

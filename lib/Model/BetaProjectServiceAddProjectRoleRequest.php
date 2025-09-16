@@ -295,15 +295,6 @@ class BetaProjectServiceAddProjectRoleRequest implements ModelInterface, ArrayAc
     {
         $invalidProperties = [];
 
-        if ($this->container['projectId'] === null) {
-            $invalidProperties[] = "'projectId' can't be null";
-        }
-        if ($this->container['roleKey'] === null) {
-            $invalidProperties[] = "'roleKey' can't be null";
-        }
-        if ($this->container['displayName'] === null) {
-            $invalidProperties[] = "'displayName' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -322,7 +313,7 @@ class BetaProjectServiceAddProjectRoleRequest implements ModelInterface, ArrayAc
     /**
      * Gets projectId
      *
-     * @return string
+     * @return string|null
      */
     public function getProjectId()
     {
@@ -332,7 +323,7 @@ class BetaProjectServiceAddProjectRoleRequest implements ModelInterface, ArrayAc
     /**
      * Sets projectId
      *
-     * @param string $projectId ID of the project.
+     * @param string|null $projectId ID of the project.
      *
      * @return self
      */
@@ -349,7 +340,7 @@ class BetaProjectServiceAddProjectRoleRequest implements ModelInterface, ArrayAc
     /**
      * Gets roleKey
      *
-     * @return string
+     * @return string|null
      */
     public function getRoleKey()
     {
@@ -359,7 +350,7 @@ class BetaProjectServiceAddProjectRoleRequest implements ModelInterface, ArrayAc
     /**
      * Sets roleKey
      *
-     * @param string $roleKey The key is the only relevant attribute for ZITADEL regarding the authorization checks.
+     * @param string|null $roleKey The key is the only relevant attribute for ZITADEL regarding the authorization checks.
      *
      * @return self
      */
@@ -376,7 +367,7 @@ class BetaProjectServiceAddProjectRoleRequest implements ModelInterface, ArrayAc
     /**
      * Gets displayName
      *
-     * @return string
+     * @return string|null
      */
     public function getDisplayName()
     {
@@ -386,7 +377,7 @@ class BetaProjectServiceAddProjectRoleRequest implements ModelInterface, ArrayAc
     /**
      * Sets displayName
      *
-     * @param string $displayName Name displayed for the role.
+     * @param string|null $displayName Name displayed for the role.
      *
      * @return self
      */

@@ -469,7 +469,7 @@ class FeatureServiceApi
     /**
      * Operation getInstanceFeatures
      *
-     * GetInstanceFeatures
+     * Get Instance Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceGetInstanceFeaturesRequest $featureServiceGetInstanceFeaturesRequest featureServiceGetInstanceFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getInstanceFeatures'] to see the possible values for this operation
@@ -581,7 +581,7 @@ class FeatureServiceApi
     /**
      * Operation getOrganizationFeatures
      *
-     * GetOrganizationFeatures
+     * Get Organization Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceGetOrganizationFeaturesRequest $featureServiceGetOrganizationFeaturesRequest featureServiceGetOrganizationFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOrganizationFeatures'] to see the possible values for this operation
@@ -693,7 +693,7 @@ class FeatureServiceApi
     /**
      * Operation getSystemFeatures
      *
-     * GetSystemFeatures
+     * Get System Features
      *
      * @param  object $body body (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSystemFeatures'] to see the possible values for this operation
@@ -805,7 +805,7 @@ class FeatureServiceApi
     /**
      * Operation getUserFeatures
      *
-     * GetUserFeatures
+     * Get User Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceGetUserFeaturesRequest $featureServiceGetUserFeaturesRequest featureServiceGetUserFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserFeatures'] to see the possible values for this operation
@@ -917,7 +917,7 @@ class FeatureServiceApi
     /**
      * Operation resetInstanceFeatures
      *
-     * ResetInstanceFeatures
+     * Reset Instance Features
      *
      * @param  object $body body (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetInstanceFeatures'] to see the possible values for this operation
@@ -1029,7 +1029,7 @@ class FeatureServiceApi
     /**
      * Operation resetOrganizationFeatures
      *
-     * ResetOrganizationFeatures
+     * Reset Organization Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceResetOrganizationFeaturesRequest $featureServiceResetOrganizationFeaturesRequest featureServiceResetOrganizationFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetOrganizationFeatures'] to see the possible values for this operation
@@ -1141,7 +1141,7 @@ class FeatureServiceApi
     /**
      * Operation resetSystemFeatures
      *
-     * ResetSystemFeatures
+     * Reset System Features
      *
      * @param  object $body body (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetSystemFeatures'] to see the possible values for this operation
@@ -1253,7 +1253,7 @@ class FeatureServiceApi
     /**
      * Operation resetUserFeatures
      *
-     * ResetUserFeatures
+     * Reset User Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceResetUserFeaturesRequest $featureServiceResetUserFeaturesRequest featureServiceResetUserFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resetUserFeatures'] to see the possible values for this operation
@@ -1365,7 +1365,7 @@ class FeatureServiceApi
     /**
      * Operation setInstanceFeatures
      *
-     * SetInstanceFeatures
+     * Set Instance Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest featureServiceSetInstanceFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setInstanceFeatures'] to see the possible values for this operation
@@ -1477,7 +1477,7 @@ class FeatureServiceApi
     /**
      * Operation setOrganizationFeatures
      *
-     * SetOrganizationFeatures
+     * Set Organization Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetOrganizationFeaturesRequest $featureServiceSetOrganizationFeaturesRequest featureServiceSetOrganizationFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setOrganizationFeatures'] to see the possible values for this operation
@@ -1589,7 +1589,7 @@ class FeatureServiceApi
     /**
      * Operation setSystemFeatures
      *
-     * SetSystemFeatures
+     * Set System Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest featureServiceSetSystemFeaturesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSystemFeatures'] to see the possible values for this operation
@@ -1701,7 +1701,7 @@ class FeatureServiceApi
     /**
      * Operation setUserFeatures
      *
-     * SetUserFeatures
+     * Set User Features
      *
      * @param  \Zitadel\Client\Model\FeatureServiceSetUserFeatureRequest $featureServiceSetUserFeatureRequest featureServiceSetUserFeatureRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setUserFeatures'] to see the possible values for this operation

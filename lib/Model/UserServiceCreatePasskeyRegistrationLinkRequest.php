@@ -288,9 +288,6 @@ class UserServiceCreatePasskeyRegistrationLinkRequest implements ModelInterface,
     {
         $invalidProperties = [];
 
-        if ($this->container['userId'] === null) {
-            $invalidProperties[] = "'userId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -309,7 +306,7 @@ class UserServiceCreatePasskeyRegistrationLinkRequest implements ModelInterface,
     /**
      * Gets userId
      *
-     * @return string
+     * @return string|null
      */
     public function getUserId()
     {
@@ -319,7 +316,7 @@ class UserServiceCreatePasskeyRegistrationLinkRequest implements ModelInterface,
     /**
      * Sets userId
      *
-     * @param string $userId userId
+     * @param string|null $userId userId
      *
      * @return self
      */

@@ -63,7 +63,8 @@ class BetaProjectServiceCreateProjectRequest implements ModelInterface, ArrayAcc
         'projectRoleAssertion' => 'bool',
         'authorizationRequired' => 'bool',
         'projectAccessRequired' => 'bool',
-        'privateLabelingSetting' => '\Zitadel\Client\Model\BetaProjectServicePrivateLabelingSetting'
+        'privateLabelingSetting' => '\Zitadel\Client\Model\BetaProjectServicePrivateLabelingSetting',
+        'admins' => '\Zitadel\Client\Model\BetaProjectServiceAdmin[]'
     ];
 
     /**
@@ -80,7 +81,8 @@ class BetaProjectServiceCreateProjectRequest implements ModelInterface, ArrayAcc
         'projectRoleAssertion' => null,
         'authorizationRequired' => null,
         'projectAccessRequired' => null,
-        'privateLabelingSetting' => null
+        'privateLabelingSetting' => null,
+        'admins' => null
     ];
 
     /**
@@ -95,7 +97,8 @@ class BetaProjectServiceCreateProjectRequest implements ModelInterface, ArrayAcc
         'projectRoleAssertion' => false,
         'authorizationRequired' => false,
         'projectAccessRequired' => false,
-        'privateLabelingSetting' => false
+        'privateLabelingSetting' => false,
+        'admins' => false
     ];
 
     /**
@@ -190,7 +193,8 @@ class BetaProjectServiceCreateProjectRequest implements ModelInterface, ArrayAcc
         'projectRoleAssertion' => 'projectRoleAssertion',
         'authorizationRequired' => 'authorizationRequired',
         'projectAccessRequired' => 'projectAccessRequired',
-        'privateLabelingSetting' => 'privateLabelingSetting'
+        'privateLabelingSetting' => 'privateLabelingSetting',
+        'admins' => 'admins'
     ];
 
     /**
@@ -205,7 +209,8 @@ class BetaProjectServiceCreateProjectRequest implements ModelInterface, ArrayAcc
         'projectRoleAssertion' => 'setProjectRoleAssertion',
         'authorizationRequired' => 'setAuthorizationRequired',
         'projectAccessRequired' => 'setProjectAccessRequired',
-        'privateLabelingSetting' => 'setPrivateLabelingSetting'
+        'privateLabelingSetting' => 'setPrivateLabelingSetting',
+        'admins' => 'setAdmins'
     ];
 
     /**
@@ -220,7 +225,8 @@ class BetaProjectServiceCreateProjectRequest implements ModelInterface, ArrayAcc
         'projectRoleAssertion' => 'getProjectRoleAssertion',
         'authorizationRequired' => 'getAuthorizationRequired',
         'projectAccessRequired' => 'getProjectAccessRequired',
-        'privateLabelingSetting' => 'getPrivateLabelingSetting'
+        'privateLabelingSetting' => 'getPrivateLabelingSetting',
+        'admins' => 'getAdmins'
     ];
 
     /**
@@ -287,6 +293,7 @@ class BetaProjectServiceCreateProjectRequest implements ModelInterface, ArrayAcc
         $this->setIfExists('authorizationRequired', $data ?? [], null);
         $this->setIfExists('projectAccessRequired', $data ?? [], null);
         $this->setIfExists('privateLabelingSetting', $data ?? [], null);
+        $this->setIfExists('admins', $data ?? [], null);
     }
 
     /**
@@ -316,9 +323,6 @@ class BetaProjectServiceCreateProjectRequest implements ModelInterface, ArrayAcc
     {
         $invalidProperties = [];
 
-        if ($this->container['name'] === null) {
-            $invalidProperties[] = "'name' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -398,7 +402,7 @@ class BetaProjectServiceCreateProjectRequest implements ModelInterface, ArrayAcc
     /**
      * Gets name
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -408,7 +412,7 @@ class BetaProjectServiceCreateProjectRequest implements ModelInterface, ArrayAcc
     /**
      * Sets name
      *
-     * @param string $name Name of the project.
+     * @param string|null $name Name of the project.
      *
      * @return self
      */
@@ -526,6 +530,33 @@ class BetaProjectServiceCreateProjectRequest implements ModelInterface, ArrayAcc
             throw new \InvalidArgumentException('non-nullable privateLabelingSetting cannot be null');
         }
         $this->container['privateLabelingSetting'] = $privateLabelingSetting;
+
+        return $this;
+    }
+
+    /**
+     * Gets admins
+     *
+     * @return \Zitadel\Client\Model\BetaProjectServiceAdmin[]|null
+     */
+    public function getAdmins()
+    {
+        return $this->container['admins'];
+    }
+
+    /**
+     * Sets admins
+     *
+     * @param \Zitadel\Client\Model\BetaProjectServiceAdmin[]|null $admins List of users and Project Member roles (PROJECT_OWNER, by default) to be assigned to those users.
+     *
+     * @return self
+     */
+    public function setAdmins($admins)
+    {
+        if (is_null($admins)) {
+            throw new \InvalidArgumentException('non-nullable admins cannot be null');
+        }
+        $this->container['admins'] = $admins;
 
         return $this;
     }

@@ -445,7 +445,7 @@ class BetaWebKeyServiceApi
     /**
      * Operation activateWebKey
      *
-     * ActivateWebKey
+     * Activate Web Key
      *
      * @param  \Zitadel\Client\Model\BetaWebKeyServiceActivateWebKeyRequest $betaWebKeyServiceActivateWebKeyRequest betaWebKeyServiceActivateWebKeyRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['activateWebKey'] to see the possible values for this operation
@@ -557,7 +557,7 @@ class BetaWebKeyServiceApi
     /**
      * Operation createWebKey
      *
-     * CreateWebKey
+     * Create Web Key
      *
      * @param  \Zitadel\Client\Model\BetaWebKeyServiceCreateWebKeyRequest $betaWebKeyServiceCreateWebKeyRequest betaWebKeyServiceCreateWebKeyRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createWebKey'] to see the possible values for this operation
@@ -669,7 +669,7 @@ class BetaWebKeyServiceApi
     /**
      * Operation deleteWebKey
      *
-     * DeleteWebKey
+     * Delete Web Key
      *
      * @param  \Zitadel\Client\Model\BetaWebKeyServiceDeleteWebKeyRequest $betaWebKeyServiceDeleteWebKeyRequest betaWebKeyServiceDeleteWebKeyRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteWebKey'] to see the possible values for this operation
@@ -781,7 +781,7 @@ class BetaWebKeyServiceApi
     /**
      * Operation listWebKeys
      *
-     * ListWebKeys
+     * List Web Keys
      *
      * @param  object $body body (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listWebKeys'] to see the possible values for this operation

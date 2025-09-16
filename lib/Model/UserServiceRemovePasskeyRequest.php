@@ -281,12 +281,6 @@ class UserServiceRemovePasskeyRequest implements ModelInterface, ArrayAccess, \J
     {
         $invalidProperties = [];
 
-        if ($this->container['userId'] === null) {
-            $invalidProperties[] = "'userId' can't be null";
-        }
-        if ($this->container['passkeyId'] === null) {
-            $invalidProperties[] = "'passkeyId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -305,7 +299,7 @@ class UserServiceRemovePasskeyRequest implements ModelInterface, ArrayAccess, \J
     /**
      * Gets userId
      *
-     * @return string
+     * @return string|null
      */
     public function getUserId()
     {
@@ -315,7 +309,7 @@ class UserServiceRemovePasskeyRequest implements ModelInterface, ArrayAccess, \J
     /**
      * Sets userId
      *
-     * @param string $userId userId
+     * @param string|null $userId userId
      *
      * @return self
      */
@@ -332,7 +326,7 @@ class UserServiceRemovePasskeyRequest implements ModelInterface, ArrayAccess, \J
     /**
      * Gets passkeyId
      *
-     * @return string
+     * @return string|null
      */
     public function getPasskeyId()
     {
@@ -342,7 +336,7 @@ class UserServiceRemovePasskeyRequest implements ModelInterface, ArrayAccess, \J
     /**
      * Sets passkeyId
      *
-     * @param string $passkeyId passkeyId
+     * @param string|null $passkeyId passkeyId
      *
      * @return self
      */

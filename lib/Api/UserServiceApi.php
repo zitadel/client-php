@@ -607,7 +607,7 @@ class UserServiceApi
     /**
      * Operation addHumanUser
      *
-     * AddHumanUser
+     * Create a new human user
      *
      * @param  \Zitadel\Client\Model\UserServiceAddHumanUserRequest $userServiceAddHumanUserRequest userServiceAddHumanUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addHumanUser'] to see the possible values for this operation
@@ -615,7 +615,7 @@ class UserServiceApi
      * @return \Zitadel\Client\Model\UserServiceAddHumanUserResponse
      * @throws ApiException
      */
-    public function addHumanUser(    $userServiceAddHumanUserRequest,string $contentType = self::contentTypes['addHumanUser'][0])
+    public function addHumanUser(    $userServiceAddHumanUserRequest = new \stdClass(),string $contentType = self::contentTypes['addHumanUser'][0])
     {
         $request = $this->addHumanUserRequest($userServiceAddHumanUserRequest, $contentType);
 
@@ -719,7 +719,7 @@ class UserServiceApi
     /**
      * Operation addIDPLink
      *
-     * AddIDPLink
+     * Add link to an identity provider to an user
      *
      * @param  \Zitadel\Client\Model\UserServiceAddIDPLinkRequest $userServiceAddIDPLinkRequest userServiceAddIDPLinkRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addIDPLink'] to see the possible values for this operation
@@ -831,7 +831,7 @@ class UserServiceApi
     /**
      * Operation addKey
      *
-     * AddKey
+     * Add a Key
      *
      * @param  \Zitadel\Client\Model\UserServiceAddKeyRequest $userServiceAddKeyRequest userServiceAddKeyRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addKey'] to see the possible values for this operation
@@ -943,7 +943,7 @@ class UserServiceApi
     /**
      * Operation addOTPEmail
      *
-     * AddOTPEmail
+     * Add OTP Email for a user
      *
      * @param  \Zitadel\Client\Model\UserServiceAddOTPEmailRequest $userServiceAddOTPEmailRequest userServiceAddOTPEmailRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOTPEmail'] to see the possible values for this operation
@@ -1055,7 +1055,7 @@ class UserServiceApi
     /**
      * Operation addOTPSMS
      *
-     * AddOTPSMS
+     * Add OTP SMS for a user
      *
      * @param  \Zitadel\Client\Model\UserServiceAddOTPSMSRequest $userServiceAddOTPSMSRequest userServiceAddOTPSMSRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOTPSMS'] to see the possible values for this operation
@@ -1167,7 +1167,7 @@ class UserServiceApi
     /**
      * Operation addPersonalAccessToken
      *
-     * AddPersonalAccessToken
+     * Add a Personal Access Token
      *
      * @param  \Zitadel\Client\Model\UserServiceAddPersonalAccessTokenRequest $userServiceAddPersonalAccessTokenRequest userServiceAddPersonalAccessTokenRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addPersonalAccessToken'] to see the possible values for this operation
@@ -1279,7 +1279,7 @@ class UserServiceApi
     /**
      * Operation addSecret
      *
-     * AddSecret
+     * Add a Users Secret
      *
      * @param  \Zitadel\Client\Model\UserServiceAddSecretRequest $userServiceAddSecretRequest userServiceAddSecretRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addSecret'] to see the possible values for this operation
@@ -1391,7 +1391,7 @@ class UserServiceApi
     /**
      * Operation createInviteCode
      *
-     * CreateInviteCode
+     * Create an invite code for a user
      *
      * @param  \Zitadel\Client\Model\UserServiceCreateInviteCodeRequest $userServiceCreateInviteCodeRequest userServiceCreateInviteCodeRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createInviteCode'] to see the possible values for this operation
@@ -1399,7 +1399,7 @@ class UserServiceApi
      * @return \Zitadel\Client\Model\UserServiceCreateInviteCodeResponse
      * @throws ApiException
      */
-    public function createInviteCode(    $userServiceCreateInviteCodeRequest,string $contentType = self::contentTypes['createInviteCode'][0])
+    public function createInviteCode(    $userServiceCreateInviteCodeRequest = new \stdClass(),string $contentType = self::contentTypes['createInviteCode'][0])
     {
         $request = $this->createInviteCodeRequest($userServiceCreateInviteCodeRequest, $contentType);
 
@@ -1503,7 +1503,7 @@ class UserServiceApi
     /**
      * Operation createPasskeyRegistrationLink
      *
-     * CreatePasskeyRegistrationLink
+     * Create a passkey registration link for a user
      *
      * @param  \Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkRequest $userServiceCreatePasskeyRegistrationLinkRequest userServiceCreatePasskeyRegistrationLinkRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createPasskeyRegistrationLink'] to see the possible values for this operation
@@ -1511,7 +1511,7 @@ class UserServiceApi
      * @return \Zitadel\Client\Model\UserServiceCreatePasskeyRegistrationLinkResponse
      * @throws ApiException
      */
-    public function createPasskeyRegistrationLink(    $userServiceCreatePasskeyRegistrationLinkRequest,string $contentType = self::contentTypes['createPasskeyRegistrationLink'][0])
+    public function createPasskeyRegistrationLink(    $userServiceCreatePasskeyRegistrationLinkRequest = new \stdClass(),string $contentType = self::contentTypes['createPasskeyRegistrationLink'][0])
     {
         $request = $this->createPasskeyRegistrationLinkRequest($userServiceCreatePasskeyRegistrationLinkRequest, $contentType);
 
@@ -1615,7 +1615,7 @@ class UserServiceApi
     /**
      * Operation createUser
      *
-     * CreateUser
+     * Create a User
      *
      * @param  \Zitadel\Client\Model\UserServiceCreateUserRequest $userServiceCreateUserRequest userServiceCreateUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createUser'] to see the possible values for this operation
@@ -1623,7 +1623,7 @@ class UserServiceApi
      * @return \Zitadel\Client\Model\UserServiceCreateUserResponse
      * @throws ApiException
      */
-    public function createUser(    $userServiceCreateUserRequest,string $contentType = self::contentTypes['createUser'][0])
+    public function createUser(    $userServiceCreateUserRequest = new \stdClass(),string $contentType = self::contentTypes['createUser'][0])
     {
         $request = $this->createUserRequest($userServiceCreateUserRequest, $contentType);
 
@@ -1727,7 +1727,7 @@ class UserServiceApi
     /**
      * Operation deactivateUser
      *
-     * DeactivateUser
+     * Deactivate user
      *
      * @param  \Zitadel\Client\Model\UserServiceDeactivateUserRequest $userServiceDeactivateUserRequest userServiceDeactivateUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deactivateUser'] to see the possible values for this operation
@@ -1839,7 +1839,7 @@ class UserServiceApi
     /**
      * Operation deleteUser
      *
-     * DeleteUser
+     * Delete user
      *
      * @param  \Zitadel\Client\Model\UserServiceDeleteUserRequest $userServiceDeleteUserRequest userServiceDeleteUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteUser'] to see the possible values for this operation
@@ -1951,7 +1951,7 @@ class UserServiceApi
     /**
      * Operation deleteUserMetadata
      *
-     * DeleteUserMetadata
+     * Delete User Metadata
      *
      * @param  \Zitadel\Client\Model\UserServiceDeleteUserMetadataRequest $userServiceDeleteUserMetadataRequest userServiceDeleteUserMetadataRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteUserMetadata'] to see the possible values for this operation
@@ -2063,7 +2063,7 @@ class UserServiceApi
     /**
      * Operation getUserByID
      *
-     * GetUserByID
+     * User by ID
      *
      * @param  \Zitadel\Client\Model\UserServiceGetUserByIDRequest $userServiceGetUserByIDRequest userServiceGetUserByIDRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserByID'] to see the possible values for this operation
@@ -2175,7 +2175,7 @@ class UserServiceApi
     /**
      * Operation humanMFAInitSkipped
      *
-     * HumanMFAInitSkipped
+     * MFA Init Skipped
      *
      * @param  \Zitadel\Client\Model\UserServiceHumanMFAInitSkippedRequest $userServiceHumanMFAInitSkippedRequest userServiceHumanMFAInitSkippedRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['humanMFAInitSkipped'] to see the possible values for this operation
@@ -2399,7 +2399,7 @@ class UserServiceApi
     /**
      * Operation listAuthenticationMethodTypes
      *
-     * ListAuthenticationMethodTypes
+     * List all possible authentication methods of a user
      *
      * @param  \Zitadel\Client\Model\UserServiceListAuthenticationMethodTypesRequest $userServiceListAuthenticationMethodTypesRequest userServiceListAuthenticationMethodTypesRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listAuthenticationMethodTypes'] to see the possible values for this operation
@@ -2511,7 +2511,7 @@ class UserServiceApi
     /**
      * Operation listIDPLinks
      *
-     * ListIDPLinks
+     * List links to an identity provider of an user
      *
      * @param  \Zitadel\Client\Model\UserServiceListIDPLinksRequest $userServiceListIDPLinksRequest userServiceListIDPLinksRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listIDPLinks'] to see the possible values for this operation
@@ -2623,7 +2623,7 @@ class UserServiceApi
     /**
      * Operation listKeys
      *
-     * ListKeys
+     * Search Keys
      *
      * @param  \Zitadel\Client\Model\UserServiceListKeysRequest $userServiceListKeysRequest userServiceListKeysRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listKeys'] to see the possible values for this operation
@@ -2735,7 +2735,7 @@ class UserServiceApi
     /**
      * Operation listPasskeys
      *
-     * ListPasskeys
+     * List passkeys of an user
      *
      * @param  \Zitadel\Client\Model\UserServiceListPasskeysRequest $userServiceListPasskeysRequest userServiceListPasskeysRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listPasskeys'] to see the possible values for this operation
@@ -2847,7 +2847,7 @@ class UserServiceApi
     /**
      * Operation listPersonalAccessTokens
      *
-     * ListPersonalAccessTokens
+     * Search Personal Access Tokens
      *
      * @param  \Zitadel\Client\Model\UserServiceListPersonalAccessTokensRequest $userServiceListPersonalAccessTokensRequest userServiceListPersonalAccessTokensRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listPersonalAccessTokens'] to see the possible values for this operation
@@ -2959,7 +2959,7 @@ class UserServiceApi
     /**
      * Operation listUserMetadata
      *
-     * ListUserMetadata
+     * List User Metadata
      *
      * @param  \Zitadel\Client\Model\UserServiceListUserMetadataRequest $userServiceListUserMetadataRequest userServiceListUserMetadataRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listUserMetadata'] to see the possible values for this operation
@@ -3071,7 +3071,7 @@ class UserServiceApi
     /**
      * Operation listUsers
      *
-     * ListUsers
+     * Search Users
      *
      * @param  \Zitadel\Client\Model\UserServiceListUsersRequest $userServiceListUsersRequest userServiceListUsersRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listUsers'] to see the possible values for this operation
@@ -3183,7 +3183,7 @@ class UserServiceApi
     /**
      * Operation lockUser
      *
-     * LockUser
+     * Lock user
      *
      * @param  \Zitadel\Client\Model\UserServiceLockUserRequest $userServiceLockUserRequest userServiceLockUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['lockUser'] to see the possible values for this operation
@@ -3295,7 +3295,7 @@ class UserServiceApi
     /**
      * Operation passwordReset
      *
-     * PasswordReset
+     * Request a code to reset a password
      *
      * @param  \Zitadel\Client\Model\UserServicePasswordResetRequest $userServicePasswordResetRequest userServicePasswordResetRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['passwordReset'] to see the possible values for this operation
@@ -3303,7 +3303,7 @@ class UserServiceApi
      * @return \Zitadel\Client\Model\UserServicePasswordResetResponse
      * @throws ApiException
      */
-    public function passwordReset(    $userServicePasswordResetRequest,string $contentType = self::contentTypes['passwordReset'][0])
+    public function passwordReset(    $userServicePasswordResetRequest = new \stdClass(),string $contentType = self::contentTypes['passwordReset'][0])
     {
         $request = $this->passwordResetRequest($userServicePasswordResetRequest, $contentType);
 
@@ -3407,7 +3407,7 @@ class UserServiceApi
     /**
      * Operation reactivateUser
      *
-     * ReactivateUser
+     * Reactivate user
      *
      * @param  \Zitadel\Client\Model\UserServiceReactivateUserRequest $userServiceReactivateUserRequest userServiceReactivateUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['reactivateUser'] to see the possible values for this operation
@@ -3519,7 +3519,7 @@ class UserServiceApi
     /**
      * Operation registerPasskey
      *
-     * RegisterPasskey
+     * Start the registration of passkey for a user
      *
      * @param  \Zitadel\Client\Model\UserServiceRegisterPasskeyRequest $userServiceRegisterPasskeyRequest userServiceRegisterPasskeyRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['registerPasskey'] to see the possible values for this operation
@@ -3631,7 +3631,7 @@ class UserServiceApi
     /**
      * Operation registerTOTP
      *
-     * RegisterTOTP
+     * Start the registration of a TOTP generator for a user
      *
      * @param  \Zitadel\Client\Model\UserServiceRegisterTOTPRequest $userServiceRegisterTOTPRequest userServiceRegisterTOTPRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['registerTOTP'] to see the possible values for this operation
@@ -3743,7 +3743,7 @@ class UserServiceApi
     /**
      * Operation registerU2F
      *
-     * RegisterU2F
+     * Start the registration of a u2f token for a user
      *
      * @param  \Zitadel\Client\Model\UserServiceRegisterU2FRequest $userServiceRegisterU2FRequest userServiceRegisterU2FRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['registerU2F'] to see the possible values for this operation
@@ -3855,7 +3855,7 @@ class UserServiceApi
     /**
      * Operation removeIDPLink
      *
-     * RemoveIDPLink
+     * Remove link of an identity provider to an user
      *
      * @param  \Zitadel\Client\Model\UserServiceRemoveIDPLinkRequest $userServiceRemoveIDPLinkRequest userServiceRemoveIDPLinkRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removeIDPLink'] to see the possible values for this operation
@@ -3967,7 +3967,7 @@ class UserServiceApi
     /**
      * Operation removeKey
      *
-     * RemoveKey
+     * Remove a Key
      *
      * @param  \Zitadel\Client\Model\UserServiceRemoveKeyRequest $userServiceRemoveKeyRequest userServiceRemoveKeyRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removeKey'] to see the possible values for this operation
@@ -4079,7 +4079,7 @@ class UserServiceApi
     /**
      * Operation removeOTPEmail
      *
-     * RemoveOTPEmail
+     * Remove One-Time Password (OTP) Email from a user
      *
      * @param  \Zitadel\Client\Model\UserServiceRemoveOTPEmailRequest $userServiceRemoveOTPEmailRequest userServiceRemoveOTPEmailRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removeOTPEmail'] to see the possible values for this operation
@@ -4191,7 +4191,7 @@ class UserServiceApi
     /**
      * Operation removeOTPSMS
      *
-     * RemoveOTPSMS
+     * Remove One-Time Password (OTP) SMS from a user
      *
      * @param  \Zitadel\Client\Model\UserServiceRemoveOTPSMSRequest $userServiceRemoveOTPSMSRequest userServiceRemoveOTPSMSRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removeOTPSMS'] to see the possible values for this operation
@@ -4303,7 +4303,7 @@ class UserServiceApi
     /**
      * Operation removePasskey
      *
-     * RemovePasskey
+     * Remove passkey from a user
      *
      * @param  \Zitadel\Client\Model\UserServiceRemovePasskeyRequest $userServiceRemovePasskeyRequest userServiceRemovePasskeyRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removePasskey'] to see the possible values for this operation
@@ -4415,7 +4415,7 @@ class UserServiceApi
     /**
      * Operation removePersonalAccessToken
      *
-     * RemovePersonalAccessToken
+     * Remove a Personal Access Token
      *
      * @param  \Zitadel\Client\Model\UserServiceRemovePersonalAccessTokenRequest $userServiceRemovePersonalAccessTokenRequest userServiceRemovePersonalAccessTokenRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removePersonalAccessToken'] to see the possible values for this operation
@@ -4527,7 +4527,7 @@ class UserServiceApi
     /**
      * Operation removePhone
      *
-     * RemovePhone
+     * Delete the user phone
      *
      * @param  \Zitadel\Client\Model\UserServiceRemovePhoneRequest $userServiceRemovePhoneRequest userServiceRemovePhoneRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removePhone'] to see the possible values for this operation
@@ -4639,7 +4639,7 @@ class UserServiceApi
     /**
      * Operation removeSecret
      *
-     * RemoveSecret
+     * Remove a Users Secret
      *
      * @param  \Zitadel\Client\Model\UserServiceRemoveSecretRequest $userServiceRemoveSecretRequest userServiceRemoveSecretRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removeSecret'] to see the possible values for this operation
@@ -4751,7 +4751,7 @@ class UserServiceApi
     /**
      * Operation removeTOTP
      *
-     * RemoveTOTP
+     * Remove TOTP generator from a user
      *
      * @param  \Zitadel\Client\Model\UserServiceRemoveTOTPRequest $userServiceRemoveTOTPRequest userServiceRemoveTOTPRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removeTOTP'] to see the possible values for this operation
@@ -4863,7 +4863,7 @@ class UserServiceApi
     /**
      * Operation removeU2F
      *
-     * RemoveU2F
+     * Remove u2f token from a user
      *
      * @param  \Zitadel\Client\Model\UserServiceRemoveU2FRequest $userServiceRemoveU2FRequest userServiceRemoveU2FRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removeU2F'] to see the possible values for this operation
@@ -4975,7 +4975,7 @@ class UserServiceApi
     /**
      * Operation resendEmailCode
      *
-     * ResendEmailCode
+     * Resend code to verify user email
      *
      * @param  \Zitadel\Client\Model\UserServiceResendEmailCodeRequest $userServiceResendEmailCodeRequest userServiceResendEmailCodeRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resendEmailCode'] to see the possible values for this operation
@@ -4983,7 +4983,7 @@ class UserServiceApi
      * @return \Zitadel\Client\Model\UserServiceResendEmailCodeResponse
      * @throws ApiException
      */
-    public function resendEmailCode(    $userServiceResendEmailCodeRequest,string $contentType = self::contentTypes['resendEmailCode'][0])
+    public function resendEmailCode(    $userServiceResendEmailCodeRequest = new \stdClass(),string $contentType = self::contentTypes['resendEmailCode'][0])
     {
         $request = $this->resendEmailCodeRequest($userServiceResendEmailCodeRequest, $contentType);
 
@@ -5087,7 +5087,7 @@ class UserServiceApi
     /**
      * Operation resendInviteCode
      *
-     * ResendInviteCode
+     * Resend an invite code for a user
      *
      * @param  \Zitadel\Client\Model\UserServiceResendInviteCodeRequest $userServiceResendInviteCodeRequest userServiceResendInviteCodeRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resendInviteCode'] to see the possible values for this operation
@@ -5199,7 +5199,7 @@ class UserServiceApi
     /**
      * Operation resendPhoneCode
      *
-     * ResendPhoneCode
+     * Resend code to verify user phone number
      *
      * @param  \Zitadel\Client\Model\UserServiceResendPhoneCodeRequest $userServiceResendPhoneCodeRequest userServiceResendPhoneCodeRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['resendPhoneCode'] to see the possible values for this operation
@@ -5207,7 +5207,7 @@ class UserServiceApi
      * @return \Zitadel\Client\Model\UserServiceResendPhoneCodeResponse
      * @throws ApiException
      */
-    public function resendPhoneCode(    $userServiceResendPhoneCodeRequest,string $contentType = self::contentTypes['resendPhoneCode'][0])
+    public function resendPhoneCode(    $userServiceResendPhoneCodeRequest = new \stdClass(),string $contentType = self::contentTypes['resendPhoneCode'][0])
     {
         $request = $this->resendPhoneCodeRequest($userServiceResendPhoneCodeRequest, $contentType);
 
@@ -5311,7 +5311,7 @@ class UserServiceApi
     /**
      * Operation retrieveIdentityProviderIntent
      *
-     * RetrieveIdentityProviderIntent
+     * Retrieve the information returned by the identity provider
      *
      * @param  \Zitadel\Client\Model\UserServiceRetrieveIdentityProviderIntentRequest $userServiceRetrieveIdentityProviderIntentRequest userServiceRetrieveIdentityProviderIntentRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['retrieveIdentityProviderIntent'] to see the possible values for this operation
@@ -5423,7 +5423,7 @@ class UserServiceApi
     /**
      * Operation sendEmailCode
      *
-     * SendEmailCode
+     * Send code to verify user email
      *
      * @param  \Zitadel\Client\Model\UserServiceSendEmailCodeRequest $userServiceSendEmailCodeRequest userServiceSendEmailCodeRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendEmailCode'] to see the possible values for this operation
@@ -5431,7 +5431,7 @@ class UserServiceApi
      * @return \Zitadel\Client\Model\UserServiceSendEmailCodeResponse
      * @throws ApiException
      */
-    public function sendEmailCode(    $userServiceSendEmailCodeRequest,string $contentType = self::contentTypes['sendEmailCode'][0])
+    public function sendEmailCode(    $userServiceSendEmailCodeRequest = new \stdClass(),string $contentType = self::contentTypes['sendEmailCode'][0])
     {
         $request = $this->sendEmailCodeRequest($userServiceSendEmailCodeRequest, $contentType);
 
@@ -5535,7 +5535,7 @@ class UserServiceApi
     /**
      * Operation setEmail
      *
-     * SetEmail
+     * Change the user email
      *
      * @param  \Zitadel\Client\Model\UserServiceSetEmailRequest $userServiceSetEmailRequest userServiceSetEmailRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setEmail'] to see the possible values for this operation
@@ -5543,7 +5543,7 @@ class UserServiceApi
      * @return \Zitadel\Client\Model\UserServiceSetEmailResponse
      * @throws ApiException
      */
-    public function setEmail(    $userServiceSetEmailRequest,string $contentType = self::contentTypes['setEmail'][0])
+    public function setEmail(    $userServiceSetEmailRequest = new \stdClass(),string $contentType = self::contentTypes['setEmail'][0])
     {
         $request = $this->setEmailRequest($userServiceSetEmailRequest, $contentType);
 
@@ -5647,7 +5647,7 @@ class UserServiceApi
     /**
      * Operation setPassword
      *
-     * SetPassword
+     * Change password
      *
      * @param  \Zitadel\Client\Model\UserServiceSetPasswordRequest $userServiceSetPasswordRequest userServiceSetPasswordRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setPassword'] to see the possible values for this operation
@@ -5655,7 +5655,7 @@ class UserServiceApi
      * @return \Zitadel\Client\Model\UserServiceSetPasswordResponse
      * @throws ApiException
      */
-    public function setPassword(    $userServiceSetPasswordRequest,string $contentType = self::contentTypes['setPassword'][0])
+    public function setPassword(    $userServiceSetPasswordRequest = new \stdClass(),string $contentType = self::contentTypes['setPassword'][0])
     {
         $request = $this->setPasswordRequest($userServiceSetPasswordRequest, $contentType);
 
@@ -5759,7 +5759,7 @@ class UserServiceApi
     /**
      * Operation setPhone
      *
-     * SetPhone
+     * Set the user phone
      *
      * @param  \Zitadel\Client\Model\UserServiceSetPhoneRequest $userServiceSetPhoneRequest userServiceSetPhoneRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setPhone'] to see the possible values for this operation
@@ -5767,7 +5767,7 @@ class UserServiceApi
      * @return \Zitadel\Client\Model\UserServiceSetPhoneResponse
      * @throws ApiException
      */
-    public function setPhone(    $userServiceSetPhoneRequest,string $contentType = self::contentTypes['setPhone'][0])
+    public function setPhone(    $userServiceSetPhoneRequest = new \stdClass(),string $contentType = self::contentTypes['setPhone'][0])
     {
         $request = $this->setPhoneRequest($userServiceSetPhoneRequest, $contentType);
 
@@ -5871,7 +5871,7 @@ class UserServiceApi
     /**
      * Operation setUserMetadata
      *
-     * SetUserMetadata
+     * Set User Metadata
      *
      * @param  \Zitadel\Client\Model\UserServiceSetUserMetadataRequest $userServiceSetUserMetadataRequest userServiceSetUserMetadataRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setUserMetadata'] to see the possible values for this operation
@@ -5983,7 +5983,7 @@ class UserServiceApi
     /**
      * Operation startIdentityProviderIntent
      *
-     * StartIdentityProviderIntent
+     * Start flow with an identity provider
      *
      * @param  \Zitadel\Client\Model\UserServiceStartIdentityProviderIntentRequest $userServiceStartIdentityProviderIntentRequest userServiceStartIdentityProviderIntentRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['startIdentityProviderIntent'] to see the possible values for this operation
@@ -5991,7 +5991,7 @@ class UserServiceApi
      * @return \Zitadel\Client\Model\UserServiceStartIdentityProviderIntentResponse
      * @throws ApiException
      */
-    public function startIdentityProviderIntent(    $userServiceStartIdentityProviderIntentRequest,string $contentType = self::contentTypes['startIdentityProviderIntent'][0])
+    public function startIdentityProviderIntent(    $userServiceStartIdentityProviderIntentRequest = new \stdClass(),string $contentType = self::contentTypes['startIdentityProviderIntent'][0])
     {
         $request = $this->startIdentityProviderIntentRequest($userServiceStartIdentityProviderIntentRequest, $contentType);
 
@@ -6095,7 +6095,7 @@ class UserServiceApi
     /**
      * Operation unlockUser
      *
-     * UnlockUser
+     * Unlock user
      *
      * @param  \Zitadel\Client\Model\UserServiceUnlockUserRequest $userServiceUnlockUserRequest userServiceUnlockUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['unlockUser'] to see the possible values for this operation
@@ -6207,7 +6207,7 @@ class UserServiceApi
     /**
      * Operation updateHumanUser
      *
-     * UpdateHumanUser
+     * Update Human User
      *
      * @param  \Zitadel\Client\Model\UserServiceUpdateHumanUserRequest $userServiceUpdateHumanUserRequest userServiceUpdateHumanUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['updateHumanUser'] to see the possible values for this operation
@@ -6319,7 +6319,7 @@ class UserServiceApi
     /**
      * Operation updateUser
      *
-     * UpdateUser
+     * Update a User
      *
      * @param  \Zitadel\Client\Model\UserServiceUpdateUserRequest $userServiceUpdateUserRequest userServiceUpdateUserRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['updateUser'] to see the possible values for this operation
@@ -6327,7 +6327,7 @@ class UserServiceApi
      * @return \Zitadel\Client\Model\UserServiceUpdateUserResponse
      * @throws ApiException
      */
-    public function updateUser(    $userServiceUpdateUserRequest,string $contentType = self::contentTypes['updateUser'][0])
+    public function updateUser(    $userServiceUpdateUserRequest = new \stdClass(),string $contentType = self::contentTypes['updateUser'][0])
     {
         $request = $this->updateUserRequest($userServiceUpdateUserRequest, $contentType);
 
@@ -6431,7 +6431,7 @@ class UserServiceApi
     /**
      * Operation verifyEmail
      *
-     * VerifyEmail
+     * Verify the email
      *
      * @param  \Zitadel\Client\Model\UserServiceVerifyEmailRequest $userServiceVerifyEmailRequest userServiceVerifyEmailRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyEmail'] to see the possible values for this operation
@@ -6543,7 +6543,7 @@ class UserServiceApi
     /**
      * Operation verifyInviteCode
      *
-     * VerifyInviteCode
+     * Verify an invite code for a user
      *
      * @param  \Zitadel\Client\Model\UserServiceVerifyInviteCodeRequest $userServiceVerifyInviteCodeRequest userServiceVerifyInviteCodeRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyInviteCode'] to see the possible values for this operation
@@ -6655,7 +6655,7 @@ class UserServiceApi
     /**
      * Operation verifyPasskeyRegistration
      *
-     * VerifyPasskeyRegistration
+     * Verify a passkey for a user
      *
      * @param  \Zitadel\Client\Model\UserServiceVerifyPasskeyRegistrationRequest $userServiceVerifyPasskeyRegistrationRequest userServiceVerifyPasskeyRegistrationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyPasskeyRegistration'] to see the possible values for this operation
@@ -6767,7 +6767,7 @@ class UserServiceApi
     /**
      * Operation verifyPhone
      *
-     * VerifyPhone
+     * Verify the phone number
      *
      * @param  \Zitadel\Client\Model\UserServiceVerifyPhoneRequest $userServiceVerifyPhoneRequest userServiceVerifyPhoneRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyPhone'] to see the possible values for this operation
@@ -6879,7 +6879,7 @@ class UserServiceApi
     /**
      * Operation verifyTOTPRegistration
      *
-     * VerifyTOTPRegistration
+     * Verify a TOTP generator for a user
      *
      * @param  \Zitadel\Client\Model\UserServiceVerifyTOTPRegistrationRequest $userServiceVerifyTOTPRegistrationRequest userServiceVerifyTOTPRegistrationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyTOTPRegistration'] to see the possible values for this operation
@@ -6991,7 +6991,7 @@ class UserServiceApi
     /**
      * Operation verifyU2FRegistration
      *
-     * VerifyU2FRegistration
+     * Verify a u2f token for a user
      *
      * @param  \Zitadel\Client\Model\UserServiceVerifyU2FRegistrationRequest $userServiceVerifyU2FRegistrationRequest userServiceVerifyU2FRegistrationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyU2FRegistration'] to see the possible values for this operation

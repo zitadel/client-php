@@ -282,9 +282,6 @@ class UserServicePhoneQuery implements ModelInterface, ArrayAccess, \JsonSeriali
     {
         $invalidProperties = [];
 
-        if ($this->container['number'] === null) {
-            $invalidProperties[] = "'number' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -303,7 +300,7 @@ class UserServicePhoneQuery implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Gets number
      *
-     * @return string
+     * @return string|null
      */
     public function getNumber()
     {
@@ -313,7 +310,7 @@ class UserServicePhoneQuery implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Sets number
      *
-     * @param string $number number
+     * @param string|null $number number
      *
      * @return self
      */

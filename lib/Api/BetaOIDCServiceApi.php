@@ -447,7 +447,7 @@ class BetaOIDCServiceApi
      * @return \Zitadel\Client\Model\BetaOIDCServiceCreateCallbackResponse
      * @throws ApiException
      */
-    public function createCallback(    $betaOIDCServiceCreateCallbackRequest,string $contentType = self::contentTypes['createCallback'][0])
+    public function createCallback(    $betaOIDCServiceCreateCallbackRequest = new \stdClass(),string $contentType = self::contentTypes['createCallback'][0])
     {
         $request = $this->createCallbackRequest($betaOIDCServiceCreateCallbackRequest, $contentType);
 

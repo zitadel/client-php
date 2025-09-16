@@ -282,9 +282,6 @@ class UserServiceNickNameQuery implements ModelInterface, ArrayAccess, \JsonSeri
     {
         $invalidProperties = [];
 
-        if ($this->container['nickName'] === null) {
-            $invalidProperties[] = "'nickName' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -303,7 +300,7 @@ class UserServiceNickNameQuery implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Gets nickName
      *
-     * @return string
+     * @return string|null
      */
     public function getNickName()
     {
@@ -313,7 +310,7 @@ class UserServiceNickNameQuery implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Sets nickName
      *
-     * @param string $nickName nickName
+     * @param string|null $nickName nickName
      *
      * @return self
      */

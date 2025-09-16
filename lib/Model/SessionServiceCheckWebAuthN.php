@@ -274,9 +274,6 @@ class SessionServiceCheckWebAuthN implements ModelInterface, ArrayAccess, \JsonS
     {
         $invalidProperties = [];
 
-        if ($this->container['credentialAssertionData'] === null) {
-            $invalidProperties[] = "'credentialAssertionData' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -295,7 +292,7 @@ class SessionServiceCheckWebAuthN implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Gets credentialAssertionData
      *
-     * @return array<string,mixed>
+     * @return array<string,mixed>|null
      */
     public function getCredentialAssertionData()
     {
@@ -305,7 +302,7 @@ class SessionServiceCheckWebAuthN implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Sets credentialAssertionData
      *
-     * @param array<string,mixed> $credentialAssertionData `Struct` represents a structured data value, consisting of fields  which map to dynamically typed values. In some languages, `Struct`  might be supported by a native representation. For example, in  scripting languages like JS a struct is represented as an  object. The details of that representation are described together  with the proto support for the language.   The JSON representation for `Struct` is JSON object.
+     * @param array<string,mixed>|null $credentialAssertionData `Struct` represents a structured data value, consisting of fields  which map to dynamically typed values. In some languages, `Struct`  might be supported by a native representation. For example, in  scripting languages like JS a struct is represented as an  object. The details of that representation are described together  with the proto support for the language.   The JSON representation for `Struct` is JSON object.
      *
      * @return self
      */

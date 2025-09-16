@@ -275,9 +275,6 @@ class BetaUserServiceTypeQuery implements ModelInterface, ArrayAccess, \JsonSeri
     {
         $invalidProperties = [];
 
-        if ($this->container['type'] === null) {
-            $invalidProperties[] = "'type' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -296,7 +293,7 @@ class BetaUserServiceTypeQuery implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Gets type
      *
-     * @return \Zitadel\Client\Model\BetaUserServiceType
+     * @return \Zitadel\Client\Model\BetaUserServiceType|null
      */
     public function getType()
     {
@@ -306,7 +303,7 @@ class BetaUserServiceTypeQuery implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Sets type
      *
-     * @param \Zitadel\Client\Model\BetaUserServiceType $type type
+     * @param \Zitadel\Client\Model\BetaUserServiceType|null $type type
      *
      * @return self
      */

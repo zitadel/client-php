@@ -288,9 +288,6 @@ class BetaOrganizationServiceCreateOrganizationRequest implements ModelInterface
     {
         $invalidProperties = [];
 
-        if ($this->container['name'] === null) {
-            $invalidProperties[] = "'name' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -309,7 +306,7 @@ class BetaOrganizationServiceCreateOrganizationRequest implements ModelInterface
     /**
      * Gets name
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -319,7 +316,7 @@ class BetaOrganizationServiceCreateOrganizationRequest implements ModelInterface
     /**
      * Sets name
      *
-     * @param string $name name of the Organization to be created.
+     * @param string|null $name name of the Organization to be created.
      *
      * @return self
      */

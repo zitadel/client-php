@@ -445,7 +445,7 @@ class OIDCServiceApi
     /**
      * Operation authorizeOrDenyDeviceAuthorization
      *
-     * AuthorizeOrDenyDeviceAuthorization
+     * Authorize or deny device authorization
      *
      * @param  \Zitadel\Client\Model\OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authorizeOrDenyDeviceAuthorization'] to see the possible values for this operation
@@ -453,7 +453,7 @@ class OIDCServiceApi
      * @return object
      * @throws ApiException
      */
-    public function authorizeOrDenyDeviceAuthorization(    $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest,string $contentType = self::contentTypes['authorizeOrDenyDeviceAuthorization'][0])
+    public function authorizeOrDenyDeviceAuthorization(    $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest = new \stdClass(),string $contentType = self::contentTypes['authorizeOrDenyDeviceAuthorization'][0])
     {
         $request = $this->authorizeOrDenyDeviceAuthorizationRequest($oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest, $contentType);
 
@@ -565,7 +565,7 @@ class OIDCServiceApi
      * @return \Zitadel\Client\Model\OIDCServiceCreateCallbackResponse
      * @throws ApiException
      */
-    public function createCallback(    $oIDCServiceCreateCallbackRequest,string $contentType = self::contentTypes['createCallback'][0])
+    public function createCallback(    $oIDCServiceCreateCallbackRequest = new \stdClass(),string $contentType = self::contentTypes['createCallback'][0])
     {
         $request = $this->createCallbackRequest($oIDCServiceCreateCallbackRequest, $contentType);
 
@@ -781,7 +781,7 @@ class OIDCServiceApi
     /**
      * Operation getDeviceAuthorizationRequest
      *
-     * GetDeviceAuthorizationRequest
+     * Get device authorization request
      *
      * @param  \Zitadel\Client\Model\OIDCServiceGetDeviceAuthorizationRequestRequest $oIDCServiceGetDeviceAuthorizationRequestRequest oIDCServiceGetDeviceAuthorizationRequestRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDeviceAuthorizationRequest'] to see the possible values for this operation

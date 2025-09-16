@@ -282,9 +282,6 @@ class BetaUserServiceEmailQuery implements ModelInterface, ArrayAccess, \JsonSer
     {
         $invalidProperties = [];
 
-        if ($this->container['emailAddress'] === null) {
-            $invalidProperties[] = "'emailAddress' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -303,7 +300,7 @@ class BetaUserServiceEmailQuery implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Gets emailAddress
      *
-     * @return string
+     * @return string|null
      */
     public function getEmailAddress()
     {
@@ -313,7 +310,7 @@ class BetaUserServiceEmailQuery implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets emailAddress
      *
-     * @param string $emailAddress emailAddress
+     * @param string|null $emailAddress emailAddress
      *
      * @return self
      */

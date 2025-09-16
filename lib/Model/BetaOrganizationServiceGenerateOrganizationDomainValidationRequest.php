@@ -288,12 +288,6 @@ class BetaOrganizationServiceGenerateOrganizationDomainValidationRequest impleme
     {
         $invalidProperties = [];
 
-        if ($this->container['organizationId'] === null) {
-            $invalidProperties[] = "'organizationId' can't be null";
-        }
-        if ($this->container['domain'] === null) {
-            $invalidProperties[] = "'domain' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -312,7 +306,7 @@ class BetaOrganizationServiceGenerateOrganizationDomainValidationRequest impleme
     /**
      * Gets organizationId
      *
-     * @return string
+     * @return string|null
      */
     public function getOrganizationId()
     {
@@ -322,7 +316,7 @@ class BetaOrganizationServiceGenerateOrganizationDomainValidationRequest impleme
     /**
      * Sets organizationId
      *
-     * @param string $organizationId Organization Id for the Organization which doman to be validated.
+     * @param string|null $organizationId Organization Id for the Organization which doman to be validated.
      *
      * @return self
      */
@@ -339,7 +333,7 @@ class BetaOrganizationServiceGenerateOrganizationDomainValidationRequest impleme
     /**
      * Gets domain
      *
-     * @return string
+     * @return string|null
      */
     public function getDomain()
     {
@@ -349,7 +343,7 @@ class BetaOrganizationServiceGenerateOrganizationDomainValidationRequest impleme
     /**
      * Sets domain
      *
-     * @param string $domain The domain which to be deleted.
+     * @param string|null $domain The domain which to be deleted.
      *
      * @return self
      */

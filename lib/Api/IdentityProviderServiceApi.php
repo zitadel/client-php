@@ -436,7 +436,7 @@ class IdentityProviderServiceApi
     /**
      * Operation getIDPByID
      *
-     * GetIDPByID
+     * Get identity provider (IdP) by ID
      *
      * @param  \Zitadel\Client\Model\IdentityProviderServiceGetIDPByIDRequest $identityProviderServiceGetIDPByIDRequest identityProviderServiceGetIDPByIDRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getIDPByID'] to see the possible values for this operation

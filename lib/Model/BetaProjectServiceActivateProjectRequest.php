@@ -274,9 +274,6 @@ class BetaProjectServiceActivateProjectRequest implements ModelInterface, ArrayA
     {
         $invalidProperties = [];
 
-        if ($this->container['id'] === null) {
-            $invalidProperties[] = "'id' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -295,7 +292,7 @@ class BetaProjectServiceActivateProjectRequest implements ModelInterface, ArrayA
     /**
      * Gets id
      *
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
@@ -305,7 +302,7 @@ class BetaProjectServiceActivateProjectRequest implements ModelInterface, ArrayA
     /**
      * Sets id
      *
-     * @param string $id The unique identifier of the project.
+     * @param string|null $id The unique identifier of the project.
      *
      * @return self
      */

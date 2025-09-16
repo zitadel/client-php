@@ -344,12 +344,6 @@ class OrganizationServiceAddHumanUserRequest implements ModelInterface, ArrayAcc
     {
         $invalidProperties = [];
 
-        if ($this->container['profile'] === null) {
-            $invalidProperties[] = "'profile' can't be null";
-        }
-        if ($this->container['email'] === null) {
-            $invalidProperties[] = "'email' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -463,7 +457,7 @@ class OrganizationServiceAddHumanUserRequest implements ModelInterface, ArrayAcc
     /**
      * Gets profile
      *
-     * @return \Zitadel\Client\Model\OrganizationServiceSetHumanProfile
+     * @return \Zitadel\Client\Model\OrganizationServiceSetHumanProfile|null
      */
     public function getProfile()
     {
@@ -473,7 +467,7 @@ class OrganizationServiceAddHumanUserRequest implements ModelInterface, ArrayAcc
     /**
      * Sets profile
      *
-     * @param \Zitadel\Client\Model\OrganizationServiceSetHumanProfile $profile profile
+     * @param \Zitadel\Client\Model\OrganizationServiceSetHumanProfile|null $profile profile
      *
      * @return self
      */
@@ -490,7 +484,7 @@ class OrganizationServiceAddHumanUserRequest implements ModelInterface, ArrayAcc
     /**
      * Gets email
      *
-     * @return \Zitadel\Client\Model\OrganizationServiceSetHumanEmail
+     * @return \Zitadel\Client\Model\OrganizationServiceSetHumanEmail|null
      */
     public function getEmail()
     {
@@ -500,7 +494,7 @@ class OrganizationServiceAddHumanUserRequest implements ModelInterface, ArrayAcc
     /**
      * Sets email
      *
-     * @param \Zitadel\Client\Model\OrganizationServiceSetHumanEmail $email email
+     * @param \Zitadel\Client\Model\OrganizationServiceSetHumanEmail|null $email email
      *
      * @return self
      */

@@ -302,12 +302,6 @@ class BetaUserServiceSetEmailRequest implements ModelInterface, ArrayAccess, \Js
     {
         $invalidProperties = [];
 
-        if ($this->container['userId'] === null) {
-            $invalidProperties[] = "'userId' can't be null";
-        }
-        if ($this->container['email'] === null) {
-            $invalidProperties[] = "'email' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -326,7 +320,7 @@ class BetaUserServiceSetEmailRequest implements ModelInterface, ArrayAccess, \Js
     /**
      * Gets userId
      *
-     * @return string
+     * @return string|null
      */
     public function getUserId()
     {
@@ -336,7 +330,7 @@ class BetaUserServiceSetEmailRequest implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets userId
      *
-     * @param string $userId userId
+     * @param string|null $userId userId
      *
      * @return self
      */
@@ -353,7 +347,7 @@ class BetaUserServiceSetEmailRequest implements ModelInterface, ArrayAccess, \Js
     /**
      * Gets email
      *
-     * @return string
+     * @return string|null
      */
     public function getEmail()
     {
@@ -363,7 +357,7 @@ class BetaUserServiceSetEmailRequest implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets email
      *
-     * @param string $email email
+     * @param string|null $email email
      *
      * @return self
      */

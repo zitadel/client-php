@@ -274,9 +274,6 @@ class BetaWebKeyServiceDeleteWebKeyRequest implements ModelInterface, ArrayAcces
     {
         $invalidProperties = [];
 
-        if ($this->container['id'] === null) {
-            $invalidProperties[] = "'id' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -295,7 +292,7 @@ class BetaWebKeyServiceDeleteWebKeyRequest implements ModelInterface, ArrayAcces
     /**
      * Gets id
      *
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
@@ -305,7 +302,7 @@ class BetaWebKeyServiceDeleteWebKeyRequest implements ModelInterface, ArrayAcces
     /**
      * Sets id
      *
-     * @param string $id id
+     * @param string|null $id id
      *
      * @return self
      */

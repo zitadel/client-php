@@ -274,9 +274,6 @@ class UserServiceAddOTPSMSRequest implements ModelInterface, ArrayAccess, \JsonS
     {
         $invalidProperties = [];
 
-        if ($this->container['userId'] === null) {
-            $invalidProperties[] = "'userId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -295,7 +292,7 @@ class UserServiceAddOTPSMSRequest implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Gets userId
      *
-     * @return string
+     * @return string|null
      */
     public function getUserId()
     {
@@ -305,7 +302,7 @@ class UserServiceAddOTPSMSRequest implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Sets userId
      *
-     * @param string $userId userId
+     * @param string|null $userId userId
      *
      * @return self
      */

@@ -295,18 +295,6 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
     {
         $invalidProperties = [];
 
-        if ($this->container['userId'] === null) {
-            $invalidProperties[] = "'userId' can't be null";
-        }
-        if ($this->container['u2fId'] === null) {
-            $invalidProperties[] = "'u2fId' can't be null";
-        }
-        if ($this->container['publicKeyCredential'] === null) {
-            $invalidProperties[] = "'publicKeyCredential' can't be null";
-        }
-        if ($this->container['tokenName'] === null) {
-            $invalidProperties[] = "'tokenName' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -325,7 +313,7 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
     /**
      * Gets userId
      *
-     * @return string
+     * @return string|null
      */
     public function getUserId()
     {
@@ -335,7 +323,7 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
     /**
      * Sets userId
      *
-     * @param string $userId userId
+     * @param string|null $userId userId
      *
      * @return self
      */
@@ -352,7 +340,7 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
     /**
      * Gets u2fId
      *
-     * @return string
+     * @return string|null
      */
     public function getU2fId()
     {
@@ -362,7 +350,7 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
     /**
      * Sets u2fId
      *
-     * @param string $u2fId u2fId
+     * @param string|null $u2fId u2fId
      *
      * @return self
      */
@@ -379,7 +367,7 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
     /**
      * Gets publicKeyCredential
      *
-     * @return array<string,mixed>
+     * @return array<string,mixed>|null
      */
     public function getPublicKeyCredential()
     {
@@ -389,7 +377,7 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
     /**
      * Sets publicKeyCredential
      *
-     * @param array<string,mixed> $publicKeyCredential `Struct` represents a structured data value, consisting of fields  which map to dynamically typed values. In some languages, `Struct`  might be supported by a native representation. For example, in  scripting languages like JS a struct is represented as an  object. The details of that representation are described together  with the proto support for the language.   The JSON representation for `Struct` is JSON object.
+     * @param array<string,mixed>|null $publicKeyCredential `Struct` represents a structured data value, consisting of fields  which map to dynamically typed values. In some languages, `Struct`  might be supported by a native representation. For example, in  scripting languages like JS a struct is represented as an  object. The details of that representation are described together  with the proto support for the language.   The JSON representation for `Struct` is JSON object.
      *
      * @return self
      */
@@ -406,7 +394,7 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
     /**
      * Gets tokenName
      *
-     * @return string
+     * @return string|null
      */
     public function getTokenName()
     {
@@ -416,7 +404,7 @@ class UserServiceVerifyU2FRegistrationRequest implements ModelInterface, ArrayAc
     /**
      * Sets tokenName
      *
-     * @param string $tokenName tokenName
+     * @param string|null $tokenName tokenName
      *
      * @return self
      */

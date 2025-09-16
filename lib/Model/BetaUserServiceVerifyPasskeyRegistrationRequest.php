@@ -295,18 +295,6 @@ class BetaUserServiceVerifyPasskeyRegistrationRequest implements ModelInterface,
     {
         $invalidProperties = [];
 
-        if ($this->container['userId'] === null) {
-            $invalidProperties[] = "'userId' can't be null";
-        }
-        if ($this->container['passkeyId'] === null) {
-            $invalidProperties[] = "'passkeyId' can't be null";
-        }
-        if ($this->container['publicKeyCredential'] === null) {
-            $invalidProperties[] = "'publicKeyCredential' can't be null";
-        }
-        if ($this->container['passkeyName'] === null) {
-            $invalidProperties[] = "'passkeyName' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -325,7 +313,7 @@ class BetaUserServiceVerifyPasskeyRegistrationRequest implements ModelInterface,
     /**
      * Gets userId
      *
-     * @return string
+     * @return string|null
      */
     public function getUserId()
     {
@@ -335,7 +323,7 @@ class BetaUserServiceVerifyPasskeyRegistrationRequest implements ModelInterface,
     /**
      * Sets userId
      *
-     * @param string $userId userId
+     * @param string|null $userId userId
      *
      * @return self
      */
@@ -352,7 +340,7 @@ class BetaUserServiceVerifyPasskeyRegistrationRequest implements ModelInterface,
     /**
      * Gets passkeyId
      *
-     * @return string
+     * @return string|null
      */
     public function getPasskeyId()
     {
@@ -362,7 +350,7 @@ class BetaUserServiceVerifyPasskeyRegistrationRequest implements ModelInterface,
     /**
      * Sets passkeyId
      *
-     * @param string $passkeyId passkeyId
+     * @param string|null $passkeyId passkeyId
      *
      * @return self
      */
@@ -379,7 +367,7 @@ class BetaUserServiceVerifyPasskeyRegistrationRequest implements ModelInterface,
     /**
      * Gets publicKeyCredential
      *
-     * @return array<string,mixed>
+     * @return array<string,mixed>|null
      */
     public function getPublicKeyCredential()
     {
@@ -389,7 +377,7 @@ class BetaUserServiceVerifyPasskeyRegistrationRequest implements ModelInterface,
     /**
      * Sets publicKeyCredential
      *
-     * @param array<string,mixed> $publicKeyCredential `Struct` represents a structured data value, consisting of fields  which map to dynamically typed values. In some languages, `Struct`  might be supported by a native representation. For example, in  scripting languages like JS a struct is represented as an  object. The details of that representation are described together  with the proto support for the language.   The JSON representation for `Struct` is JSON object.
+     * @param array<string,mixed>|null $publicKeyCredential `Struct` represents a structured data value, consisting of fields  which map to dynamically typed values. In some languages, `Struct`  might be supported by a native representation. For example, in  scripting languages like JS a struct is represented as an  object. The details of that representation are described together  with the proto support for the language.   The JSON representation for `Struct` is JSON object.
      *
      * @return self
      */
@@ -406,7 +394,7 @@ class BetaUserServiceVerifyPasskeyRegistrationRequest implements ModelInterface,
     /**
      * Gets passkeyName
      *
-     * @return string
+     * @return string|null
      */
     public function getPasskeyName()
     {
@@ -416,7 +404,7 @@ class BetaUserServiceVerifyPasskeyRegistrationRequest implements ModelInterface,
     /**
      * Sets passkeyName
      *
-     * @param string $passkeyName passkeyName
+     * @param string|null $passkeyName passkeyName
      *
      * @return self
      */

@@ -288,15 +288,6 @@ class UserServiceRemoveIDPLinkRequest implements ModelInterface, ArrayAccess, \J
     {
         $invalidProperties = [];
 
-        if ($this->container['userId'] === null) {
-            $invalidProperties[] = "'userId' can't be null";
-        }
-        if ($this->container['idpId'] === null) {
-            $invalidProperties[] = "'idpId' can't be null";
-        }
-        if ($this->container['linkedUserId'] === null) {
-            $invalidProperties[] = "'linkedUserId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -315,7 +306,7 @@ class UserServiceRemoveIDPLinkRequest implements ModelInterface, ArrayAccess, \J
     /**
      * Gets userId
      *
-     * @return string
+     * @return string|null
      */
     public function getUserId()
     {
@@ -325,7 +316,7 @@ class UserServiceRemoveIDPLinkRequest implements ModelInterface, ArrayAccess, \J
     /**
      * Sets userId
      *
-     * @param string $userId userId
+     * @param string|null $userId userId
      *
      * @return self
      */
@@ -342,7 +333,7 @@ class UserServiceRemoveIDPLinkRequest implements ModelInterface, ArrayAccess, \J
     /**
      * Gets idpId
      *
-     * @return string
+     * @return string|null
      */
     public function getIdpId()
     {
@@ -352,7 +343,7 @@ class UserServiceRemoveIDPLinkRequest implements ModelInterface, ArrayAccess, \J
     /**
      * Sets idpId
      *
-     * @param string $idpId idpId
+     * @param string|null $idpId idpId
      *
      * @return self
      */
@@ -369,7 +360,7 @@ class UserServiceRemoveIDPLinkRequest implements ModelInterface, ArrayAccess, \J
     /**
      * Gets linkedUserId
      *
-     * @return string
+     * @return string|null
      */
     public function getLinkedUserId()
     {
@@ -379,7 +370,7 @@ class UserServiceRemoveIDPLinkRequest implements ModelInterface, ArrayAccess, \J
     /**
      * Sets linkedUserId
      *
-     * @param string $linkedUserId linkedUserId
+     * @param string|null $linkedUserId linkedUserId
      *
      * @return self
      */

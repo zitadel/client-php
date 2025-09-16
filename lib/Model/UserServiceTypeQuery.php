@@ -275,9 +275,6 @@ class UserServiceTypeQuery implements ModelInterface, ArrayAccess, \JsonSerializ
     {
         $invalidProperties = [];
 
-        if ($this->container['type'] === null) {
-            $invalidProperties[] = "'type' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -296,7 +293,7 @@ class UserServiceTypeQuery implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Gets type
      *
-     * @return \Zitadel\Client\Model\UserServiceType
+     * @return \Zitadel\Client\Model\UserServiceType|null
      */
     public function getType()
     {
@@ -306,7 +303,7 @@ class UserServiceTypeQuery implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets type
      *
-     * @param \Zitadel\Client\Model\UserServiceType $type type
+     * @param \Zitadel\Client\Model\UserServiceType|null $type type
      *
      * @return self
      */

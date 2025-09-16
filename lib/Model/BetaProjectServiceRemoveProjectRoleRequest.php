@@ -281,12 +281,6 @@ class BetaProjectServiceRemoveProjectRoleRequest implements ModelInterface, Arra
     {
         $invalidProperties = [];
 
-        if ($this->container['projectId'] === null) {
-            $invalidProperties[] = "'projectId' can't be null";
-        }
-        if ($this->container['roleKey'] === null) {
-            $invalidProperties[] = "'roleKey' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -305,7 +299,7 @@ class BetaProjectServiceRemoveProjectRoleRequest implements ModelInterface, Arra
     /**
      * Gets projectId
      *
-     * @return string
+     * @return string|null
      */
     public function getProjectId()
     {
@@ -315,7 +309,7 @@ class BetaProjectServiceRemoveProjectRoleRequest implements ModelInterface, Arra
     /**
      * Sets projectId
      *
-     * @param string $projectId ID of the project.
+     * @param string|null $projectId ID of the project.
      *
      * @return self
      */
@@ -332,7 +326,7 @@ class BetaProjectServiceRemoveProjectRoleRequest implements ModelInterface, Arra
     /**
      * Gets roleKey
      *
-     * @return string
+     * @return string|null
      */
     public function getRoleKey()
     {
@@ -342,7 +336,7 @@ class BetaProjectServiceRemoveProjectRoleRequest implements ModelInterface, Arra
     /**
      * Sets roleKey
      *
-     * @param string $roleKey The key is the only relevant attribute for ZITADEL regarding the authorization checks.
+     * @param string|null $roleKey The key is the only relevant attribute for ZITADEL regarding the authorization checks.
      *
      * @return self
      */

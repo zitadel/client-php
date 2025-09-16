@@ -275,9 +275,6 @@ class UserServiceOrganizationIdQuery implements ModelInterface, ArrayAccess, \Js
     {
         $invalidProperties = [];
 
-        if ($this->container['organizationId'] === null) {
-            $invalidProperties[] = "'organizationId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -296,7 +293,7 @@ class UserServiceOrganizationIdQuery implements ModelInterface, ArrayAccess, \Js
     /**
      * Gets organizationId
      *
-     * @return string
+     * @return string|null
      */
     public function getOrganizationId()
     {
@@ -306,7 +303,7 @@ class UserServiceOrganizationIdQuery implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets organizationId
      *
-     * @param string $organizationId organizationId
+     * @param string|null $organizationId organizationId
      *
      * @return self
      */

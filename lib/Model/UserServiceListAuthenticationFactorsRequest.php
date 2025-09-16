@@ -288,9 +288,6 @@ class UserServiceListAuthenticationFactorsRequest implements ModelInterface, Arr
     {
         $invalidProperties = [];
 
-        if ($this->container['userId'] === null) {
-            $invalidProperties[] = "'userId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -309,7 +306,7 @@ class UserServiceListAuthenticationFactorsRequest implements ModelInterface, Arr
     /**
      * Gets userId
      *
-     * @return string
+     * @return string|null
      */
     public function getUserId()
     {
@@ -319,7 +316,7 @@ class UserServiceListAuthenticationFactorsRequest implements ModelInterface, Arr
     /**
      * Sets userId
      *
-     * @param string $userId userId
+     * @param string|null $userId userId
      *
      * @return self
      */

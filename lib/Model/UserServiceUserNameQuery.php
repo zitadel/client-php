@@ -282,9 +282,6 @@ class UserServiceUserNameQuery implements ModelInterface, ArrayAccess, \JsonSeri
     {
         $invalidProperties = [];
 
-        if ($this->container['userName'] === null) {
-            $invalidProperties[] = "'userName' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -303,7 +300,7 @@ class UserServiceUserNameQuery implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Gets userName
      *
-     * @return string
+     * @return string|null
      */
     public function getUserName()
     {
@@ -313,7 +310,7 @@ class UserServiceUserNameQuery implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Sets userName
      *
-     * @param string $userName userName
+     * @param string|null $userName userName
      *
      * @return self
      */

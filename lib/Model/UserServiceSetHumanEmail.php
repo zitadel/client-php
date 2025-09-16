@@ -295,9 +295,6 @@ class UserServiceSetHumanEmail implements ModelInterface, ArrayAccess, \JsonSeri
     {
         $invalidProperties = [];
 
-        if ($this->container['email'] === null) {
-            $invalidProperties[] = "'email' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -316,7 +313,7 @@ class UserServiceSetHumanEmail implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Gets email
      *
-     * @return string
+     * @return string|null
      */
     public function getEmail()
     {
@@ -326,7 +323,7 @@ class UserServiceSetHumanEmail implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Sets email
      *
-     * @param string $email email
+     * @param string|null $email email
      *
      * @return self
      */

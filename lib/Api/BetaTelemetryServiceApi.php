@@ -439,7 +439,7 @@ class BetaTelemetryServiceApi
     /**
      * Operation reportBaseInformation
      *
-     * ReportBaseInformation
+     * ReportBaseInformation is used to report the base information of the ZITADEL system,  including the version, instances, their creation date and domains.  The response contains a report ID to link it to the resource counts or other reports.  The report ID is only valid for the same system ID.
      *
      * @param  \Zitadel\Client\Model\BetaTelemetryServiceReportBaseInformationRequest $betaTelemetryServiceReportBaseInformationRequest betaTelemetryServiceReportBaseInformationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['reportBaseInformation'] to see the possible values for this operation
@@ -551,7 +551,7 @@ class BetaTelemetryServiceApi
     /**
      * Operation reportResourceCounts
      *
-     * ReportResourceCounts
+     * ReportResourceCounts is used to report the resource counts such as amount of organizations  or users per organization and much more.  Since the resource counts can be reported in multiple batches,  the response contains a report ID to continue reporting.  The report ID is only valid for the same system ID.
      *
      * @param  \Zitadel\Client\Model\BetaTelemetryServiceReportResourceCountsRequest $betaTelemetryServiceReportResourceCountsRequest betaTelemetryServiceReportResourceCountsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['reportResourceCounts'] to see the possible values for this operation

@@ -447,7 +447,7 @@ class SAMLServiceApi
      * @return \Zitadel\Client\Model\SAMLServiceCreateResponseResponse
      * @throws ApiException
      */
-    public function createResponse(    $sAMLServiceCreateResponseRequest,string $contentType = self::contentTypes['createResponse'][0])
+    public function createResponse(    $sAMLServiceCreateResponseRequest = new \stdClass(),string $contentType = self::contentTypes['createResponse'][0])
     {
         $request = $this->createResponseRequest($sAMLServiceCreateResponseRequest, $contentType);
 
