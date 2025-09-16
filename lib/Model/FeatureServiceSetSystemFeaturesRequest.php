@@ -62,7 +62,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
         'oidcTokenExchange' => 'bool',
         'improvedPerformance' => '\Zitadel\Client\Model\FeatureServiceImprovedPerformance[]',
         'oidcSingleV1SessionTermination' => 'bool',
-        'disableUserTokenEvent' => 'bool',
         'enableBackChannelLogout' => 'bool',
         'loginV2' => '\Zitadel\Client\Model\FeatureServiceLoginV2',
         'permissionCheckV2' => 'bool'
@@ -81,7 +80,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
         'oidcTokenExchange' => null,
         'improvedPerformance' => null,
         'oidcSingleV1SessionTermination' => null,
-        'disableUserTokenEvent' => null,
         'enableBackChannelLogout' => null,
         'loginV2' => null,
         'permissionCheckV2' => null
@@ -98,7 +96,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
         'oidcTokenExchange' => true,
         'improvedPerformance' => false,
         'oidcSingleV1SessionTermination' => true,
-        'disableUserTokenEvent' => true,
         'enableBackChannelLogout' => true,
         'loginV2' => false,
         'permissionCheckV2' => true
@@ -195,7 +192,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
         'oidcTokenExchange' => 'oidcTokenExchange',
         'improvedPerformance' => 'improvedPerformance',
         'oidcSingleV1SessionTermination' => 'oidcSingleV1SessionTermination',
-        'disableUserTokenEvent' => 'disableUserTokenEvent',
         'enableBackChannelLogout' => 'enableBackChannelLogout',
         'loginV2' => 'loginV2',
         'permissionCheckV2' => 'permissionCheckV2'
@@ -212,7 +208,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
         'oidcTokenExchange' => 'setOidcTokenExchange',
         'improvedPerformance' => 'setImprovedPerformance',
         'oidcSingleV1SessionTermination' => 'setOidcSingleV1SessionTermination',
-        'disableUserTokenEvent' => 'setDisableUserTokenEvent',
         'enableBackChannelLogout' => 'setEnableBackChannelLogout',
         'loginV2' => 'setLoginV2',
         'permissionCheckV2' => 'setPermissionCheckV2'
@@ -229,7 +224,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
         'oidcTokenExchange' => 'getOidcTokenExchange',
         'improvedPerformance' => 'getImprovedPerformance',
         'oidcSingleV1SessionTermination' => 'getOidcSingleV1SessionTermination',
-        'disableUserTokenEvent' => 'getDisableUserTokenEvent',
         'enableBackChannelLogout' => 'getEnableBackChannelLogout',
         'loginV2' => 'getLoginV2',
         'permissionCheckV2' => 'getPermissionCheckV2'
@@ -297,7 +291,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
         $this->setIfExists('oidcTokenExchange', $data ?? [], null);
         $this->setIfExists('improvedPerformance', $data ?? [], null);
         $this->setIfExists('oidcSingleV1SessionTermination', $data ?? [], null);
-        $this->setIfExists('disableUserTokenEvent', $data ?? [], null);
         $this->setIfExists('enableBackChannelLogout', $data ?? [], null);
         $this->setIfExists('loginV2', $data ?? [], null);
         $this->setIfExists('permissionCheckV2', $data ?? [], null);
@@ -504,40 +497,6 @@ class FeatureServiceSetSystemFeaturesRequest implements ModelInterface, ArrayAcc
             }
         }
         $this->container['oidcSingleV1SessionTermination'] = $oidcSingleV1SessionTermination;
-
-        return $this;
-    }
-
-    /**
-     * Gets disableUserTokenEvent
-     *
-     * @return bool|null
-     */
-    public function getDisableUserTokenEvent()
-    {
-        return $this->container['disableUserTokenEvent'];
-    }
-
-    /**
-     * Sets disableUserTokenEvent
-     *
-     * @param bool|null $disableUserTokenEvent disableUserTokenEvent
-     *
-     * @return self
-     */
-    public function setDisableUserTokenEvent($disableUserTokenEvent)
-    {
-        if (is_null($disableUserTokenEvent)) {
-            array_push($this->openAPINullablesSetToNull, 'disableUserTokenEvent');
-        } else {
-            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
-            $index = array_search('disableUserTokenEvent', $nullablesSetToNull);
-            if ($index !== FALSE) {
-                unset($nullablesSetToNull[$index]);
-                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
-            }
-        }
-        $this->container['disableUserTokenEvent'] = $disableUserTokenEvent;
 
         return $this;
     }

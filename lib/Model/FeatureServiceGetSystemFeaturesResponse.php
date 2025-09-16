@@ -63,7 +63,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
         'oidcTokenExchange' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'improvedPerformance' => '\Zitadel\Client\Model\FeatureServiceImprovedPerformanceFeatureFlag',
         'oidcSingleV1SessionTermination' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
-        'disableUserTokenEvent' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'enableBackChannelLogout' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag',
         'loginV2' => '\Zitadel\Client\Model\FeatureServiceLoginV2FeatureFlag',
         'permissionCheckV2' => '\Zitadel\Client\Model\FeatureServiceFeatureFlag'
@@ -83,7 +82,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
         'oidcTokenExchange' => null,
         'improvedPerformance' => null,
         'oidcSingleV1SessionTermination' => null,
-        'disableUserTokenEvent' => null,
         'enableBackChannelLogout' => null,
         'loginV2' => null,
         'permissionCheckV2' => null
@@ -101,7 +99,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
         'oidcTokenExchange' => false,
         'improvedPerformance' => false,
         'oidcSingleV1SessionTermination' => false,
-        'disableUserTokenEvent' => false,
         'enableBackChannelLogout' => false,
         'loginV2' => false,
         'permissionCheckV2' => false
@@ -199,7 +196,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
         'oidcTokenExchange' => 'oidcTokenExchange',
         'improvedPerformance' => 'improvedPerformance',
         'oidcSingleV1SessionTermination' => 'oidcSingleV1SessionTermination',
-        'disableUserTokenEvent' => 'disableUserTokenEvent',
         'enableBackChannelLogout' => 'enableBackChannelLogout',
         'loginV2' => 'loginV2',
         'permissionCheckV2' => 'permissionCheckV2'
@@ -217,7 +213,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
         'oidcTokenExchange' => 'setOidcTokenExchange',
         'improvedPerformance' => 'setImprovedPerformance',
         'oidcSingleV1SessionTermination' => 'setOidcSingleV1SessionTermination',
-        'disableUserTokenEvent' => 'setDisableUserTokenEvent',
         'enableBackChannelLogout' => 'setEnableBackChannelLogout',
         'loginV2' => 'setLoginV2',
         'permissionCheckV2' => 'setPermissionCheckV2'
@@ -235,7 +230,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
         'oidcTokenExchange' => 'getOidcTokenExchange',
         'improvedPerformance' => 'getImprovedPerformance',
         'oidcSingleV1SessionTermination' => 'getOidcSingleV1SessionTermination',
-        'disableUserTokenEvent' => 'getDisableUserTokenEvent',
         'enableBackChannelLogout' => 'getEnableBackChannelLogout',
         'loginV2' => 'getLoginV2',
         'permissionCheckV2' => 'getPermissionCheckV2'
@@ -304,7 +298,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
         $this->setIfExists('oidcTokenExchange', $data ?? [], null);
         $this->setIfExists('improvedPerformance', $data ?? [], null);
         $this->setIfExists('oidcSingleV1SessionTermination', $data ?? [], null);
-        $this->setIfExists('disableUserTokenEvent', $data ?? [], null);
         $this->setIfExists('enableBackChannelLogout', $data ?? [], null);
         $this->setIfExists('loginV2', $data ?? [], null);
         $this->setIfExists('permissionCheckV2', $data ?? [], null);
@@ -510,33 +503,6 @@ class FeatureServiceGetSystemFeaturesResponse implements ModelInterface, ArrayAc
             throw new \InvalidArgumentException('non-nullable oidcSingleV1SessionTermination cannot be null');
         }
         $this->container['oidcSingleV1SessionTermination'] = $oidcSingleV1SessionTermination;
-
-        return $this;
-    }
-
-    /**
-     * Gets disableUserTokenEvent
-     *
-     * @return \Zitadel\Client\Model\FeatureServiceFeatureFlag|null
-     */
-    public function getDisableUserTokenEvent()
-    {
-        return $this->container['disableUserTokenEvent'];
-    }
-
-    /**
-     * Sets disableUserTokenEvent
-     *
-     * @param \Zitadel\Client\Model\FeatureServiceFeatureFlag|null $disableUserTokenEvent disableUserTokenEvent
-     *
-     * @return self
-     */
-    public function setDisableUserTokenEvent($disableUserTokenEvent)
-    {
-        if (is_null($disableUserTokenEvent)) {
-            throw new \InvalidArgumentException('non-nullable disableUserTokenEvent cannot be null');
-        }
-        $this->container['disableUserTokenEvent'] = $disableUserTokenEvent;
 
         return $this;
     }

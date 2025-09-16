@@ -1,6 +1,6 @@
 <?php
 /**
- * BetaFeatureServiceImprovedPerformance
+ * IdentityProviderServiceSAMLSignatureAlgorithm
  *
  * PHP version 8.1
  *
@@ -30,27 +30,25 @@ namespace Zitadel\Client\Model;
 use \Zitadel\Client\ObjectSerializer;
 
 /**
- * BetaFeatureServiceImprovedPerformance Class Doc Comment
+ * IdentityProviderServiceSAMLSignatureAlgorithm Class Doc Comment
  *
  * @category Class
  * @package  Zitadel\Client
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
-class BetaFeatureServiceImprovedPerformance
+class IdentityProviderServiceSAMLSignatureAlgorithm
 {
     /**
      * Possible values of this enum
      */
-    public const IMPROVED_PERFORMANCE_UNSPECIFIED = 'IMPROVED_PERFORMANCE_UNSPECIFIED';
+    public const SAML_SIGNATURE_UNSPECIFIED = 'SAML_SIGNATURE_UNSPECIFIED';
 
-    public const IMPROVED_PERFORMANCE_PROJECT_GRANT = 'IMPROVED_PERFORMANCE_PROJECT_GRANT';
+    public const SAML_SIGNATURE_RSA_SHA1 = 'SAML_SIGNATURE_RSA_SHA1';
 
-    public const IMPROVED_PERFORMANCE_PROJECT = 'IMPROVED_PERFORMANCE_PROJECT';
+    public const SAML_SIGNATURE_RSA_SHA256 = 'SAML_SIGNATURE_RSA_SHA256';
 
-    public const IMPROVED_PERFORMANCE_USER_GRANT = 'IMPROVED_PERFORMANCE_USER_GRANT';
-
-    public const IMPROVED_PERFORMANCE_ORG_DOMAIN_VERIFIED = 'IMPROVED_PERFORMANCE_ORG_DOMAIN_VERIFIED';
+    public const SAML_SIGNATURE_RSA_SHA512 = 'SAML_SIGNATURE_RSA_SHA512';
 
     /**
      * Gets allowable values of the enum
@@ -59,11 +57,10 @@ class BetaFeatureServiceImprovedPerformance
     public static function getAllowableEnumValues()
     {
         return [
-            self::IMPROVED_PERFORMANCE_UNSPECIFIED,
-            self::IMPROVED_PERFORMANCE_PROJECT_GRANT,
-            self::IMPROVED_PERFORMANCE_PROJECT,
-            self::IMPROVED_PERFORMANCE_USER_GRANT,
-            self::IMPROVED_PERFORMANCE_ORG_DOMAIN_VERIFIED
+            self::SAML_SIGNATURE_UNSPECIFIED,
+            self::SAML_SIGNATURE_RSA_SHA1,
+            self::SAML_SIGNATURE_RSA_SHA256,
+            self::SAML_SIGNATURE_RSA_SHA512
         ];
     }
 }

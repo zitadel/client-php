@@ -1,6 +1,6 @@
 <?php
 /**
- * BetaFeatureServiceImprovedPerformance
+ * UserServiceByteFilterMethod
  *
  * PHP version 8.1
  *
@@ -30,27 +30,21 @@ namespace Zitadel\Client\Model;
 use \Zitadel\Client\ObjectSerializer;
 
 /**
- * BetaFeatureServiceImprovedPerformance Class Doc Comment
+ * UserServiceByteFilterMethod Class Doc Comment
  *
  * @category Class
  * @package  Zitadel\Client
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
-class BetaFeatureServiceImprovedPerformance
+class UserServiceByteFilterMethod
 {
     /**
      * Possible values of this enum
      */
-    public const IMPROVED_PERFORMANCE_UNSPECIFIED = 'IMPROVED_PERFORMANCE_UNSPECIFIED';
+    public const BYTE_FILTER_METHOD_EQUALS = 'BYTE_FILTER_METHOD_EQUALS';
 
-    public const IMPROVED_PERFORMANCE_PROJECT_GRANT = 'IMPROVED_PERFORMANCE_PROJECT_GRANT';
-
-    public const IMPROVED_PERFORMANCE_PROJECT = 'IMPROVED_PERFORMANCE_PROJECT';
-
-    public const IMPROVED_PERFORMANCE_USER_GRANT = 'IMPROVED_PERFORMANCE_USER_GRANT';
-
-    public const IMPROVED_PERFORMANCE_ORG_DOMAIN_VERIFIED = 'IMPROVED_PERFORMANCE_ORG_DOMAIN_VERIFIED';
+    public const BYTE_FILTER_METHOD_NOT_EQUALS = 'BYTE_FILTER_METHOD_NOT_EQUALS';
 
     /**
      * Gets allowable values of the enum
@@ -59,11 +53,8 @@ class BetaFeatureServiceImprovedPerformance
     public static function getAllowableEnumValues()
     {
         return [
-            self::IMPROVED_PERFORMANCE_UNSPECIFIED,
-            self::IMPROVED_PERFORMANCE_PROJECT_GRANT,
-            self::IMPROVED_PERFORMANCE_PROJECT,
-            self::IMPROVED_PERFORMANCE_USER_GRANT,
-            self::IMPROVED_PERFORMANCE_ORG_DOMAIN_VERIFIED
+            self::BYTE_FILTER_METHOD_EQUALS,
+            self::BYTE_FILTER_METHOD_NOT_EQUALS
         ];
     }
 }

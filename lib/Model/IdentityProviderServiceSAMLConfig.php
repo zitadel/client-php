@@ -62,7 +62,8 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
         'withSignedRequest' => 'bool',
         'nameIdFormat' => '\Zitadel\Client\Model\IdentityProviderServiceSAMLNameIDFormat',
         'transientMappingAttributeName' => 'string',
-        'federatedLogoutEnabled' => 'bool'
+        'federatedLogoutEnabled' => 'bool',
+        'signatureAlgorithm' => '\Zitadel\Client\Model\IdentityProviderServiceSAMLSignatureAlgorithm'
     ];
 
     /**
@@ -78,7 +79,8 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
         'withSignedRequest' => null,
         'nameIdFormat' => null,
         'transientMappingAttributeName' => null,
-        'federatedLogoutEnabled' => null
+        'federatedLogoutEnabled' => null,
+        'signatureAlgorithm' => null
     ];
 
     /**
@@ -92,7 +94,8 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
         'withSignedRequest' => false,
         'nameIdFormat' => false,
         'transientMappingAttributeName' => true,
-        'federatedLogoutEnabled' => true
+        'federatedLogoutEnabled' => true,
+        'signatureAlgorithm' => false
     ];
 
     /**
@@ -186,7 +189,8 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
         'withSignedRequest' => 'withSignedRequest',
         'nameIdFormat' => 'nameIdFormat',
         'transientMappingAttributeName' => 'transientMappingAttributeName',
-        'federatedLogoutEnabled' => 'federatedLogoutEnabled'
+        'federatedLogoutEnabled' => 'federatedLogoutEnabled',
+        'signatureAlgorithm' => 'signatureAlgorithm'
     ];
 
     /**
@@ -200,7 +204,8 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
         'withSignedRequest' => 'setWithSignedRequest',
         'nameIdFormat' => 'setNameIdFormat',
         'transientMappingAttributeName' => 'setTransientMappingAttributeName',
-        'federatedLogoutEnabled' => 'setFederatedLogoutEnabled'
+        'federatedLogoutEnabled' => 'setFederatedLogoutEnabled',
+        'signatureAlgorithm' => 'setSignatureAlgorithm'
     ];
 
     /**
@@ -214,7 +219,8 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
         'withSignedRequest' => 'getWithSignedRequest',
         'nameIdFormat' => 'getNameIdFormat',
         'transientMappingAttributeName' => 'getTransientMappingAttributeName',
-        'federatedLogoutEnabled' => 'getFederatedLogoutEnabled'
+        'federatedLogoutEnabled' => 'getFederatedLogoutEnabled',
+        'signatureAlgorithm' => 'getSignatureAlgorithm'
     ];
 
     /**
@@ -280,6 +286,7 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
         $this->setIfExists('nameIdFormat', $data ?? [], null);
         $this->setIfExists('transientMappingAttributeName', $data ?? [], null);
         $this->setIfExists('federatedLogoutEnabled', $data ?? [], null);
+        $this->setIfExists('signatureAlgorithm', $data ?? [], null);
     }
 
     /**
@@ -496,6 +503,33 @@ class IdentityProviderServiceSAMLConfig implements ModelInterface, ArrayAccess, 
             }
         }
         $this->container['federatedLogoutEnabled'] = $federatedLogoutEnabled;
+
+        return $this;
+    }
+
+    /**
+     * Gets signatureAlgorithm
+     *
+     * @return \Zitadel\Client\Model\IdentityProviderServiceSAMLSignatureAlgorithm|null
+     */
+    public function getSignatureAlgorithm()
+    {
+        return $this->container['signatureAlgorithm'];
+    }
+
+    /**
+     * Sets signatureAlgorithm
+     *
+     * @param \Zitadel\Client\Model\IdentityProviderServiceSAMLSignatureAlgorithm|null $signatureAlgorithm signatureAlgorithm
+     *
+     * @return self
+     */
+    public function setSignatureAlgorithm($signatureAlgorithm)
+    {
+        if (is_null($signatureAlgorithm)) {
+            throw new \InvalidArgumentException('non-nullable signatureAlgorithm cannot be null');
+        }
+        $this->container['signatureAlgorithm'] = $signatureAlgorithm;
 
         return $this;
     }
