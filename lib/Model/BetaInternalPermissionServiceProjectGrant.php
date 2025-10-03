@@ -58,7 +58,7 @@ class BetaInternalPermissionServiceProjectGrant implements ModelInterface, Array
       */
     protected static $openAPITypes = [
         'projectId' => 'string',
-        'projectGrantId' => 'string'
+        'organizationId' => 'string'
     ];
 
     /**
@@ -70,7 +70,7 @@ class BetaInternalPermissionServiceProjectGrant implements ModelInterface, Array
       */
     protected static $openAPIFormats = [
         'projectId' => null,
-        'projectGrantId' => null
+        'organizationId' => null
     ];
 
     /**
@@ -80,7 +80,7 @@ class BetaInternalPermissionServiceProjectGrant implements ModelInterface, Array
       */
     protected static array $openAPINullables = [
         'projectId' => false,
-        'projectGrantId' => false
+        'organizationId' => false
     ];
 
     /**
@@ -170,7 +170,7 @@ class BetaInternalPermissionServiceProjectGrant implements ModelInterface, Array
      */
     protected static $attributeMap = [
         'projectId' => 'projectId',
-        'projectGrantId' => 'projectGrantId'
+        'organizationId' => 'organizationId'
     ];
 
     /**
@@ -180,7 +180,7 @@ class BetaInternalPermissionServiceProjectGrant implements ModelInterface, Array
      */
     protected static $setters = [
         'projectId' => 'setProjectId',
-        'projectGrantId' => 'setProjectGrantId'
+        'organizationId' => 'setOrganizationId'
     ];
 
     /**
@@ -190,7 +190,7 @@ class BetaInternalPermissionServiceProjectGrant implements ModelInterface, Array
      */
     protected static $getters = [
         'projectId' => 'getProjectId',
-        'projectGrantId' => 'getProjectGrantId'
+        'organizationId' => 'getOrganizationId'
     ];
 
     /**
@@ -251,7 +251,7 @@ class BetaInternalPermissionServiceProjectGrant implements ModelInterface, Array
     public function __construct(?array $data = null)
     {
         $this->setIfExists('projectId', $data ?? [], null);
-        $this->setIfExists('projectGrantId', $data ?? [], null);
+        $this->setIfExists('organizationId', $data ?? [], null);
     }
 
     /**
@@ -324,28 +324,28 @@ class BetaInternalPermissionServiceProjectGrant implements ModelInterface, Array
     }
 
     /**
-     * Gets projectGrantId
+     * Gets organizationId
      *
      * @return string|null
      */
-    public function getProjectGrantId()
+    public function getOrganizationId()
     {
-        return $this->container['projectGrantId'];
+        return $this->container['organizationId'];
     }
 
     /**
-     * Sets projectGrantId
+     * Sets organizationId
      *
-     * @param string|null $projectGrantId ProjectGrantID is required to grant administrator privileges for a specific project grant.
+     * @param string|null $organizationId OrganizationID is required to grant administrator privileges for a specific project grant.
      *
      * @return self
      */
-    public function setProjectGrantId($projectGrantId)
+    public function setOrganizationId($organizationId)
     {
-        if (is_null($projectGrantId)) {
-            throw new \InvalidArgumentException('non-nullable projectGrantId cannot be null');
+        if (is_null($organizationId)) {
+            throw new \InvalidArgumentException('non-nullable organizationId cannot be null');
         }
-        $this->container['projectGrantId'] = $projectGrantId;
+        $this->container['organizationId'] = $organizationId;
 
         return $this;
     }
