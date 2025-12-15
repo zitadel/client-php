@@ -42,7 +42,7 @@ jobs:
           php-version: '8.1'
 
       - name: Install Dependencies
-        run: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader
+        run: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
       - name: Run Formatter
         run: composer format

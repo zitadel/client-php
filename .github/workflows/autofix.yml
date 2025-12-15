@@ -38,7 +38,7 @@ jobs:
           coverage: none
 
       - name: Install Dependencies
-        run: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader
+        run: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
       - name: Run Rector
         run: composer rector -- --dry-run --ansi
