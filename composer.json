@@ -20,7 +20,7 @@
         }
     ],
     "require": {
-        "php": "^8.",
+        "php": "^8.3",
         "ext-curl": "*",
         "ext-json": "*",
         "guzzlehttp/guzzle": "^7.3",
@@ -30,7 +30,7 @@
         "league/uri": "^7.5"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.0 || ^9.0",
+        "phpunit/phpunit": "^12.0",
         "friendsofphp/php-cs-fixer": "^3.75",
         "haydenpierce/class-finder": "^0.5.3",
         "testcontainers/testcontainers": "^1.0",
@@ -40,7 +40,8 @@
         "rector/rector": "^2.0",
         "phpstan/phpstan": "^2.1",
         "phpdocumentor/phpdocumentor": "^3.8",
-        "icanhazstring/composer-unused": "^0.9.3"
+        "icanhazstring/composer-unused": "^0.9.3",
+        "mridang/phpunit-reporters": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -61,7 +62,7 @@
         "chat": "https://discord.com/servers/zitadel-927474939156643850"
     },
     "scripts": {
-        "test": "phpunit --coverage-html=build/coverage/html --coverage-clover=build/coverage/clover.xml",
+        "test": "phpunit --coverage-html=build/coverage/html --coverage-clover=build/coverage/clover.xml --log-junit=build/reports/junit.xml",
         "rector": "rector process",
         "phpstan": "phpstan analyse --memory-limit=-1",
         "format": "php-cs-fixer fix",

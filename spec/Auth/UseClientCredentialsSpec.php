@@ -89,6 +89,7 @@ class UseClientCredentialsSpec extends AbstractIntegrationTest
      */
     public function testRetrievesGeneralSettingsWithValidAuth(): void
     {
+        $this->expectNotToPerformAssertions();
         $credentials = $this->generateUserSecret(self::getAuthToken());
         $client = Zitadel::withClientCredentials(self::getBaseUrl(), $credentials['clientId'], $credentials['clientSecret']);
 

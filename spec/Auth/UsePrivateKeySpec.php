@@ -28,6 +28,7 @@ class UsePrivateKeySpec extends AbstractIntegrationTest
      */
     public function testRetrievesGeneralSettingsWithValidAuth(): void
     {
+        $this->expectNotToPerformAssertions();
         $client = Zitadel::withPrivateKey(self::getBaseUrl(), self::getJwtKey());
         $client->settings->getGeneralSettings();
     }
