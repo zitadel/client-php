@@ -8,14 +8,14 @@ use Testcontainers\Container\StartedGenericContainer;
 use Testcontainers\Wait\WaitForHttp;
 
 /**
- * Class OAuthAuthenticatorTest
+ * Class OAuthAuthenticatorTestCase
  *
  * This test class sets up a Docker container using Testcontainers to run a mock OAuth2 server.
  * It initializes the container before any tests run and tears it down after all tests are completed.
  *
  * @package YourPackageName
  */
-abstract class OAuthAuthenticatorTest extends TestCase
+abstract class OAuthAuthenticatorTestCase extends TestCase
 {
     /**
      * @var string Holds the OAuth host URL constructed from the container's host and mapped port.

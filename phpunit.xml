@@ -2,27 +2,19 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          bootstrap="./vendor/autoload.php"
          colors="true"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
-         cacheResult="false">
-  <listeners>
-    <listener class="Zitadel\Client\Spec\Setup" file="spec/Setup.php"/>
-  </listeners>
-  <coverage processUncoveredFiles="true">
-    <include>
-      <directory suffix=".php">./lib</directory>
-    </include>
-    <exclude>
-      <directory>lib/Api</directory>
-      <directory>lib/Model</directory>
-      <directory suffix=".php">./vendor</directory>
-      <directory suffix=".php">./test</directory>
-      <directory suffix=".php">./spec</directory>
-    </exclude>
-  </coverage>
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.5/phpunit.xsd"
+         cacheResult="false"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerWarnings="true">
+  <extensions>
+    <bootstrap class="Zitadel\Client\Spec\Setup"/>
+    <bootstrap class="Mridang\PHPUnitReporters\JestReporterExtension">
+      <parameter name="cloverPath" value="build/coverage/clover.xml"/>
+    </bootstrap>
+  </extensions>
   <testsuites>
     <testsuite name="tests">
-      <directory suffix=".php">./test</directory>
-      <directory suffix=".php">./spec</directory>
+      <directory suffix="Test.php">./test</directory>
     </testsuite>
     <testsuite name="specs">
       <directory suffix="Spec.php">./spec</directory>
@@ -33,4 +25,19 @@
     <ini name="memory_limit" value="1024M"/>
     <env name="APP_ENV" value="test"/>
   </php>
+  <source>
+    <include>
+      <directory suffix=".php">./lib</directory>
+    </include>
+    <exclude>
+      <directory>lib/Api</directory>
+      <directory>lib/Model</directory>
+      <directory suffix=".php">./vendor</directory>
+      <directory suffix=".php">./test</directory>
+      <directory suffix=".php">./spec</directory>
+    </exclude>
+  </source>
+  <logging>
+    <junit outputFile="build/reports/junit-raw.xml"/>
+  </logging>
 </phpunit>
