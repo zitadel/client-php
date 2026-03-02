@@ -4,6 +4,8 @@ namespace Zitadel\Client;
 
 use Exception;
 use Zitadel\Client\Api\ActionServiceApi;
+use Zitadel\Client\Api\ApplicationServiceApi;
+use Zitadel\Client\Api\AuthorizationServiceApi;
 use Zitadel\Client\Api\BetaActionServiceApi;
 use Zitadel\Client\Api\BetaAppServiceApi;
 use Zitadel\Client\Api\BetaAuthorizationServiceApi;
@@ -20,8 +22,11 @@ use Zitadel\Client\Api\BetaUserServiceApi;
 use Zitadel\Client\Api\BetaWebKeyServiceApi;
 use Zitadel\Client\Api\FeatureServiceApi;
 use Zitadel\Client\Api\IdentityProviderServiceApi;
+use Zitadel\Client\Api\InstanceServiceApi;
+use Zitadel\Client\Api\InternalPermissionServiceApi;
 use Zitadel\Client\Api\OIDCServiceApi;
 use Zitadel\Client\Api\OrganizationServiceApi;
+use Zitadel\Client\Api\ProjectServiceApi;
 use Zitadel\Client\Api\SAMLServiceApi;
 use Zitadel\Client\Api\SessionServiceApi;
 use Zitadel\Client\Api\SettingsServiceApi;
@@ -64,14 +69,24 @@ class Zitadel
     public BetaActionServiceApi $betaActions;
     /** @var ActionServiceApi */
     public ActionServiceApi $actions;
+    /** @var ApplicationServiceApi */
+    public ApplicationServiceApi $applications;
+    /** @var AuthorizationServiceApi */
+    public AuthorizationServiceApi $authorizations;
     /** @var FeatureServiceApi */
     public FeatureServiceApi $features;
     /** @var IdentityProviderServiceApi */
     public IdentityProviderServiceApi $idps;
+    /** @var InstanceServiceApi */
+    public InstanceServiceApi $instances;
+    /** @var InternalPermissionServiceApi */
+    public InternalPermissionServiceApi $internalPermissions;
     /** @var OIDCServiceApi */
     public OIDCServiceApi $oidc;
     /** @var OrganizationServiceApi */
     public OrganizationServiceApi $organizations;
+    /** @var ProjectServiceApi */
+    public ProjectServiceApi $projects;
     /** @var SAMLServiceApi */
     public SAMLServiceApi $saml;
     /** @var SessionServiceApi */
@@ -106,10 +121,15 @@ class Zitadel
         $this->betaWebkeys = new BetaWebKeyServiceApi(null, $config);
         $this->betaActions = new BetaActionServiceApi(null, $config);
         $this->actions = new ActionServiceApi(null, $config);
+        $this->applications = new ApplicationServiceApi(null, $config);
+        $this->authorizations = new AuthorizationServiceApi(null, $config);
         $this->features = new FeatureServiceApi(null, $config);
         $this->idps = new IdentityProviderServiceApi(null, $config);
+        $this->instances = new InstanceServiceApi(null, $config);
+        $this->internalPermissions = new InternalPermissionServiceApi(null, $config);
         $this->oidc = new OIDCServiceApi(null, $config);
         $this->organizations = new OrganizationServiceApi(null, $config);
+        $this->projects = new ProjectServiceApi(null, $config);
         $this->saml = new SAMLServiceApi(null, $config);
         $this->sessions = new SessionServiceApi(null, $config);
         $this->settings = new SettingsServiceApi(null, $config);
