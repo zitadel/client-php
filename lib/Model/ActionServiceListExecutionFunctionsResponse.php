@@ -302,7 +302,7 @@ class ActionServiceListExecutionFunctionsResponse implements ModelInterface, Arr
     /**
      * Sets functions
      *
-     * @param string[]|null $functions All available methods
+     * @param string[]|null $functions All available functions to use in conditions.
      *
      * @return self
      */

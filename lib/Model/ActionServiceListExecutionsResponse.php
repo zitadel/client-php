@@ -336,7 +336,7 @@ class ActionServiceListExecutionsResponse implements ModelInterface, ArrayAccess
     /**
      * Sets executions
      *
-     * @param \Zitadel\Client\Model\ActionServiceExecution[]|null $executions executions
+     * @param \Zitadel\Client\Model\ActionServiceExecution[]|null $executions List of all executions matching the query.
      *
      * @return self
      */

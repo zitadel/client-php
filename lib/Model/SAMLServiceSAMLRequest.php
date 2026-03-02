@@ -35,6 +35,7 @@ use \Zitadel\Client\ObjectSerializer;
  * SAMLServiceSAMLRequest Class Doc Comment
  *
  * @category Class
+ * @description SAMLRequest contains information about a SAML authentication request.  see: https://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0.html
  * @package  Zitadel\Client
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
@@ -337,7 +338,7 @@ class SAMLServiceSAMLRequest implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets id
      *
-     * @param string|null $id id
+     * @param string|null $id ID of the created SAMLRequest.
      *
      * @return self
      */
@@ -391,7 +392,7 @@ class SAMLServiceSAMLRequest implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets issuer
      *
-     * @param string|null $issuer issuer
+     * @param string|null $issuer SAML entityID of the application that created the SAMLRequest.
      *
      * @return self
      */
@@ -418,7 +419,7 @@ class SAMLServiceSAMLRequest implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets assertionConsumerService
      *
-     * @param string|null $assertionConsumerService assertionConsumerService
+     * @param string|null $assertionConsumerService URL which points back to the assertion consumer service of the application that created the SAMLRequest.
      *
      * @return self
      */
@@ -445,7 +446,7 @@ class SAMLServiceSAMLRequest implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets relayState
      *
-     * @param string|null $relayState relayState
+     * @param string|null $relayState RelayState provided by the application for the request.
      *
      * @return self
      */
@@ -472,7 +473,7 @@ class SAMLServiceSAMLRequest implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets binding
      *
-     * @param string|null $binding binding
+     * @param string|null $binding Binding used by the application for the request.
      *
      * @return self
      */

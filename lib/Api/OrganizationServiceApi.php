@@ -66,10 +66,46 @@ class OrganizationServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
+        'activateOrganization' => [
+            'application/json',
+        ],
         'addOrganization' => [
             'application/json',
         ],
+        'addOrganizationDomain' => [
+            'application/json',
+        ],
+        'deactivateOrganization' => [
+            'application/json',
+        ],
+        'deleteOrganization' => [
+            'application/json',
+        ],
+        'deleteOrganizationDomain' => [
+            'application/json',
+        ],
+        'deleteOrganizationMetadata' => [
+            'application/json',
+        ],
+        'generateOrganizationDomainValidation' => [
+            'application/json',
+        ],
+        'listOrganizationDomains' => [
+            'application/json',
+        ],
+        'listOrganizationMetadata' => [
+            'application/json',
+        ],
         'listOrganizations' => [
+            'application/json',
+        ],
+        'setOrganizationMetadata' => [
+            'application/json',
+        ],
+        'updateOrganization' => [
+            'application/json',
+        ],
+        'verifyOrganizationDomain' => [
             'application/json',
         ],
     ];
@@ -437,9 +473,121 @@ class OrganizationServiceApi
     }
 
     /**
+     * Operation activateOrganization
+     *
+     * Activate Organization
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceActivateOrganizationRequest $organizationServiceActivateOrganizationRequest organizationServiceActivateOrganizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['activateOrganization'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\OrganizationServiceActivateOrganizationResponse
+     * @throws ApiException
+     */
+    public function activateOrganization(    $organizationServiceActivateOrganizationRequest,string $contentType = self::contentTypes['activateOrganization'][0])
+    {
+        $request = $this->activateOrganizationRequest($organizationServiceActivateOrganizationRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\OrganizationServiceActivateOrganizationResponse',
+            'default' => '\Zitadel\Client\Model\OrganizationServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\OrganizationServiceActivateOrganizationResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'activateOrganization'
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceActivateOrganizationRequest $organizationServiceActivateOrganizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['activateOrganization'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function activateOrganizationRequest($organizationServiceActivateOrganizationRequest, string $contentType = self::contentTypes['activateOrganization'][0])
+    {
+
+        if ($organizationServiceActivateOrganizationRequest === null || (is_array($organizationServiceActivateOrganizationRequest) && count($organizationServiceActivateOrganizationRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $organizationServiceActivateOrganizationRequest when calling activateOrganization'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.org.v2.OrganizationService/ActivateOrganization';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($organizationServiceActivateOrganizationRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($organizationServiceActivateOrganizationRequest));
+            } else {
+                $httpBody = $organizationServiceActivateOrganizationRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
      * Operation addOrganization
      *
-     * Create an Organization
+     * Add Organization
      *
      * @param  \Zitadel\Client\Model\OrganizationServiceAddOrganizationRequest $organizationServiceAddOrganizationRequest organizationServiceAddOrganizationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOrganization'] to see the possible values for this operation
@@ -549,9 +697,905 @@ class OrganizationServiceApi
     }
 
     /**
+     * Operation addOrganizationDomain
+     *
+     * Add Organization Domain
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceAddOrganizationDomainRequest $organizationServiceAddOrganizationDomainRequest organizationServiceAddOrganizationDomainRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOrganizationDomain'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\OrganizationServiceAddOrganizationDomainResponse
+     * @throws ApiException
+     */
+    public function addOrganizationDomain(    $organizationServiceAddOrganizationDomainRequest,string $contentType = self::contentTypes['addOrganizationDomain'][0])
+    {
+        $request = $this->addOrganizationDomainRequest($organizationServiceAddOrganizationDomainRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\OrganizationServiceAddOrganizationDomainResponse',
+            'default' => '\Zitadel\Client\Model\OrganizationServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\OrganizationServiceAddOrganizationDomainResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'addOrganizationDomain'
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceAddOrganizationDomainRequest $organizationServiceAddOrganizationDomainRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addOrganizationDomain'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function addOrganizationDomainRequest($organizationServiceAddOrganizationDomainRequest, string $contentType = self::contentTypes['addOrganizationDomain'][0])
+    {
+
+        if ($organizationServiceAddOrganizationDomainRequest === null || (is_array($organizationServiceAddOrganizationDomainRequest) && count($organizationServiceAddOrganizationDomainRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $organizationServiceAddOrganizationDomainRequest when calling addOrganizationDomain'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.org.v2.OrganizationService/AddOrganizationDomain';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($organizationServiceAddOrganizationDomainRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($organizationServiceAddOrganizationDomainRequest));
+            } else {
+                $httpBody = $organizationServiceAddOrganizationDomainRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation deactivateOrganization
+     *
+     * Deactivate Organization
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceDeactivateOrganizationRequest $organizationServiceDeactivateOrganizationRequest organizationServiceDeactivateOrganizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deactivateOrganization'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\OrganizationServiceDeactivateOrganizationResponse
+     * @throws ApiException
+     */
+    public function deactivateOrganization(    $organizationServiceDeactivateOrganizationRequest,string $contentType = self::contentTypes['deactivateOrganization'][0])
+    {
+        $request = $this->deactivateOrganizationRequest($organizationServiceDeactivateOrganizationRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\OrganizationServiceDeactivateOrganizationResponse',
+            'default' => '\Zitadel\Client\Model\OrganizationServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\OrganizationServiceDeactivateOrganizationResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'deactivateOrganization'
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceDeactivateOrganizationRequest $organizationServiceDeactivateOrganizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deactivateOrganization'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function deactivateOrganizationRequest($organizationServiceDeactivateOrganizationRequest, string $contentType = self::contentTypes['deactivateOrganization'][0])
+    {
+
+        if ($organizationServiceDeactivateOrganizationRequest === null || (is_array($organizationServiceDeactivateOrganizationRequest) && count($organizationServiceDeactivateOrganizationRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $organizationServiceDeactivateOrganizationRequest when calling deactivateOrganization'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.org.v2.OrganizationService/DeactivateOrganization';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($organizationServiceDeactivateOrganizationRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($organizationServiceDeactivateOrganizationRequest));
+            } else {
+                $httpBody = $organizationServiceDeactivateOrganizationRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation deleteOrganization
+     *
+     * Delete Organization
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceDeleteOrganizationRequest $organizationServiceDeleteOrganizationRequest organizationServiceDeleteOrganizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteOrganization'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\OrganizationServiceDeleteOrganizationResponse
+     * @throws ApiException
+     */
+    public function deleteOrganization(    $organizationServiceDeleteOrganizationRequest,string $contentType = self::contentTypes['deleteOrganization'][0])
+    {
+        $request = $this->deleteOrganizationRequest($organizationServiceDeleteOrganizationRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\OrganizationServiceDeleteOrganizationResponse',
+            'default' => '\Zitadel\Client\Model\OrganizationServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\OrganizationServiceDeleteOrganizationResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'deleteOrganization'
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceDeleteOrganizationRequest $organizationServiceDeleteOrganizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteOrganization'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function deleteOrganizationRequest($organizationServiceDeleteOrganizationRequest, string $contentType = self::contentTypes['deleteOrganization'][0])
+    {
+
+        if ($organizationServiceDeleteOrganizationRequest === null || (is_array($organizationServiceDeleteOrganizationRequest) && count($organizationServiceDeleteOrganizationRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $organizationServiceDeleteOrganizationRequest when calling deleteOrganization'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.org.v2.OrganizationService/DeleteOrganization';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($organizationServiceDeleteOrganizationRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($organizationServiceDeleteOrganizationRequest));
+            } else {
+                $httpBody = $organizationServiceDeleteOrganizationRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation deleteOrganizationDomain
+     *
+     * Delete Organization Domain
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceDeleteOrganizationDomainRequest $organizationServiceDeleteOrganizationDomainRequest organizationServiceDeleteOrganizationDomainRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteOrganizationDomain'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\OrganizationServiceDeleteOrganizationDomainResponse
+     * @throws ApiException
+     */
+    public function deleteOrganizationDomain(    $organizationServiceDeleteOrganizationDomainRequest,string $contentType = self::contentTypes['deleteOrganizationDomain'][0])
+    {
+        $request = $this->deleteOrganizationDomainRequest($organizationServiceDeleteOrganizationDomainRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\OrganizationServiceDeleteOrganizationDomainResponse',
+            'default' => '\Zitadel\Client\Model\OrganizationServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\OrganizationServiceDeleteOrganizationDomainResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'deleteOrganizationDomain'
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceDeleteOrganizationDomainRequest $organizationServiceDeleteOrganizationDomainRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteOrganizationDomain'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function deleteOrganizationDomainRequest($organizationServiceDeleteOrganizationDomainRequest, string $contentType = self::contentTypes['deleteOrganizationDomain'][0])
+    {
+
+        if ($organizationServiceDeleteOrganizationDomainRequest === null || (is_array($organizationServiceDeleteOrganizationDomainRequest) && count($organizationServiceDeleteOrganizationDomainRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $organizationServiceDeleteOrganizationDomainRequest when calling deleteOrganizationDomain'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.org.v2.OrganizationService/DeleteOrganizationDomain';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($organizationServiceDeleteOrganizationDomainRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($organizationServiceDeleteOrganizationDomainRequest));
+            } else {
+                $httpBody = $organizationServiceDeleteOrganizationDomainRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation deleteOrganizationMetadata
+     *
+     * Delete Organization Metadata
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceDeleteOrganizationMetadataRequest $organizationServiceDeleteOrganizationMetadataRequest organizationServiceDeleteOrganizationMetadataRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteOrganizationMetadata'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\OrganizationServiceDeleteOrganizationMetadataResponse
+     * @throws ApiException
+     */
+    public function deleteOrganizationMetadata(    $organizationServiceDeleteOrganizationMetadataRequest,string $contentType = self::contentTypes['deleteOrganizationMetadata'][0])
+    {
+        $request = $this->deleteOrganizationMetadataRequest($organizationServiceDeleteOrganizationMetadataRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\OrganizationServiceDeleteOrganizationMetadataResponse',
+            'default' => '\Zitadel\Client\Model\OrganizationServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\OrganizationServiceDeleteOrganizationMetadataResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'deleteOrganizationMetadata'
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceDeleteOrganizationMetadataRequest $organizationServiceDeleteOrganizationMetadataRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteOrganizationMetadata'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function deleteOrganizationMetadataRequest($organizationServiceDeleteOrganizationMetadataRequest, string $contentType = self::contentTypes['deleteOrganizationMetadata'][0])
+    {
+
+        if ($organizationServiceDeleteOrganizationMetadataRequest === null || (is_array($organizationServiceDeleteOrganizationMetadataRequest) && count($organizationServiceDeleteOrganizationMetadataRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $organizationServiceDeleteOrganizationMetadataRequest when calling deleteOrganizationMetadata'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.org.v2.OrganizationService/DeleteOrganizationMetadata';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($organizationServiceDeleteOrganizationMetadataRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($organizationServiceDeleteOrganizationMetadataRequest));
+            } else {
+                $httpBody = $organizationServiceDeleteOrganizationMetadataRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation generateOrganizationDomainValidation
+     *
+     * Generate Organization Domain Validation
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceGenerateOrganizationDomainValidationRequest $organizationServiceGenerateOrganizationDomainValidationRequest organizationServiceGenerateOrganizationDomainValidationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['generateOrganizationDomainValidation'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\OrganizationServiceGenerateOrganizationDomainValidationResponse
+     * @throws ApiException
+     */
+    public function generateOrganizationDomainValidation(    $organizationServiceGenerateOrganizationDomainValidationRequest,string $contentType = self::contentTypes['generateOrganizationDomainValidation'][0])
+    {
+        $request = $this->generateOrganizationDomainValidationRequest($organizationServiceGenerateOrganizationDomainValidationRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\OrganizationServiceGenerateOrganizationDomainValidationResponse',
+            'default' => '\Zitadel\Client\Model\OrganizationServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\OrganizationServiceGenerateOrganizationDomainValidationResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'generateOrganizationDomainValidation'
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceGenerateOrganizationDomainValidationRequest $organizationServiceGenerateOrganizationDomainValidationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['generateOrganizationDomainValidation'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function generateOrganizationDomainValidationRequest($organizationServiceGenerateOrganizationDomainValidationRequest, string $contentType = self::contentTypes['generateOrganizationDomainValidation'][0])
+    {
+
+        if ($organizationServiceGenerateOrganizationDomainValidationRequest === null || (is_array($organizationServiceGenerateOrganizationDomainValidationRequest) && count($organizationServiceGenerateOrganizationDomainValidationRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $organizationServiceGenerateOrganizationDomainValidationRequest when calling generateOrganizationDomainValidation'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.org.v2.OrganizationService/GenerateOrganizationDomainValidation';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($organizationServiceGenerateOrganizationDomainValidationRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($organizationServiceGenerateOrganizationDomainValidationRequest));
+            } else {
+                $httpBody = $organizationServiceGenerateOrganizationDomainValidationRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation listOrganizationDomains
+     *
+     * List Organization Domains
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceListOrganizationDomainsRequest $organizationServiceListOrganizationDomainsRequest organizationServiceListOrganizationDomainsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizationDomains'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\OrganizationServiceListOrganizationDomainsResponse
+     * @throws ApiException
+     */
+    public function listOrganizationDomains(    $organizationServiceListOrganizationDomainsRequest,string $contentType = self::contentTypes['listOrganizationDomains'][0])
+    {
+        $request = $this->listOrganizationDomainsRequest($organizationServiceListOrganizationDomainsRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\OrganizationServiceListOrganizationDomainsResponse',
+            'default' => '\Zitadel\Client\Model\OrganizationServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\OrganizationServiceListOrganizationDomainsResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'listOrganizationDomains'
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceListOrganizationDomainsRequest $organizationServiceListOrganizationDomainsRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizationDomains'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function listOrganizationDomainsRequest($organizationServiceListOrganizationDomainsRequest, string $contentType = self::contentTypes['listOrganizationDomains'][0])
+    {
+
+        if ($organizationServiceListOrganizationDomainsRequest === null || (is_array($organizationServiceListOrganizationDomainsRequest) && count($organizationServiceListOrganizationDomainsRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $organizationServiceListOrganizationDomainsRequest when calling listOrganizationDomains'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.org.v2.OrganizationService/ListOrganizationDomains';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($organizationServiceListOrganizationDomainsRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($organizationServiceListOrganizationDomainsRequest));
+            } else {
+                $httpBody = $organizationServiceListOrganizationDomainsRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation listOrganizationMetadata
+     *
+     * List Organization Metadata
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceListOrganizationMetadataRequest $organizationServiceListOrganizationMetadataRequest organizationServiceListOrganizationMetadataRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizationMetadata'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\OrganizationServiceListOrganizationMetadataResponse
+     * @throws ApiException
+     */
+    public function listOrganizationMetadata(    $organizationServiceListOrganizationMetadataRequest,string $contentType = self::contentTypes['listOrganizationMetadata'][0])
+    {
+        $request = $this->listOrganizationMetadataRequest($organizationServiceListOrganizationMetadataRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\OrganizationServiceListOrganizationMetadataResponse',
+            'default' => '\Zitadel\Client\Model\OrganizationServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\OrganizationServiceListOrganizationMetadataResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'listOrganizationMetadata'
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceListOrganizationMetadataRequest $organizationServiceListOrganizationMetadataRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizationMetadata'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function listOrganizationMetadataRequest($organizationServiceListOrganizationMetadataRequest, string $contentType = self::contentTypes['listOrganizationMetadata'][0])
+    {
+
+        if ($organizationServiceListOrganizationMetadataRequest === null || (is_array($organizationServiceListOrganizationMetadataRequest) && count($organizationServiceListOrganizationMetadataRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $organizationServiceListOrganizationMetadataRequest when calling listOrganizationMetadata'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.org.v2.OrganizationService/ListOrganizationMetadata';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($organizationServiceListOrganizationMetadataRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($organizationServiceListOrganizationMetadataRequest));
+            } else {
+                $httpBody = $organizationServiceListOrganizationMetadataRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
      * Operation listOrganizations
      *
-     * Search Organizations
+     * List Organizations
      *
      * @param  \Zitadel\Client\Model\OrganizationServiceListOrganizationsRequest $organizationServiceListOrganizationsRequest organizationServiceListOrganizationsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listOrganizations'] to see the possible values for this operation
@@ -612,6 +1656,342 @@ class OrganizationServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($organizationServiceListOrganizationsRequest));
             } else {
                 $httpBody = $organizationServiceListOrganizationsRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation setOrganizationMetadata
+     *
+     * Set Organization Metadata
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceSetOrganizationMetadataRequest $organizationServiceSetOrganizationMetadataRequest organizationServiceSetOrganizationMetadataRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setOrganizationMetadata'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\OrganizationServiceSetOrganizationMetadataResponse
+     * @throws ApiException
+     */
+    public function setOrganizationMetadata(    $organizationServiceSetOrganizationMetadataRequest,string $contentType = self::contentTypes['setOrganizationMetadata'][0])
+    {
+        $request = $this->setOrganizationMetadataRequest($organizationServiceSetOrganizationMetadataRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\OrganizationServiceSetOrganizationMetadataResponse',
+            'default' => '\Zitadel\Client\Model\OrganizationServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\OrganizationServiceSetOrganizationMetadataResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'setOrganizationMetadata'
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceSetOrganizationMetadataRequest $organizationServiceSetOrganizationMetadataRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setOrganizationMetadata'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function setOrganizationMetadataRequest($organizationServiceSetOrganizationMetadataRequest, string $contentType = self::contentTypes['setOrganizationMetadata'][0])
+    {
+
+        if ($organizationServiceSetOrganizationMetadataRequest === null || (is_array($organizationServiceSetOrganizationMetadataRequest) && count($organizationServiceSetOrganizationMetadataRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $organizationServiceSetOrganizationMetadataRequest when calling setOrganizationMetadata'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.org.v2.OrganizationService/SetOrganizationMetadata';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($organizationServiceSetOrganizationMetadataRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($organizationServiceSetOrganizationMetadataRequest));
+            } else {
+                $httpBody = $organizationServiceSetOrganizationMetadataRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation updateOrganization
+     *
+     * Update Organization
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceUpdateOrganizationRequest $organizationServiceUpdateOrganizationRequest organizationServiceUpdateOrganizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['updateOrganization'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\OrganizationServiceUpdateOrganizationResponse
+     * @throws ApiException
+     */
+    public function updateOrganization(    $organizationServiceUpdateOrganizationRequest,string $contentType = self::contentTypes['updateOrganization'][0])
+    {
+        $request = $this->updateOrganizationRequest($organizationServiceUpdateOrganizationRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\OrganizationServiceUpdateOrganizationResponse',
+            'default' => '\Zitadel\Client\Model\OrganizationServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\OrganizationServiceUpdateOrganizationResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'updateOrganization'
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceUpdateOrganizationRequest $organizationServiceUpdateOrganizationRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['updateOrganization'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function updateOrganizationRequest($organizationServiceUpdateOrganizationRequest, string $contentType = self::contentTypes['updateOrganization'][0])
+    {
+
+        if ($organizationServiceUpdateOrganizationRequest === null || (is_array($organizationServiceUpdateOrganizationRequest) && count($organizationServiceUpdateOrganizationRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $organizationServiceUpdateOrganizationRequest when calling updateOrganization'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.org.v2.OrganizationService/UpdateOrganization';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($organizationServiceUpdateOrganizationRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($organizationServiceUpdateOrganizationRequest));
+            } else {
+                $httpBody = $organizationServiceUpdateOrganizationRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation verifyOrganizationDomain
+     *
+     * Verify Organization Domain
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceVerifyOrganizationDomainRequest $organizationServiceVerifyOrganizationDomainRequest organizationServiceVerifyOrganizationDomainRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyOrganizationDomain'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\OrganizationServiceVerifyOrganizationDomainResponse
+     * @throws ApiException
+     */
+    public function verifyOrganizationDomain(    $organizationServiceVerifyOrganizationDomainRequest,string $contentType = self::contentTypes['verifyOrganizationDomain'][0])
+    {
+        $request = $this->verifyOrganizationDomainRequest($organizationServiceVerifyOrganizationDomainRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\OrganizationServiceVerifyOrganizationDomainResponse',
+            'default' => '\Zitadel\Client\Model\OrganizationServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\OrganizationServiceVerifyOrganizationDomainResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'verifyOrganizationDomain'
+     *
+     * @param  \Zitadel\Client\Model\OrganizationServiceVerifyOrganizationDomainRequest $organizationServiceVerifyOrganizationDomainRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyOrganizationDomain'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function verifyOrganizationDomainRequest($organizationServiceVerifyOrganizationDomainRequest, string $contentType = self::contentTypes['verifyOrganizationDomain'][0])
+    {
+
+        if ($organizationServiceVerifyOrganizationDomainRequest === null || (is_array($organizationServiceVerifyOrganizationDomainRequest) && count($organizationServiceVerifyOrganizationDomainRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $organizationServiceVerifyOrganizationDomainRequest when calling verifyOrganizationDomain'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.org.v2.OrganizationService/VerifyOrganizationDomain';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($organizationServiceVerifyOrganizationDomainRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($organizationServiceVerifyOrganizationDomainRequest));
+            } else {
+                $httpBody = $organizationServiceVerifyOrganizationDomainRequest;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {

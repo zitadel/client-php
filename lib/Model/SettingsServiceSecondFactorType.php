@@ -46,11 +46,15 @@ class SettingsServiceSecondFactorType
 
     public const SECOND_FACTOR_TYPE_OTP = 'SECOND_FACTOR_TYPE_OTP';
 
+    public const SECOND_FACTOR_TYPE_TOTP = 'SECOND_FACTOR_TYPE_TOTP';
+
     public const SECOND_FACTOR_TYPE_U2_F = 'SECOND_FACTOR_TYPE_U2F';
 
     public const SECOND_FACTOR_TYPE_OTP_EMAIL = 'SECOND_FACTOR_TYPE_OTP_EMAIL';
 
     public const SECOND_FACTOR_TYPE_OTP_SMS = 'SECOND_FACTOR_TYPE_OTP_SMS';
+
+    public const SECOND_FACTOR_TYPE_RECOVERY_CODES = 'SECOND_FACTOR_TYPE_RECOVERY_CODES';
 
     /**
      * Gets allowable values of the enum
@@ -61,9 +65,11 @@ class SettingsServiceSecondFactorType
         return [
             self::SECOND_FACTOR_TYPE_UNSPECIFIED,
             self::SECOND_FACTOR_TYPE_OTP,
+            self::SECOND_FACTOR_TYPE_TOTP,
             self::SECOND_FACTOR_TYPE_U2_F,
             self::SECOND_FACTOR_TYPE_OTP_EMAIL,
-            self::SECOND_FACTOR_TYPE_OTP_SMS
+            self::SECOND_FACTOR_TYPE_OTP_SMS,
+            self::SECOND_FACTOR_TYPE_RECOVERY_CODES
         ];
     }
 }

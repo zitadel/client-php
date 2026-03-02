@@ -472,7 +472,7 @@ class SettingsServiceApi
     /**
      * Operation getActiveIdentityProviders
      *
-     * Get the current active identity providers
+     * Get Active Identity Providers
      *
      * @param  \Zitadel\Client\Model\SettingsServiceGetActiveIdentityProvidersRequest $settingsServiceGetActiveIdentityProvidersRequest settingsServiceGetActiveIdentityProvidersRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getActiveIdentityProviders'] to see the possible values for this operation
@@ -584,7 +584,7 @@ class SettingsServiceApi
     /**
      * Operation getBrandingSettings
      *
-     * Get the current active branding settings
+     * Get Branding Settings
      *
      * @param  \Zitadel\Client\Model\SettingsServiceGetBrandingSettingsRequest $settingsServiceGetBrandingSettingsRequest settingsServiceGetBrandingSettingsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBrandingSettings'] to see the possible values for this operation
@@ -696,7 +696,7 @@ class SettingsServiceApi
     /**
      * Operation getDomainSettings
      *
-     * Get the domain settings
+     * Get Domain Settings
      *
      * @param  \Zitadel\Client\Model\SettingsServiceGetDomainSettingsRequest $settingsServiceGetDomainSettingsRequest settingsServiceGetDomainSettingsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDomainSettings'] to see the possible values for this operation
@@ -808,7 +808,7 @@ class SettingsServiceApi
     /**
      * Operation getGeneralSettings
      *
-     * Get basic information over the instance
+     * Get General Settings
      *
      * @param  object $body body (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getGeneralSettings'] to see the possible values for this operation
@@ -1032,7 +1032,7 @@ class SettingsServiceApi
     /**
      * Operation getLegalAndSupportSettings
      *
-     * Get the legal and support settings
+     * Get Legal and Support Settings
      *
      * @param  \Zitadel\Client\Model\SettingsServiceGetLegalAndSupportSettingsRequest $settingsServiceGetLegalAndSupportSettingsRequest settingsServiceGetLegalAndSupportSettingsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLegalAndSupportSettings'] to see the possible values for this operation
@@ -1144,7 +1144,7 @@ class SettingsServiceApi
     /**
      * Operation getLockoutSettings
      *
-     * Get the lockout settings
+     * Get Lockout Settings
      *
      * @param  \Zitadel\Client\Model\SettingsServiceGetLockoutSettingsRequest $settingsServiceGetLockoutSettingsRequest settingsServiceGetLockoutSettingsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLockoutSettings'] to see the possible values for this operation
@@ -1256,7 +1256,7 @@ class SettingsServiceApi
     /**
      * Operation getLoginSettings
      *
-     * Get the login settings
+     * Get Login Settings
      *
      * @param  \Zitadel\Client\Model\SettingsServiceGetLoginSettingsRequest $settingsServiceGetLoginSettingsRequest settingsServiceGetLoginSettingsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getLoginSettings'] to see the possible values for this operation
@@ -1368,7 +1368,7 @@ class SettingsServiceApi
     /**
      * Operation getPasswordComplexitySettings
      *
-     * Get the password complexity settings
+     * Get Password Complexity Settings
      *
      * @param  \Zitadel\Client\Model\SettingsServiceGetPasswordComplexitySettingsRequest $settingsServiceGetPasswordComplexitySettingsRequest settingsServiceGetPasswordComplexitySettingsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordComplexitySettings'] to see the possible values for this operation
@@ -1480,7 +1480,7 @@ class SettingsServiceApi
     /**
      * Operation getPasswordExpirySettings
      *
-     * Get the password expiry settings
+     * Get Password Expiry Settings
      *
      * @param  \Zitadel\Client\Model\SettingsServiceGetPasswordExpirySettingsRequest $settingsServiceGetPasswordExpirySettingsRequest settingsServiceGetPasswordExpirySettingsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPasswordExpirySettings'] to see the possible values for this operation
@@ -1592,7 +1592,7 @@ class SettingsServiceApi
     /**
      * Operation getSecuritySettings
      *
-     * Get the security settings
+     * Get Security Settings
      *
      * @param  object $body body (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSecuritySettings'] to see the possible values for this operation
@@ -1816,7 +1816,7 @@ class SettingsServiceApi
     /**
      * Operation setSecuritySettings
      *
-     * Set the security settings
+     * Set Security Settings
      *
      * @param  \Zitadel\Client\Model\SettingsServiceSetSecuritySettingsRequest $settingsServiceSetSecuritySettingsRequest settingsServiceSetSecuritySettingsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSecuritySettings'] to see the possible values for this operation

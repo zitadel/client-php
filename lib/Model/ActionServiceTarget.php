@@ -64,6 +64,7 @@ class ActionServiceTarget implements ModelInterface, ArrayAccess, \JsonSerializa
         'timeout' => 'string',
         'endpoint' => 'string',
         'signingKey' => 'string',
+        'payloadType' => '\Zitadel\Client\Model\ActionServicePayloadType',
         'restAsync' => 'object',
         'restCall' => '\Zitadel\Client\Model\ActionServiceRESTCall',
         'restWebhook' => '\Zitadel\Client\Model\ActionServiceRESTWebhook'
@@ -84,6 +85,7 @@ class ActionServiceTarget implements ModelInterface, ArrayAccess, \JsonSerializa
         'timeout' => 'duration',
         'endpoint' => null,
         'signingKey' => null,
+        'payloadType' => null,
         'restAsync' => null,
         'restCall' => null,
         'restWebhook' => null
@@ -102,6 +104,7 @@ class ActionServiceTarget implements ModelInterface, ArrayAccess, \JsonSerializa
         'timeout' => false,
         'endpoint' => false,
         'signingKey' => false,
+        'payloadType' => false,
         'restAsync' => false,
         'restCall' => false,
         'restWebhook' => false
@@ -200,6 +203,7 @@ class ActionServiceTarget implements ModelInterface, ArrayAccess, \JsonSerializa
         'timeout' => 'timeout',
         'endpoint' => 'endpoint',
         'signingKey' => 'signingKey',
+        'payloadType' => 'payloadType',
         'restAsync' => 'restAsync',
         'restCall' => 'restCall',
         'restWebhook' => 'restWebhook'
@@ -218,6 +222,7 @@ class ActionServiceTarget implements ModelInterface, ArrayAccess, \JsonSerializa
         'timeout' => 'setTimeout',
         'endpoint' => 'setEndpoint',
         'signingKey' => 'setSigningKey',
+        'payloadType' => 'setPayloadType',
         'restAsync' => 'setRestAsync',
         'restCall' => 'setRestCall',
         'restWebhook' => 'setRestWebhook'
@@ -236,6 +241,7 @@ class ActionServiceTarget implements ModelInterface, ArrayAccess, \JsonSerializa
         'timeout' => 'getTimeout',
         'endpoint' => 'getEndpoint',
         'signingKey' => 'getSigningKey',
+        'payloadType' => 'getPayloadType',
         'restAsync' => 'getRestAsync',
         'restCall' => 'getRestCall',
         'restWebhook' => 'getRestWebhook'
@@ -305,6 +311,7 @@ class ActionServiceTarget implements ModelInterface, ArrayAccess, \JsonSerializa
         $this->setIfExists('timeout', $data ?? [], null);
         $this->setIfExists('endpoint', $data ?? [], null);
         $this->setIfExists('signingKey', $data ?? [], null);
+        $this->setIfExists('payloadType', $data ?? [], null);
         $this->setIfExists('restAsync', $data ?? [], null);
         $this->setIfExists('restCall', $data ?? [], null);
         $this->setIfExists('restWebhook', $data ?? [], null);
@@ -446,7 +453,7 @@ class ActionServiceTarget implements ModelInterface, ArrayAccess, \JsonSerializa
     /**
      * Sets name
      *
-     * @param string|null $name name
+     * @param string|null $name Display name of the target.
      *
      * @return self
      */
@@ -500,7 +507,7 @@ class ActionServiceTarget implements ModelInterface, ArrayAccess, \JsonSerializa
     /**
      * Sets endpoint
      *
-     * @param string|null $endpoint endpoint
+     * @param string|null $endpoint The URL that will be called in case of an execution.
      *
      * @return self
      */
@@ -527,7 +534,7 @@ class ActionServiceTarget implements ModelInterface, ArrayAccess, \JsonSerializa
     /**
      * Sets signingKey
      *
-     * @param string|null $signingKey signingKey
+     * @param string|null $signingKey The current signing key used to sign the request sent to the target.  The key can be used to verify the integrity and authenticity of the request  on the receiver side. The key should be treated as a secret and only known to ZITADEL and the receiver.  The signature is included in the request header `X-ZITADEL-Signature`  and calculated over the raw body of the request using HMAC with SHA256.
      *
      * @return self
      */
@@ -537,6 +544,33 @@ class ActionServiceTarget implements ModelInterface, ArrayAccess, \JsonSerializa
             throw new \InvalidArgumentException('non-nullable signingKey cannot be null');
         }
         $this->container['signingKey'] = $signingKey;
+
+        return $this;
+    }
+
+    /**
+     * Gets payloadType
+     *
+     * @return \Zitadel\Client\Model\ActionServicePayloadType|null
+     */
+    public function getPayloadType()
+    {
+        return $this->container['payloadType'];
+    }
+
+    /**
+     * Sets payloadType
+     *
+     * @param \Zitadel\Client\Model\ActionServicePayloadType|null $payloadType payloadType
+     *
+     * @return self
+     */
+    public function setPayloadType($payloadType)
+    {
+        if (is_null($payloadType)) {
+            throw new \InvalidArgumentException('non-nullable payloadType cannot be null');
+        }
+        $this->container['payloadType'] = $payloadType;
 
         return $this;
     }

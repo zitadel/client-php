@@ -343,7 +343,7 @@ class SessionServiceListSessionsRequest implements ModelInterface, ArrayAccess, 
     /**
      * Sets queries
      *
-     * @param \Zitadel\Client\Model\SessionServiceSearchQuery[]|null $queries queries
+     * @param \Zitadel\Client\Model\SessionServiceSearchQuery[]|null $queries The criteria to be used when searching for sessions.  Multiple queries will be combined with a logical AND.
      *
      * @return self
      */

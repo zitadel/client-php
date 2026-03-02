@@ -66,7 +66,16 @@ class ActionServiceApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
+        'activatePublicKey' => [
+            'application/json',
+        ],
+        'addPublicKey' => [
+            'application/json',
+        ],
         'createTarget' => [
+            'application/json',
+        ],
+        'deactivatePublicKey' => [
             'application/json',
         ],
         'deleteTarget' => [
@@ -87,7 +96,13 @@ class ActionServiceApi
         'listExecutions' => [
             'application/json',
         ],
+        'listPublicKeys' => [
+            'application/json',
+        ],
         'listTargets' => [
+            'application/json',
+        ],
+        'removePublicKey' => [
             'application/json',
         ],
         'setExecution' => [
@@ -461,6 +476,230 @@ class ActionServiceApi
     }
 
     /**
+     * Operation activatePublicKey
+     *
+     * Activate Public Key
+     *
+     * @param  \Zitadel\Client\Model\ActionServiceActivatePublicKeyRequest $actionServiceActivatePublicKeyRequest actionServiceActivatePublicKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['activatePublicKey'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\ActionServiceActivatePublicKeyResponse
+     * @throws ApiException
+     */
+    public function activatePublicKey(    $actionServiceActivatePublicKeyRequest,string $contentType = self::contentTypes['activatePublicKey'][0])
+    {
+        $request = $this->activatePublicKeyRequest($actionServiceActivatePublicKeyRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\ActionServiceActivatePublicKeyResponse',
+            'default' => '\Zitadel\Client\Model\ActionServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\ActionServiceActivatePublicKeyResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'activatePublicKey'
+     *
+     * @param  \Zitadel\Client\Model\ActionServiceActivatePublicKeyRequest $actionServiceActivatePublicKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['activatePublicKey'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function activatePublicKeyRequest($actionServiceActivatePublicKeyRequest, string $contentType = self::contentTypes['activatePublicKey'][0])
+    {
+
+        if ($actionServiceActivatePublicKeyRequest === null || (is_array($actionServiceActivatePublicKeyRequest) && count($actionServiceActivatePublicKeyRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $actionServiceActivatePublicKeyRequest when calling activatePublicKey'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.action.v2.ActionService/ActivatePublicKey';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($actionServiceActivatePublicKeyRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($actionServiceActivatePublicKeyRequest));
+            } else {
+                $httpBody = $actionServiceActivatePublicKeyRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation addPublicKey
+     *
+     * Add Public Key
+     *
+     * @param  \Zitadel\Client\Model\ActionServiceAddPublicKeyRequest $actionServiceAddPublicKeyRequest actionServiceAddPublicKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addPublicKey'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\ActionServiceAddPublicKeyResponse
+     * @throws ApiException
+     */
+    public function addPublicKey(    $actionServiceAddPublicKeyRequest,string $contentType = self::contentTypes['addPublicKey'][0])
+    {
+        $request = $this->addPublicKeyRequest($actionServiceAddPublicKeyRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\ActionServiceAddPublicKeyResponse',
+            'default' => '\Zitadel\Client\Model\ActionServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\ActionServiceAddPublicKeyResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'addPublicKey'
+     *
+     * @param  \Zitadel\Client\Model\ActionServiceAddPublicKeyRequest $actionServiceAddPublicKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['addPublicKey'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function addPublicKeyRequest($actionServiceAddPublicKeyRequest, string $contentType = self::contentTypes['addPublicKey'][0])
+    {
+
+        if ($actionServiceAddPublicKeyRequest === null || (is_array($actionServiceAddPublicKeyRequest) && count($actionServiceAddPublicKeyRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $actionServiceAddPublicKeyRequest when calling addPublicKey'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.action.v2.ActionService/AddPublicKey';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($actionServiceAddPublicKeyRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($actionServiceAddPublicKeyRequest));
+            } else {
+                $httpBody = $actionServiceAddPublicKeyRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
      * Operation createTarget
      *
      * Create Target
@@ -524,6 +763,118 @@ class ActionServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($actionServiceCreateTargetRequest));
             } else {
                 $httpBody = $actionServiceCreateTargetRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation deactivatePublicKey
+     *
+     * Deactivate Public Key
+     *
+     * @param  \Zitadel\Client\Model\ActionServiceDeactivatePublicKeyRequest $actionServiceDeactivatePublicKeyRequest actionServiceDeactivatePublicKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deactivatePublicKey'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\ActionServiceDeactivatePublicKeyResponse
+     * @throws ApiException
+     */
+    public function deactivatePublicKey(    $actionServiceDeactivatePublicKeyRequest,string $contentType = self::contentTypes['deactivatePublicKey'][0])
+    {
+        $request = $this->deactivatePublicKeyRequest($actionServiceDeactivatePublicKeyRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\ActionServiceDeactivatePublicKeyResponse',
+            'default' => '\Zitadel\Client\Model\ActionServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\ActionServiceDeactivatePublicKeyResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'deactivatePublicKey'
+     *
+     * @param  \Zitadel\Client\Model\ActionServiceDeactivatePublicKeyRequest $actionServiceDeactivatePublicKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deactivatePublicKey'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function deactivatePublicKeyRequest($actionServiceDeactivatePublicKeyRequest, string $contentType = self::contentTypes['deactivatePublicKey'][0])
+    {
+
+        if ($actionServiceDeactivatePublicKeyRequest === null || (is_array($actionServiceDeactivatePublicKeyRequest) && count($actionServiceDeactivatePublicKeyRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $actionServiceDeactivatePublicKeyRequest when calling deactivatePublicKey'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.action.v2.ActionService/DeactivatePublicKey';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($actionServiceDeactivatePublicKeyRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($actionServiceDeactivatePublicKeyRequest));
+            } else {
+                $httpBody = $actionServiceDeactivatePublicKeyRequest;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -1245,6 +1596,118 @@ class ActionServiceApi
     }
 
     /**
+     * Operation listPublicKeys
+     *
+     * List Public Keys
+     *
+     * @param  \Zitadel\Client\Model\ActionServiceListPublicKeysRequest $actionServiceListPublicKeysRequest actionServiceListPublicKeysRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listPublicKeys'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\ActionServiceListPublicKeysResponse
+     * @throws ApiException
+     */
+    public function listPublicKeys(    $actionServiceListPublicKeysRequest,string $contentType = self::contentTypes['listPublicKeys'][0])
+    {
+        $request = $this->listPublicKeysRequest($actionServiceListPublicKeysRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\ActionServiceListPublicKeysResponse',
+            'default' => '\Zitadel\Client\Model\ActionServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\ActionServiceListPublicKeysResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'listPublicKeys'
+     *
+     * @param  \Zitadel\Client\Model\ActionServiceListPublicKeysRequest $actionServiceListPublicKeysRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listPublicKeys'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function listPublicKeysRequest($actionServiceListPublicKeysRequest, string $contentType = self::contentTypes['listPublicKeys'][0])
+    {
+
+        if ($actionServiceListPublicKeysRequest === null || (is_array($actionServiceListPublicKeysRequest) && count($actionServiceListPublicKeysRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $actionServiceListPublicKeysRequest when calling listPublicKeys'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.action.v2.ActionService/ListPublicKeys';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($actionServiceListPublicKeysRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($actionServiceListPublicKeysRequest));
+            } else {
+                $httpBody = $actionServiceListPublicKeysRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
      * Operation listTargets
      *
      * List targets
@@ -1308,6 +1771,118 @@ class ActionServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($actionServiceListTargetsRequest));
             } else {
                 $httpBody = $actionServiceListTargetsRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation removePublicKey
+     *
+     * Remove Public Key
+     *
+     * @param  \Zitadel\Client\Model\ActionServiceRemovePublicKeyRequest $actionServiceRemovePublicKeyRequest actionServiceRemovePublicKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removePublicKey'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\ActionServiceRemovePublicKeyResponse
+     * @throws ApiException
+     */
+    public function removePublicKey(    $actionServiceRemovePublicKeyRequest,string $contentType = self::contentTypes['removePublicKey'][0])
+    {
+        $request = $this->removePublicKeyRequest($actionServiceRemovePublicKeyRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\ActionServiceRemovePublicKeyResponse',
+            'default' => '\Zitadel\Client\Model\ActionServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\ActionServiceRemovePublicKeyResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'removePublicKey'
+     *
+     * @param  \Zitadel\Client\Model\ActionServiceRemovePublicKeyRequest $actionServiceRemovePublicKeyRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removePublicKey'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function removePublicKeyRequest($actionServiceRemovePublicKeyRequest, string $contentType = self::contentTypes['removePublicKey'][0])
+    {
+
+        if ($actionServiceRemovePublicKeyRequest === null || (is_array($actionServiceRemovePublicKeyRequest) && count($actionServiceRemovePublicKeyRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $actionServiceRemovePublicKeyRequest when calling removePublicKey'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.action.v2.ActionService/RemovePublicKey';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($actionServiceRemovePublicKeyRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($actionServiceRemovePublicKeyRequest));
+            } else {
+                $httpBody = $actionServiceRemovePublicKeyRequest;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {

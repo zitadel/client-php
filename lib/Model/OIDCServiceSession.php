@@ -309,7 +309,7 @@ class OIDCServiceSession implements ModelInterface, ArrayAccess, \JsonSerializab
     /**
      * Sets sessionId
      *
-     * @param string|null $sessionId sessionId
+     * @param string|null $sessionId ID of the session, used to login the user. Connects the session to the Auth Request.
      *
      * @return self
      */
@@ -336,7 +336,7 @@ class OIDCServiceSession implements ModelInterface, ArrayAccess, \JsonSerializab
     /**
      * Sets sessionToken
      *
-     * @param string|null $sessionToken sessionToken
+     * @param string|null $sessionToken Token of the session used to login the user. This token verifies that the session is valid.
      *
      * @return self
      */

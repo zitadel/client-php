@@ -350,7 +350,7 @@ class SessionServiceCreateSessionResponse implements ModelInterface, ArrayAccess
     /**
      * Sets sessionId
      *
-     * @param string|null $sessionId sessionId
+     * @param string|null $sessionId Unique identifier of the session.
      *
      * @return self
      */
@@ -377,7 +377,7 @@ class SessionServiceCreateSessionResponse implements ModelInterface, ArrayAccess
     /**
      * Sets sessionToken
      *
-     * @param string|null $sessionToken sessionToken
+     * @param string|null $sessionToken The current token of the session, which is required for using the session as authentication,  e.g.when authenticating an OIDC auth request or SAML request.  Additionally, the session token can be used as OAuth2 access token to authenticate against  the ZITADEL APIs.
      *
      * @return self
      */

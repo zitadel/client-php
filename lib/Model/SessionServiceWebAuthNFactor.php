@@ -336,7 +336,7 @@ class SessionServiceWebAuthNFactor implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets userVerified
      *
-     * @param bool|null $userVerified userVerified
+     * @param bool|null $userVerified Indicates if the user presence was verified during the last challenge.  This can be used to determine if the factor can be considered as multi-factor authentication.
      *
      * @return self
      */

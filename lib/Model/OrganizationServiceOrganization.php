@@ -330,7 +330,7 @@ class OrganizationServiceOrganization implements ModelInterface, ArrayAccess, \J
     /**
      * Sets id
      *
-     * @param string|null $id Unique identifier of the organization.
+     * @param string|null $id ID is the unique identifier of the organization.
      *
      * @return self
      */

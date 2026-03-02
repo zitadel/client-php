@@ -309,7 +309,7 @@ class SessionServiceWebAuthN implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets domain
      *
-     * @param string|null $domain domain
+     * @param string|null $domain The domain on which the session was created. Will be used in the WebAuthN challenge.  It must be either the exact domain or a top-level domain of the origin of the request.  For example if the request is coming from \"login.example.com\", the domain can be  \"login.example.com\" or \"example.com\", but not \"other.com\" or \"sub.login.example.com\".  See also: https://www.w3.org/TR/webauthn/#relying-party-identifier
      *
      * @return self
      */

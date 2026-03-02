@@ -316,7 +316,7 @@ class SettingsServiceLockoutSettings implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets maxPasswordAttempts
      *
-     * @param mixed|null $maxPasswordAttempts maxPasswordAttempts
+     * @param mixed|null $maxPasswordAttempts The amount of failed password attempts before the account gets locked.  Attempts are reset as soon as the password is entered correctly or the password is reset.  If set to 0 the account will never be locked.
      *
      * @return self
      */
@@ -377,7 +377,7 @@ class SettingsServiceLockoutSettings implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets maxOtpAttempts
      *
-     * @param mixed|null $maxOtpAttempts maxOtpAttempts
+     * @param mixed|null $maxOtpAttempts THe amount of failed OTP (TOTP, SMS, Email) attempts before the account gets locked.  Attempts are reset as soon as the OTP is entered correctly.  If set to 0 the account will never be locked.
      *
      * @return self
      */

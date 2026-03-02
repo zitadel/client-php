@@ -302,7 +302,7 @@ class ActionServiceListExecutionMethodsResponse implements ModelInterface, Array
     /**
      * Sets methods
      *
-     * @param string[]|null $methods All available methods
+     * @param string[]|null $methods All available methods to use in conditions.
      *
      * @return self
      */

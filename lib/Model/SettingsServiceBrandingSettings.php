@@ -398,7 +398,7 @@ class SettingsServiceBrandingSettings implements ModelInterface, ArrayAccess, \J
     /**
      * Sets fontUrl
      *
-     * @param string|null $fontUrl fontUrl
+     * @param string|null $fontUrl The url where the font is served.
      *
      * @return self
      */
@@ -425,7 +425,7 @@ class SettingsServiceBrandingSettings implements ModelInterface, ArrayAccess, \J
     /**
      * Sets hideLoginNameSuffix
      *
-     * @param bool|null $hideLoginNameSuffix hides the org suffix on the login form if the scope \\\"urn:zitadel:iam:org:domain:primary:{domainname}\\\" is set
+     * @param bool|null $hideLoginNameSuffix If enabled, the organization suffix will be hidden on the login form if the scope \\\"urn:zitadel:iam:org:domain:primary:{domainname}\\\" is used.
      *
      * @return self
      */
@@ -452,7 +452,7 @@ class SettingsServiceBrandingSettings implements ModelInterface, ArrayAccess, \J
     /**
      * Sets disableWatermark
      *
-     * @param bool|null $disableWatermark disableWatermark
+     * @param bool|null $disableWatermark If enabled, the Zitadel logo will not be displayed on the login screen.
      *
      * @return self
      */

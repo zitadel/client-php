@@ -337,7 +337,7 @@ class SettingsServiceTheme implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets primaryColor
      *
-     * @param string|null $primaryColor hex value for primary color
+     * @param string|null $primaryColor The hex value for primary color.
      *
      * @return self
      */
@@ -364,7 +364,7 @@ class SettingsServiceTheme implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets backgroundColor
      *
-     * @param string|null $backgroundColor hex value for background color
+     * @param string|null $backgroundColor The hex value for background color.
      *
      * @return self
      */
@@ -391,7 +391,7 @@ class SettingsServiceTheme implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets warnColor
      *
-     * @param string|null $warnColor hex value for warning color
+     * @param string|null $warnColor The hex value for warning color.
      *
      * @return self
      */
@@ -418,7 +418,7 @@ class SettingsServiceTheme implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets fontColor
      *
-     * @param string|null $fontColor hex value for font color
+     * @param string|null $fontColor The value for font color.
      *
      * @return self
      */
@@ -445,7 +445,7 @@ class SettingsServiceTheme implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets logoUrl
      *
-     * @param string|null $logoUrl url where the logo is served
+     * @param string|null $logoUrl The URL where the logo is served.
      *
      * @return self
      */
@@ -472,7 +472,7 @@ class SettingsServiceTheme implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets iconUrl
      *
-     * @param string|null $iconUrl url where the icon is served
+     * @param string|null $iconUrl The URL where the icon is served.
      *
      * @return self
      */

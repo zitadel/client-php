@@ -309,7 +309,7 @@ class SAMLServicePostResponse implements ModelInterface, ArrayAccess, \JsonSeria
     /**
      * Sets relayState
      *
-     * @param string|null $relayState relayState
+     * @param string|null $relayState The SAML RelaySate, that needs to be returned to the application to match the response to the request.
      *
      * @return self
      */
@@ -336,7 +336,7 @@ class SAMLServicePostResponse implements ModelInterface, ArrayAccess, \JsonSeria
     /**
      * Sets samlResponse
      *
-     * @param string|null $samlResponse samlResponse
+     * @param string|null $samlResponse The SAML Response, that needs to be returned to the application to complete the SAML flow.
      *
      * @return self
      */

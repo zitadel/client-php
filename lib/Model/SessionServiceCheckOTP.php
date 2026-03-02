@@ -302,7 +302,7 @@ class SessionServiceCheckOTP implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets code
      *
-     * @param string|null $code code
+     * @param string|null $code The One-Time Password sent over SMS or Email of the user to be checked.
      *
      * @return self
      */

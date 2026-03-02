@@ -351,7 +351,7 @@ class SettingsServiceLegalAndSupportSettings implements ModelInterface, ArrayAcc
     /**
      * Sets tosLink
      *
-     * @param string|null $tosLink tosLink
+     * @param string|null $tosLink Link to the Terms of Service. Can be a relative or absolute URL.
      *
      * @return self
      */
@@ -378,7 +378,7 @@ class SettingsServiceLegalAndSupportSettings implements ModelInterface, ArrayAcc
     /**
      * Sets privacyPolicyLink
      *
-     * @param string|null $privacyPolicyLink privacyPolicyLink
+     * @param string|null $privacyPolicyLink Link to the Privacy Policy. Can be a relative or absolute URL.
      *
      * @return self
      */
@@ -405,7 +405,7 @@ class SettingsServiceLegalAndSupportSettings implements ModelInterface, ArrayAcc
     /**
      * Sets helpLink
      *
-     * @param string|null $helpLink helpLink
+     * @param string|null $helpLink Link to a help page. Can be a relative or absolute URL.
      *
      * @return self
      */
@@ -432,7 +432,7 @@ class SettingsServiceLegalAndSupportSettings implements ModelInterface, ArrayAcc
     /**
      * Sets supportEmail
      *
-     * @param string|null $supportEmail supportEmail
+     * @param string|null $supportEmail Email address for support issues.
      *
      * @return self
      */
@@ -486,7 +486,7 @@ class SettingsServiceLegalAndSupportSettings implements ModelInterface, ArrayAcc
     /**
      * Sets docsLink
      *
-     * @param string|null $docsLink docsLink
+     * @param string|null $docsLink Link to documentation to be shown in the console.
      *
      * @return self
      */
@@ -513,7 +513,7 @@ class SettingsServiceLegalAndSupportSettings implements ModelInterface, ArrayAcc
     /**
      * Sets customLink
      *
-     * @param string|null $customLink customLink
+     * @param string|null $customLink Link to an external resource that will be available to users in the console.
      *
      * @return self
      */
@@ -540,7 +540,7 @@ class SettingsServiceLegalAndSupportSettings implements ModelInterface, ArrayAcc
     /**
      * Sets customLinkText
      *
-     * @param string|null $customLinkText customLinkText
+     * @param string|null $customLinkText The button text that would be shown in console pointing to custom link.
      *
      * @return self
      */

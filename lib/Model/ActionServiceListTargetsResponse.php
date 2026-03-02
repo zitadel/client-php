@@ -336,7 +336,7 @@ class ActionServiceListTargetsResponse implements ModelInterface, ArrayAccess, \
     /**
      * Sets targets
      *
-     * @param \Zitadel\Client\Model\ActionServiceTarget[]|null $targets targets
+     * @param \Zitadel\Client\Model\ActionServiceTarget[]|null $targets List of all targets matching the query.
      *
      * @return self
      */

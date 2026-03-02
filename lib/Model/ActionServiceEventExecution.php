@@ -316,7 +316,7 @@ class ActionServiceEventExecution implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Sets all
      *
-     * @param bool|null $all all events as condition.
+     * @param bool|null $all Define all events as condition.  After any event is created, the execution is triggered.
      *
      * @return self
      */
@@ -343,7 +343,7 @@ class ActionServiceEventExecution implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Sets event
      *
-     * @param string|null $event Event name as condition.
+     * @param string|null $event Define a specific event as condition.  After this event is created, the execution is triggered.
      *
      * @return self
      */
@@ -370,7 +370,7 @@ class ActionServiceEventExecution implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Sets group
      *
-     * @param string|null $group Event group as condition, all events under this group.
+     * @param string|null $group Define an event group as condition.  After any event under this group is created, the execution is triggered.
      *
      * @return self
      */

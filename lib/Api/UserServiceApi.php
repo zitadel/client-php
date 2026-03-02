@@ -105,6 +105,9 @@ class UserServiceApi
         'deleteUserMetadata' => [
             'application/json',
         ],
+        'generateRecoveryCodes' => [
+            'application/json',
+        ],
         'getUserByID' => [
             'application/json',
         ],
@@ -172,6 +175,9 @@ class UserServiceApi
             'application/json',
         ],
         'removePhone' => [
+            'application/json',
+        ],
+        'removeRecoveryCodes' => [
             'application/json',
         ],
         'removeSecret' => [
@@ -2012,6 +2018,118 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($userServiceDeleteUserMetadataRequest));
             } else {
                 $httpBody = $userServiceDeleteUserMetadataRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation generateRecoveryCodes
+     *
+     * Generate single-use recovery codes for a user
+     *
+     * @param  \Zitadel\Client\Model\UserServiceGenerateRecoveryCodesRequest $userServiceGenerateRecoveryCodesRequest userServiceGenerateRecoveryCodesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['generateRecoveryCodes'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\UserServiceGenerateRecoveryCodesResponse
+     * @throws ApiException
+     */
+    public function generateRecoveryCodes(    $userServiceGenerateRecoveryCodesRequest,string $contentType = self::contentTypes['generateRecoveryCodes'][0])
+    {
+        $request = $this->generateRecoveryCodesRequest($userServiceGenerateRecoveryCodesRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceGenerateRecoveryCodesResponse',
+            'default' => '\Zitadel\Client\Model\UserServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceGenerateRecoveryCodesResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'generateRecoveryCodes'
+     *
+     * @param  \Zitadel\Client\Model\UserServiceGenerateRecoveryCodesRequest $userServiceGenerateRecoveryCodesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['generateRecoveryCodes'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function generateRecoveryCodesRequest($userServiceGenerateRecoveryCodesRequest, string $contentType = self::contentTypes['generateRecoveryCodes'][0])
+    {
+
+        if ($userServiceGenerateRecoveryCodesRequest === null || (is_array($userServiceGenerateRecoveryCodesRequest) && count($userServiceGenerateRecoveryCodesRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $userServiceGenerateRecoveryCodesRequest when calling generateRecoveryCodes'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.user.v2.UserService/GenerateRecoveryCodes';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($userServiceGenerateRecoveryCodesRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($userServiceGenerateRecoveryCodesRequest));
+            } else {
+                $httpBody = $userServiceGenerateRecoveryCodesRequest;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -4588,6 +4706,118 @@ class UserServiceApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($userServiceRemovePhoneRequest));
             } else {
                 $httpBody = $userServiceRemovePhoneRequest;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                $httpBody = ObjectSerializer::buildQuery($formParams, $this->config->getBooleanFormatForQueryString());
+            }
+        }
+
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams, $this->config->getBooleanFormatForQueryString());
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation removeRecoveryCodes
+     *
+     * Remove recovery codes from a user
+     *
+     * @param  \Zitadel\Client\Model\UserServiceRemoveRecoveryCodesRequest $userServiceRemoveRecoveryCodesRequest userServiceRemoveRecoveryCodesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removeRecoveryCodes'] to see the possible values for this operation
+     *
+     * @return \Zitadel\Client\Model\UserServiceRemoveRecoveryCodesResponse
+     * @throws ApiException
+     */
+    public function removeRecoveryCodes(    $userServiceRemoveRecoveryCodesRequest,string $contentType = self::contentTypes['removeRecoveryCodes'][0])
+    {
+        $request = $this->removeRecoveryCodesRequest($userServiceRemoveRecoveryCodesRequest, $contentType);
+
+        $responseTypes = [
+            200 => '\Zitadel\Client\Model\UserServiceRemoveRecoveryCodesResponse',
+            'default' => '\Zitadel\Client\Model\UserServiceConnectError',
+        ];
+        $defaultSignatureType = '\Zitadel\Client\Model\UserServiceRemoveRecoveryCodesResponse';
+        return $this->executeRequest($request, $responseTypes, $defaultSignatureType);
+    }
+
+    /**
+     * Create request for operation 'removeRecoveryCodes'
+     *
+     * @param  \Zitadel\Client\Model\UserServiceRemoveRecoveryCodesRequest $userServiceRemoveRecoveryCodesRequest (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['removeRecoveryCodes'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    private function removeRecoveryCodesRequest($userServiceRemoveRecoveryCodesRequest, string $contentType = self::contentTypes['removeRecoveryCodes'][0])
+    {
+
+        if ($userServiceRemoveRecoveryCodesRequest === null || (is_array($userServiceRemoveRecoveryCodesRequest) && count($userServiceRemoveRecoveryCodesRequest) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $userServiceRemoveRecoveryCodesRequest when calling removeRecoveryCodes'
+            );
+        }
+
+
+        $resourcePath = '/zitadel.user.v2.UserService/RemoveRecoveryCodes';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+        if (isset($userServiceRemoveRecoveryCodesRequest)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($userServiceRemoveRecoveryCodesRequest));
+            } else {
+                $httpBody = $userServiceRemoveRecoveryCodesRequest;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {

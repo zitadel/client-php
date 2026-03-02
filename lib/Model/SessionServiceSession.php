@@ -351,7 +351,7 @@ class SessionServiceSession implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Sets id
      *
-     * @param string|null $id id
+     * @param string|null $id Unique identifier of the session.
      *
      * @return self
      */
@@ -432,7 +432,7 @@ class SessionServiceSession implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Sets sequence
      *
-     * @param mixed|null $sequence sequence
+     * @param mixed|null $sequence The sequence of the session represents the change sequence of the session.
      *
      * @return self
      */
@@ -493,7 +493,7 @@ class SessionServiceSession implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Sets metadata
      *
-     * @param array<string,string>|null $metadata metadata
+     * @param array<string,string>|null $metadata Metadata contains custom key value pairs set by the user.  The metadata is not interpreted by ZITADEL and can be used to store any information  relevant to the session.
      *
      * @return self
      */
