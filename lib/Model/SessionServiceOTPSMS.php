@@ -302,7 +302,7 @@ class SessionServiceOTPSMS implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets returnCode
      *
-     * @param bool|null $returnCode returnCode
+     * @param bool|null $returnCode Request the code to be returned instead of sending an SMS.  This is useful for testing or in case you want to send the code yourself.
      *
      * @return self
      */

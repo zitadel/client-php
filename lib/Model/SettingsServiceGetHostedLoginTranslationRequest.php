@@ -330,7 +330,7 @@ class SettingsServiceGetHostedLoginTranslationRequest implements ModelInterface,
     /**
      * Sets locale
      *
-     * @param string|null $locale locale
+     * @param string|null $locale The locale of the translations to be returned.  Needs to be a BCP 47 language tag (e.g. \"en\", \"de\", \"fr-CH\").
      *
      * @return self
      */

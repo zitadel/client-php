@@ -445,7 +445,7 @@ class OIDCServiceApi
     /**
      * Operation authorizeOrDenyDeviceAuthorization
      *
-     * Authorize or deny device authorization
+     * Authorize or Deny Device Authorization
      *
      * @param  \Zitadel\Client\Model\OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authorizeOrDenyDeviceAuthorization'] to see the possible values for this operation
@@ -557,7 +557,7 @@ class OIDCServiceApi
     /**
      * Operation createCallback
      *
-     * CreateCallback
+     * Create Callback
      *
      * @param  \Zitadel\Client\Model\OIDCServiceCreateCallbackRequest $oIDCServiceCreateCallbackRequest oIDCServiceCreateCallbackRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createCallback'] to see the possible values for this operation
@@ -669,7 +669,7 @@ class OIDCServiceApi
     /**
      * Operation getAuthRequest
      *
-     * GetAuthRequest
+     * Get Auth Request
      *
      * @param  \Zitadel\Client\Model\OIDCServiceGetAuthRequestRequest $oIDCServiceGetAuthRequestRequest oIDCServiceGetAuthRequestRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAuthRequest'] to see the possible values for this operation
@@ -781,7 +781,7 @@ class OIDCServiceApi
     /**
      * Operation getDeviceAuthorizationRequest
      *
-     * Get device authorization request
+     * Get Device Authorization Request
      *
      * @param  \Zitadel\Client\Model\OIDCServiceGetDeviceAuthorizationRequestRequest $oIDCServiceGetDeviceAuthorizationRequestRequest oIDCServiceGetDeviceAuthorizationRequestRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDeviceAuthorizationRequest'] to see the possible values for this operation

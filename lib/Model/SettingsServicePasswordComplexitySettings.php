@@ -337,7 +337,7 @@ class SettingsServicePasswordComplexitySettings implements ModelInterface, Array
     /**
      * Sets minLength
      *
-     * @param mixed|null $minLength minLength
+     * @param mixed|null $minLength The minimum length a password must have.
      *
      * @return self
      */
@@ -371,7 +371,7 @@ class SettingsServicePasswordComplexitySettings implements ModelInterface, Array
     /**
      * Sets requiresUppercase
      *
-     * @param bool|null $requiresUppercase requiresUppercase
+     * @param bool|null $requiresUppercase Defines if the password MUST contain an upper case letter.
      *
      * @return self
      */
@@ -398,7 +398,7 @@ class SettingsServicePasswordComplexitySettings implements ModelInterface, Array
     /**
      * Sets requiresLowercase
      *
-     * @param bool|null $requiresLowercase requiresLowercase
+     * @param bool|null $requiresLowercase Defines if the password MUST contain a lowercase letter.
      *
      * @return self
      */
@@ -425,7 +425,7 @@ class SettingsServicePasswordComplexitySettings implements ModelInterface, Array
     /**
      * Sets requiresNumber
      *
-     * @param bool|null $requiresNumber requiresNumber
+     * @param bool|null $requiresNumber Defines if the password MUST contain a number.
      *
      * @return self
      */
@@ -452,7 +452,7 @@ class SettingsServicePasswordComplexitySettings implements ModelInterface, Array
     /**
      * Sets requiresSymbol
      *
-     * @param bool|null $requiresSymbol requiresSymbol
+     * @param bool|null $requiresSymbol Defines if the password MUST contain a symbol or special character. E.g. \"$\"
      *
      * @return self
      */

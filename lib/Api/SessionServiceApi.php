@@ -448,7 +448,7 @@ class SessionServiceApi
     /**
      * Operation createSession
      *
-     * Create a new session
+     * Create Session
      *
      * @param  \Zitadel\Client\Model\SessionServiceCreateSessionRequest $sessionServiceCreateSessionRequest sessionServiceCreateSessionRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createSession'] to see the possible values for this operation
@@ -560,7 +560,7 @@ class SessionServiceApi
     /**
      * Operation deleteSession
      *
-     * Terminate a session
+     * DeleteSession
      *
      * @param  \Zitadel\Client\Model\SessionServiceDeleteSessionRequest $sessionServiceDeleteSessionRequest sessionServiceDeleteSessionRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteSession'] to see the possible values for this operation
@@ -672,7 +672,7 @@ class SessionServiceApi
     /**
      * Operation getSession
      *
-     * GetSession a session
+     * Get Session
      *
      * @param  \Zitadel\Client\Model\SessionServiceGetSessionRequest $sessionServiceGetSessionRequest sessionServiceGetSessionRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSession'] to see the possible values for this operation
@@ -784,7 +784,7 @@ class SessionServiceApi
     /**
      * Operation listSessions
      *
-     * Search sessions
+     * List sessions
      *
      * @param  \Zitadel\Client\Model\SessionServiceListSessionsRequest $sessionServiceListSessionsRequest sessionServiceListSessionsRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listSessions'] to see the possible values for this operation
@@ -896,7 +896,7 @@ class SessionServiceApi
     /**
      * Operation setSession
      *
-     * Update a session
+     * Set Session
      *
      * @param  \Zitadel\Client\Model\SessionServiceSetSessionRequest $sessionServiceSetSessionRequest sessionServiceSetSessionRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['setSession'] to see the possible values for this operation

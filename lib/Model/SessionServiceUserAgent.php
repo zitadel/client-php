@@ -323,7 +323,7 @@ class SessionServiceUserAgent implements ModelInterface, ArrayAccess, \JsonSeria
     /**
      * Sets fingerprintId
      *
-     * @param string|null $fingerprintId fingerprintId
+     * @param string|null $fingerprintId FingerprintID is a unique identifier for the user agent's fingerprint.  It can be used to group sessions by device or browser.
      *
      * @return self
      */
@@ -357,7 +357,7 @@ class SessionServiceUserAgent implements ModelInterface, ArrayAccess, \JsonSeria
     /**
      * Sets ip
      *
-     * @param string|null $ip ip
+     * @param string|null $ip IP is the IP address from which the session was created.
      *
      * @return self
      */
@@ -391,7 +391,7 @@ class SessionServiceUserAgent implements ModelInterface, ArrayAccess, \JsonSeria
     /**
      * Sets description
      *
-     * @param string|null $description description
+     * @param string|null $description Description is a human-readable description of the user agent.
      *
      * @return self
      */

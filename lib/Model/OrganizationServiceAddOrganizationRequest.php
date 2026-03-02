@@ -59,6 +59,7 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
     protected static $openAPITypes = [
         'name' => 'string',
         'admins' => '\Zitadel\Client\Model\OrganizationServiceAdmin[]',
+        'organizationId' => 'string',
         'orgId' => 'string'
     ];
 
@@ -72,6 +73,7 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
     protected static $openAPIFormats = [
         'name' => null,
         'admins' => null,
+        'organizationId' => null,
         'orgId' => null
     ];
 
@@ -83,6 +85,7 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
     protected static array $openAPINullables = [
         'name' => false,
         'admins' => false,
+        'organizationId' => true,
         'orgId' => true
     ];
 
@@ -174,6 +177,7 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
     protected static $attributeMap = [
         'name' => 'name',
         'admins' => 'admins',
+        'organizationId' => 'organizationId',
         'orgId' => 'orgId'
     ];
 
@@ -185,6 +189,7 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
     protected static $setters = [
         'name' => 'setName',
         'admins' => 'setAdmins',
+        'organizationId' => 'setOrganizationId',
         'orgId' => 'setOrgId'
     ];
 
@@ -196,6 +201,7 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
     protected static $getters = [
         'name' => 'getName',
         'admins' => 'getAdmins',
+        'organizationId' => 'getOrganizationId',
         'orgId' => 'getOrgId'
     ];
 
@@ -258,6 +264,7 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
     {
         $this->setIfExists('name', $data ?? [], null);
         $this->setIfExists('admins', $data ?? [], null);
+        $this->setIfExists('organizationId', $data ?? [], null);
         $this->setIfExists('orgId', $data ?? [], null);
     }
 
@@ -316,7 +323,7 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
     /**
      * Sets name
      *
-     * @param string|null $name name
+     * @param string|null $name Name is the unique name of the organization to be created.  This must be unique across the instance.
      *
      * @return self
      */
@@ -343,7 +350,7 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
     /**
      * Sets admins
      *
-     * @param \Zitadel\Client\Model\OrganizationServiceAdmin[]|null $admins admins
+     * @param \Zitadel\Client\Model\OrganizationServiceAdmin[]|null $admins Specify users to be assigned as organization admins.  If no users are specified here, the organization will be created without any admin users.  The organization can still be managed by any instance administrator.  If no roles are specified for a user, they will be assigned the role ORG_OWNER.
      *
      * @return self
      */
@@ -358,9 +365,44 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
     }
 
     /**
+     * Gets organizationId
+     *
+     * @return string|null
+     */
+    public function getOrganizationId()
+    {
+        return $this->container['organizationId'];
+    }
+
+    /**
+     * Sets organizationId
+     *
+     * @param string|null $organizationId OrganizationID is the unique identifier of the organization. This field is optional.  If omitted, the system will generate one,  which is the recommended way. The generated ID will be returned in the response.
+     *
+     * @return self
+     */
+    public function setOrganizationId($organizationId)
+    {
+        if (is_null($organizationId)) {
+            array_push($this->openAPINullablesSetToNull, 'organizationId');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('organizationId', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['organizationId'] = $organizationId;
+
+        return $this;
+    }
+
+    /**
      * Gets orgId
      *
      * @return string|null
+     * @deprecated
      */
     public function getOrgId()
     {
@@ -370,9 +412,10 @@ class OrganizationServiceAddOrganizationRequest implements ModelInterface, Array
     /**
      * Sets orgId
      *
-     * @param string|null $orgId optionally set your own id unique for the organization.
+     * @param string|null $orgId Optionally, set a unique id for the organization. If omitted, the system will generate one,  which is the recommended way. The generated ID will be returned in the response.   Deprecated: use 'organization_id' field instead.  If both org_id and organization_id are set, organization_id will take precedence.
      *
      * @return self
+     * @deprecated
      */
     public function setOrgId($orgId)
     {

@@ -58,6 +58,8 @@ class UserServiceAuthenticationMethodType
 
     public const AUTHENTICATION_METHOD_TYPE_OTP_EMAIL = 'AUTHENTICATION_METHOD_TYPE_OTP_EMAIL';
 
+    public const AUTHENTICATION_METHOD_TYPE_RECOVERY_CODE = 'AUTHENTICATION_METHOD_TYPE_RECOVERY_CODE';
+
     /**
      * Gets allowable values of the enum
      * @return string[]
@@ -72,7 +74,8 @@ class UserServiceAuthenticationMethodType
             self::AUTHENTICATION_METHOD_TYPE_TOTP,
             self::AUTHENTICATION_METHOD_TYPE_U2_F,
             self::AUTHENTICATION_METHOD_TYPE_OTP_SMS,
-            self::AUTHENTICATION_METHOD_TYPE_OTP_EMAIL
+            self::AUTHENTICATION_METHOD_TYPE_OTP_EMAIL,
+            self::AUTHENTICATION_METHOD_TYPE_RECOVERY_CODE
         ];
     }
 }

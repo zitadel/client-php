@@ -302,7 +302,7 @@ class SessionServiceUserIDQuery implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets id
      *
-     * @param string|null $id id
+     * @param string|null $id ID of the user whose sessions are being searched for.
      *
      * @return self
      */

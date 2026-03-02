@@ -302,7 +302,7 @@ class SessionServiceCheckPassword implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Sets password
      *
-     * @param string|null $password password
+     * @param string|null $password The password of the user to be checked.
      *
      * @return self
      */

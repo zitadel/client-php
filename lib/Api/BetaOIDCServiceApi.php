@@ -439,7 +439,7 @@ class BetaOIDCServiceApi
     /**
      * Operation createCallback
      *
-     * CreateCallback
+     * Create Callback
      *
      * @param  \Zitadel\Client\Model\BetaOIDCServiceCreateCallbackRequest $betaOIDCServiceCreateCallbackRequest betaOIDCServiceCreateCallbackRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createCallback'] to see the possible values for this operation
@@ -551,7 +551,7 @@ class BetaOIDCServiceApi
     /**
      * Operation getAuthRequest
      *
-     * GetAuthRequest
+     * Get AuthRequest
      *
      * @param  \Zitadel\Client\Model\BetaOIDCServiceGetAuthRequestRequest $betaOIDCServiceGetAuthRequestRequest betaOIDCServiceGetAuthRequestRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAuthRequest'] to see the possible values for this operation

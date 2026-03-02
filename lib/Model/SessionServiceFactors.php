@@ -63,7 +63,8 @@ class SessionServiceFactors implements ModelInterface, ArrayAccess, \JsonSeriali
         'intent' => '\Zitadel\Client\Model\SessionServiceIntentFactor',
         'totp' => '\Zitadel\Client\Model\SessionServiceTOTPFactor',
         'otpSms' => '\Zitadel\Client\Model\SessionServiceOTPFactor',
-        'otpEmail' => '\Zitadel\Client\Model\SessionServiceOTPFactor'
+        'otpEmail' => '\Zitadel\Client\Model\SessionServiceOTPFactor',
+        'recoveryCode' => '\Zitadel\Client\Model\SessionServiceRecoveryCodeFactor'
     ];
 
     /**
@@ -80,7 +81,8 @@ class SessionServiceFactors implements ModelInterface, ArrayAccess, \JsonSeriali
         'intent' => null,
         'totp' => null,
         'otpSms' => null,
-        'otpEmail' => null
+        'otpEmail' => null,
+        'recoveryCode' => null
     ];
 
     /**
@@ -95,7 +97,8 @@ class SessionServiceFactors implements ModelInterface, ArrayAccess, \JsonSeriali
         'intent' => false,
         'totp' => false,
         'otpSms' => false,
-        'otpEmail' => false
+        'otpEmail' => false,
+        'recoveryCode' => false
     ];
 
     /**
@@ -190,7 +193,8 @@ class SessionServiceFactors implements ModelInterface, ArrayAccess, \JsonSeriali
         'intent' => 'intent',
         'totp' => 'totp',
         'otpSms' => 'otpSms',
-        'otpEmail' => 'otpEmail'
+        'otpEmail' => 'otpEmail',
+        'recoveryCode' => 'recoveryCode'
     ];
 
     /**
@@ -205,7 +209,8 @@ class SessionServiceFactors implements ModelInterface, ArrayAccess, \JsonSeriali
         'intent' => 'setIntent',
         'totp' => 'setTotp',
         'otpSms' => 'setOtpSms',
-        'otpEmail' => 'setOtpEmail'
+        'otpEmail' => 'setOtpEmail',
+        'recoveryCode' => 'setRecoveryCode'
     ];
 
     /**
@@ -220,7 +225,8 @@ class SessionServiceFactors implements ModelInterface, ArrayAccess, \JsonSeriali
         'intent' => 'getIntent',
         'totp' => 'getTotp',
         'otpSms' => 'getOtpSms',
-        'otpEmail' => 'getOtpEmail'
+        'otpEmail' => 'getOtpEmail',
+        'recoveryCode' => 'getRecoveryCode'
     ];
 
     /**
@@ -287,6 +293,7 @@ class SessionServiceFactors implements ModelInterface, ArrayAccess, \JsonSeriali
         $this->setIfExists('totp', $data ?? [], null);
         $this->setIfExists('otpSms', $data ?? [], null);
         $this->setIfExists('otpEmail', $data ?? [], null);
+        $this->setIfExists('recoveryCode', $data ?? [], null);
     }
 
     /**
@@ -516,6 +523,33 @@ class SessionServiceFactors implements ModelInterface, ArrayAccess, \JsonSeriali
             throw new \InvalidArgumentException('non-nullable otpEmail cannot be null');
         }
         $this->container['otpEmail'] = $otpEmail;
+
+        return $this;
+    }
+
+    /**
+     * Gets recoveryCode
+     *
+     * @return \Zitadel\Client\Model\SessionServiceRecoveryCodeFactor|null
+     */
+    public function getRecoveryCode()
+    {
+        return $this->container['recoveryCode'];
+    }
+
+    /**
+     * Sets recoveryCode
+     *
+     * @param \Zitadel\Client\Model\SessionServiceRecoveryCodeFactor|null $recoveryCode recoveryCode
+     *
+     * @return self
+     */
+    public function setRecoveryCode($recoveryCode)
+    {
+        if (is_null($recoveryCode)) {
+            throw new \InvalidArgumentException('non-nullable recoveryCode cannot be null');
+        }
+        $this->container['recoveryCode'] = $recoveryCode;
 
         return $this;
     }

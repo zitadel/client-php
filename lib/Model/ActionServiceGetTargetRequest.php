@@ -302,7 +302,7 @@ class ActionServiceGetTargetRequest implements ModelInterface, ArrayAccess, \Jso
     /**
      * Sets id
      *
-     * @param string|null $id id
+     * @param string|null $id The unique identifier of the target to retrieve.
      *
      * @return self
      */

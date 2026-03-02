@@ -357,7 +357,7 @@ class SessionServiceCreateSessionRequest implements ModelInterface, ArrayAccess,
     /**
      * Sets metadata
      *
-     * @param array<string,string>|null $metadata metadata
+     * @param array<string,string>|null $metadata Custom key value list to be stored on the session.
      *
      * @return self
      */

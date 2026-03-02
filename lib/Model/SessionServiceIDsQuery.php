@@ -302,7 +302,7 @@ class SessionServiceIDsQuery implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets ids
      *
-     * @param string[]|null $ids ids
+     * @param string[]|null $ids List of session IDs to search for.  If multiple IDs are provided, sessions matching any of the IDs will be returned.
      *
      * @return self
      */

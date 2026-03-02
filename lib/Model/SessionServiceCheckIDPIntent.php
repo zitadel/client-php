@@ -309,7 +309,7 @@ class SessionServiceCheckIDPIntent implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets idpIntentId
      *
-     * @param string|null $idpIntentId idpIntentId
+     * @param string|null $idpIntentId The ID of the idp intent, previously returned on the success response of the IDP callback.
      *
      * @return self
      */
@@ -336,7 +336,7 @@ class SessionServiceCheckIDPIntent implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets idpIntentToken
      *
-     * @param string|null $idpIntentToken idpIntentToken
+     * @param string|null $idpIntentToken The token of the idp intent, previously returned on the success response of the IDP callback.
      *
      * @return self
      */

@@ -370,7 +370,7 @@ class OrganizationServiceListOrganizationsResponse implements ModelInterface, Ar
     /**
      * Sets result
      *
-     * @param \Zitadel\Client\Model\OrganizationServiceOrganization[]|null $result result
+     * @param \Zitadel\Client\Model\OrganizationServiceOrganization[]|null $result The Result is a list of organizations matching the query.
      *
      * @return self
      */

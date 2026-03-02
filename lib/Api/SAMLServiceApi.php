@@ -439,7 +439,7 @@ class SAMLServiceApi
     /**
      * Operation createResponse
      *
-     * CreateResponse
+     * Create Response
      *
      * @param  \Zitadel\Client\Model\SAMLServiceCreateResponseRequest $sAMLServiceCreateResponseRequest sAMLServiceCreateResponseRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['createResponse'] to see the possible values for this operation
@@ -551,7 +551,7 @@ class SAMLServiceApi
     /**
      * Operation getSAMLRequest
      *
-     * GetSAMLRequest
+     * Get SAML Request
      *
      * @param  \Zitadel\Client\Model\SAMLServiceGetSAMLRequestRequest $sAMLServiceGetSAMLRequestRequest sAMLServiceGetSAMLRequestRequest (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSAMLRequest'] to see the possible values for this operation

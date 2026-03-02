@@ -316,7 +316,7 @@ class ActionServiceRequestExecution implements ModelInterface, ArrayAccess, \Jso
     /**
      * Sets all
      *
-     * @param bool|null $all All calls to any available services and methods as condition.
+     * @param bool|null $all Define all calls as condition.  When a call to any available service happens, the execution is triggered.
      *
      * @return self
      */
@@ -343,7 +343,7 @@ class ActionServiceRequestExecution implements ModelInterface, ArrayAccess, \Jso
     /**
      * Sets method
      *
-     * @param string|null $method GRPC-method as condition.
+     * @param string|null $method Define a GRPC-method as condition.  When a request to this method happens, the execution is triggered.
      *
      * @return self
      */
@@ -370,7 +370,7 @@ class ActionServiceRequestExecution implements ModelInterface, ArrayAccess, \Jso
     /**
      * Sets service
      *
-     * @param string|null $service GRPC-service as condition.
+     * @param string|null $service Define a GRPC-service as condition.  When a request to any method of this service happens, the execution is triggered.
      *
      * @return self
      */

@@ -316,7 +316,7 @@ class ActionServiceResponseExecution implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets all
      *
-     * @param bool|null $all All calls to any available services and methods as condition.
+     * @param bool|null $all Define all calls as condition.  Before a response is returned to the client from any available service,  the execution is triggered.
      *
      * @return self
      */
@@ -343,7 +343,7 @@ class ActionServiceResponseExecution implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets method
      *
-     * @param string|null $method GRPC-method as condition.
+     * @param string|null $method Define a GRPC-method as condition.  Before a response is returned to the client from this method, the execution is triggered.
      *
      * @return self
      */
@@ -370,7 +370,7 @@ class ActionServiceResponseExecution implements ModelInterface, ArrayAccess, \Js
     /**
      * Sets service
      *
-     * @param string|null $service GRPC-service as condition.
+     * @param string|null $service Define a GRPC-service as condition.  Before a response is returned to the client from any method of this service, the execution is triggered.
      *
      * @return self
      */

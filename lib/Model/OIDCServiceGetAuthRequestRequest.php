@@ -302,7 +302,7 @@ class OIDCServiceGetAuthRequestRequest implements ModelInterface, ArrayAccess, \
     /**
      * Sets authRequestId
      *
-     * @param string|null $authRequestId authRequestId
+     * @param string|null $authRequestId The ID of the Auth Request, as obtained from the redirect URL.
      *
      * @return self
      */

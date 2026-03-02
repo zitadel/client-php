@@ -302,7 +302,7 @@ class ActionServiceTargetFilter implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets targetId
      *
-     * @param string|null $targetId Defines the id to query for.
+     * @param string|null $targetId Defines the id of the target that needs to be part of the execution.
      *
      * @return self
      */

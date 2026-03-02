@@ -302,7 +302,7 @@ class WebKeyServiceActivateWebKeyRequest implements ModelInterface, ArrayAccess,
     /**
      * Sets id
      *
-     * @param string|null $id id
+     * @param string|null $id The unique identifier of the key to activate.
      *
      * @return self
      */

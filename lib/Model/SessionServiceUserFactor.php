@@ -357,7 +357,7 @@ class SessionServiceUserFactor implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Sets id
      *
-     * @param string|null $id id
+     * @param string|null $id The unique identifier of the user that was verified.
      *
      * @return self
      */
@@ -384,7 +384,7 @@ class SessionServiceUserFactor implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Sets loginName
      *
-     * @param string|null $loginName loginName
+     * @param string|null $loginName The login name of the user that was verified.
      *
      * @return self
      */
@@ -411,7 +411,7 @@ class SessionServiceUserFactor implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Sets displayName
      *
-     * @param string|null $displayName displayName
+     * @param string|null $displayName The display name of the user that was verified.
      *
      * @return self
      */
@@ -438,7 +438,7 @@ class SessionServiceUserFactor implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Sets organizationId
      *
-     * @param string|null $organizationId organizationId
+     * @param string|null $organizationId The id of the organization the user belongs to.
      *
      * @return self
      */

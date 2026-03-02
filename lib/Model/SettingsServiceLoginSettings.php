@@ -58,6 +58,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
       */
     protected static $openAPITypes = [
         'allowUsernamePassword' => 'bool',
+        'allowLocalAuthentication' => 'bool',
         'allowRegister' => 'bool',
         'allowExternalIdp' => 'bool',
         'forceMfa' => 'bool',
@@ -88,6 +89,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
       */
     protected static $openAPIFormats = [
         'allowUsernamePassword' => null,
+        'allowLocalAuthentication' => null,
         'allowRegister' => null,
         'allowExternalIdp' => null,
         'forceMfa' => null,
@@ -116,6 +118,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
       */
     protected static array $openAPINullables = [
         'allowUsernamePassword' => false,
+        'allowLocalAuthentication' => false,
         'allowRegister' => false,
         'allowExternalIdp' => false,
         'forceMfa' => false,
@@ -224,6 +227,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
      */
     protected static $attributeMap = [
         'allowUsernamePassword' => 'allowUsernamePassword',
+        'allowLocalAuthentication' => 'allowLocalAuthentication',
         'allowRegister' => 'allowRegister',
         'allowExternalIdp' => 'allowExternalIdp',
         'forceMfa' => 'forceMfa',
@@ -252,6 +256,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
      */
     protected static $setters = [
         'allowUsernamePassword' => 'setAllowUsernamePassword',
+        'allowLocalAuthentication' => 'setAllowLocalAuthentication',
         'allowRegister' => 'setAllowRegister',
         'allowExternalIdp' => 'setAllowExternalIdp',
         'forceMfa' => 'setForceMfa',
@@ -280,6 +285,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
      */
     protected static $getters = [
         'allowUsernamePassword' => 'getAllowUsernamePassword',
+        'allowLocalAuthentication' => 'getAllowLocalAuthentication',
         'allowRegister' => 'getAllowRegister',
         'allowExternalIdp' => 'getAllowExternalIdp',
         'forceMfa' => 'getForceMfa',
@@ -359,6 +365,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     public function __construct(?array $data = null)
     {
         $this->setIfExists('allowUsernamePassword', $data ?? [], null);
+        $this->setIfExists('allowLocalAuthentication', $data ?? [], null);
         $this->setIfExists('allowRegister', $data ?? [], null);
         $this->setIfExists('allowExternalIdp', $data ?? [], null);
         $this->setIfExists('forceMfa', $data ?? [], null);
@@ -426,6 +433,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
      * Gets allowUsernamePassword
      *
      * @return bool|null
+     * @deprecated
      */
     public function getAllowUsernamePassword()
     {
@@ -435,9 +443,10 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets allowUsernamePassword
      *
-     * @param bool|null $allowUsernamePassword allowUsernamePassword
+     * @param bool|null $allowUsernamePassword If enabled, users can log in locally with their username and passkeys or password.  Disabling this option will require users to log in with an external identity provider.  Be sure to allow at least one external identity provider if this option is disabled.  Deprecated: check allow_local_authentication instead.
      *
      * @return self
+     * @deprecated
      */
     public function setAllowUsernamePassword($allowUsernamePassword)
     {
@@ -445,6 +454,33 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
             throw new \InvalidArgumentException('non-nullable allowUsernamePassword cannot be null');
         }
         $this->container['allowUsernamePassword'] = $allowUsernamePassword;
+
+        return $this;
+    }
+
+    /**
+     * Gets allowLocalAuthentication
+     *
+     * @return bool|null
+     */
+    public function getAllowLocalAuthentication()
+    {
+        return $this->container['allowLocalAuthentication'];
+    }
+
+    /**
+     * Sets allowLocalAuthentication
+     *
+     * @param bool|null $allowLocalAuthentication If enabled, users can log in locally with their username and passkeys or password.  Disabling this option will require users to log in with an external identity provider.  Be sure to allow at least one external identity provider if this option is disabled.
+     *
+     * @return self
+     */
+    public function setAllowLocalAuthentication($allowLocalAuthentication)
+    {
+        if (is_null($allowLocalAuthentication)) {
+            throw new \InvalidArgumentException('non-nullable allowLocalAuthentication cannot be null');
+        }
+        $this->container['allowLocalAuthentication'] = $allowLocalAuthentication;
 
         return $this;
     }
@@ -462,7 +498,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets allowRegister
      *
-     * @param bool|null $allowRegister allowRegister
+     * @param bool|null $allowRegister If enabled, users can register a local account by themself.  This option does not effect external identity providers.  Each identity provider can be configured to allow or disallow registration.
      *
      * @return self
      */
@@ -489,7 +525,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets allowExternalIdp
      *
-     * @param bool|null $allowExternalIdp allowExternalIdp
+     * @param bool|null $allowExternalIdp If enabled, users will generally be allowed to use an external identity provider to log in.  Be sure to allow at least one external identity provider if this option is enabled.
      *
      * @return self
      */
@@ -516,7 +552,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets forceMfa
      *
-     * @param bool|null $forceMfa forceMfa
+     * @param bool|null $forceMfa If enabled, users will be forced to use a multi-factor to log in.  This also applies to federated logins through an external identity provider.  Users will be required to set up a second factor if they have not done so already.
      *
      * @return self
      */
@@ -570,7 +606,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets hidePasswordReset
      *
-     * @param bool|null $hidePasswordReset hidePasswordReset
+     * @param bool|null $hidePasswordReset If enabled, the password reset link will be hidden on the login screen.
      *
      * @return self
      */
@@ -597,7 +633,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets ignoreUnknownUsernames
      *
-     * @param bool|null $ignoreUnknownUsernames ignoreUnknownUsernames
+     * @param bool|null $ignoreUnknownUsernames If enabled, an unknown username on the login screen will not return an error directly,  but will always display the password screen.  This prevents user enumeration attacks.
      *
      * @return self
      */
@@ -624,7 +660,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets defaultRedirectUri
      *
-     * @param string|null $defaultRedirectUri defaultRedirectUri
+     * @param string|null $defaultRedirectUri Defines where the user will be redirected to if the login is started without app context (e.g. from mail).
      *
      * @return self
      */
@@ -786,7 +822,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets secondFactors
      *
-     * @param \Zitadel\Client\Model\SettingsServiceSecondFactorType[]|null $secondFactors secondFactors
+     * @param \Zitadel\Client\Model\SettingsServiceSecondFactorType[]|null $secondFactors The list of allowed second factors.
      *
      * @return self
      */
@@ -813,7 +849,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets multiFactors
      *
-     * @param \Zitadel\Client\Model\SettingsServiceMultiFactorType[]|null $multiFactors multiFactors
+     * @param \Zitadel\Client\Model\SettingsServiceMultiFactorType[]|null $multiFactors The list of allowed multi factors.
      *
      * @return self
      */
@@ -840,7 +876,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets allowDomainDiscovery
      *
-     * @param bool|null $allowDomainDiscovery If set to true, the suffix (@domain.com) of an unknown username input on the login screen will be matched against the org domains and will redirect to the registration of that organization on success.
+     * @param bool|null $allowDomainDiscovery Allow discovery of the organization and its authentication option by domain.  If set to true, the suffix (@domain.com) of an unknown username input on the login screen  will be matched against the organization domains and will redirect to the registration of that organization on success.  The registration can either be locally (requires allow_register to be true) or through an external identity provider.  In case only one identity provider is configured for the organization, the user will be redirected directly to the identity provider.
      *
      * @return self
      */
@@ -867,7 +903,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets disableLoginWithEmail
      *
-     * @param bool|null $disableLoginWithEmail disableLoginWithEmail
+     * @param bool|null $disableLoginWithEmail By default, users can login with their verified email address additionally to their login name.  Setting this to true disables the email login.  Note: If the email is set as the login name, this setting has no effect.
      *
      * @return self
      */
@@ -894,7 +930,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets disableLoginWithPhone
      *
-     * @param bool|null $disableLoginWithPhone disableLoginWithPhone
+     * @param bool|null $disableLoginWithPhone By default, users can login with their verified phone number additionally to their login name.  Setting this to true disables the phone number login.  Note: If the phone number is set as the login name, this setting has no effect.
      *
      * @return self
      */
@@ -948,7 +984,7 @@ class SettingsServiceLoginSettings implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets forceMfaLocalOnly
      *
-     * @param bool|null $forceMfaLocalOnly forceMfaLocalOnly
+     * @param bool|null $forceMfaLocalOnly If enabled, users will be forced to use a multi-factor to log in if they authenticated locally.  This does not apply to federated logins through an external identity provider.  Users will be required to set up a second factor if they have not done so already.  If both force_mfa and force_mfa_local_only are enabled, force_mfa takes precedence and  all logins will require a second factor.
      *
      * @return self
      */

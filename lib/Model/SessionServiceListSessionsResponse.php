@@ -336,7 +336,7 @@ class SessionServiceListSessionsResponse implements ModelInterface, ArrayAccess,
     /**
      * Sets sessions
      *
-     * @param \Zitadel\Client\Model\SessionServiceSession[]|null $sessions sessions
+     * @param \Zitadel\Client\Model\SessionServiceSession[]|null $sessions The sessions matching the search query. There might be more sessions available  than returned in this response. Use the details field to see if there are more sessions  available and to get the total count of sessions matching the query.
      *
      * @return self
      */

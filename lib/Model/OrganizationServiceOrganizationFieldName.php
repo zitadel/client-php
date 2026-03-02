@@ -46,6 +46,8 @@ class OrganizationServiceOrganizationFieldName
 
     public const ORGANIZATION_FIELD_NAME_NAME = 'ORGANIZATION_FIELD_NAME_NAME';
 
+    public const ORGANIZATION_FIELD_NAME_CREATION_DATE = 'ORGANIZATION_FIELD_NAME_CREATION_DATE';
+
     /**
      * Gets allowable values of the enum
      * @return string[]
@@ -54,7 +56,8 @@ class OrganizationServiceOrganizationFieldName
     {
         return [
             self::ORGANIZATION_FIELD_NAME_UNSPECIFIED,
-            self::ORGANIZATION_FIELD_NAME_NAME
+            self::ORGANIZATION_FIELD_NAME_NAME,
+            self::ORGANIZATION_FIELD_NAME_CREATION_DATE
         ];
     }
 }

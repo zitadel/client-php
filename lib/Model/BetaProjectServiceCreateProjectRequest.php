@@ -439,7 +439,7 @@ class BetaProjectServiceCreateProjectRequest implements ModelInterface, ArrayAcc
     /**
      * Sets projectRoleAssertion
      *
-     * @param bool|null $projectRoleAssertion Enable this setting to have role information included in the user info endpoint. It is also dependent on your application settings to include it in tokens and other types.
+     * @param bool|null $projectRoleAssertion Enable this setting to provide role information to your application. For OpenID Connect, the roles can be requested from the UserInfo endpoint or sent in the ID or Access Token, based on your application's configuration.
      *
      * @return self
      */
@@ -466,7 +466,7 @@ class BetaProjectServiceCreateProjectRequest implements ModelInterface, ArrayAcc
     /**
      * Sets authorizationRequired
      *
-     * @param bool|null $authorizationRequired When enabled ZITADEL will check if a user has an authorization to use this project assigned when login into an application of this project.
+     * @param bool|null $authorizationRequired Deny authentication if the user has no authorization assigned to this project. Authorizations to the project without assigned a specific role to the user are allowed.
      *
      * @return self
      */
@@ -493,7 +493,7 @@ class BetaProjectServiceCreateProjectRequest implements ModelInterface, ArrayAcc
     /**
      * Sets projectAccessRequired
      *
-     * @param bool|null $projectAccessRequired When enabled ZITADEL will check if the organization of the user, that is trying to log in, has access to this project (either owns the project or is granted).
+     * @param bool|null $projectAccessRequired Before a user can be authenticated, it is verified that their affiliated organization has been granted access to this project. Authentication is not permitted for users from unauthorized organizations.
      *
      * @return self
      */

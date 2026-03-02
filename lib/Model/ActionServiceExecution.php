@@ -404,7 +404,7 @@ class ActionServiceExecution implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets targets
      *
-     * @param string[]|null $targets Ordered list of targets called during the execution.
+     * @param string[]|null $targets Ordered list of targets called during the execution.  The order of the targets in this list defines the order of execution.  If one of the targets fails, depending on the target's type and settings,  the execution might be interrupted and the following targets will not be called.
      *
      * @return self
      */

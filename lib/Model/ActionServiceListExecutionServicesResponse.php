@@ -302,7 +302,7 @@ class ActionServiceListExecutionServicesResponse implements ModelInterface, Arra
     /**
      * Sets services
      *
-     * @param string[]|null $services All available methods
+     * @param string[]|null $services All available services to use in conditions.
      *
      * @return self
      */

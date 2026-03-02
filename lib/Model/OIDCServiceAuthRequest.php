@@ -35,6 +35,7 @@ use \Zitadel\Client\ObjectSerializer;
  * OIDCServiceAuthRequest Class Doc Comment
  *
  * @category Class
+ * @description AuthRequest represents an OpenID Connect Authorization Request as defined in  https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
  * @package  Zitadel\Client
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
@@ -365,7 +366,7 @@ class OIDCServiceAuthRequest implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets id
      *
-     * @param string|null $id id
+     * @param string|null $id The unique identifier of the authorization request.
      *
      * @return self
      */
@@ -419,7 +420,7 @@ class OIDCServiceAuthRequest implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets clientId
      *
-     * @param string|null $clientId clientId
+     * @param string|null $clientId The OAuth2/OIDC client_id of the application that initiated the authorization request.
      *
      * @return self
      */
@@ -446,7 +447,7 @@ class OIDCServiceAuthRequest implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets scope
      *
-     * @param string[]|null $scope scope
+     * @param string[]|null $scope The scopes by the application that the user must consent to.
      *
      * @return self
      */
@@ -473,7 +474,7 @@ class OIDCServiceAuthRequest implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets redirectUri
      *
-     * @param string|null $redirectUri redirectUri
+     * @param string|null $redirectUri The redirect_uri used in the authorization request. This must exactly match one of the redirect URIs registered for the client.  This uri is used to send the authorization code or tokens back to the application.
      *
      * @return self
      */
@@ -500,7 +501,7 @@ class OIDCServiceAuthRequest implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets prompt
      *
-     * @param \Zitadel\Client\Model\OIDCServicePrompt[]|null $prompt prompt
+     * @param \Zitadel\Client\Model\OIDCServicePrompt[]|null $prompt Prompts that must be displayed to the user.
      *
      * @return self
      */
@@ -527,7 +528,7 @@ class OIDCServiceAuthRequest implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets uiLocales
      *
-     * @param string[]|null $uiLocales uiLocales
+     * @param string[]|null $uiLocales End-User's preferred languages and scripts for the user interface, represented as a list of BCP47 [RFC5646]  language tag values, ordered by preference.  For instance, the value [fr-CA, fr, en] represents a preference for French as spoken in Canada,  then French (without a region designation), followed by English (without a region designation).  An error SHOULD NOT result if some or all of the requested locales are not supported.
      *
      * @return self
      */
@@ -554,7 +555,7 @@ class OIDCServiceAuthRequest implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets loginHint
      *
-     * @param string|null $loginHint loginHint
+     * @param string|null $loginHint Login hint can be set by the application with a user identifier such as an email or phone number.
      *
      * @return self
      */
@@ -615,7 +616,7 @@ class OIDCServiceAuthRequest implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets hintUserId
      *
-     * @param string|null $hintUserId hintUserId
+     * @param string|null $hintUserId User ID taken from a ID Token Hint if it was present and valid.
      *
      * @return self
      */

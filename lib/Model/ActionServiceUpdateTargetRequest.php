@@ -62,6 +62,7 @@ class ActionServiceUpdateTargetRequest implements ModelInterface, ArrayAccess, \
         'timeout' => 'string',
         'endpoint' => 'string',
         'expirationSigningKey' => 'string',
+        'payloadType' => '\Zitadel\Client\Model\ActionServicePayloadType',
         'restAsync' => 'object',
         'restCall' => '\Zitadel\Client\Model\ActionServiceRESTCall',
         'restWebhook' => '\Zitadel\Client\Model\ActionServiceRESTWebhook'
@@ -80,6 +81,7 @@ class ActionServiceUpdateTargetRequest implements ModelInterface, ArrayAccess, \
         'timeout' => 'duration',
         'endpoint' => null,
         'expirationSigningKey' => 'duration',
+        'payloadType' => null,
         'restAsync' => null,
         'restCall' => null,
         'restWebhook' => null
@@ -96,6 +98,7 @@ class ActionServiceUpdateTargetRequest implements ModelInterface, ArrayAccess, \
         'timeout' => false,
         'endpoint' => true,
         'expirationSigningKey' => false,
+        'payloadType' => false,
         'restAsync' => false,
         'restCall' => false,
         'restWebhook' => false
@@ -192,6 +195,7 @@ class ActionServiceUpdateTargetRequest implements ModelInterface, ArrayAccess, \
         'timeout' => 'timeout',
         'endpoint' => 'endpoint',
         'expirationSigningKey' => 'expirationSigningKey',
+        'payloadType' => 'payloadType',
         'restAsync' => 'restAsync',
         'restCall' => 'restCall',
         'restWebhook' => 'restWebhook'
@@ -208,6 +212,7 @@ class ActionServiceUpdateTargetRequest implements ModelInterface, ArrayAccess, \
         'timeout' => 'setTimeout',
         'endpoint' => 'setEndpoint',
         'expirationSigningKey' => 'setExpirationSigningKey',
+        'payloadType' => 'setPayloadType',
         'restAsync' => 'setRestAsync',
         'restCall' => 'setRestCall',
         'restWebhook' => 'setRestWebhook'
@@ -224,6 +229,7 @@ class ActionServiceUpdateTargetRequest implements ModelInterface, ArrayAccess, \
         'timeout' => 'getTimeout',
         'endpoint' => 'getEndpoint',
         'expirationSigningKey' => 'getExpirationSigningKey',
+        'payloadType' => 'getPayloadType',
         'restAsync' => 'getRestAsync',
         'restCall' => 'getRestCall',
         'restWebhook' => 'getRestWebhook'
@@ -291,6 +297,7 @@ class ActionServiceUpdateTargetRequest implements ModelInterface, ArrayAccess, \
         $this->setIfExists('timeout', $data ?? [], null);
         $this->setIfExists('endpoint', $data ?? [], null);
         $this->setIfExists('expirationSigningKey', $data ?? [], null);
+        $this->setIfExists('payloadType', $data ?? [], null);
         $this->setIfExists('restAsync', $data ?? [], null);
         $this->setIfExists('restCall', $data ?? [], null);
         $this->setIfExists('restWebhook', $data ?? [], null);
@@ -351,7 +358,7 @@ class ActionServiceUpdateTargetRequest implements ModelInterface, ArrayAccess, \
     /**
      * Sets id
      *
-     * @param string|null $id id
+     * @param string|null $id The unique identifier of the target to update.
      *
      * @return self
      */
@@ -378,7 +385,7 @@ class ActionServiceUpdateTargetRequest implements ModelInterface, ArrayAccess, \
     /**
      * Sets name
      *
-     * @param string|null $name name
+     * @param string|null $name Optionally, update the name of the target.  If not set, the name will not be changed.
      *
      * @return self
      */
@@ -439,7 +446,7 @@ class ActionServiceUpdateTargetRequest implements ModelInterface, ArrayAccess, \
     /**
      * Sets endpoint
      *
-     * @param string|null $endpoint endpoint
+     * @param string|null $endpoint The new URL of the endpoint to call.  If not set, the endpoint will not be changed.
      *
      * @return self
      */
@@ -483,6 +490,33 @@ class ActionServiceUpdateTargetRequest implements ModelInterface, ArrayAccess, \
             throw new \InvalidArgumentException('non-nullable expirationSigningKey cannot be null');
         }
         $this->container['expirationSigningKey'] = $expirationSigningKey;
+
+        return $this;
+    }
+
+    /**
+     * Gets payloadType
+     *
+     * @return \Zitadel\Client\Model\ActionServicePayloadType|null
+     */
+    public function getPayloadType()
+    {
+        return $this->container['payloadType'];
+    }
+
+    /**
+     * Sets payloadType
+     *
+     * @param \Zitadel\Client\Model\ActionServicePayloadType|null $payloadType payloadType
+     *
+     * @return self
+     */
+    public function setPayloadType($payloadType)
+    {
+        if (is_null($payloadType)) {
+            throw new \InvalidArgumentException('non-nullable payloadType cannot be null');
+        }
+        $this->container['payloadType'] = $payloadType;
 
         return $this;
     }

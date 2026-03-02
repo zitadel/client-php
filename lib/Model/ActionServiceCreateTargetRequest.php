@@ -60,6 +60,7 @@ class ActionServiceCreateTargetRequest implements ModelInterface, ArrayAccess, \
         'name' => 'string',
         'timeout' => 'string',
         'endpoint' => 'string',
+        'payloadType' => '\Zitadel\Client\Model\ActionServicePayloadType',
         'restAsync' => 'object',
         'restCall' => '\Zitadel\Client\Model\ActionServiceRESTCall',
         'restWebhook' => '\Zitadel\Client\Model\ActionServiceRESTWebhook'
@@ -76,6 +77,7 @@ class ActionServiceCreateTargetRequest implements ModelInterface, ArrayAccess, \
         'name' => null,
         'timeout' => 'duration',
         'endpoint' => null,
+        'payloadType' => null,
         'restAsync' => null,
         'restCall' => null,
         'restWebhook' => null
@@ -90,6 +92,7 @@ class ActionServiceCreateTargetRequest implements ModelInterface, ArrayAccess, \
         'name' => false,
         'timeout' => false,
         'endpoint' => false,
+        'payloadType' => false,
         'restAsync' => false,
         'restCall' => false,
         'restWebhook' => false
@@ -184,6 +187,7 @@ class ActionServiceCreateTargetRequest implements ModelInterface, ArrayAccess, \
         'name' => 'name',
         'timeout' => 'timeout',
         'endpoint' => 'endpoint',
+        'payloadType' => 'payloadType',
         'restAsync' => 'restAsync',
         'restCall' => 'restCall',
         'restWebhook' => 'restWebhook'
@@ -198,6 +202,7 @@ class ActionServiceCreateTargetRequest implements ModelInterface, ArrayAccess, \
         'name' => 'setName',
         'timeout' => 'setTimeout',
         'endpoint' => 'setEndpoint',
+        'payloadType' => 'setPayloadType',
         'restAsync' => 'setRestAsync',
         'restCall' => 'setRestCall',
         'restWebhook' => 'setRestWebhook'
@@ -212,6 +217,7 @@ class ActionServiceCreateTargetRequest implements ModelInterface, ArrayAccess, \
         'name' => 'getName',
         'timeout' => 'getTimeout',
         'endpoint' => 'getEndpoint',
+        'payloadType' => 'getPayloadType',
         'restAsync' => 'getRestAsync',
         'restCall' => 'getRestCall',
         'restWebhook' => 'getRestWebhook'
@@ -277,6 +283,7 @@ class ActionServiceCreateTargetRequest implements ModelInterface, ArrayAccess, \
         $this->setIfExists('name', $data ?? [], null);
         $this->setIfExists('timeout', $data ?? [], null);
         $this->setIfExists('endpoint', $data ?? [], null);
+        $this->setIfExists('payloadType', $data ?? [], null);
         $this->setIfExists('restAsync', $data ?? [], null);
         $this->setIfExists('restCall', $data ?? [], null);
         $this->setIfExists('restWebhook', $data ?? [], null);
@@ -391,7 +398,7 @@ class ActionServiceCreateTargetRequest implements ModelInterface, ArrayAccess, \
     /**
      * Sets endpoint
      *
-     * @param string|null $endpoint endpoint
+     * @param string|null $endpoint The URL of the endpoint to call.
      *
      * @return self
      */
@@ -401,6 +408,33 @@ class ActionServiceCreateTargetRequest implements ModelInterface, ArrayAccess, \
             throw new \InvalidArgumentException('non-nullable endpoint cannot be null');
         }
         $this->container['endpoint'] = $endpoint;
+
+        return $this;
+    }
+
+    /**
+     * Gets payloadType
+     *
+     * @return \Zitadel\Client\Model\ActionServicePayloadType|null
+     */
+    public function getPayloadType()
+    {
+        return $this->container['payloadType'];
+    }
+
+    /**
+     * Sets payloadType
+     *
+     * @param \Zitadel\Client\Model\ActionServicePayloadType|null $payloadType payloadType
+     *
+     * @return self
+     */
+    public function setPayloadType($payloadType)
+    {
+        if (is_null($payloadType)) {
+            throw new \InvalidArgumentException('non-nullable payloadType cannot be null');
+        }
+        $this->container['payloadType'] = $payloadType;
 
         return $this;
     }

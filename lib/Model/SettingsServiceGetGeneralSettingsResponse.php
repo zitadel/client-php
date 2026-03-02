@@ -59,7 +59,9 @@ class SettingsServiceGetGeneralSettingsResponse implements ModelInterface, Array
     protected static $openAPITypes = [
         'defaultOrgId' => 'string',
         'defaultLanguage' => 'string',
-        'supportedLanguages' => 'string[]'
+        'supportedLanguages' => 'string[]',
+        'defaultOrganizationId' => 'string',
+        'allowedLanguages' => 'string[]'
     ];
 
     /**
@@ -72,7 +74,9 @@ class SettingsServiceGetGeneralSettingsResponse implements ModelInterface, Array
     protected static $openAPIFormats = [
         'defaultOrgId' => null,
         'defaultLanguage' => null,
-        'supportedLanguages' => null
+        'supportedLanguages' => null,
+        'defaultOrganizationId' => null,
+        'allowedLanguages' => null
     ];
 
     /**
@@ -83,7 +87,9 @@ class SettingsServiceGetGeneralSettingsResponse implements ModelInterface, Array
     protected static array $openAPINullables = [
         'defaultOrgId' => false,
         'defaultLanguage' => false,
-        'supportedLanguages' => false
+        'supportedLanguages' => false,
+        'defaultOrganizationId' => false,
+        'allowedLanguages' => false
     ];
 
     /**
@@ -174,7 +180,9 @@ class SettingsServiceGetGeneralSettingsResponse implements ModelInterface, Array
     protected static $attributeMap = [
         'defaultOrgId' => 'defaultOrgId',
         'defaultLanguage' => 'defaultLanguage',
-        'supportedLanguages' => 'supportedLanguages'
+        'supportedLanguages' => 'supportedLanguages',
+        'defaultOrganizationId' => 'defaultOrganizationId',
+        'allowedLanguages' => 'allowedLanguages'
     ];
 
     /**
@@ -185,7 +193,9 @@ class SettingsServiceGetGeneralSettingsResponse implements ModelInterface, Array
     protected static $setters = [
         'defaultOrgId' => 'setDefaultOrgId',
         'defaultLanguage' => 'setDefaultLanguage',
-        'supportedLanguages' => 'setSupportedLanguages'
+        'supportedLanguages' => 'setSupportedLanguages',
+        'defaultOrganizationId' => 'setDefaultOrganizationId',
+        'allowedLanguages' => 'setAllowedLanguages'
     ];
 
     /**
@@ -196,7 +206,9 @@ class SettingsServiceGetGeneralSettingsResponse implements ModelInterface, Array
     protected static $getters = [
         'defaultOrgId' => 'getDefaultOrgId',
         'defaultLanguage' => 'getDefaultLanguage',
-        'supportedLanguages' => 'getSupportedLanguages'
+        'supportedLanguages' => 'getSupportedLanguages',
+        'defaultOrganizationId' => 'getDefaultOrganizationId',
+        'allowedLanguages' => 'getAllowedLanguages'
     ];
 
     /**
@@ -259,6 +271,8 @@ class SettingsServiceGetGeneralSettingsResponse implements ModelInterface, Array
         $this->setIfExists('defaultOrgId', $data ?? [], null);
         $this->setIfExists('defaultLanguage', $data ?? [], null);
         $this->setIfExists('supportedLanguages', $data ?? [], null);
+        $this->setIfExists('defaultOrganizationId', $data ?? [], null);
+        $this->setIfExists('allowedLanguages', $data ?? [], null);
     }
 
     /**
@@ -316,7 +330,7 @@ class SettingsServiceGetGeneralSettingsResponse implements ModelInterface, Array
     /**
      * Sets defaultOrgId
      *
-     * @param string|null $defaultOrgId defaultOrgId
+     * @param string|null $defaultOrgId The unique identifier of the default organization.  The default organization is used to assign new users to an organization if no other organization is specified.  Deprecated: use default_organization_id instead.
      *
      * @return self
      */
@@ -343,7 +357,7 @@ class SettingsServiceGetGeneralSettingsResponse implements ModelInterface, Array
     /**
      * Sets defaultLanguage
      *
-     * @param string|null $defaultLanguage defaultLanguage
+     * @param string|null $defaultLanguage The default language is use if no other language is specified or detected.  The format is a BCP 47 language tag (e.g. \"en\", \"de\", \"fr-CH\").
      *
      * @return self
      */
@@ -370,7 +384,7 @@ class SettingsServiceGetGeneralSettingsResponse implements ModelInterface, Array
     /**
      * Sets supportedLanguages
      *
-     * @param string[]|null $supportedLanguages supportedLanguages
+     * @param string[]|null $supportedLanguages The list of supported languages.  Note that the instance might restrict the languages further  only allowing a subset of these languages to be used.  The format is a BCP 47 language tag (e.g. \"en\", \"de\", \"fr-CH\").
      *
      * @return self
      */
@@ -380,6 +394,60 @@ class SettingsServiceGetGeneralSettingsResponse implements ModelInterface, Array
             throw new \InvalidArgumentException('non-nullable supportedLanguages cannot be null');
         }
         $this->container['supportedLanguages'] = $supportedLanguages;
+
+        return $this;
+    }
+
+    /**
+     * Gets defaultOrganizationId
+     *
+     * @return string|null
+     */
+    public function getDefaultOrganizationId()
+    {
+        return $this->container['defaultOrganizationId'];
+    }
+
+    /**
+     * Sets defaultOrganizationId
+     *
+     * @param string|null $defaultOrganizationId The unique identifier of the default organization.  The default organization is used to assign new users to an organization if no other organization is specified.
+     *
+     * @return self
+     */
+    public function setDefaultOrganizationId($defaultOrganizationId)
+    {
+        if (is_null($defaultOrganizationId)) {
+            throw new \InvalidArgumentException('non-nullable defaultOrganizationId cannot be null');
+        }
+        $this->container['defaultOrganizationId'] = $defaultOrganizationId;
+
+        return $this;
+    }
+
+    /**
+     * Gets allowedLanguages
+     *
+     * @return string[]|null
+     */
+    public function getAllowedLanguages()
+    {
+        return $this->container['allowedLanguages'];
+    }
+
+    /**
+     * Sets allowedLanguages
+     *
+     * @param string[]|null $allowedLanguages The list of allowed languages for the instance.  This is a subset of the supported languages to be used in the instance  e.g. for user selection during registration or language detection in the UI.  The format is a BCP 47 language tag (e.g. \"en\", \"de\", \"fr-CH\").
+     *
+     * @return self
+     */
+    public function setAllowedLanguages($allowedLanguages)
+    {
+        if (is_null($allowedLanguages)) {
+            throw new \InvalidArgumentException('non-nullable allowedLanguages cannot be null');
+        }
+        $this->container['allowedLanguages'] = $allowedLanguages;
 
         return $this;
     }

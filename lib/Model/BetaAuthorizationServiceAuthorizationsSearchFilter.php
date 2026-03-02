@@ -58,6 +58,7 @@ class BetaAuthorizationServiceAuthorizationsSearchFilter implements ModelInterfa
       */
     protected static $openAPITypes = [
         'authorizationIds' => '\Zitadel\Client\Model\BetaAuthorizationServiceInIDsFilter',
+        'inUserIds' => '\Zitadel\Client\Model\BetaAuthorizationServiceInIDsFilter',
         'organizationId' => '\Zitadel\Client\Model\BetaAuthorizationServiceIDFilter',
         'projectGrantId' => '\Zitadel\Client\Model\BetaAuthorizationServiceIDFilter',
         'projectId' => '\Zitadel\Client\Model\BetaAuthorizationServiceIDFilter',
@@ -79,6 +80,7 @@ class BetaAuthorizationServiceAuthorizationsSearchFilter implements ModelInterfa
       */
     protected static $openAPIFormats = [
         'authorizationIds' => null,
+        'inUserIds' => null,
         'organizationId' => null,
         'projectGrantId' => null,
         'projectId' => null,
@@ -98,6 +100,7 @@ class BetaAuthorizationServiceAuthorizationsSearchFilter implements ModelInterfa
       */
     protected static array $openAPINullables = [
         'authorizationIds' => false,
+        'inUserIds' => false,
         'organizationId' => false,
         'projectGrantId' => false,
         'projectId' => false,
@@ -197,6 +200,7 @@ class BetaAuthorizationServiceAuthorizationsSearchFilter implements ModelInterfa
      */
     protected static $attributeMap = [
         'authorizationIds' => 'authorizationIds',
+        'inUserIds' => 'inUserIds',
         'organizationId' => 'organizationId',
         'projectGrantId' => 'projectGrantId',
         'projectId' => 'projectId',
@@ -216,6 +220,7 @@ class BetaAuthorizationServiceAuthorizationsSearchFilter implements ModelInterfa
      */
     protected static $setters = [
         'authorizationIds' => 'setAuthorizationIds',
+        'inUserIds' => 'setInUserIds',
         'organizationId' => 'setOrganizationId',
         'projectGrantId' => 'setProjectGrantId',
         'projectId' => 'setProjectId',
@@ -235,6 +240,7 @@ class BetaAuthorizationServiceAuthorizationsSearchFilter implements ModelInterfa
      */
     protected static $getters = [
         'authorizationIds' => 'getAuthorizationIds',
+        'inUserIds' => 'getInUserIds',
         'organizationId' => 'getOrganizationId',
         'projectGrantId' => 'getProjectGrantId',
         'projectId' => 'getProjectId',
@@ -305,6 +311,7 @@ class BetaAuthorizationServiceAuthorizationsSearchFilter implements ModelInterfa
     public function __construct(?array $data = null)
     {
         $this->setIfExists('authorizationIds', $data ?? [], null);
+        $this->setIfExists('inUserIds', $data ?? [], null);
         $this->setIfExists('organizationId', $data ?? [], null);
         $this->setIfExists('projectGrantId', $data ?? [], null);
         $this->setIfExists('projectId', $data ?? [], null);
@@ -382,6 +389,33 @@ class BetaAuthorizationServiceAuthorizationsSearchFilter implements ModelInterfa
             throw new \InvalidArgumentException('non-nullable authorizationIds cannot be null');
         }
         $this->container['authorizationIds'] = $authorizationIds;
+
+        return $this;
+    }
+
+    /**
+     * Gets inUserIds
+     *
+     * @return \Zitadel\Client\Model\BetaAuthorizationServiceInIDsFilter|null
+     */
+    public function getInUserIds()
+    {
+        return $this->container['inUserIds'];
+    }
+
+    /**
+     * Sets inUserIds
+     *
+     * @param \Zitadel\Client\Model\BetaAuthorizationServiceInIDsFilter|null $inUserIds inUserIds
+     *
+     * @return self
+     */
+    public function setInUserIds($inUserIds)
+    {
+        if (is_null($inUserIds)) {
+            throw new \InvalidArgumentException('non-nullable inUserIds cannot be null');
+        }
+        $this->container['inUserIds'] = $inUserIds;
 
         return $this;
     }
