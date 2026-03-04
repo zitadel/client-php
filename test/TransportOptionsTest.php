@@ -2,6 +2,8 @@
 
 namespace Zitadel\Client\Test;
 
+use Docker\Docker;
+use Docker\API\Model\NetworksCreatePostBody;
 use PHPUnit\Framework\TestCase;
 use Testcontainers\Container\GenericContainer;
 use Testcontainers\Container\StartedGenericContainer;
@@ -14,8 +16,11 @@ class TransportOptionsTest extends TestCase
     protected static string $host;
     protected static int $httpPort;
     protected static int $httpsPort;
+    protected static int $proxyPort;
     protected static string $caCertPath;
+    private static ?string $networkId = null;
     private static ?StartedGenericContainer $wiremock = null;
+    private static ?StartedGenericContainer $proxy = null;
 
     public static function setUpBeforeClass(): void
     {
@@ -24,7 +29,15 @@ class TransportOptionsTest extends TestCase
         $fixturesDir = __DIR__ . '/fixtures';
         self::$caCertPath = $fixturesDir . '/ca.pem';
 
+        $docker = Docker::create();
+        $networkBody = new NetworksCreatePostBody();
+        $networkBody->setName('zitadel-proxy-test');
+        $response = $docker->networkCreate($networkBody);
+        self::$networkId = $response->getId();
+
         self::$wiremock = (new GenericContainer("wiremock/wiremock:3.3.1"))
+            ->withName('wiremock')
+            ->withNetwork('zitadel-proxy-test')
             ->withCommand([
                 "--https-port", "8443",
                 "--https-keystore", "/home/wiremock/keystore.p12",
@@ -36,9 +49,16 @@ class TransportOptionsTest extends TestCase
             ->withExposedPorts(8080, 8443)
             ->start();
 
+        self::$proxy = (new GenericContainer("vimagick/tinyproxy"))
+            ->withNetwork('zitadel-proxy-test')
+            ->withMount($fixturesDir . '/tinyproxy.conf', '/etc/tinyproxy/tinyproxy.conf')
+            ->withExposedPorts(8888)
+            ->start();
+
         self::$host = self::$wiremock->getHost();
         self::$httpPort = self::$wiremock->getMappedPort(8080);
         self::$httpsPort = self::$wiremock->getMappedPort(8443);
+        self::$proxyPort = self::$proxy->getMappedPort(8888);
 
         (new WaitForHttp(self::$httpPort))
             ->withPath("/__admin/mappings")
@@ -50,7 +70,11 @@ class TransportOptionsTest extends TestCase
 
     public static function tearDownAfterClass(): void
     {
+        self::$proxy?->stop();
         self::$wiremock?->stop();
+        if (self::$networkId !== null) {
+            Docker::create()->networkDelete('zitadel-proxy-test');
+        }
         parent::tearDownAfterClass();
     }
 
@@ -176,12 +200,14 @@ class TransportOptionsTest extends TestCase
 
     public function testProxyUrl(): void
     {
+        // Use Docker-internal hostname — only resolvable through the proxy's network
         $zitadel = Zitadel::withAccessToken(
-            "http://" . self::$host . ":" . self::$httpPort,
+            "http://wiremock:8080",
             "test-token",
-            new TransportOptions(proxyUrl: "http://" . self::$host . ":" . self::$httpPort),
+            new TransportOptions(proxyUrl: "http://" . self::$host . ":" . self::$proxyPort),
         );
         $this->assertInstanceOf(Zitadel::class, $zitadel);
+        $zitadel->settings->getGeneralSettings();
     }
 
     public function testNoCaCertFails(): void
