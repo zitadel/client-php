@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use Exception;
 use Firebase\JWT\JWT;
 use League\OAuth2\Client\Provider\GenericProvider;
+use Zitadel\Client\TransportOptions;
 
 /**
  * JWT-based Authenticator using the JWT Bearer Grant (RFC7523).
@@ -85,12 +86,16 @@ class WebTokenAuthenticator extends OAuthAuthenticator
      *
      * @param string $host The base URL for the API endpoints.
      * @param string $jsonPath The file path to the JSON configuration file.
+     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
      * @return WebTokenAuthenticator An initialized instance of JWTAuthenticator.
      * @throws Exception if the file cannot be read or the JSON is invalid.
      * @noinspection SpellCheckingInspection
      */
-    public static function fromJson(string $host, string $jsonPath): WebTokenAuthenticator
-    {
+    public static function fromJson(
+        string $host,
+        string $jsonPath,
+        ?TransportOptions $transportOptions = null,
+    ): WebTokenAuthenticator {
         $json = file_get_contents($jsonPath);
         if ($json === false) {
             throw new Exception("Unable to read JSON file: $jsonPath");
@@ -108,21 +113,26 @@ class WebTokenAuthenticator extends OAuthAuthenticator
             throw new Exception("Missing required configuration keys in JSON file.");
         }
 
-        return self::builder($host, $userId, $privateKey)->keyId($keyId)->build();
+        return self::builder($host, $userId, $privateKey, $transportOptions)->keyId($keyId)->build();
     }
 
     /**
-     * Returns a new builder instance for ClientCredentialsAuthenticator.
+     * Returns a new builder instance for WebTokenAuthenticator.
      *
      * @param string $host The base URL for API endpoints.
      * @param string $userId
      * @param string $privateKey
+     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
      * @return WebTokenAuthenticatorBuilder A new builder instance.
      * @throws Exception
      */
-    public static function builder(string $host, string $userId, string $privateKey): WebTokenAuthenticatorBuilder
-    {
-        return new WebTokenAuthenticatorBuilder($host, $userId, $userId, $host, $privateKey);
+    public static function builder(
+        string $host,
+        string $userId,
+        string $privateKey,
+        ?TransportOptions $transportOptions = null,
+    ): WebTokenAuthenticatorBuilder {
+        return new WebTokenAuthenticatorBuilder($host, $userId, $userId, $host, $privateKey, $transportOptions);
     }
 
     protected function getGrantType(): string

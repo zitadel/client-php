@@ -4,6 +4,7 @@ namespace Zitadel\Client\Auth;
 
 use DateInterval;
 use Exception;
+use Zitadel\Client\TransportOptions;
 
 /**
  * Builder for JWTAuthenticator.
@@ -37,11 +38,18 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
      * @param string $jwtSubject The subject claim for the JWT.
      * @param string $jwtAudience The audience claim for the JWT.
      * @param string $privateKey The PEM-formatted private key used to sign the JWT.
+     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
      * @throws Exception
      */
-    public function __construct(string $host, private readonly string $jwtIssuer, private readonly string $jwtSubject, private readonly string $jwtAudience, private readonly string $privateKey)
-    {
-        parent::__construct($host);
+    public function __construct(
+        string $host,
+        private readonly string $jwtIssuer,
+        private readonly string $jwtSubject,
+        private readonly string $jwtAudience,
+        private readonly string $privateKey,
+        ?TransportOptions $transportOptions = null,
+    ) {
+        parent::__construct($host, $transportOptions);
         $this->jwtLifetime = new DateInterval('PT1H');
     }
 

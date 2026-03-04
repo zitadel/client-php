@@ -4,6 +4,7 @@ namespace Zitadel\Client\Auth;
 
 use Exception;
 use League\OAuth2\Client\Provider\GenericProvider;
+use Zitadel\Client\TransportOptions;
 
 /**
  * OAuth2 Client Credentials Authenticator.
@@ -43,12 +44,17 @@ class ClientCredentialsAuthenticator extends OAuthAuthenticator
      * @param string $host The base URL for API endpoints.
      * @param string $clientId The OAuth2 client identifier.
      * @param string $clientSecret The OAuth2 client secret.
+     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
      * @return ClientCredentialsAuthenticatorBuilder A new builder instance.
      * @throws Exception
      */
-    public static function builder(string $host, string $clientId, string $clientSecret): ClientCredentialsAuthenticatorBuilder
-    {
-        return new ClientCredentialsAuthenticatorBuilder($host, $clientId, $clientSecret);
+    public static function builder(
+        string $host,
+        string $clientId,
+        string $clientSecret,
+        ?TransportOptions $transportOptions = null,
+    ): ClientCredentialsAuthenticatorBuilder {
+        return new ClientCredentialsAuthenticatorBuilder($host, $clientId, $clientSecret, $transportOptions);
     }
 
     protected function getGrantType(): string

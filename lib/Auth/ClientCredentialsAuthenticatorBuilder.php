@@ -3,6 +3,7 @@
 namespace Zitadel\Client\Auth;
 
 use Exception;
+use Zitadel\Client\TransportOptions;
 
 /**
  * Builder for ClientCredentialsAuthenticator.
@@ -18,11 +19,16 @@ final class ClientCredentialsAuthenticatorBuilder extends OAuthAuthenticatorBuil
      * @param string $host The base URL for API endpoints.
      * @param string $clientId The OAuth2 client identifier.
      * @param string $clientSecret The OAuth2 client secret.
+     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
      * @throws Exception
      */
-    public function __construct(string $host, private readonly string $clientId, private readonly string $clientSecret)
-    {
-        parent::__construct($host);
+    public function __construct(
+        string $host,
+        private readonly string $clientId,
+        private readonly string $clientSecret,
+        ?TransportOptions $transportOptions = null,
+    ) {
+        parent::__construct($host, $transportOptions);
     }
 
     /**

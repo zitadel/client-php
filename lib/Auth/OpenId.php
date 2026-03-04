@@ -5,6 +5,7 @@ namespace Zitadel\Client\Auth;
 use Exception;
 use InvalidArgumentException;
 use League\Uri\Uri;
+use Zitadel\Client\TransportOptions;
 
 /**
  * OpenId class is responsible for fetching and storing important OpenID configuration endpoints.
@@ -33,17 +34,22 @@ class OpenId
      * for future use.
      *
      * @param string $hostname The hostname of the OpenID provider.
+     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
      * @throws InvalidArgumentException If the provided hostname is empty.
      * @throws Exception If there's an error during the HTTP request or JSON parsing.
      */
-    public function __construct(string $hostname)
-    {
+    public function __construct(
+        string $hostname,
+        ?TransportOptions $transportOptions = null,
+    ) {
         if (empty($hostname)) {
             throw new InvalidArgumentException("Hostname cannot be empty.");
         }
 
+        $transportOptions ??= TransportOptions::defaults();
+
         $this->hostEndpoint = $this->buildHostname($hostname);
-        $config = self::fetchOpenIdConfiguration($hostname);
+        $config = self::fetchOpenIdConfiguration($hostname, $transportOptions);
 
         $this->tokenEndpoint = Uri::new($config['token_endpoint']);
         $this->authorizationEndpoint = Uri::new($config['authorization_endpoint']);
@@ -72,13 +78,35 @@ class OpenId
      * in JSON format, and parses it to extract the necessary OpenID configuration fields.
      *
      * @param string $hostname The hostname of the OpenID provider.
+     * @param TransportOptions $transportOptions Transport options for HTTP connections.
      * @return mixed An associative array containing the OpenID configuration.
      * @throws Exception If the HTTP request fails, or if the JSON response is malformed.
      */
-    private static function fetchOpenIdConfiguration(string $hostname): mixed
-    {
+    private static function fetchOpenIdConfiguration(
+        string $hostname,
+        TransportOptions $transportOptions,
+    ): mixed {
         $wellKnownUrl = self::buildWellKnownUrl($hostname);
-        $response = file_get_contents($wellKnownUrl);
+
+        $opts = [];
+        if (!empty($transportOptions->defaultHeaders)) {
+            $headerStr = '';
+            foreach ($transportOptions->defaultHeaders as $name => $value) {
+                $headerStr .= "$name: $value\r\n";
+            }
+            $opts['http'] = ['header' => $headerStr];
+        }
+        if ($transportOptions->proxyUrl !== null) {
+            $opts['http']['proxy'] = $transportOptions->proxyUrl;
+            $opts['http']['request_fulluri'] = true;
+        }
+        if ($transportOptions->insecure) {
+            $opts['ssl'] = ['verify_peer' => false, 'verify_peer_name' => false];
+        } elseif ($transportOptions->caCertPath !== null) {
+            $opts['ssl'] = ['cafile' => $transportOptions->caCertPath, 'verify_peer_name' => false];
+        }
+        $context = !empty($opts) ? stream_context_create($opts) : null;
+        $response = file_get_contents($wellKnownUrl, false, $context);
 
         if ($response === false) {
             throw new Exception("Failed to fetch OpenID configuration.");
