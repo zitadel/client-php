@@ -6,6 +6,7 @@ use DateInterval;
 use DateTimeImmutable;
 use Exception;
 use Firebase\JWT\JWT;
+use GuzzleHttp\Client;
 use League\OAuth2\Client\Provider\GenericProvider;
 use Zitadel\Client\TransportOptions;
 
@@ -82,7 +83,7 @@ class WebTokenAuthenticator extends OAuthAuthenticator
         if (!empty($transportOptions->defaultHeaders)) {
             $guzzleOpts['headers'] = $transportOptions->defaultHeaders;
         }
-        $collaborators = !empty($guzzleOpts) ? ['httpClient' => new \GuzzleHttp\Client($guzzleOpts)] : [];
+        $collaborators = !empty($guzzleOpts) ? ['httpClient' => new Client($guzzleOpts)] : [];
 
         parent::__construct($hostName, $clientId, $scope, new GenericProvider([
             'clientId' => $clientId,

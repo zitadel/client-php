@@ -21,8 +21,18 @@ class TransportOptionsTest extends TestCase
     {
         parent::setUpBeforeClass();
 
+        $fixturesDir = __DIR__ . '/fixtures';
+        self::$caCertPath = $fixturesDir . '/ca.pem';
+
         self::$wiremock = (new GenericContainer("wiremock/wiremock:3.3.1"))
-            ->withCommand(["--https-port", "8443", "--global-response-templating"])
+            ->withCommand([
+                "--https-port", "8443",
+                "--https-keystore", "/home/wiremock/keystore.p12",
+                "--keystore-password", "password",
+                "--keystore-type", "PKCS12",
+                "--global-response-templating",
+            ])
+            ->withMount($fixturesDir . '/keystore.p12', '/home/wiremock/keystore.p12')
             ->withExposedPorts(8080, 8443)
             ->start();
 
@@ -36,13 +46,11 @@ class TransportOptionsTest extends TestCase
             ->wait(self::$wiremock);
 
         self::registerStubs();
-        self::extractCertificate();
     }
 
     public static function tearDownAfterClass(): void
     {
         self::$wiremock?->stop();
-        @unlink(self::$caCertPath);
         parent::tearDownAfterClass();
     }
 
@@ -87,34 +95,6 @@ class TransportOptionsTest extends TestCase
             ],
         ]);
         file_get_contents("{$adminUrl}/__admin/mappings", false, $context);
-    }
-
-    private static function extractCertificate(): void
-    {
-        $ctx = stream_context_create([
-            'ssl' => [
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-                'capture_peer_cert' => true,
-            ],
-        ]);
-
-        $client = stream_socket_client(
-            "ssl://" . self::$host . ":" . self::$httpsPort,
-            $errno,
-            $errstr,
-            30,
-            STREAM_CLIENT_CONNECT,
-            $ctx
-        );
-
-        $params = stream_context_get_params($client);
-        $cert = $params['options']['ssl']['peer_certificate'];
-        openssl_x509_export($cert, $pem);
-        fclose($client);
-
-        self::$caCertPath = sys_get_temp_dir() . '/wiremock-ca-' . uniqid() . '.pem';
-        file_put_contents(self::$caCertPath, $pem);
     }
 
     public function testCustomCaCert(): void
