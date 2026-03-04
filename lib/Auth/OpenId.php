@@ -103,7 +103,7 @@ class OpenId
         if ($transportOptions->insecure) {
             $opts['ssl'] = ['verify_peer' => false, 'verify_peer_name' => false];
         } elseif ($transportOptions->caCertPath !== null) {
-            $opts['ssl'] = ['cafile' => $transportOptions->caCertPath, 'verify_peer_name' => false];
+            $opts['ssl'] = ['cafile' => $transportOptions->caCertPath, 'verify_peer_name' => true];
         }
         $context = !empty($opts) ? stream_context_create($opts) : null;
         $response = file_get_contents($wellKnownUrl, false, $context);
