@@ -267,7 +267,6 @@ use Zitadel\Client\TransportOptions;
 $options = new TransportOptions(
     defaultHeaders: ['Proxy-Authorization' => 'Basic dXNlcjpwYXNz'],
     caCertPath: '/path/to/ca.pem',
-    insecure: true,
     proxyUrl: 'http://proxy:8080',
 );
 

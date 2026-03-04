@@ -113,7 +113,7 @@ class TransportOptionsTest extends TestCase
         openssl_x509_export($cert, $pem);
         fclose($client);
 
-        self::$caCertPath = tempnam(sys_get_temp_dir(), 'wiremock-ca-') . '.pem';
+        self::$caCertPath = sys_get_temp_dir() . '/wiremock-ca-' . uniqid() . '.pem';
         file_put_contents(self::$caCertPath, $pem);
     }
 
