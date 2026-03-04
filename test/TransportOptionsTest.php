@@ -73,7 +73,8 @@ class TransportOptionsTest extends TestCase
                 ]),
             ],
         ]);
-        file_get_contents("{$adminUrl}/__admin/mappings", false, $context);
+        $response = file_get_contents("{$adminUrl}/__admin/mappings", false, $context);
+        self::assertNotFalse($response, 'Failed to register WireMock stub');
 
         // Stub 2 - Token endpoint
         $context = stream_context_create([
@@ -94,7 +95,8 @@ class TransportOptionsTest extends TestCase
                 ]),
             ],
         ]);
-        file_get_contents("{$adminUrl}/__admin/mappings", false, $context);
+        $response = file_get_contents("{$adminUrl}/__admin/mappings", false, $context);
+        self::assertNotFalse($response, 'Failed to register WireMock stub');
     }
 
     public function testCustomCaCert(): void
@@ -151,7 +153,7 @@ class TransportOptionsTest extends TestCase
             $httpUrl,
             "dummy-client",
             "dummy-secret",
-            proxyUrl: "tcp://" . self::$host . ":" . self::$httpPort,
+            proxyUrl: "http://" . self::$host . ":" . self::$httpPort,
         );
         $this->assertInstanceOf(Zitadel::class, $zitadel);
     }
