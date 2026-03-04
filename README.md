@@ -74,7 +74,7 @@ JSON file. This process creates a secure token.
 **Example:**
 
 ```php
-use \Zitadel\Client\Zitadel;
+use Zitadel\Client\Zitadel;
 
 $zitadel = Zitadel::withPrivateKey("https://example.us1.zitadel.cloud", "path/to/jwt-key.json");
 
@@ -93,6 +93,7 @@ try {
     echo "User created: " . print_r($response, true);
 } catch (ApiException $e) {
     echo "Error: " . $e->getMessage();
+}
 ```
 
 #### 2. Client Credentials Grant
@@ -116,9 +117,8 @@ which is then used to authenticate.
 ```php
 use Zitadel\Client\Zitadel;
 use Zitadel\Client\Model\UserServiceAddHumanUserRequest;
-use \Zitadel\Client\Model\UserServiceAddHumanUserRequest;
-use \Zitadel\Client\Model\UserServiceSetHumanProfile;
-use \Zitadel\Client\Model\UserServiceSetHumanEmail;
+use Zitadel\Client\Model\UserServiceSetHumanProfile;
+use Zitadel\Client\Model\UserServiceSetHumanEmail;
 
 $zitadel = Zitadel::withClientCredentials("https://example.us1.zitadel.cloud", "id", "secret");
 
@@ -159,12 +159,10 @@ authenticate without exchanging credentials every time.
 **Example:**
 
 ```php
-use \Zitadel\Client\Zitadel;
 use Zitadel\Client\Zitadel;
 use Zitadel\Client\Model\UserServiceAddHumanUserRequest;
-use \Zitadel\Client\Model\UserServiceAddHumanUserRequest;
-use \Zitadel\Client\Model\UserServiceSetHumanProfile;
-use \Zitadel\Client\Model\UserServiceSetHumanEmail;
+use Zitadel\Client\Model\UserServiceSetHumanProfile;
+use Zitadel\Client\Model\UserServiceSetHumanEmail;
 
 $zitadel = Zitadel::withAccessToken("https://example.us1.zitadel.cloud", "token");
 
@@ -196,9 +194,51 @@ environment and security requirements. For more details, please refer to the
 
 ## Advanced Configuration
 
-All factory methods (`withClientCredentials`, `withPrivateKey`, `withAccessToken`)
-accept an optional `TransportOptions` parameter for configuring TLS, proxies,
-and default headers.
+The SDK provides a `TransportOptions` object that allows you to customise
+the underlying HTTP transport used for both OpenID discovery and API calls.
+
+### Disabling TLS Verification
+
+In development or testing environments with self-signed certificates, you can
+disable TLS verification entirely:
+
+```php
+use Zitadel\Client\Zitadel;
+use Zitadel\Client\TransportOptions;
+
+$options = new TransportOptions(insecure: true);
+
+$zitadel = Zitadel::withClientCredentials(
+    'https://your-instance.zitadel.cloud',
+    'client-id',
+    'client-secret',
+    $options,
+);
+```
+
+### Using a Custom CA Certificate
+
+If your Zitadel instance uses a certificate signed by a private CA, you can
+provide the path to the CA certificate in PEM format:
+
+```php
+use Zitadel\Client\Zitadel;
+use Zitadel\Client\TransportOptions;
+
+$options = new TransportOptions(caCertPath: '/path/to/ca.pem');
+
+$zitadel = Zitadel::withClientCredentials(
+    'https://your-instance.zitadel.cloud',
+    'client-id',
+    'client-secret',
+    $options,
+);
+```
+
+### Custom Default Headers
+
+You can attach default headers to every outgoing request. This is useful for
+proxy authentication or custom routing headers:
 
 ```php
 use Zitadel\Client\Zitadel;
@@ -206,25 +246,34 @@ use Zitadel\Client\TransportOptions;
 
 $options = new TransportOptions(
     defaultHeaders: ['Proxy-Authorization' => 'Basic dXNlcjpwYXNz'],
-    caCertPath: '/path/to/ca.pem',
-    proxyUrl: 'http://proxy:8080',
-    insecure: false,
 );
 
 $zitadel = Zitadel::withClientCredentials(
-    'https://my-instance.zitadel.cloud',
+    'https://your-instance.zitadel.cloud',
     'client-id',
     'client-secret',
     $options,
 );
 ```
 
-Available options:
+### Proxy Configuration
 
-- `caCertPath` — path to a custom CA certificate for TLS verification
-- `insecure` — disable TLS certificate verification (not recommended for production)
-- `defaultHeaders` — associative array of headers to include in every HTTP request
-- `proxyUrl` — HTTP proxy URL for all requests
+If your environment requires routing traffic through an HTTP proxy, you can
+specify the proxy URL:
+
+```php
+use Zitadel\Client\Zitadel;
+use Zitadel\Client\TransportOptions;
+
+$options = new TransportOptions(proxyUrl: 'http://proxy:8080');
+
+$zitadel = Zitadel::withClientCredentials(
+    'https://your-instance.zitadel.cloud',
+    'client-id',
+    'client-secret',
+    $options,
+);
+```
 
 ## Design and Dependencies
 
