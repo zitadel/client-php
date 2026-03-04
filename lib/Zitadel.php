@@ -103,8 +103,6 @@ class Zitadel
     {
         $resolved = $transportOptions ?? TransportOptions::defaults();
         $config = new Configuration($authenticator);
-        $mutator = self::makeConfigMutator($resolved);
-        $mutator($config);
 
         $guzzleOpts = array_merge(['http_errors' => false], $resolved->toGuzzleOptions());
         $client = new Client($guzzleOpts);
@@ -208,22 +206,5 @@ class Zitadel
         );
     }
 
-    private static function makeConfigMutator(TransportOptions $resolved): callable
-    {
-        return static function (Configuration $config) use ($resolved): void {
-            if (!empty($resolved->defaultHeaders)) {
-                $config->setDefaultHeaders($resolved->defaultHeaders);
-            }
-            if ($resolved->caCertPath !== null) {
-                $config->setCaCertPath($resolved->caCertPath);
-            }
-            if ($resolved->insecure) {
-                $config->setInsecure(true);
-            }
-            if ($resolved->proxyUrl !== null) {
-                $config->setProxyUrl($resolved->proxyUrl);
-            }
-        };
-    }
 
 }
