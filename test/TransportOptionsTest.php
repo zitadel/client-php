@@ -176,11 +176,9 @@ class TransportOptionsTest extends TestCase
 
     public function testProxyUrl(): void
     {
-        $httpUrl = "http://" . self::$host . ":" . self::$httpPort;
-        $zitadel = Zitadel::withClientCredentials(
-            $httpUrl,
-            "dummy-client",
-            "dummy-secret",
+        $zitadel = Zitadel::withAccessToken(
+            "http://" . self::$host . ":" . self::$httpPort,
+            "test-token",
             new TransportOptions(proxyUrl: "http://" . self::$host . ":" . self::$httpPort),
         );
         $this->assertInstanceOf(Zitadel::class, $zitadel);
