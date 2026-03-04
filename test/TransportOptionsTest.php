@@ -97,6 +97,24 @@ class TransportOptionsTest extends TestCase
         ]);
         $response = file_get_contents("{$adminUrl}/__admin/mappings", false, $context);
         self::assertNotFalse($response, 'Failed to register WireMock stub');
+
+        // Stub 3 - Settings API endpoint (for verifying headers on API calls)
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'POST',
+                'header' => "Content-Type: application/json\r\n",
+                'content' => json_encode([
+                    'request' => ['method' => 'POST', 'url' => '/zitadel.settings.v2.SettingsService/GetGeneralSettings'],
+                    'response' => [
+                        'status' => 200,
+                        'headers' => ['Content-Type' => 'application/json'],
+                        'jsonBody' => new \stdClass(),
+                    ],
+                ]),
+            ],
+        ]);
+        $response = file_get_contents("{$adminUrl}/__admin/mappings", false, $context);
+        self::assertNotFalse($response, 'Failed to register WireMock stub');
     }
 
     public function testCustomCaCert(): void
@@ -131,19 +149,29 @@ class TransportOptionsTest extends TestCase
         );
         $this->assertInstanceOf(Zitadel::class, $zitadel);
 
-        // Verify via WireMock request journal
-        $journal = json_decode(
-            file_get_contents("http://" . self::$host . ":" . self::$httpPort . "/__admin/requests"),
+        // Make an actual API call to verify headers propagate to service requests
+        $zitadel->settings->getGeneralSettings();
+
+        // Use WireMock's verification API to assert the header was sent on the API call
+        $verifyContext = stream_context_create([
+            'http' => [
+                'method' => 'POST',
+                'header' => "Content-Type: application/json\r\n",
+                'content' => json_encode([
+                    'url' => '/zitadel.settings.v2.SettingsService/GetGeneralSettings',
+                    'headers' => ['X-Custom-Header' => ['equalTo' => 'test-value']],
+                ]),
+            ],
+        ]);
+        $result = json_decode(
+            file_get_contents(
+                "http://" . self::$host . ":" . self::$httpPort . "/__admin/requests/count",
+                false,
+                $verifyContext
+            ),
             true
         );
-        $foundHeader = false;
-        foreach ($journal['requests'] as $req) {
-            if (isset($req['request']['headers']['X-Custom-Header'])) {
-                $foundHeader = true;
-                break;
-            }
-        }
-        $this->assertTrue($foundHeader, "Custom header should be present in WireMock request journal");
+        $this->assertGreaterThanOrEqual(1, $result['count'], "Custom header should be present on API call");
     }
 
     public function testProxyUrl(): void
