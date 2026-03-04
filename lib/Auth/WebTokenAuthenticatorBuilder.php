@@ -109,6 +109,7 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
             $this->jwtLifetime,
             jwtAlgorithm: $this->jwtAlgorithm,
             keyId: $this->keyId,
+            transportOptions: $this->transportOptions,
         );
     }
 }

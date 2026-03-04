@@ -15,6 +15,7 @@ abstract class OAuthAuthenticatorBuilder
 {
     protected OpenId $hostName;
     protected string $authScopes = 'openid urn:zitadel:iam:org:project:id:zitadel:aud';
+    protected TransportOptions $transportOptions;
 
     /**
      * Constructs the builder with the required host.
@@ -27,8 +28,8 @@ abstract class OAuthAuthenticatorBuilder
         string $hostName,
         ?TransportOptions $transportOptions = null,
     ) {
-        $transportOptions ??= TransportOptions::defaults();
-        $this->hostName = new OpenId($hostName, $transportOptions);
+        $this->transportOptions = $transportOptions ?? TransportOptions::defaults();
+        $this->hostName = new OpenId($hostName, $this->transportOptions);
     }
 
     /**

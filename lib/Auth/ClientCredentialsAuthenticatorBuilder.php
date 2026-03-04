@@ -42,7 +42,8 @@ final class ClientCredentialsAuthenticatorBuilder extends OAuthAuthenticatorBuil
             $this->hostName,
             $this->clientId,
             $this->clientSecret,
-            $this->authScopes
+            $this->authScopes,
+            $this->transportOptions
         );
     }
 }

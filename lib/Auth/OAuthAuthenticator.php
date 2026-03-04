@@ -6,6 +6,7 @@ use Exception;
 use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 use Throwable;
+use Zitadel\Client\TransportOptions;
 use Zitadel\Client\ZitadelException;
 
 /**
@@ -28,6 +29,12 @@ abstract class OAuthAuthenticator extends Authenticator
      * @var AccessTokenInterface|null
      */
     protected ?AccessTokenInterface $token;
+    /**
+     * Transport options for HTTP connections.
+     *
+     * @var TransportOptions
+     */
+    protected TransportOptions $transportOptions;
 
     /**
      * OAuthAuthenticator constructor.
@@ -36,6 +43,7 @@ abstract class OAuthAuthenticator extends Authenticator
      * @param string $clientId The OAuth2 client identifier.
      * @param string $scope The scope for the token request.
      * @param GenericProvider $provider
+     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
      */
     public function __construct(OpenId           $openId, /**
      * The OAuth2 client identifier.
@@ -43,11 +51,12 @@ abstract class OAuthAuthenticator extends Authenticator
         protected string $clientId, /**
          * The scope for the token request.
          */
-        protected string $scope, protected GenericProvider $provider)
+        protected string $scope, protected GenericProvider $provider, ?TransportOptions $transportOptions = null)
     {
         parent::__construct($openId->getHostEndpoint()->toString());
         $this->token = null;
         $this->openId = $openId;
+        $this->transportOptions = $transportOptions ?? TransportOptions::defaults();
     }
 
     /**

@@ -22,20 +22,42 @@ class ClientCredentialsAuthenticator extends OAuthAuthenticator
      * @param string $clientId The OAuth2 client identifier.
      * @param string $clientSecret The OAuth2 client secret.
      * @param string $scope The scope for the token request.
+     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
      */
     public function __construct(
         OpenId $hostName,
         string $clientId,
         string $clientSecret,
-        string $scope = 'openid urn:zitadel:iam:org:project:id:zitadel:aud'
+        string $scope = 'openid urn:zitadel:iam:org:project:id:zitadel:aud',
+        ?TransportOptions $transportOptions = null
     ) {
+        $transportOptions ??= TransportOptions::defaults();
+
+        $guzzleOpts = [];
+        if ($transportOptions->insecure) {
+            $guzzleOpts['verify'] = false;
+        } elseif ($transportOptions->caCertPath !== null) {
+            $guzzleOpts['verify'] = $transportOptions->caCertPath;
+            $defaults = openssl_get_cert_locations();
+            if (isset($defaults['default_cert_dir']) && is_dir($defaults['default_cert_dir'])) {
+                $guzzleOpts['curl'] = [CURLOPT_CAPATH => $defaults['default_cert_dir'], CURLOPT_SSL_VERIFYHOST => 2];
+            }
+        }
+        if ($transportOptions->proxyUrl !== null) {
+            $guzzleOpts['proxy'] = $transportOptions->proxyUrl;
+        }
+        if (!empty($transportOptions->defaultHeaders)) {
+            $guzzleOpts['headers'] = $transportOptions->defaultHeaders;
+        }
+        $collaborators = !empty($guzzleOpts) ? ['httpClient' => new \GuzzleHttp\Client($guzzleOpts)] : [];
+
         parent::__construct($hostName, $clientId, $scope, new GenericProvider([
             'clientId' => $clientId,
             'clientSecret' => $clientSecret,
             'urlAccessToken' => $hostName->getTokenEndpoint()->toString(),
             'urlAuthorize' => $hostName->getAuthorizationEndpoint()->toString(),
             'urlResourceOwnerDetails' => $hostName->getUserinfoEndpoint()->toString(),
-        ]));
+        ], $collaborators), $transportOptions);
     }
 
     /**
