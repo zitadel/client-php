@@ -112,7 +112,12 @@ class Zitadel
             $guzzleOpts['verify'] = false;
         } elseif ($config->getCaCertPath() !== null) {
             $guzzleOpts['verify'] = $config->getCaCertPath();
-            $guzzleOpts['curl'] = [CURLOPT_SSL_VERIFYHOST => 2];
+            $curlOpts = [CURLOPT_SSL_VERIFYHOST => 2];
+            $defaults = openssl_get_cert_locations();
+            if (isset($defaults['default_cert_dir']) && is_dir($defaults['default_cert_dir'])) {
+                $curlOpts[CURLOPT_CAPATH] = $defaults['default_cert_dir'];
+            }
+            $guzzleOpts['curl'] = $curlOpts;
         }
         if (!empty($config->getDefaultHeaders())) {
             $guzzleOpts['headers'] = $config->getDefaultHeaders();
