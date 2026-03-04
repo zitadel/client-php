@@ -183,20 +183,7 @@ class Zitadel
         $resolved = self::resolveTransportOptions($transportOptions, $defaultHeaders, $caCertPath, $insecure, $proxyUrl);
         return new self(
             new PersonalAccessAuthenticator($host, $accessToken),
-            static function (Configuration $config) use ($resolved): void {
-                if (!empty($resolved->defaultHeaders)) {
-                    $config->setDefaultHeaders($resolved->defaultHeaders);
-                }
-                if ($resolved->caCertPath !== null) {
-                    $config->setCaCertPath($resolved->caCertPath);
-                }
-                if ($resolved->insecure) {
-                    $config->setInsecure(true);
-                }
-                if ($resolved->proxyUrl !== null) {
-                    $config->setProxyUrl($resolved->proxyUrl);
-                }
-            },
+            self::makeConfigMutator($resolved),
         );
     }
 
@@ -229,20 +216,7 @@ class Zitadel
         return new self(
             ClientCredentialsAuthenticator::builder($host, $clientId, $clientSecret, $resolved)
                 ->build(),
-            static function (Configuration $config) use ($resolved): void {
-                if (!empty($resolved->defaultHeaders)) {
-                    $config->setDefaultHeaders($resolved->defaultHeaders);
-                }
-                if ($resolved->caCertPath !== null) {
-                    $config->setCaCertPath($resolved->caCertPath);
-                }
-                if ($resolved->insecure) {
-                    $config->setInsecure(true);
-                }
-                if ($resolved->proxyUrl !== null) {
-                    $config->setProxyUrl($resolved->proxyUrl);
-                }
-            },
+            self::makeConfigMutator($resolved),
         );
     }
 
@@ -272,21 +246,26 @@ class Zitadel
         $resolved = self::resolveTransportOptions($transportOptions, $defaultHeaders, $caCertPath, $insecure, $proxyUrl);
         return new self(
             WebTokenAuthenticator::fromJson($host, $keyFile, $resolved),
-            static function (Configuration $config) use ($resolved): void {
-                if (!empty($resolved->defaultHeaders)) {
-                    $config->setDefaultHeaders($resolved->defaultHeaders);
-                }
-                if ($resolved->caCertPath !== null) {
-                    $config->setCaCertPath($resolved->caCertPath);
-                }
-                if ($resolved->insecure) {
-                    $config->setInsecure(true);
-                }
-                if ($resolved->proxyUrl !== null) {
-                    $config->setProxyUrl($resolved->proxyUrl);
-                }
-            },
+            self::makeConfigMutator($resolved),
         );
+    }
+
+    private static function makeConfigMutator(TransportOptions $resolved): callable
+    {
+        return static function (Configuration $config) use ($resolved): void {
+            if (!empty($resolved->defaultHeaders)) {
+                $config->setDefaultHeaders($resolved->defaultHeaders);
+            }
+            if ($resolved->caCertPath !== null) {
+                $config->setCaCertPath($resolved->caCertPath);
+            }
+            if ($resolved->insecure) {
+                $config->setInsecure(true);
+            }
+            if ($resolved->proxyUrl !== null) {
+                $config->setProxyUrl($resolved->proxyUrl);
+            }
+        };
     }
 
     /**
