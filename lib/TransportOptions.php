@@ -22,4 +22,32 @@ final class TransportOptions
     {
         return new self();
     }
+
+    /**
+     * Builds Guzzle HTTP client options from these transport options.
+     *
+     * @return array<string, mixed>
+     */
+    public function toGuzzleOptions(): array
+    {
+        $opts = [];
+        if ($this->insecure) {
+            $opts['verify'] = false;
+        } elseif ($this->caCertPath !== null) {
+            $opts['verify'] = $this->caCertPath;
+            $curlOpts = [CURLOPT_SSL_VERIFYHOST => 2];
+            $defaults = openssl_get_cert_locations();
+            if (isset($defaults['default_cert_dir']) && is_dir($defaults['default_cert_dir'])) {
+                $curlOpts[CURLOPT_CAPATH] = $defaults['default_cert_dir'];
+            }
+            $opts['curl'] = $curlOpts;
+        }
+        if ($this->proxyUrl !== null) {
+            $opts['proxy'] = $this->proxyUrl;
+        }
+        if (!empty($this->defaultHeaders)) {
+            $opts['headers'] = $this->defaultHeaders;
+        }
+        return $opts;
+    }
 }

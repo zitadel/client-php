@@ -99,32 +99,14 @@ class Zitadel
     /** @var WebKeyServiceApi */
     public WebKeyServiceApi $webkeys;
 
-    public function __construct(Authenticator $authenticator, ?callable $mutateConfig = null)
+    public function __construct(Authenticator $authenticator, ?TransportOptions $transportOptions = null)
     {
+        $resolved = $transportOptions ?? TransportOptions::defaults();
         $config = new Configuration($authenticator);
-        $mutateConfig ??= static function (Configuration $config): void {
-            // No mutation by default.
-        };
-        $mutateConfig($config);
+        $mutator = self::makeConfigMutator($resolved);
+        $mutator($config);
 
-        $guzzleOpts = ['http_errors' => false];
-        if ($config->isInsecure()) {
-            $guzzleOpts['verify'] = false;
-        } elseif ($config->getCaCertPath() !== null) {
-            $guzzleOpts['verify'] = $config->getCaCertPath();
-            $curlOpts = [CURLOPT_SSL_VERIFYHOST => 2];
-            $defaults = openssl_get_cert_locations();
-            if (isset($defaults['default_cert_dir']) && is_dir($defaults['default_cert_dir'])) {
-                $curlOpts[CURLOPT_CAPATH] = $defaults['default_cert_dir'];
-            }
-            $guzzleOpts['curl'] = $curlOpts;
-        }
-        if (!empty($config->getDefaultHeaders())) {
-            $guzzleOpts['headers'] = $config->getDefaultHeaders();
-        }
-        if ($config->getProxyUrl() !== null) {
-            $guzzleOpts['proxy'] = $config->getProxyUrl();
-        }
+        $guzzleOpts = array_merge(['http_errors' => false], $resolved->toGuzzleOptions());
         $client = new Client($guzzleOpts);
 
         $this->betaProjects = new BetaProjectServiceApi($client, $config);
@@ -183,7 +165,7 @@ class Zitadel
         $resolved = self::resolveTransportOptions($transportOptions, $defaultHeaders, $caCertPath, $insecure, $proxyUrl);
         return new self(
             new PersonalAccessAuthenticator($host, $accessToken),
-            self::makeConfigMutator($resolved),
+            $resolved,
         );
     }
 
@@ -216,7 +198,7 @@ class Zitadel
         return new self(
             ClientCredentialsAuthenticator::builder($host, $clientId, $clientSecret, $resolved)
                 ->build(),
-            self::makeConfigMutator($resolved),
+            $resolved,
         );
     }
 
@@ -246,7 +228,7 @@ class Zitadel
         $resolved = self::resolveTransportOptions($transportOptions, $defaultHeaders, $caCertPath, $insecure, $proxyUrl);
         return new self(
             WebTokenAuthenticator::fromJson($host, $keyFile, $resolved),
-            self::makeConfigMutator($resolved),
+            $resolved,
         );
     }
 

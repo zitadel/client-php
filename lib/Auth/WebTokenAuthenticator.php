@@ -67,22 +67,7 @@ class WebTokenAuthenticator extends OAuthAuthenticator
     ) {
         $transportOptions ??= TransportOptions::defaults();
 
-        $guzzleOpts = [];
-        if ($transportOptions->insecure) {
-            $guzzleOpts['verify'] = false;
-        } elseif ($transportOptions->caCertPath !== null) {
-            $guzzleOpts['verify'] = $transportOptions->caCertPath;
-            $defaults = openssl_get_cert_locations();
-            if (isset($defaults['default_cert_dir']) && is_dir($defaults['default_cert_dir'])) {
-                $guzzleOpts['curl'] = [CURLOPT_CAPATH => $defaults['default_cert_dir'], CURLOPT_SSL_VERIFYHOST => 2];
-            }
-        }
-        if ($transportOptions->proxyUrl !== null) {
-            $guzzleOpts['proxy'] = $transportOptions->proxyUrl;
-        }
-        if (!empty($transportOptions->defaultHeaders)) {
-            $guzzleOpts['headers'] = $transportOptions->defaultHeaders;
-        }
+        $guzzleOpts = $transportOptions->toGuzzleOptions();
         $collaborators = !empty($guzzleOpts) ? ['httpClient' => new Client($guzzleOpts)] : [];
 
         parent::__construct($hostName, $clientId, $scope, new GenericProvider([
