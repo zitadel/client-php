@@ -145,24 +145,16 @@ class Zitadel
      *
      * @param string $host API URL (e.g. "https://api.zitadel.example.com").
      * @param string $accessToken Personal Access Token for Bearer authentication.
-     * @param array<string, string> $defaultHeaders Optional default headers for transport.
-     * @param string|null $caCertPath Optional path to a CA certificate file.
-     * @param bool $insecure Whether to disable SSL verification.
-     * @param string|null $proxyUrl Optional proxy URL for HTTP requests.
-     * @param TransportOptions|null $transportOptions Optional transport options (takes precedence over individual params).
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, headers.
      * @return self Configured Zitadel client instance.
      * @see https://zitadel.com/docs/guides/integrate/service-users/personal-access-token
      */
     public static function withAccessToken(
         string $host,
         string $accessToken,
-        array $defaultHeaders = [],
-        ?string $caCertPath = null,
-        bool $insecure = false,
-        ?string $proxyUrl = null,
         ?TransportOptions $transportOptions = null,
     ): self {
-        $resolved = self::resolveTransportOptions($transportOptions, $defaultHeaders, $caCertPath, $insecure, $proxyUrl);
+        $resolved = $transportOptions ?? TransportOptions::defaults();
         return new self(
             new PersonalAccessAuthenticator($host, $accessToken),
             $resolved,
@@ -175,11 +167,7 @@ class Zitadel
      * @param string $host API URL.
      * @param string $clientId OAuth2 client identifier.
      * @param string $clientSecret OAuth2 client secret.
-     * @param array<string, string> $defaultHeaders Optional default headers for transport.
-     * @param string|null $caCertPath Optional path to a CA certificate file.
-     * @param bool $insecure Whether to disable SSL verification.
-     * @param string|null $proxyUrl Optional proxy URL for HTTP requests.
-     * @param TransportOptions|null $transportOptions Optional transport options (takes precedence over individual params).
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, headers.
      * @return self Configured Zitadel client instance with token auto-refresh.
      * @throws Exception If token retrieval fails.
      * @see https://zitadel.com/docs/guides/integrate/service-users/client-credentials
@@ -188,13 +176,9 @@ class Zitadel
         string $host,
         string $clientId,
         string $clientSecret,
-        array $defaultHeaders = [],
-        ?string $caCertPath = null,
-        bool $insecure = false,
-        ?string $proxyUrl = null,
         ?TransportOptions $transportOptions = null,
     ): self {
-        $resolved = self::resolveTransportOptions($transportOptions, $defaultHeaders, $caCertPath, $insecure, $proxyUrl);
+        $resolved = $transportOptions ?? TransportOptions::defaults();
         return new self(
             ClientCredentialsAuthenticator::builder($host, $clientId, $clientSecret, $resolved)
                 ->build(),
@@ -207,11 +191,7 @@ class Zitadel
      *
      * @param string $host API URL.
      * @param string $keyFile Path to service account JSON or PEM key file.
-     * @param array<string, string> $defaultHeaders Optional default headers for transport.
-     * @param string|null $caCertPath Optional path to a CA certificate file.
-     * @param bool $insecure Whether to disable SSL verification.
-     * @param string|null $proxyUrl Optional proxy URL for HTTP requests.
-     * @param TransportOptions|null $transportOptions Optional transport options (takes precedence over individual params).
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, headers.
      * @return self Configured Zitadel client instance using JWT assertion.
      * @throws Exception If key parsing or token exchange fails.
      * @see https://zitadel.com/docs/guides/integrate/service-users/private-key-jwt
@@ -219,13 +199,9 @@ class Zitadel
     public static function withPrivateKey(
         string $host,
         string $keyFile,
-        array $defaultHeaders = [],
-        ?string $caCertPath = null,
-        bool $insecure = false,
-        ?string $proxyUrl = null,
         ?TransportOptions $transportOptions = null,
     ): self {
-        $resolved = self::resolveTransportOptions($transportOptions, $defaultHeaders, $caCertPath, $insecure, $proxyUrl);
+        $resolved = $transportOptions ?? TransportOptions::defaults();
         return new self(
             WebTokenAuthenticator::fromJson($host, $keyFile, $resolved),
             $resolved,
@@ -250,16 +226,4 @@ class Zitadel
         };
     }
 
-    /**
-     * @param array<string, string> $defaultHeaders
-     */
-    private static function resolveTransportOptions(
-        ?TransportOptions $transportOptions,
-        array $defaultHeaders,
-        ?string $caCertPath,
-        bool $insecure,
-        ?string $proxyUrl,
-    ): TransportOptions {
-        return $transportOptions ?? new TransportOptions($defaultHeaders, $caCertPath, $insecure, $proxyUrl);
-    }
 }

@@ -123,7 +123,7 @@ class TransportOptionsTest extends TestCase
             "https://" . self::$host . ":" . self::$httpsPort,
             "dummy-client",
             "dummy-secret",
-            caCertPath: self::$caCertPath,
+            new TransportOptions(caCertPath: self::$caCertPath),
         );
         $this->assertInstanceOf(Zitadel::class, $zitadel);
     }
@@ -134,7 +134,7 @@ class TransportOptionsTest extends TestCase
             "https://" . self::$host . ":" . self::$httpsPort,
             "dummy-client",
             "dummy-secret",
-            insecure: true,
+            new TransportOptions(insecure: true),
         );
         $this->assertInstanceOf(Zitadel::class, $zitadel);
     }
@@ -145,7 +145,7 @@ class TransportOptionsTest extends TestCase
             "http://" . self::$host . ":" . self::$httpPort,
             "dummy-client",
             "dummy-secret",
-            defaultHeaders: ["X-Custom-Header" => "test-value"],
+            new TransportOptions(defaultHeaders: ["X-Custom-Header" => "test-value"]),
         );
         $this->assertInstanceOf(Zitadel::class, $zitadel);
 
@@ -181,7 +181,7 @@ class TransportOptionsTest extends TestCase
             $httpUrl,
             "dummy-client",
             "dummy-secret",
-            proxyUrl: "http://" . self::$host . ":" . self::$httpPort,
+            new TransportOptions(proxyUrl: "http://" . self::$host . ":" . self::$httpPort),
         );
         $this->assertInstanceOf(Zitadel::class, $zitadel);
     }
@@ -194,17 +194,5 @@ class TransportOptionsTest extends TestCase
             "dummy-client",
             "dummy-secret",
         );
-    }
-
-    public function testTransportOptionsObject(): void
-    {
-        $opts = new TransportOptions(insecure: true);
-        $zitadel = Zitadel::withClientCredentials(
-            "https://" . self::$host . ":" . self::$httpsPort,
-            "dummy-client",
-            "dummy-secret",
-            transportOptions: $opts,
-        );
-        $this->assertInstanceOf(Zitadel::class, $zitadel);
     }
 }

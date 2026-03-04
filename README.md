@@ -197,68 +197,8 @@ environment and security requirements. For more details, please refer to the
 ## Advanced Configuration
 
 All factory methods (`withClientCredentials`, `withPrivateKey`, `withAccessToken`)
-accept optional named parameters for advanced transport configuration.
-
-### Disabling TLS Verification
-
-For development or testing environments with self-signed certificates, you can
-disable TLS verification entirely:
-
-```php
-$zitadel = Zitadel::withClientCredentials(
-    "https://example.us1.zitadel.cloud",
-    "client-id",
-    "client-secret",
-    insecure: true,
-);
-```
-
-### Using a Custom CA Certificate
-
-If your Zitadel instance uses a certificate signed by a private or internal
-certificate authority, provide the path to the CA certificate:
-
-```php
-$zitadel = Zitadel::withClientCredentials(
-    "https://example.us1.zitadel.cloud",
-    "client-id",
-    "client-secret",
-    caCertPath: '/path/to/ca.pem',
-);
-```
-
-### Custom Default Headers
-
-You can add default headers that will be included in every HTTP request made
-by the SDK. This is useful for proxies that require authentication or for
-adding custom tracing headers:
-
-```php
-$zitadel = Zitadel::withClientCredentials(
-    "https://example.us1.zitadel.cloud",
-    "client-id",
-    "client-secret",
-    defaultHeaders: ['Proxy-Authorization' => 'Basic dXNlcjpwYXNz'],
-);
-```
-
-### Proxy Configuration
-
-If your environment requires HTTP requests to go through a proxy, you can
-specify the proxy URL:
-
-```php
-$zitadel = Zitadel::withClientCredentials(
-    "https://example.us1.zitadel.cloud",
-    "client-id",
-    "client-secret",
-    proxyUrl: 'http://proxy:8080',
-);
-```
-
-### Using TransportOptions
-
-All transport settings can be combined into a single `TransportOptions` object:
+accept an optional `TransportOptions` parameter for configuring TLS, proxies,
+and default headers.
 
 ```php
 use Zitadel\Client\Zitadel;
@@ -268,15 +208,23 @@ $options = new TransportOptions(
     defaultHeaders: ['Proxy-Authorization' => 'Basic dXNlcjpwYXNz'],
     caCertPath: '/path/to/ca.pem',
     proxyUrl: 'http://proxy:8080',
+    insecure: false,
 );
 
 $zitadel = Zitadel::withClientCredentials(
     'https://my-instance.zitadel.cloud',
     'client-id',
     'client-secret',
-    transportOptions: $options,
+    $options,
 );
 ```
+
+Available options:
+
+- `caCertPath` — path to a custom CA certificate for TLS verification
+- `insecure` — disable TLS certificate verification (not recommended for production)
+- `defaultHeaders` — associative array of headers to include in every HTTP request
+- `proxyUrl` — HTTP proxy URL for all requests
 
 ## Design and Dependencies
 
