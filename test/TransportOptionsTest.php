@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Testcontainers\Container\GenericContainer;
 use Testcontainers\Container\StartedGenericContainer;
 use Testcontainers\Wait\WaitForHttp;
+use Testcontainers\Wait\WaitForHostPort;
 use Zitadel\Client\TransportOptions;
 use Zitadel\Client\Zitadel;
 
@@ -61,6 +62,9 @@ class TransportOptionsTest extends TestCase
         self::$httpPort = self::$wiremock->getMappedPort(8080);
         self::$httpsPort = self::$wiremock->getMappedPort(8443);
         self::$proxyPort = self::$proxy->getMappedPort(3128);
+
+        (new WaitForHostPort())
+            ->wait(self::$proxy);
 
         (new WaitForHttp(self::$httpPort))
             ->withPath("/__admin/mappings")
@@ -184,14 +188,13 @@ class TransportOptionsTest extends TestCase
                 ]),
             ],
         ]);
-        $result = json_decode(
-            file_get_contents(
-                "http://" . self::$host . ":" . self::$httpPort . "/__admin/requests/count",
-                false,
-                $verifyContext
-            ),
-            true
+        $rawResult = file_get_contents(
+            "http://" . self::$host . ":" . self::$httpPort . "/__admin/requests/count",
+            false,
+            $verifyContext
         );
+        $this->assertNotFalse($rawResult, 'Failed to reach WireMock admin API');
+        $result = json_decode($rawResult, true);
         $this->assertGreaterThanOrEqual(1, $result['count'], "Custom header should be present on API call");
     }
 
