@@ -35,12 +35,10 @@ final class TransportOptions
             $opts['verify'] = false;
         } elseif ($this->caCertPath !== null) {
             $opts['verify'] = $this->caCertPath;
-            $curlOpts = [CURLOPT_SSL_VERIFYHOST => 2];
             $defaults = openssl_get_cert_locations();
             if (isset($defaults['default_cert_dir']) && is_dir($defaults['default_cert_dir'])) {
-                $curlOpts[CURLOPT_CAPATH] = $defaults['default_cert_dir'];
+                $opts['curl'] = [CURLOPT_CAPATH => $defaults['default_cert_dir']];
             }
-            $opts['curl'] = $curlOpts;
         }
         if ($this->proxyUrl !== null) {
             $opts['proxy'] = $this->proxyUrl;
