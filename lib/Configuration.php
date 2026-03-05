@@ -45,34 +45,6 @@ class Configuration
     protected string $tempFolderPath;
 
     /**
-     * Default headers to include with every HTTP request.
-     *
-     * @var array<string, string>
-     */
-    protected array $defaultHeaders = [];
-
-    /**
-     * Path to a CA certificate file for SSL verification.
-     *
-     * @var string|null
-     */
-    protected ?string $caCertPath = null;
-
-    /**
-     * Whether to disable SSL verification entirely.
-     *
-     * @var bool
-     */
-    protected bool $insecure = false;
-
-    /**
-     * Proxy URL for HTTP requests.
-     *
-     * @var ?string
-     */
-    protected ?string $proxyUrl = null;
-
-    /**
      * Constructor
      */
     public function __construct(protected Authenticator $authenticator)
@@ -252,98 +224,6 @@ class Configuration
     public function setTempFolderPath(string $tempFolderPath): Configuration
     {
         $this->tempFolderPath = $tempFolderPath;
-        return $this;
-    }
-
-    /**
-     * Gets the default headers
-     *
-     * @return array<string, string> Default headers
-     */
-    public function getDefaultHeaders(): array
-    {
-        return $this->defaultHeaders;
-    }
-
-    /**
-     * Sets the default headers
-     *
-     * @param array<string, string> $headers Default headers
-     *
-     * @return static
-     */
-    public function setDefaultHeaders(array $headers): static
-    {
-        $this->defaultHeaders = $headers;
-        return $this;
-    }
-
-    /**
-     * Gets the CA certificate path
-     *
-     * @return string|null CA certificate path
-     */
-    public function getCaCertPath(): ?string
-    {
-        return $this->caCertPath;
-    }
-
-    /**
-     * Sets the CA certificate path
-     *
-     * @param string|null $path CA certificate path
-     *
-     * @return static
-     */
-    public function setCaCertPath(?string $path): static
-    {
-        $this->caCertPath = $path;
-        return $this;
-    }
-
-    /**
-     * Gets whether SSL verification is disabled
-     *
-     * @return bool Whether SSL verification is disabled
-     */
-    public function isInsecure(): bool
-    {
-        return $this->insecure;
-    }
-
-    /**
-     * Sets whether to disable SSL verification
-     *
-     * @param bool $insecure Whether to disable SSL verification
-     *
-     * @return static
-     */
-    public function setInsecure(bool $insecure): static
-    {
-        $this->insecure = $insecure;
-        return $this;
-    }
-
-    /**
-     * Gets the proxy URL
-     *
-     * @return ?string Proxy URL
-     */
-    public function getProxyUrl(): ?string
-    {
-        return $this->proxyUrl;
-    }
-
-    /**
-     * Sets the proxy URL
-     *
-     * @param ?string $proxyUrl Proxy URL
-     *
-     * @return $this
-     */
-    public function setProxyUrl(?string $proxyUrl): static
-    {
-        $this->proxyUrl = $proxyUrl;
         return $this;
     }
 
