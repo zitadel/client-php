@@ -19,6 +19,7 @@ class TransportOptionsTest extends TestCase
     protected static int $proxyPort;
     protected static string $caCertPath;
     private static ?string $networkId = null;
+    private static ?string $networkName = null;
     private static ?StartedGenericContainer $wiremock = null;
     private static ?StartedGenericContainer $proxy = null;
 
@@ -30,14 +31,15 @@ class TransportOptionsTest extends TestCase
         self::$caCertPath = $fixturesDir . '/ca.pem';
 
         $docker = Docker::create();
+        self::$networkName = 'zitadel-test-' . bin2hex(random_bytes(4));
         $networkBody = new NetworksCreatePostBody();
-        $networkBody->setName('zitadel-proxy-test');
+        $networkBody->setName(self::$networkName);
         $response = $docker->networkCreate($networkBody);
         self::$networkId = $response->getId();
 
         self::$wiremock = (new GenericContainer("wiremock/wiremock:3.3.1"))
             ->withName('wiremock')
-            ->withNetwork('zitadel-proxy-test')
+            ->withNetwork(self::$networkName)
             ->withCommand([
                 "--https-port", "8443",
                 "--https-keystore", "/home/wiremock/keystore.p12",
@@ -50,7 +52,7 @@ class TransportOptionsTest extends TestCase
             ->start();
 
         self::$proxy = (new GenericContainer("ubuntu/squid:6.10-24.10_beta"))
-            ->withNetwork('zitadel-proxy-test')
+            ->withNetwork(self::$networkName)
             ->withMount($fixturesDir . '/squid.conf', '/etc/squid/squid.conf')
             ->withExposedPorts(3128)
             ->start();
@@ -73,7 +75,7 @@ class TransportOptionsTest extends TestCase
         self::$proxy?->stop();
         self::$wiremock?->stop();
         if (self::$networkId !== null) {
-            Docker::create()->networkDelete('zitadel-proxy-test');
+            Docker::create()->networkDelete(self::$networkName);
         }
         parent::tearDownAfterClass();
     }
