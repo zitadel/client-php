@@ -49,16 +49,16 @@ class TransportOptionsTest extends TestCase
             ->withExposedPorts(8080, 8443)
             ->start();
 
-        self::$proxy = (new GenericContainer("vimagick/tinyproxy"))
+        self::$proxy = (new GenericContainer("ubuntu/squid:6.10-24.10_beta"))
             ->withNetwork('zitadel-proxy-test')
-            ->withMount($fixturesDir . '/tinyproxy.conf', '/etc/tinyproxy/tinyproxy.conf')
-            ->withExposedPorts(8888)
+            ->withMount($fixturesDir . '/squid.conf', '/etc/squid/squid.conf')
+            ->withExposedPorts(3128)
             ->start();
 
         self::$host = self::$wiremock->getHost();
         self::$httpPort = self::$wiremock->getMappedPort(8080);
         self::$httpsPort = self::$wiremock->getMappedPort(8443);
-        self::$proxyPort = self::$proxy->getMappedPort(8888);
+        self::$proxyPort = self::$proxy->getMappedPort(3128);
 
         (new WaitForHttp(self::$httpPort))
             ->withPath("/__admin/mappings")
