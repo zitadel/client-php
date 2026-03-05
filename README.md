@@ -238,14 +238,14 @@ $zitadel = Zitadel::withClientCredentials(
 ### Custom Default Headers
 
 You can attach default headers to every outgoing request. This is useful for
-proxy authentication or custom routing headers:
+custom routing or tracing headers:
 
 ```php
 use Zitadel\Client\Zitadel;
 use Zitadel\Client\TransportOptions;
 
 $options = new TransportOptions(
-    defaultHeaders: ['Proxy-Authorization' => 'Basic dXNlcjpwYXNz'],
+    defaultHeaders: ['X-Custom-Header' => 'my-value'],
 );
 
 $zitadel = Zitadel::withClientCredentials(
@@ -259,13 +259,14 @@ $zitadel = Zitadel::withClientCredentials(
 ### Proxy Configuration
 
 If your environment requires routing traffic through an HTTP proxy, you can
-specify the proxy URL:
+specify the proxy URL. To authenticate with the proxy, embed the credentials
+directly in the URL:
 
 ```php
 use Zitadel\Client\Zitadel;
 use Zitadel\Client\TransportOptions;
 
-$options = new TransportOptions(proxyUrl: 'http://proxy:8080');
+$options = new TransportOptions(proxyUrl: 'http://user:pass@proxy:8080');
 
 $zitadel = Zitadel::withClientCredentials(
     'https://your-instance.zitadel.cloud',
