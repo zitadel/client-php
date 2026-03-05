@@ -82,7 +82,6 @@ class TransportOptionsTest extends TestCase
     {
         $adminUrl = "http://" . self::$host . ":" . self::$httpPort;
 
-        // Stub 1 - OpenID Configuration
         $context = stream_context_create([
             'http' => [
                 'method' => 'POST',
@@ -100,7 +99,6 @@ class TransportOptionsTest extends TestCase
         $response = file_get_contents("{$adminUrl}/__admin/mappings", false, $context);
         self::assertNotFalse($response, 'Failed to register WireMock stub');
 
-        // Stub 2 - Token endpoint
         $context = stream_context_create([
             'http' => [
                 'method' => 'POST',
@@ -122,7 +120,6 @@ class TransportOptionsTest extends TestCase
         $response = file_get_contents("{$adminUrl}/__admin/mappings", false, $context);
         self::assertNotFalse($response, 'Failed to register WireMock stub');
 
-        // Stub 3 - Settings API endpoint (for verifying headers on API calls)
         $context = stream_context_create([
             'http' => [
                 'method' => 'POST',
@@ -173,10 +170,8 @@ class TransportOptionsTest extends TestCase
         );
         $this->assertInstanceOf(Zitadel::class, $zitadel);
 
-        // Make an actual API call to verify headers propagate to service requests
         $zitadel->settings->getGeneralSettings();
 
-        // Use WireMock's verification API to assert the header was sent on the API call
         $verifyContext = stream_context_create([
             'http' => [
                 'method' => 'POST',
@@ -200,7 +195,6 @@ class TransportOptionsTest extends TestCase
 
     public function testProxyUrl(): void
     {
-        // Use Docker-internal hostname — only resolvable through the proxy's network
         $zitadel = Zitadel::withAccessToken(
             "http://wiremock:8080",
             "test-token",
