@@ -21,6 +21,11 @@ final class TransportOptions
     ) {
     }
 
+    /**
+     * Returns a TransportOptions instance with all default values.
+     *
+     * @return self
+     */
     public static function defaults(): self
     {
         return new self();
