@@ -21,7 +21,7 @@ abstract class OAuthAuthenticatorBuilder
      * Constructs the builder with the required host.
      *
      * @param string $hostName
-     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @throws Exception
      */
     public function __construct(

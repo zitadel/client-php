@@ -38,7 +38,7 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
      * @param string $jwtSubject The subject claim for the JWT.
      * @param string $jwtAudience The audience claim for the JWT.
      * @param string $privateKey The PEM-formatted private key used to sign the JWT.
-     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @throws Exception
      */
     public function __construct(

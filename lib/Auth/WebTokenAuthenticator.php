@@ -32,7 +32,7 @@ class WebTokenAuthenticator extends OAuthAuthenticator
      * @param DateInterval $jwtLifetime The lifetime of the JWT in seconds. Defaults to 300.
      * @param string $jwtAlgorithm The signing algorithm. Defaults to "RS256".
      * @param string|null $keyId
-     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      */
     public function __construct(
         OpenId                  $hostName,
@@ -94,7 +94,7 @@ class WebTokenAuthenticator extends OAuthAuthenticator
      *
      * @param string $host The base URL for the API endpoints.
      * @param string $jsonPath The file path to the JSON configuration file.
-     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @return WebTokenAuthenticator An initialized instance of JWTAuthenticator.
      * @throws Exception if the file cannot be read or the JSON is invalid.
      * @noinspection SpellCheckingInspection
@@ -130,7 +130,7 @@ class WebTokenAuthenticator extends OAuthAuthenticator
      * @param string $host The base URL for API endpoints.
      * @param string $userId
      * @param string $privateKey
-     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @return WebTokenAuthenticatorBuilder A new builder instance.
      * @throws Exception
      */

@@ -19,7 +19,7 @@ final class ClientCredentialsAuthenticatorBuilder extends OAuthAuthenticatorBuil
      * @param string $host The base URL for API endpoints.
      * @param string $clientId The OAuth2 client identifier.
      * @param string $clientSecret The OAuth2 client secret.
-     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @throws Exception
      */
     public function __construct(

@@ -99,6 +99,10 @@ class Zitadel
     /** @var WebKeyServiceApi */
     public WebKeyServiceApi $webkeys;
 
+    /**
+     * @param Authenticator $authenticator The authenticator providing credentials for API calls.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
+     */
     public function __construct(Authenticator $authenticator, ?TransportOptions $transportOptions = null)
     {
         $resolved = $transportOptions ?? TransportOptions::defaults();
@@ -143,7 +147,7 @@ class Zitadel
      *
      * @param string $host API URL (e.g. "https://api.zitadel.example.com").
      * @param string $accessToken Personal Access Token for Bearer authentication.
-     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, headers.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @return self Configured Zitadel client instance.
      * @see https://zitadel.com/docs/guides/integrate/service-users/personal-access-token
      */
@@ -165,7 +169,7 @@ class Zitadel
      * @param string $host API URL.
      * @param string $clientId OAuth2 client identifier.
      * @param string $clientSecret OAuth2 client secret.
-     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, headers.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @return self Configured Zitadel client instance with token auto-refresh.
      * @throws Exception If token retrieval fails.
      * @see https://zitadel.com/docs/guides/integrate/service-users/client-credentials
@@ -189,7 +193,7 @@ class Zitadel
      *
      * @param string $host API URL.
      * @param string $keyFile Path to service account JSON or PEM key file.
-     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, headers.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @return self Configured Zitadel client instance using JWT assertion.
      * @throws Exception If key parsing or token exchange fails.
      * @see https://zitadel.com/docs/guides/integrate/service-users/private-key-jwt

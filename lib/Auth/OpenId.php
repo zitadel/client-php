@@ -34,7 +34,7 @@ class OpenId
      * for future use.
      *
      * @param string $hostname The hostname of the OpenID provider.
-     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @throws InvalidArgumentException If the provided hostname is empty.
      * @throws Exception If there's an error during the HTTP request or JSON parsing.
      */
@@ -78,7 +78,7 @@ class OpenId
      * in JSON format, and parses it to extract the necessary OpenID configuration fields.
      *
      * @param string $hostname The hostname of the OpenID provider.
-     * @param TransportOptions $transportOptions Transport options for HTTP connections.
+     * @param TransportOptions $transportOptions Transport options for TLS, proxy, and headers.
      * @return mixed An associative array containing the OpenID configuration.
      * @throws Exception If the HTTP request fails, or if the JSON response is malformed.
      */

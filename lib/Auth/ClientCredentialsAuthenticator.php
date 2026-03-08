@@ -23,7 +23,7 @@ class ClientCredentialsAuthenticator extends OAuthAuthenticator
      * @param string $clientId The OAuth2 client identifier.
      * @param string $clientSecret The OAuth2 client secret.
      * @param string $scope The scope for the token request.
-     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      */
     public function __construct(
         OpenId $hostName,
@@ -52,7 +52,7 @@ class ClientCredentialsAuthenticator extends OAuthAuthenticator
      * @param string $host The base URL for API endpoints.
      * @param string $clientId The OAuth2 client identifier.
      * @param string $clientSecret The OAuth2 client secret.
-     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @return ClientCredentialsAuthenticatorBuilder A new builder instance.
      * @throws Exception
      */

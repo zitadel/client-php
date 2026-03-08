@@ -43,7 +43,7 @@ abstract class OAuthAuthenticator extends Authenticator
      * @param string $clientId The OAuth2 client identifier.
      * @param string $scope The scope for the token request.
      * @param GenericProvider $provider
-     * @param TransportOptions|null $transportOptions Optional transport options for HTTP connections.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      */
     public function __construct(OpenId           $openId, /**
      * The OAuth2 client identifier.
