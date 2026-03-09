@@ -9,7 +9,7 @@ final class TransportOptions
 {
     /**
      * @param array<string, string> $defaultHeaders Default HTTP headers sent to the origin server with every request.
-     * @param string|null $caCertPath Path to a custom CA certificate bundle for TLS verification.
+     * @param string|null $caCertPath Path to a custom CA certificate file for TLS verification.
      * @param bool $insecure Whether to disable TLS certificate verification.
      * @param string|null $proxyUrl Proxy URL for HTTP connections.
      */
