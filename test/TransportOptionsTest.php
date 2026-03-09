@@ -9,6 +9,8 @@ use Testcontainers\Container\GenericContainer;
 use Testcontainers\Container\StartedGenericContainer;
 use Testcontainers\Wait\WaitForHttp;
 use Testcontainers\Wait\WaitForHostPort;
+use Exception;
+use stdClass;
 use Zitadel\Client\TransportOptions;
 use Zitadel\Client\Zitadel;
 
@@ -102,7 +104,7 @@ class TransportOptionsTest extends TestCase
                 ]),
             ],
         ]);
-        $response = file_get_contents("{$adminUrl}/__admin/mappings", false, $context);
+        $response = file_get_contents("$adminUrl/__admin/mappings", false, $context);
         self::assertNotFalse($response, 'Failed to register WireMock stub');
 
         $context = stream_context_create([
@@ -123,7 +125,7 @@ class TransportOptionsTest extends TestCase
                 ]),
             ],
         ]);
-        $response = file_get_contents("{$adminUrl}/__admin/mappings", false, $context);
+        $response = file_get_contents("$adminUrl/__admin/mappings", false, $context);
         self::assertNotFalse($response, 'Failed to register WireMock stub');
 
         $context = stream_context_create([
@@ -135,12 +137,12 @@ class TransportOptionsTest extends TestCase
                     'response' => [
                         'status' => 200,
                         'headers' => ['Content-Type' => 'application/json'],
-                        'jsonBody' => new \stdClass(),
+                        'jsonBody' => new stdClass(),
                     ],
                 ]),
             ],
         ]);
-        $response = file_get_contents("{$adminUrl}/__admin/mappings", false, $context);
+        $response = file_get_contents("$adminUrl/__admin/mappings", false, $context);
         self::assertNotFalse($response, 'Failed to register WireMock stub');
     }
 
@@ -211,7 +213,7 @@ class TransportOptionsTest extends TestCase
 
     public function testNoCaCertFails(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         Zitadel::withClientCredentials(
             "https://" . self::$host . ":" . self::$httpsPort,
             "dummy-client",
