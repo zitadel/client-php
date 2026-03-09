@@ -8,7 +8,7 @@ namespace Zitadel\Client;
 final class TransportOptions
 {
     /**
-     * @param array<string, string> $defaultHeaders Default HTTP headers to include in every request.
+     * @param array<string, string> $defaultHeaders Default HTTP headers sent to the origin server with every request.
      * @param string|null $caCertPath Path to a custom CA certificate bundle for TLS verification.
      * @param bool $insecure Whether to disable TLS certificate verification.
      * @param string|null $proxyUrl Proxy URL for HTTP connections.
