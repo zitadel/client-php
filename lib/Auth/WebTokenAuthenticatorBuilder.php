@@ -7,14 +7,14 @@ use Exception;
 use Zitadel\Client\TransportOptions;
 
 /**
- * Builder for JWTAuthenticator.
+ * Builder for WebTokenAuthenticator.
  *
- * Provides a fluent API for configuring and constructing a JWTAuthenticator.
+ * Provides a fluent API for configuring and constructing a WebTokenAuthenticator.
  * This builder extends the base OAuthAuthenticatorBuilder.
  *
  * Usage:
  * <pre>
- *   $authenticator = JWTAuthenticator::builder("https://api.example.com", "issuer", "subject", "audience", $privateKey)
+ *   $authenticator = WebTokenAuthenticator::builder("https://api.example.com", "issuer", "subject", "audience", $privateKey)
  *       ->tokenEndpoint("/oauth/v2/token")
  *       ->scopes(["openid", "foo"])
  *       ->tokenLifetimeSeconds(3600)
@@ -88,10 +88,10 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
 
 
     /**
-     * Builds and returns a new JWTAuthenticator instance.
+     * Builds and returns a new WebTokenAuthenticator instance.
      *
      * Generates a JWT assertion using the provided parameters and then constructs
-     * a JWTAuthenticator.
+     * a WebTokenAuthenticator.
      *
      * @return WebTokenAuthenticator
      * @throws Exception if JWT generation fails.

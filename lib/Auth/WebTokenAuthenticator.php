@@ -20,7 +20,7 @@ class WebTokenAuthenticator extends OAuthAuthenticator
     private const GRANT_TYPE = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
 
     /**
-     * JWTAuthenticator constructor.
+     * WebTokenAuthenticator constructor.
      *
      * @param OpenId $hostName The base URL for the API endpoints.
      * @param string $clientId The OAuth2 client identifier.
@@ -80,7 +80,7 @@ class WebTokenAuthenticator extends OAuthAuthenticator
     }
 
     /**
-     * Initialize a JWTAuthenticator instance from a JSON configuration file.
+     * Initialize a WebTokenAuthenticator instance from a JSON configuration file.
      *
      * The JSON file should have the following structure:
      * <code>
@@ -95,7 +95,7 @@ class WebTokenAuthenticator extends OAuthAuthenticator
      * @param string $host The base URL for the API endpoints.
      * @param string $jsonPath The file path to the JSON configuration file.
      * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
-     * @return WebTokenAuthenticator An initialized instance of JWTAuthenticator.
+     * @return WebTokenAuthenticator An initialized instance of WebTokenAuthenticator.
      * @throws Exception if the file cannot be read or the JSON is invalid.
      * @noinspection SpellCheckingInspection
      */
