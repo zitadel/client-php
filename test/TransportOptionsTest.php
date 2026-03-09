@@ -10,7 +10,6 @@ use Testcontainers\Container\StartedGenericContainer;
 use Testcontainers\Wait\WaitForHttp;
 use Testcontainers\Wait\WaitForHostPort;
 use Exception;
-use stdClass;
 use Zitadel\Client\TransportOptions;
 use Zitadel\Client\Zitadel;
 
@@ -51,6 +50,7 @@ class TransportOptionsTest extends TestCase
                 "--global-response-templating",
             ])
             ->withMount($fixturesDir . '/keystore.p12', '/home/wiremock/keystore.p12')
+            ->withMount($fixturesDir . '/mappings', '/home/wiremock/mappings')
             ->withExposedPorts(8080, 8443)
             ->start();
 
@@ -72,8 +72,6 @@ class TransportOptionsTest extends TestCase
             ->withPath("/__admin/mappings")
             ->withExpectedStatusCode(200)
             ->wait(self::$wiremock);
-
-        self::registerStubs();
     }
 
     public static function tearDownAfterClass(): void
@@ -84,66 +82,6 @@ class TransportOptionsTest extends TestCase
             Docker::create()->networkDelete(self::$networkName);
         }
         parent::tearDownAfterClass();
-    }
-
-    private static function registerStubs(): void
-    {
-        $adminUrl = "http://" . self::$host . ":" . self::$httpPort;
-
-        $context = stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'header' => "Content-Type: application/json\r\n",
-                'content' => json_encode([
-                    'request' => ['method' => 'GET', 'url' => '/.well-known/openid-configuration'],
-                    'response' => [
-                        'status' => 200,
-                        'headers' => ['Content-Type' => 'application/json'],
-                        'body' => '{"issuer":"{{request.baseUrl}}","token_endpoint":"{{request.baseUrl}}/oauth/v2/token","authorization_endpoint":"{{request.baseUrl}}/oauth/v2/authorize","userinfo_endpoint":"{{request.baseUrl}}/oidc/v1/userinfo","jwks_uri":"{{request.baseUrl}}/oauth/v2/keys"}',
-                    ],
-                ]),
-            ],
-        ]);
-        $response = file_get_contents("$adminUrl/__admin/mappings", false, $context);
-        self::assertNotFalse($response, 'Failed to register WireMock stub');
-
-        $context = stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'header' => "Content-Type: application/json\r\n",
-                'content' => json_encode([
-                    'request' => ['method' => 'POST', 'url' => '/oauth/v2/token'],
-                    'response' => [
-                        'status' => 200,
-                        'headers' => ['Content-Type' => 'application/json'],
-                        'jsonBody' => [
-                            'access_token' => 'test-token-12345',
-                            'token_type' => 'Bearer',
-                            'expires_in' => 3600,
-                        ],
-                    ],
-                ]),
-            ],
-        ]);
-        $response = file_get_contents("$adminUrl/__admin/mappings", false, $context);
-        self::assertNotFalse($response, 'Failed to register WireMock stub');
-
-        $context = stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'header' => "Content-Type: application/json\r\n",
-                'content' => json_encode([
-                    'request' => ['method' => 'POST', 'url' => '/zitadel.settings.v2.SettingsService/GetGeneralSettings'],
-                    'response' => [
-                        'status' => 200,
-                        'headers' => ['Content-Type' => 'application/json'],
-                        'jsonBody' => new stdClass(),
-                    ],
-                ]),
-            ],
-        ]);
-        $response = file_get_contents("$adminUrl/__admin/mappings", false, $context);
-        self::assertNotFalse($response, 'Failed to register WireMock stub');
     }
 
     public function testCustomCaCert(): void
