@@ -43,7 +43,7 @@ class TransportOptionsTest extends TestCase
 
     public function testInsecureTakesPrecedenceOverCaCert(): void
     {
-        $opts = new TransportOptions(caCertPath: '/path/to/ca.pem', insecure: true);
+        $opts = new TransportOptions(caCertPath: '/nonexistent/ca.pem', insecure: true);
         $result = $opts->toGuzzleOptions();
         $this->assertFalse($result['verify']);
     }
