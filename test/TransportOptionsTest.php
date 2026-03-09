@@ -38,7 +38,7 @@ class TransportOptionsTest extends TestCase
         $response = $docker->networkCreate($networkBody);
         self::$networkId = $response->getId();
 
-        self::$wiremock = (new GenericContainer("wiremock/wiremock:3.3.1"))
+        self::$wiremock = (new GenericContainer("wiremock/wiremock:3.12.1"))
             ->withName('wiremock')
             ->withNetwork(self::$networkName)
             ->withCommand([
