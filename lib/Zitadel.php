@@ -101,12 +101,20 @@ class Zitadel
 
     /**
      * @param Authenticator $authenticator The authenticator providing credentials for API calls.
+     * @param callable|null $mutateConfig Optional callback to mutate the configuration.
      * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      */
-    public function __construct(Authenticator $authenticator, ?TransportOptions $transportOptions = null)
-    {
+    public function __construct(
+        Authenticator $authenticator,
+        ?callable $mutateConfig = null,
+        ?TransportOptions $transportOptions = null,
+    ) {
         $resolved = $transportOptions ?? TransportOptions::defaults();
         $config = new Configuration($authenticator);
+
+        if ($mutateConfig !== null) {
+            $mutateConfig($config);
+        }
 
         $guzzleOpts = array_merge(['http_errors' => false], $resolved->toGuzzleOptions());
         $client = new Client($guzzleOpts);
@@ -159,6 +167,7 @@ class Zitadel
         $resolved = $transportOptions ?? TransportOptions::defaults();
         return new self(
             new PersonalAccessAuthenticator($host, $accessToken),
+            null,
             $resolved,
         );
     }
@@ -184,6 +193,7 @@ class Zitadel
         return new self(
             ClientCredentialsAuthenticator::builder($host, $clientId, $clientSecret, $resolved)
                 ->build(),
+            null,
             $resolved,
         );
     }
@@ -206,6 +216,7 @@ class Zitadel
         $resolved = $transportOptions ?? TransportOptions::defaults();
         return new self(
             WebTokenAuthenticator::fromJson($host, $keyFile, $resolved),
+            null,
             $resolved,
         );
     }
