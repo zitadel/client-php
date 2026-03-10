@@ -3,6 +3,7 @@
 namespace Zitadel\Client;
 
 use Exception;
+use GuzzleHttp\Client;
 use Zitadel\Client\Api\ActionServiceApi;
 use Zitadel\Client\Api\ApplicationServiceApi;
 use Zitadel\Client\Api\AuthorizationServiceApi;
@@ -98,43 +99,55 @@ class Zitadel
     /** @var WebKeyServiceApi */
     public WebKeyServiceApi $webkeys;
 
-    public function __construct(Authenticator $authenticator, ?callable $mutateConfig = null)
-    {
+    /**
+     * @param Authenticator $authenticator The authenticator providing credentials for API calls.
+     * @param callable|null $mutateConfig Optional callback to mutate the configuration.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
+     */
+    public function __construct(
+        Authenticator $authenticator,
+        ?callable $mutateConfig = null,
+        ?TransportOptions $transportOptions = null,
+    ) {
+        $resolved = $transportOptions ?? TransportOptions::defaults();
         $config = new Configuration($authenticator);
-        $mutateConfig ??= static function (Configuration $config): void {
-            // No mutation by default.
-        };
-        $mutateConfig($config);
 
-        $this->betaProjects = new BetaProjectServiceApi(null, $config);
-        $this->betaApps = new BetaAppServiceApi(null, $config);
-        $this->betaOidc = new BetaOIDCServiceApi(null, $config);
-        $this->betaUsers = new BetaUserServiceApi(null, $config);
-        $this->betaOrganizations = new BetaOrganizationServiceApi(null, $config);
-        $this->betaSettings = new BetaSettingsServiceApi(null, $config);
-        $this->betaPermissions = new BetaInternalPermissionServiceApi(null, $config);
-        $this->betaAuthorizations = new BetaAuthorizationServiceApi(null, $config);
-        $this->betaSessions = new BetaSessionServiceApi(null, $config);
-        $this->betaInstance = new BetaInstanceServiceApi(null, $config);
-        $this->betaTelemetry = new BetaTelemetryServiceApi(null, $config);
-        $this->betaFeatures = new BetaFeatureServiceApi(null, $config);
-        $this->betaWebkeys = new BetaWebKeyServiceApi(null, $config);
-        $this->betaActions = new BetaActionServiceApi(null, $config);
-        $this->actions = new ActionServiceApi(null, $config);
-        $this->applications = new ApplicationServiceApi(null, $config);
-        $this->authorizations = new AuthorizationServiceApi(null, $config);
-        $this->features = new FeatureServiceApi(null, $config);
-        $this->idps = new IdentityProviderServiceApi(null, $config);
-        $this->instances = new InstanceServiceApi(null, $config);
-        $this->internalPermissions = new InternalPermissionServiceApi(null, $config);
-        $this->oidc = new OIDCServiceApi(null, $config);
-        $this->organizations = new OrganizationServiceApi(null, $config);
-        $this->projects = new ProjectServiceApi(null, $config);
-        $this->saml = new SAMLServiceApi(null, $config);
-        $this->sessions = new SessionServiceApi(null, $config);
-        $this->settings = new SettingsServiceApi(null, $config);
-        $this->users = new UserServiceApi(null, $config);
-        $this->webkeys = new WebKeyServiceApi(null, $config);
+        if ($mutateConfig !== null) {
+            $mutateConfig($config);
+        }
+
+        $guzzleOpts = array_merge(['http_errors' => false], $resolved->toGuzzleOptions());
+        $client = new Client($guzzleOpts);
+
+        $this->betaProjects = new BetaProjectServiceApi($client, $config);
+        $this->betaApps = new BetaAppServiceApi($client, $config);
+        $this->betaOidc = new BetaOIDCServiceApi($client, $config);
+        $this->betaUsers = new BetaUserServiceApi($client, $config);
+        $this->betaOrganizations = new BetaOrganizationServiceApi($client, $config);
+        $this->betaSettings = new BetaSettingsServiceApi($client, $config);
+        $this->betaPermissions = new BetaInternalPermissionServiceApi($client, $config);
+        $this->betaAuthorizations = new BetaAuthorizationServiceApi($client, $config);
+        $this->betaSessions = new BetaSessionServiceApi($client, $config);
+        $this->betaInstance = new BetaInstanceServiceApi($client, $config);
+        $this->betaTelemetry = new BetaTelemetryServiceApi($client, $config);
+        $this->betaFeatures = new BetaFeatureServiceApi($client, $config);
+        $this->betaWebkeys = new BetaWebKeyServiceApi($client, $config);
+        $this->betaActions = new BetaActionServiceApi($client, $config);
+        $this->actions = new ActionServiceApi($client, $config);
+        $this->applications = new ApplicationServiceApi($client, $config);
+        $this->authorizations = new AuthorizationServiceApi($client, $config);
+        $this->features = new FeatureServiceApi($client, $config);
+        $this->idps = new IdentityProviderServiceApi($client, $config);
+        $this->instances = new InstanceServiceApi($client, $config);
+        $this->internalPermissions = new InternalPermissionServiceApi($client, $config);
+        $this->oidc = new OIDCServiceApi($client, $config);
+        $this->organizations = new OrganizationServiceApi($client, $config);
+        $this->projects = new ProjectServiceApi($client, $config);
+        $this->saml = new SAMLServiceApi($client, $config);
+        $this->sessions = new SessionServiceApi($client, $config);
+        $this->settings = new SettingsServiceApi($client, $config);
+        $this->users = new UserServiceApi($client, $config);
+        $this->webkeys = new WebKeyServiceApi($client, $config);
     }
 
     /**
@@ -142,12 +155,21 @@ class Zitadel
      *
      * @param string $host API URL (e.g. "https://api.zitadel.example.com").
      * @param string $accessToken Personal Access Token for Bearer authentication.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @return self Configured Zitadel client instance.
      * @see https://zitadel.com/docs/guides/integrate/service-users/personal-access-token
      */
-    public static function withAccessToken(string $host, string $accessToken): self
-    {
-        return new self(new PersonalAccessAuthenticator($host, $accessToken));
+    public static function withAccessToken(
+        string $host,
+        string $accessToken,
+        ?TransportOptions $transportOptions = null,
+    ): self {
+        $resolved = $transportOptions ?? TransportOptions::defaults();
+        return new self(
+            new PersonalAccessAuthenticator($host, $accessToken),
+            null,
+            $resolved,
+        );
     }
 
     /**
@@ -156,15 +178,23 @@ class Zitadel
      * @param string $host API URL.
      * @param string $clientId OAuth2 client identifier.
      * @param string $clientSecret OAuth2 client secret.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @return self Configured Zitadel client instance with token auto-refresh.
      * @throws Exception If token retrieval fails.
      * @see https://zitadel.com/docs/guides/integrate/service-users/client-credentials
      */
-    public static function withClientCredentials(string $host, string $clientId, string $clientSecret): self
-    {
+    public static function withClientCredentials(
+        string $host,
+        string $clientId,
+        string $clientSecret,
+        ?TransportOptions $transportOptions = null,
+    ): self {
+        $resolved = $transportOptions ?? TransportOptions::defaults();
         return new self(
-            ClientCredentialsAuthenticator::builder($host, $clientId, $clientSecret)
-                ->build()
+            ClientCredentialsAuthenticator::builder($host, $clientId, $clientSecret, $resolved)
+                ->build(),
+            null,
+            $resolved,
         );
     }
 
@@ -173,12 +203,22 @@ class Zitadel
      *
      * @param string $host API URL.
      * @param string $keyFile Path to service account JSON or PEM key file.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @return self Configured Zitadel client instance using JWT assertion.
      * @throws Exception If key parsing or token exchange fails.
      * @see https://zitadel.com/docs/guides/integrate/service-users/private-key-jwt
      */
-    public static function withPrivateKey(string $host, string $keyFile): self
-    {
-        return new self(WebTokenAuthenticator::fromJson($host, $keyFile));
+    public static function withPrivateKey(
+        string $host,
+        string $keyFile,
+        ?TransportOptions $transportOptions = null,
+    ): self {
+        $resolved = $transportOptions ?? TransportOptions::defaults();
+        return new self(
+            WebTokenAuthenticator::fromJson($host, $keyFile, $resolved),
+            null,
+            $resolved,
+        );
     }
+
 }

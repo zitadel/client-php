@@ -6,7 +6,9 @@ use DateInterval;
 use DateTimeImmutable;
 use Exception;
 use Firebase\JWT\JWT;
+use GuzzleHttp\Client;
 use League\OAuth2\Client\Provider\GenericProvider;
+use Zitadel\Client\TransportOptions;
 
 /**
  * JWT-based Authenticator using the JWT Bearer Grant (RFC7523).
@@ -18,7 +20,7 @@ class WebTokenAuthenticator extends OAuthAuthenticator
     private const GRANT_TYPE = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
 
     /**
-     * JWTAuthenticator constructor.
+     * WebTokenAuthenticator constructor.
      *
      * @param OpenId $hostName The base URL for the API endpoints.
      * @param string $clientId The OAuth2 client identifier.
@@ -30,6 +32,7 @@ class WebTokenAuthenticator extends OAuthAuthenticator
      * @param DateInterval $jwtLifetime The lifetime of the JWT in seconds. Defaults to 300.
      * @param string $jwtAlgorithm The signing algorithm. Defaults to "RS256".
      * @param string|null $keyId
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      */
     public function __construct(
         OpenId                  $hostName,
@@ -59,19 +62,25 @@ class WebTokenAuthenticator extends OAuthAuthenticator
          * The signing algorithm.
          */
         private readonly string       $jwtAlgorithm = 'RS256',
-        private readonly ?string      $keyId = null
+        private readonly ?string      $keyId = null,
+        ?TransportOptions $transportOptions = null
     ) {
+        $transportOptions ??= TransportOptions::defaults();
+
+        $guzzleOpts = $transportOptions->toGuzzleOptions();
+        $collaborators = !empty($guzzleOpts) ? ['httpClient' => new Client($guzzleOpts)] : [];
+
         parent::__construct($hostName, $clientId, $scope, new GenericProvider([
             'clientId' => $clientId,
             'urlAccessToken' => $hostName->getTokenEndpoint()->toString(),
             'urlAuthorize' => $hostName->getAuthorizationEndpoint()->toString(),
             'urlResourceOwnerDetails' => $hostName->getUserinfoEndpoint()->toString(),
-        ]));
+        ], $collaborators), $transportOptions);
         $this->provider->getGrantFactory()->setGrant(WebTokenAuthenticator::GRANT_TYPE, new JwtBearer());
     }
 
     /**
-     * Initialize a JWTAuthenticator instance from a JSON configuration file.
+     * Initialize a WebTokenAuthenticator instance from a JSON configuration file.
      *
      * The JSON file should have the following structure:
      * <code>
@@ -85,12 +94,16 @@ class WebTokenAuthenticator extends OAuthAuthenticator
      *
      * @param string $host The base URL for the API endpoints.
      * @param string $jsonPath The file path to the JSON configuration file.
-     * @return WebTokenAuthenticator An initialized instance of JWTAuthenticator.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
+     * @return WebTokenAuthenticator An initialized instance of WebTokenAuthenticator.
      * @throws Exception if the file cannot be read or the JSON is invalid.
      * @noinspection SpellCheckingInspection
      */
-    public static function fromJson(string $host, string $jsonPath): WebTokenAuthenticator
-    {
+    public static function fromJson(
+        string $host,
+        string $jsonPath,
+        ?TransportOptions $transportOptions = null,
+    ): WebTokenAuthenticator {
         $json = file_get_contents($jsonPath);
         if ($json === false) {
             throw new Exception("Unable to read JSON file: $jsonPath");
@@ -108,21 +121,26 @@ class WebTokenAuthenticator extends OAuthAuthenticator
             throw new Exception("Missing required configuration keys in JSON file.");
         }
 
-        return self::builder($host, $userId, $privateKey)->keyId($keyId)->build();
+        return self::builder($host, $userId, $privateKey, $transportOptions)->keyId($keyId)->build();
     }
 
     /**
-     * Returns a new builder instance for ClientCredentialsAuthenticator.
+     * Returns a new builder instance for WebTokenAuthenticator.
      *
      * @param string $host The base URL for API endpoints.
      * @param string $userId
      * @param string $privateKey
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @return WebTokenAuthenticatorBuilder A new builder instance.
      * @throws Exception
      */
-    public static function builder(string $host, string $userId, string $privateKey): WebTokenAuthenticatorBuilder
-    {
-        return new WebTokenAuthenticatorBuilder($host, $userId, $userId, $host, $privateKey);
+    public static function builder(
+        string $host,
+        string $userId,
+        string $privateKey,
+        ?TransportOptions $transportOptions = null,
+    ): WebTokenAuthenticatorBuilder {
+        return new WebTokenAuthenticatorBuilder($host, $userId, $userId, $host, $privateKey, $transportOptions);
     }
 
     protected function getGrantType(): string

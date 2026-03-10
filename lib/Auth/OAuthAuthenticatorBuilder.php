@@ -3,6 +3,7 @@
 namespace Zitadel\Client\Auth;
 
 use Exception;
+use Zitadel\Client\TransportOptions;
 
 /**
  * Base builder for OAuth authenticators.
@@ -14,16 +15,21 @@ abstract class OAuthAuthenticatorBuilder
 {
     protected OpenId $hostName;
     protected string $authScopes = 'openid urn:zitadel:iam:org:project:id:zitadel:aud';
+    protected TransportOptions $transportOptions;
 
     /**
      * Constructs the builder with the required host.
      *
      * @param string $hostName
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @throws Exception
      */
-    public function __construct(string $hostName)
-    {
-        $this->hostName = new OpenId($hostName);
+    public function __construct(
+        string $hostName,
+        ?TransportOptions $transportOptions = null,
+    ) {
+        $this->transportOptions = $transportOptions ?? TransportOptions::defaults();
+        $this->hostName = new OpenId($hostName, $this->transportOptions);
     }
 
     /**

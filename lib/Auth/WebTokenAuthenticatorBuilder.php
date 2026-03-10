@@ -4,16 +4,17 @@ namespace Zitadel\Client\Auth;
 
 use DateInterval;
 use Exception;
+use Zitadel\Client\TransportOptions;
 
 /**
- * Builder for JWTAuthenticator.
+ * Builder for WebTokenAuthenticator.
  *
- * Provides a fluent API for configuring and constructing a JWTAuthenticator.
+ * Provides a fluent API for configuring and constructing a WebTokenAuthenticator.
  * This builder extends the base OAuthAuthenticatorBuilder.
  *
  * Usage:
  * <pre>
- *   $authenticator = JWTAuthenticator::builder("https://api.example.com", "issuer", "subject", "audience", $privateKey)
+ *   $authenticator = WebTokenAuthenticator::builder("https://api.example.com", "issuer", "subject", "audience", $privateKey)
  *       ->tokenEndpoint("/oauth/v2/token")
  *       ->scopes(["openid", "foo"])
  *       ->tokenLifetimeSeconds(3600)
@@ -37,11 +38,18 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
      * @param string $jwtSubject The subject claim for the JWT.
      * @param string $jwtAudience The audience claim for the JWT.
      * @param string $privateKey The PEM-formatted private key used to sign the JWT.
+     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @throws Exception
      */
-    public function __construct(string $host, private readonly string $jwtIssuer, private readonly string $jwtSubject, private readonly string $jwtAudience, private readonly string $privateKey)
-    {
-        parent::__construct($host);
+    public function __construct(
+        string $host,
+        private readonly string $jwtIssuer,
+        private readonly string $jwtSubject,
+        private readonly string $jwtAudience,
+        private readonly string $privateKey,
+        ?TransportOptions $transportOptions = null,
+    ) {
+        parent::__construct($host, $transportOptions);
         $this->jwtLifetime = new DateInterval('PT1H');
     }
 
@@ -80,10 +88,10 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
 
 
     /**
-     * Builds and returns a new JWTAuthenticator instance.
+     * Builds and returns a new WebTokenAuthenticator instance.
      *
      * Generates a JWT assertion using the provided parameters and then constructs
-     * a JWTAuthenticator.
+     * a WebTokenAuthenticator.
      *
      * @return WebTokenAuthenticator
      * @throws Exception if JWT generation fails.
@@ -101,6 +109,7 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
             $this->jwtLifetime,
             jwtAlgorithm: $this->jwtAlgorithm,
             keyId: $this->keyId,
+            transportOptions: $this->transportOptions,
         );
     }
 }
