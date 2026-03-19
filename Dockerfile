@@ -1,4 +1,4 @@
-FROM composer/composer:2@sha256:b7ef481cbd284d30761fa6b29c0ec4e5fa56ecc7d77632f8151c513ca5214750
+FROM composer/composer:2@sha256:1e34eb440be410077b4caf9a2319dc87e122643e10742c1793c6c586539c1d93
 
 WORKDIR /app
 
