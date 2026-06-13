@@ -1,10 +1,12 @@
 parameters:
-  level: 6
+  level: 9
+  tmpDir: .phpstan
   paths:
-    - lib
-    - test
-    - spec
+    - .
   excludePaths:
-    - lib/Model/*
-    - lib/Api/*
-    - lib/ObjectSerializer.php
+    - vendor
+    # Pest test files use magic methods (test(), expect(), beforeEach(),
+    # etc.) that phpstan cannot analyse without the dedicated
+    # pestphp/pest-plugin-phpstan plugin. Skip the tests directory until
+    # that plugin is wired up.
+    - tests

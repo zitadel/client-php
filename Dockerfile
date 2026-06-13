@@ -1,6 +1,18 @@
-FROM composer/composer:2@sha256:b7ef481cbd284d30761fa6b29c0ec4e5fa56ecc7d77632f8151c513ca5214750
+# Interactive REPL image for poking at the SDK with psysh. The SDK requires
+# PHP 8.5, so base off the official php:8.5 image and pull composer from the
+# official composer image rather than the composer/composer base (which still
+# ships PHP 8.4).
+FROM php:8.5-cli
 
 WORKDIR /app
+
+# Composer needs git and unzip to fetch and extract dist packages.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git unzip libzip-dev \
+    && docker-php-ext-install zip \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Set COMPOSER_HOME so global packages are in /root/.composer reliably.
 ENV COMPOSER_HOME=/root/.composer

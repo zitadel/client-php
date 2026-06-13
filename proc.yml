@@ -1,0 +1,7 @@
+packageName: zitadel/client
+variableNamingConvention: camelCase
+invokerPackage: Zitadel\Client
+disallowAdditionalPropertiesIfNotPresent: false
+repoName: git@github.com:zitadel/client-php.git
+generatorName: php-plus
+generateUnitTests: true

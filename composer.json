@@ -1,47 +1,58 @@
 {
     "name": "zitadel/client",
-    "version": "4.1.0",
-    "description": "Official Zitadel SDK for PHP. Authenticate and access Zitadel's authentication and management APIs in PHP.",
-    "keywords": [
-        "api",
-        "iam",
-        "client-lib",
-        "client-library",
-        "sdk-python",
-        "zitadel",
-        "zitadel-sdk"
-    ],
-    "homepage": "https://github.com/zitadel/client-php",
-    "license": "Apache-2.0",
-    "authors": [
-        {
-            "name": "Zitadel",
-            "homepage": "https://zitadel.com"
-        }
-    ],
+    "description": "The Zitadel SDK is a convenience wrapper around the Zitadel APIs to assist you in integrating with your Zitadel environment. This SDK enables you to handle resources, settings, and configurations within the Zitadel platform.",
+    "license": "MIT",
+    "version": "1.0.0",
     "require": {
-        "php": "^8.3",
+        "php": "^8.5",
         "ext-curl": "*",
         "ext-json": "*",
-        "guzzlehttp/guzzle": "^7.3",
-        "guzzlehttp/psr7": "^1.7 || ^2.0",
-        "firebase/php-jwt": "^7.0.0",
-        "league/oauth2-client": "^2.8",
+        "ext-mbstring": "*",
+        "symfony/http-client": "^6.0|^7.0",
+        "symfony/mime": "^6.0|^7.0",
+        "symfony/serializer": "^6.0|^7.0",
+        "symfony/property-access": "^6.0|^7.0",
+        "symfony/property-info": "^6.0|^7.0",
+        "symfony/uid": "^6.0|^7.0",
+        "phpdocumentor/reflection-docblock": "^5.3",
+        "php-ds/php-ds": "^1.5",
+        "ext-openssl": "*",
         "league/uri": "^7.5",
-        "ext-openssl": "*"
+        "firebase/php-jwt": "^7.0.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^12.0",
-        "friendsofphp/php-cs-fixer": "^3.75",
+        "pestphp/pest": "^4.0",
+        "friendsofphp/php-cs-fixer": "^3.95",
+        "phpstan/phpstan": "^2.1",
+        "squizlabs/php_codesniffer": "^3.13",
+        "slevomat/coding-standard": "^8.16",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "rector/rector": "^2.4",
+        "ext-dom": "*",
         "haydenpierce/class-finder": "^0.5.3",
         "testcontainers/testcontainers": "^1.0",
-        "ext-dom": "*",
         "vlucas/phpdotenv": "^5.6",
-        "rector/rector": "^2.0",
-        "phpstan/phpstan": "^2.1",
-        "phpdocumentor/phpdocumentor": "^3.8",
-        "icanhazstring/composer-unused": "^0.9.3",
-        "mridang/phpunit-reporters": "^1.0"
+        "mridang/phpunit-reporters": "^1.0",
+        "icanhazstring/composer-unused": "^0.9.3"
+    },
+    "scripts": {
+        "test": "pest --testsuite unit,tests --coverage --coverage-clover=build/coverage/clover.xml --log-junit=build/reports/junit.xml",
+        "phpstan": "phpstan analyse --memory-limit=-1",
+        "rector": "rector process",
+        "format": "php-cs-fixer fix",
+        "depcheck": "composer-unused"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "pestphp/pest-plugin": true
+        }
+    },
+    "suggest": {
+        "ext-brotli": "For brotli response decompression",
+        "ext-zstd": "For zstd response decompression",
+        "ext-ds": "Use the PECL ext-ds for native performance",
+        "open-telemetry/api": "For automatic W3C Trace Context (traceparent) propagation on API calls"
     },
     "autoload": {
         "psr-4": {
@@ -53,29 +64,5 @@
             "Zitadel\\Client\\Test\\": "test/",
             "Zitadel\\Client\\Spec\\": "spec/"
         }
-    },
-    "support": {
-        "email": "support@zitadel.com",
-        "issues": "https://github.com/zitadel/client-php/issues",
-        "source": "https://github.com/zitadel/client-php",
-        "security": "https://github.com/zitadel/client-php/security",
-        "chat": "https://discord.com/servers/zitadel-927474939156643850"
-    },
-    "scripts": {
-        "test": "phpunit --coverage-html=build/coverage/html --coverage-clover=build/coverage/clover.xml --log-junit=build/reports/junit.xml",
-        "rector": "rector process",
-        "phpstan": "phpstan analyse --memory-limit=-1",
-        "format": "php-cs-fixer fix",
-        "docgen": "phpdoc --config=phpdoc.xml",
-        "depcheck": "composer-unused"
-    },
-    "config": {
-        "platform": {
-            "php": "8.3.0"
-        },
-        "allow-plugins": {
-            "php-http/discovery": true
-        },
-        "process-timeout": 600
     }
 }

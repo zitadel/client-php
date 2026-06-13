@@ -30,7 +30,7 @@ class UsePrivateKeySpec extends AbstractIntegrationTest
     {
         $this->expectNotToPerformAssertions();
         $client = Zitadel::withPrivateKey(self::getBaseUrl(), self::getJwtKey());
-        $client->settings->getGeneralSettings();
+        $client->settings->getGeneralSettings(new \stdClass());
     }
 
     /**
@@ -42,6 +42,6 @@ class UsePrivateKeySpec extends AbstractIntegrationTest
         $invalid = Zitadel::withPrivateKey("https://zitadel.cloud", self::getJwtKey());
 
         $this->expectException(ZitadelException::class);
-        $invalid->settings->getGeneralSettings();
+        $invalid->settings->getGeneralSettings(new \stdClass());
     }
 }
