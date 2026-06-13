@@ -30,13 +30,15 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@cf4cade2721270509d5b1c766ab3549210a39a2a # v2
         with:
-          php-version: '8.3'
+          php-version: '8.5'
 
       - name: Install Dependencies
         run: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
       - name: Run Tests
         run: composer test
+        env:
+          XDEBUG_MODE: coverage
 
       - name: Generate coverage report
         uses: mridang/action-test-reporter@v1

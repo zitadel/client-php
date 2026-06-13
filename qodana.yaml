@@ -7,7 +7,7 @@ exclude:
   - name: All
     paths:
       - lib/Api
-      - lib/Model
+      - lib/Models
       - lib/ObjectSerializer.php
       - lib/HeaderSelector.php
 

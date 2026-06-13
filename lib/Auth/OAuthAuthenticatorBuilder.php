@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zitadel\Client\Auth;
 
 use Exception;
@@ -20,7 +22,6 @@ abstract class OAuthAuthenticatorBuilder
     /**
      * Constructs the builder with the required host.
      *
-     * @param string $hostName
      * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
      * @throws Exception
      */
@@ -28,7 +29,7 @@ abstract class OAuthAuthenticatorBuilder
         string $hostName,
         ?TransportOptions $transportOptions = null,
     ) {
-        $this->transportOptions = $transportOptions ?? TransportOptions::defaults();
+        $this->transportOptions = $transportOptions ?? TransportOptions::builder()->build();
         $this->hostName = new OpenId($hostName, $this->transportOptions);
     }
 
@@ -36,7 +37,6 @@ abstract class OAuthAuthenticatorBuilder
      * Overrides the default scopes.
      *
      * @param string[] $authScopes A list of scopes for the token request.
-     * @return static
      */
     public function scopes(array $authScopes): static
     {

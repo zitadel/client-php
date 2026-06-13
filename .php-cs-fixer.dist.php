@@ -1,18 +1,13 @@
 <?php
 
-use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
+declare(strict_types=1);
 
-$config = new PhpCsFixer\Config();
-$config->setRules([
-    '@PSR12' => true,
-])
-    ->setFinder(PhpCsFixer\Finder::create()
-        ->in(__DIR__)
-        ->exclude('lib/Model')
-        ->exclude('lib/Api'))
-    ->setRiskyAllowed(true)
-    ->setParallelConfig(ParallelConfigFactory::detect())
-    ->setCacheFile(__DIR__ . '/build/.php-cs-fixer.cache')
-    ->setUsingCache(!(getenv('GITHUB_ACTIONS') === 'true'));
+$finder = (new PhpCsFixer\Finder())
+    ->in(__DIR__ . '/lib');
 
-return $config;
+return (new PhpCsFixer\Config())
+    ->setRules([
+        '@PSR12' => true,
+    ])
+    ->setFinder($finder)
+    ->setUsingCache(false);
