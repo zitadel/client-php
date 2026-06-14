@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zitadel\Client\Auth;
 
 use Exception;
@@ -33,8 +35,6 @@ final class ClientCredentialsAuthenticatorBuilder extends OAuthAuthenticatorBuil
 
     /**
      * Builds and returns a new ClientCredentialsAuthenticator instance.
-     *
-     * @return ClientCredentialsAuthenticator
      */
     public function build(): ClientCredentialsAuthenticator
     {
@@ -42,8 +42,7 @@ final class ClientCredentialsAuthenticatorBuilder extends OAuthAuthenticatorBuil
             $this->hostName,
             $this->clientId,
             $this->clientSecret,
-            $this->authScopes,
-            $this->transportOptions
+            $this->authScopes
         );
     }
 }

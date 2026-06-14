@@ -12,23 +12,24 @@ class WebTokenAuthenticatorTest extends OAuthAuthenticatorTestCase
      */
     public function testRefreshToken(): void
     {
-        $authenticator = WebTokenAuthenticator::builder(static::$oauthHost, "1", WebTokenAuthenticatorTest::getPrivateKey())
-            ->scopes(["openid", "foo"])
-            ->build();
+        $authenticator = $this->withApiClient(
+            WebTokenAuthenticator::builder(static::$oauthHost, "1", WebTokenAuthenticatorTest::getPrivateKey())
+                ->build()
+        );
 
         $this->assertNotEmpty($authenticator->getAuthToken(), "Access token should not be empty");
         $token = $authenticator->refreshToken();
-        $this->assertNotEmpty($token->getToken(), "Access token should not be empty");
-        $this->assertFalse($token->hasExpired(), "Token expiry should be in the future");
-        $this->assertEquals($token->getToken(), $authenticator->getAuthToken());
-        $this->assertEquals($authenticator->getHost()->toString(), static::$oauthHost);
-        $this->assertNotEquals($authenticator->refreshToken()->getToken(), $authenticator->refreshToken()->getToken());
+        $this->assertNotEmpty($token, "Access token should not be empty");
+        $this->assertEquals($token, $authenticator->getAuthToken());
+        $this->assertEquals($authenticator->getHost(), static::$oauthHost);
+        $this->assertNotEquals($authenticator->refreshToken(), $authenticator->refreshToken());
     }
 
     private static function getPrivateKey(): string
     {
         $config = ['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA];
         $res = openssl_pkey_new($config);
+        self::assertNotFalse($res);
         openssl_pkey_export($res, $key);
         return $key;
     }
@@ -38,17 +39,18 @@ class WebTokenAuthenticatorTest extends OAuthAuthenticatorTestCase
      */
     public function testRefreshTokenWithRS256(): void
     {
-        $authenticator = WebTokenAuthenticator::builder(static::$oauthHost, "1", WebTokenAuthenticatorTest::getPrivateKey())
-            ->jwtAlgorithm("RS256")
-            ->build();
+        $authenticator = $this->withApiClient(
+            WebTokenAuthenticator::builder(static::$oauthHost, "1", WebTokenAuthenticatorTest::getPrivateKey())
+                ->jwtAlgorithm("RS256")
+                ->build()
+        );
 
         $this->assertNotEmpty($authenticator->getAuthToken(), "Access token should not be empty");
         $token = $authenticator->refreshToken();
-        $this->assertNotEmpty($token->getToken(), "Access token should not be empty");
-        $this->assertFalse($token->hasExpired(), "Token expiry should be in the future");
-        $this->assertEquals($token->getToken(), $authenticator->getAuthToken());
-        $this->assertEquals($authenticator->getHost()->toString(), static::$oauthHost);
-        $this->assertNotEquals($authenticator->refreshToken()->getToken(), $authenticator->refreshToken()->getToken());
+        $this->assertNotEmpty($token, "Access token should not be empty");
+        $this->assertEquals($token, $authenticator->getAuthToken());
+        $this->assertEquals($authenticator->getHost(), static::$oauthHost);
+        $this->assertNotEquals($authenticator->refreshToken(), $authenticator->refreshToken());
     }
 
     /**
@@ -56,16 +58,17 @@ class WebTokenAuthenticatorTest extends OAuthAuthenticatorTestCase
      */
     public function testRefreshTokenWithExtendedLifetime(): void
     {
-        $authenticator = WebTokenAuthenticator::builder(static::$oauthHost, "1", WebTokenAuthenticatorTest::getPrivateKey())
-            ->tokenLifetimeSeconds(86400)
-            ->build();
+        $authenticator = $this->withApiClient(
+            WebTokenAuthenticator::builder(static::$oauthHost, "1", WebTokenAuthenticatorTest::getPrivateKey())
+                ->tokenLifetimeSeconds(86400)
+                ->build()
+        );
 
         $this->assertNotEmpty($authenticator->getAuthToken(), "Access token should not be empty");
         $token = $authenticator->refreshToken();
-        $this->assertNotEmpty($token->getToken(), "Access token should not be empty");
-        $this->assertFalse($token->hasExpired(), "Token expiry should be in the future");
-        $this->assertEquals($token->getToken(), $authenticator->getAuthToken());
-        $this->assertEquals($authenticator->getHost()->toString(), static::$oauthHost);
-        $this->assertNotEquals($authenticator->refreshToken()->getToken(), $authenticator->refreshToken()->getToken());
+        $this->assertNotEmpty($token, "Access token should not be empty");
+        $this->assertEquals($token, $authenticator->getAuthToken());
+        $this->assertEquals($authenticator->getHost(), static::$oauthHost);
+        $this->assertNotEquals($authenticator->refreshToken(), $authenticator->refreshToken());
     }
 }

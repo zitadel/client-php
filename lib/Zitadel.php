@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zitadel\Client;
 
 use Exception;
-use GuzzleHttp\Client;
 use Zitadel\Client\Api\ActionServiceApi;
 use Zitadel\Client\Api\ApplicationServiceApi;
 use Zitadel\Client\Api\AuthorizationServiceApi;
@@ -35,68 +36,40 @@ use Zitadel\Client\Api\UserServiceApi;
 use Zitadel\Client\Api\WebKeyServiceApi;
 use Zitadel\Client\Auth\Authenticator;
 use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
+use Zitadel\Client\Auth\HttpAwareAuthenticator;
 use Zitadel\Client\Auth\PersonalAccessAuthenticator;
 use Zitadel\Client\Auth\WebTokenAuthenticator;
 
 class Zitadel
 {
-    /** @var BetaProjectServiceApi */
     public BetaProjectServiceApi $betaProjects;
-    /** @var BetaAppServiceApi */
     public BetaAppServiceApi $betaApps;
-    /** @var BetaOIDCServiceApi */
     public BetaOIDCServiceApi $betaOidc;
-    /** @var BetaUserServiceApi */
     public BetaUserServiceApi $betaUsers;
-    /** @var BetaOrganizationServiceApi */
     public BetaOrganizationServiceApi $betaOrganizations;
-    /** @var BetaSettingsServiceApi */
     public BetaSettingsServiceApi $betaSettings;
-    /** @var BetaInternalPermissionServiceApi */
     public BetaInternalPermissionServiceApi $betaPermissions;
-    /** @var BetaAuthorizationServiceApi */
     public BetaAuthorizationServiceApi $betaAuthorizations;
-    /** @var BetaSessionServiceApi */
     public BetaSessionServiceApi $betaSessions;
-    /** @var BetaInstanceServiceApi */
     public BetaInstanceServiceApi $betaInstance;
-    /** @var BetaTelemetryServiceApi */
     public BetaTelemetryServiceApi $betaTelemetry;
-    /** @var BetaFeatureServiceApi */
     public BetaFeatureServiceApi $betaFeatures;
-    /** @var BetaWebKeyServiceApi */
     public BetaWebKeyServiceApi $betaWebkeys;
-    /** @var BetaActionServiceApi */
     public BetaActionServiceApi $betaActions;
-    /** @var ActionServiceApi */
     public ActionServiceApi $actions;
-    /** @var ApplicationServiceApi */
     public ApplicationServiceApi $applications;
-    /** @var AuthorizationServiceApi */
     public AuthorizationServiceApi $authorizations;
-    /** @var FeatureServiceApi */
     public FeatureServiceApi $features;
-    /** @var IdentityProviderServiceApi */
     public IdentityProviderServiceApi $idps;
-    /** @var InstanceServiceApi */
     public InstanceServiceApi $instances;
-    /** @var InternalPermissionServiceApi */
     public InternalPermissionServiceApi $internalPermissions;
-    /** @var OIDCServiceApi */
     public OIDCServiceApi $oidc;
-    /** @var OrganizationServiceApi */
     public OrganizationServiceApi $organizations;
-    /** @var ProjectServiceApi */
     public ProjectServiceApi $projects;
-    /** @var SAMLServiceApi */
     public SAMLServiceApi $saml;
-    /** @var SessionServiceApi */
     public SessionServiceApi $sessions;
-    /** @var SettingsServiceApi */
     public SettingsServiceApi $settings;
-    /** @var UserServiceApi */
     public UserServiceApi $users;
-    /** @var WebKeyServiceApi */
     public WebKeyServiceApi $webkeys;
 
     /**
@@ -110,44 +83,49 @@ class Zitadel
         ?TransportOptions $transportOptions = null,
     ) {
         $resolved = $transportOptions ?? TransportOptions::defaults();
-        $config = new Configuration($authenticator);
+        $apiClient = new DefaultApiClient($resolved);
+
+        if ($authenticator instanceof HttpAwareAuthenticator) {
+            $authenticator->setApiClient($apiClient);
+        }
+
+        $config = Configuration::builder()
+            ->baseUrl($authenticator->getHost())
+            ->build();
 
         if ($mutateConfig !== null) {
             $mutateConfig($config);
         }
 
-        $guzzleOpts = array_merge(['http_errors' => false], $resolved->toGuzzleOptions());
-        $client = new Client($guzzleOpts);
-
-        $this->betaProjects = new BetaProjectServiceApi($client, $config);
-        $this->betaApps = new BetaAppServiceApi($client, $config);
-        $this->betaOidc = new BetaOIDCServiceApi($client, $config);
-        $this->betaUsers = new BetaUserServiceApi($client, $config);
-        $this->betaOrganizations = new BetaOrganizationServiceApi($client, $config);
-        $this->betaSettings = new BetaSettingsServiceApi($client, $config);
-        $this->betaPermissions = new BetaInternalPermissionServiceApi($client, $config);
-        $this->betaAuthorizations = new BetaAuthorizationServiceApi($client, $config);
-        $this->betaSessions = new BetaSessionServiceApi($client, $config);
-        $this->betaInstance = new BetaInstanceServiceApi($client, $config);
-        $this->betaTelemetry = new BetaTelemetryServiceApi($client, $config);
-        $this->betaFeatures = new BetaFeatureServiceApi($client, $config);
-        $this->betaWebkeys = new BetaWebKeyServiceApi($client, $config);
-        $this->betaActions = new BetaActionServiceApi($client, $config);
-        $this->actions = new ActionServiceApi($client, $config);
-        $this->applications = new ApplicationServiceApi($client, $config);
-        $this->authorizations = new AuthorizationServiceApi($client, $config);
-        $this->features = new FeatureServiceApi($client, $config);
-        $this->idps = new IdentityProviderServiceApi($client, $config);
-        $this->instances = new InstanceServiceApi($client, $config);
-        $this->internalPermissions = new InternalPermissionServiceApi($client, $config);
-        $this->oidc = new OIDCServiceApi($client, $config);
-        $this->organizations = new OrganizationServiceApi($client, $config);
-        $this->projects = new ProjectServiceApi($client, $config);
-        $this->saml = new SAMLServiceApi($client, $config);
-        $this->sessions = new SessionServiceApi($client, $config);
-        $this->settings = new SettingsServiceApi($client, $config);
-        $this->users = new UserServiceApi($client, $config);
-        $this->webkeys = new WebKeyServiceApi($client, $config);
+        $this->betaProjects = new BetaProjectServiceApi($apiClient, $config, $authenticator);
+        $this->betaApps = new BetaAppServiceApi($apiClient, $config, $authenticator);
+        $this->betaOidc = new BetaOIDCServiceApi($apiClient, $config, $authenticator);
+        $this->betaUsers = new BetaUserServiceApi($apiClient, $config, $authenticator);
+        $this->betaOrganizations = new BetaOrganizationServiceApi($apiClient, $config, $authenticator);
+        $this->betaSettings = new BetaSettingsServiceApi($apiClient, $config, $authenticator);
+        $this->betaPermissions = new BetaInternalPermissionServiceApi($apiClient, $config, $authenticator);
+        $this->betaAuthorizations = new BetaAuthorizationServiceApi($apiClient, $config, $authenticator);
+        $this->betaSessions = new BetaSessionServiceApi($apiClient, $config, $authenticator);
+        $this->betaInstance = new BetaInstanceServiceApi($apiClient, $config, $authenticator);
+        $this->betaTelemetry = new BetaTelemetryServiceApi($apiClient, $config, $authenticator);
+        $this->betaFeatures = new BetaFeatureServiceApi($apiClient, $config, $authenticator);
+        $this->betaWebkeys = new BetaWebKeyServiceApi($apiClient, $config, $authenticator);
+        $this->betaActions = new BetaActionServiceApi($apiClient, $config, $authenticator);
+        $this->actions = new ActionServiceApi($apiClient, $config, $authenticator);
+        $this->applications = new ApplicationServiceApi($apiClient, $config, $authenticator);
+        $this->authorizations = new AuthorizationServiceApi($apiClient, $config, $authenticator);
+        $this->features = new FeatureServiceApi($apiClient, $config, $authenticator);
+        $this->idps = new IdentityProviderServiceApi($apiClient, $config, $authenticator);
+        $this->instances = new InstanceServiceApi($apiClient, $config, $authenticator);
+        $this->internalPermissions = new InternalPermissionServiceApi($apiClient, $config, $authenticator);
+        $this->oidc = new OIDCServiceApi($apiClient, $config, $authenticator);
+        $this->organizations = new OrganizationServiceApi($apiClient, $config, $authenticator);
+        $this->projects = new ProjectServiceApi($apiClient, $config, $authenticator);
+        $this->saml = new SAMLServiceApi($apiClient, $config, $authenticator);
+        $this->sessions = new SessionServiceApi($apiClient, $config, $authenticator);
+        $this->settings = new SettingsServiceApi($apiClient, $config, $authenticator);
+        $this->users = new UserServiceApi($apiClient, $config, $authenticator);
+        $this->webkeys = new WebKeyServiceApi($apiClient, $config, $authenticator);
     }
 
     /**
@@ -220,5 +198,4 @@ class Zitadel
             $resolved,
         );
     }
-
 }

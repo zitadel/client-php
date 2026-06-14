@@ -82,7 +82,7 @@ abstract class AbstractIntegrationTest extends TestCase
         echo "Loaded JWT_KEY path: " . self::$jwtKey . "\n";
 
 
-        self::$baseUrl = 'http://localhost:8099';
+        self::$baseUrl = 'http://localhost:18101';
         echo "Exposed BASE_URL as: " . self::$baseUrl . "\n";
 
         sleep(20);
@@ -158,31 +158,45 @@ abstract class AbstractIntegrationTest extends TestCase
     /**
      * Retrieves the authentication token.
      *
-     * @return string|null The authentication token, or null if not set.
+     * @return string The authentication token.
+     * @throws RuntimeException If the token has not been initialised.
      */
-    protected static function getAuthToken(): ?string
+    protected static function getAuthToken(): string
     {
+        if (self::$authToken === null) {
+            throw new RuntimeException('Authentication token has not been initialised.');
+        }
+
         return self::$authToken;
     }
 
     /**
      * Retrieves the absolute path to the JWT key file.
      *
-     * @return string|null The absolute path to the JWT key file, or null
-     * if not set.
+     * @return string The absolute path to the JWT key file.
+     * @throws RuntimeException If the JWT key path has not been initialised.
      */
-    protected static function getJwtKey(): ?string
+    protected static function getJwtKey(): string
     {
+        if (self::$jwtKey === null) {
+            throw new RuntimeException('JWT key path has not been initialised.');
+        }
+
         return self::$jwtKey;
     }
 
     /**
      * Retrieves the base URL.
      *
-     * @return string|null The base URL, or null if not set.
+     * @return string The base URL.
+     * @throws RuntimeException If the base URL has not been initialised.
      */
-    protected static function getBaseUrl(): ?string
+    protected static function getBaseUrl(): string
     {
+        if (self::$baseUrl === null) {
+            throw new RuntimeException('Base URL has not been initialised.');
+        }
+
         return self::$baseUrl;
     }
 }

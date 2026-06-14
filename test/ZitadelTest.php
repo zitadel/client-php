@@ -4,6 +4,7 @@ namespace Zitadel\Client\Test;
 
 use Docker\Docker;
 use Docker\API\Model\NetworksCreatePostBody;
+use Docker\API\Model\NetworksCreatePostResponse201;
 use Exception;
 use HaydenPierce\ClassFinder\ClassFinder;
 use PHPUnit\Framework\TestCase;
@@ -41,9 +42,10 @@ class ZitadelTest extends TestCase
         $networkBody = new NetworksCreatePostBody();
         $networkBody->setName(self::$networkName);
         $response = $docker->networkCreate($networkBody);
+        self::assertInstanceOf(NetworksCreatePostResponse201::class, $response);
         self::$networkId = $response->getId();
 
-        self::$wiremock = (new GenericContainer("wiremock/wiremock:3.12.1"))
+        self::$wiremock = new GenericContainer("wiremock/wiremock:3.12.1")
             ->withName('wiremock')
             ->withNetwork(self::$networkName)
             ->withCommand([
@@ -58,7 +60,7 @@ class ZitadelTest extends TestCase
             ->withExposedPorts(8080, 8443)
             ->start();
 
-        self::$proxy = (new GenericContainer("ubuntu/squid:6.10-24.10_beta"))
+        self::$proxy = new GenericContainer("ubuntu/squid:6.10-24.10_beta")
             ->withNetwork(self::$networkName)
             ->withMount($fixturesDir . '/squid.conf', '/etc/squid/squid.conf')
             ->withExposedPorts(3128)
@@ -69,10 +71,11 @@ class ZitadelTest extends TestCase
         self::$httpsPort = self::$wiremock->getMappedPort(8443);
         self::$proxyPort = self::$proxy->getMappedPort(3128);
 
-        (new WaitForHostPort())
+        new WaitForHostPort()
+            ->withTimeout(60000)
             ->wait(self::$proxy);
 
-        (new WaitForHttp(self::$httpPort))
+        new WaitForHttp(8080, 60000)
             ->withPath("/__admin/mappings")
             ->withExpectedStatusCode(200)
             ->wait(self::$wiremock);
@@ -82,7 +85,7 @@ class ZitadelTest extends TestCase
     {
         self::$proxy?->stop();
         self::$wiremock?->stop();
-        if (self::$networkId !== null) {
+        if (self::$networkId !== null && self::$networkName !== null) {
             Docker::create()->networkDelete(self::$networkName);
         }
         parent::tearDownAfterClass();
@@ -118,8 +121,8 @@ class ZitadelTest extends TestCase
             new TransportOptions(caCertPath: self::$caCertPath),
         );
 
-        $response = $zitadel->settings->getGeneralSettings();
-        $this->assertEquals('https', $response->getDefaultLanguage());
+        $response = $zitadel->settings->getGeneralSettings(new \stdClass());
+        $this->assertEquals('https', $response->defaultLanguage);
     }
 
     public function testInsecureMode(): void
@@ -131,8 +134,8 @@ class ZitadelTest extends TestCase
             new TransportOptions(insecure: true),
         );
 
-        $response = $zitadel->settings->getGeneralSettings();
-        $this->assertEquals('https', $response->getDefaultLanguage());
+        $response = $zitadel->settings->getGeneralSettings(new \stdClass());
+        $this->assertEquals('https', $response->defaultLanguage);
     }
 
     public function testDefaultHeaders(): void
@@ -144,9 +147,9 @@ class ZitadelTest extends TestCase
             new TransportOptions(defaultHeaders: ["X-Custom-Header" => "test-value"]),
         );
 
-        $response = $zitadel->settings->getGeneralSettings();
-        $this->assertEquals('http', $response->getDefaultLanguage());
-        $this->assertEquals('test-value', $response->getDefaultOrgId());
+        $response = $zitadel->settings->getGeneralSettings(new \stdClass());
+        $this->assertEquals('http', $response->defaultLanguage);
+        $this->assertEquals('test-value', $response->defaultOrgId);
     }
 
     public function testProxyUrl(): void
@@ -157,8 +160,8 @@ class ZitadelTest extends TestCase
             new TransportOptions(proxyUrl: "http://" . self::$host . ":" . self::$proxyPort),
         );
 
-        $response = $zitadel->settings->getGeneralSettings();
-        $this->assertEquals('http', $response->getDefaultLanguage());
+        $response = $zitadel->settings->getGeneralSettings(new \stdClass());
+        $this->assertEquals('http', $response->defaultLanguage);
     }
 
     public function testNoCaCertFails(): void

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zitadel\Client\Auth;
 
 use Exception;
@@ -42,18 +44,35 @@ class OpenId
         string $hostname,
         ?TransportOptions $transportOptions = null,
     ) {
-        if (empty($hostname)) {
+        if ($hostname === '' || $hostname === '0') {
             throw new InvalidArgumentException("Hostname cannot be empty.");
         }
 
-        $transportOptions ??= TransportOptions::defaults();
+        $transportOptions ??= TransportOptions::builder()->build();
 
         $this->hostEndpoint = $this->buildHostname($hostname);
-        $config = self::fetchOpenIdConfiguration($hostname, $transportOptions);
+        $config = $this->fetchOpenIdConfiguration($hostname, $transportOptions);
 
-        $this->tokenEndpoint = Uri::new($config['token_endpoint']);
-        $this->authorizationEndpoint = Uri::new($config['authorization_endpoint']);
-        $this->userinfoEndpoint = Uri::new($config['userinfo_endpoint']);
+        $this->tokenEndpoint = Uri::new($this->requireStringField($config, 'token_endpoint'));
+        $this->authorizationEndpoint = Uri::new($this->requireStringField($config, 'authorization_endpoint'));
+        $this->userinfoEndpoint = Uri::new($this->requireStringField($config, 'userinfo_endpoint'));
+    }
+
+    /**
+     * Extracts a required string field from the decoded OpenID configuration,
+     * failing loudly if it is missing or not a string.
+     *
+     * @param mixed  $config The decoded configuration document.
+     * @param string $field  The field name to extract.
+     * @return string The field value.
+     * @throws Exception If the field is absent or not a string.
+     */
+    private function requireStringField(mixed $config, string $field): string
+    {
+        if (!is_array($config) || !isset($config[$field]) || !is_string($config[$field])) {
+            throw new Exception("OpenID configuration is missing a valid '$field'.");
+        }
+        return $config[$field];
     }
 
     /**
@@ -82,25 +101,25 @@ class OpenId
      * @return mixed An associative array containing the OpenID configuration.
      * @throws Exception If the HTTP request fails, or if the JSON response is malformed.
      */
-    private static function fetchOpenIdConfiguration(
+    private function fetchOpenIdConfiguration(
         string $hostname,
         TransportOptions $transportOptions,
     ): mixed {
-        $wellKnownUrl = self::buildWellKnownUrl($hostname);
+        $wellKnownUrl = $this->buildWellKnownUrl($hostname);
 
         $opts = [];
-        if (!empty($transportOptions->defaultHeaders)) {
+        if ($transportOptions->defaultHeaders !== []) {
             $headerStr = '';
             foreach ($transportOptions->defaultHeaders as $name => $value) {
                 $headerStr .= "$name: $value\r\n";
             }
             $opts['http'] = ['header' => $headerStr];
         }
-        if ($transportOptions->proxyUrl !== null) {
-            $opts['http']['proxy'] = $transportOptions->proxyUrl;
+        if ($transportOptions->proxy !== null) {
+            $opts['http']['proxy'] = $transportOptions->proxy;
             $opts['http']['request_fulluri'] = true;
         }
-        if ($transportOptions->insecure) {
+        if (!$transportOptions->verifySsl) {
             $opts['ssl'] = ['verify_peer' => false, 'verify_peer_name' => false];
         } elseif ($transportOptions->caCertPath !== null) {
             $sslOpts = ['cafile' => $transportOptions->caCertPath, 'verify_peer_name' => true];
@@ -110,7 +129,7 @@ class OpenId
             }
             $opts['ssl'] = $sslOpts;
         }
-        $context = !empty($opts) ? stream_context_create($opts) : null;
+        $context = $opts === [] ? null : stream_context_create($opts);
         $response = file_get_contents($wellKnownUrl, false, $context);
 
         if ($response === false) {
@@ -134,10 +153,10 @@ class OpenId
      * @param string $hostname The hostname of the OpenID provider.
      * @return string The well-known URL to fetch the OpenID configuration.
      */
-    private static function buildWellKnownUrl(string $hostname): string
+    private function buildWellKnownUrl(string $hostname): string
     {
         $uri = Uri::new($hostname);
-        return $uri->withPath('/.well-known/openid-configuration');
+        return $uri->withPath('/.well-known/openid-configuration')->toString();
     }
 
     /**

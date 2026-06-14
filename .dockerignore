@@ -1,6 +1,0 @@
-# Exclude everything by default
-*
-
-# Include only the essential files needed for building the library
-!composer.*
-!lib/
