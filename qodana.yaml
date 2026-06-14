@@ -7,13 +7,67 @@ exclude:
   - name: All
     paths:
       - lib/Api
-      - lib/Model
+      - lib/Models
+      # Test code legitimately uses fixture classes, descriptive names and
+      # reaches into internals; production-grade IDE inspections are noise here.
+      - tests
+      - test
+      - spec
       - lib/ObjectSerializer.php
       - lib/HeaderSelector.php
+  # Style is owned by php-cs-fixer (the CI cs-fixer job is authoritative).
+  - name: PhpCSValidationInspection
+  # The analyzer's PHP container cannot resolve the PECL ext-ds (\Ds\*),
+  # symfony/http-client/mime, or league/uri types even though they are all
+  # declared in composer.json "require" and installed by the bootstrap. This
+  # is an analyzer-environment limitation, not a missing declaration.
+  - name: PhpUndefinedClassInspection
+  - name: PhpUndefinedNamespaceInspection
+  # zstd_uncompress()/brotli_uncompress() are optional PECL functions guarded
+  # by function_exists() (ext-zstd/ext-brotli are in composer "suggest").
+  - name: PhpUndefinedFunctionInspection
+  # The Serializer normalizers rename the interface parameter ($data -> $object)
+  # intentionally for readability; the Symfony contract is still satisfied.
+  - name: PhpParameterNameChangedDuringInheritanceInspection
+  # PreciseDuration deliberately bypasses \DateInterval::__construct() to avoid
+  # microsecond truncation; the parent constructor must not be called.
+  - name: PhpMissingParentConstructorInspection
+  # Import handling is intentionally left as-is across the SDKs (a deliberate
+  # decision, not a defect): the generator emits fully-qualified references
+  # rather than `use` imports. phpcs's import organisation is disabled too.
+  - name: PhpFullyQualifiedNameUsageInspection
+  - name: PhpUnnecessaryFullyQualifiedNameInspection
+  # PHP has no checked exceptions; exhaustive @throws / try-catch documentation
+  # is a completeness preference, not a correctness issue. The SDK intentionally
+  # propagates ApiException to the caller.
+  - name: PhpUnhandledExceptionInspection
+  - name: PhpDocMissingThrowsInspection
+  # `readonly` cannot be applied to the model/config classes: Symfony's
+  # Serializer denormalises by writing properties after construction, which a
+  # readonly class forbids (rector.php skips the readonly rules for the same
+  # reason).
+  - name: PhpClassCanBeReadonlyInspection
+  # The generated getters carry encode/decode logic, so they cannot collapse
+  # into plain PHP 8.4 property hooks.
+  - name: PhpGetterAndSetterCanBeReplacedWithPropertyHooksInspection
+  # IntelliJ-only idiom suggestions on valid generated code (pipe operator,
+  # PHPDoc shape, internal-entity use, optional-arg defaults). php-cs-fixer /
+  # rector / phpstan — the SDK's actual tools — do not flag these.
+  - name: PhpPipeOperatorCanBeUsedInspection
+  - name: PhpConditionCheckedByNextConditionInspection
+  - name: PhpDocSignatureInspection
+  - name: PhpInternalEntityUsedInspection
+  - name: PhpRedundantOptionalArgumentInspection
+  - name: PhpVarTagWithoutVariableNameInspection
+  # Code coverage is not a metric we gate on, and the bulk of the SDK is
+  # generated code that is untested by design. Qodana does not support
+  # path-scoped coverage exclusion (only full-inspection / .NET attribute
+  # excludes), so the coverage inspection is disabled outright.
+  - name: PhpCoverageInspection
 
 php:
-  version: '8.0'
+  version: '8.5'
 
 bootstrap: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
 
-linter: jetbrains/qodana-php:2025.1
+linter: jetbrains/qodana-php:2026.1

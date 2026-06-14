@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zitadel\Client\Test\Auth;
 
 use PHPUnit\Framework\TestCase;

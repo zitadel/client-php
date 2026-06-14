@@ -3,16 +3,16 @@
 namespace Zitadel\Client\Spec;
 
 use Zitadel\Client\ApiException;
-use Zitadel\Client\Model\SessionServiceChecks;
-use Zitadel\Client\Model\SessionServiceCheckUser;
-use Zitadel\Client\Model\SessionServiceCreateSessionRequest;
-use Zitadel\Client\Model\SessionServiceDeleteSessionRequest;
-use Zitadel\Client\Model\SessionServiceGetSessionRequest;
-use Zitadel\Client\Model\SessionServiceListSessionsRequest;
-use Zitadel\Client\Model\SessionServiceSetSessionRequest;
-use Zitadel\Client\Model\UserServiceAddHumanUserRequest;
-use Zitadel\Client\Model\UserServiceSetHumanEmail;
-use Zitadel\Client\Model\UserServiceSetHumanProfile;
+use Zitadel\Client\Models\SessionServiceChecks;
+use Zitadel\Client\Models\SessionServiceCheckUser;
+use Zitadel\Client\Models\SessionServiceCreateSessionRequest;
+use Zitadel\Client\Models\SessionServiceDeleteSessionRequest;
+use Zitadel\Client\Models\SessionServiceGetSessionRequest;
+use Zitadel\Client\Models\SessionServiceListSessionsRequest;
+use Zitadel\Client\Models\SessionServiceSetSessionRequest;
+use Zitadel\Client\Models\UserServiceAddHumanUserRequest;
+use Zitadel\Client\Models\UserServiceSetHumanEmail;
+use Zitadel\Client\Models\UserServiceSetHumanProfile;
 use Zitadel\Client\Zitadel;
 
 /**
@@ -35,6 +35,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
     private static Zitadel $client;
     private string $sessionId;
 
+    #[\Override]
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
@@ -46,15 +47,16 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
      */
     public function testRetrievesTheSessionDetailsById(): void
     {
-        $request = (new SessionServiceGetSessionRequest())
-            ->setSessionId($this->sessionId);
+        $request = new SessionServiceGetSessionRequest();
+        $request->sessionId = $this->sessionId;
 
         $response = self::$client->sessions->getSession(
             $request,
         );
+        $this->assertNotNull($response->session);
         $this->assertSame(
             $this->sessionId,
-            $response->getSession()->getId()
+            $response->session->id
         );
     }
 
@@ -63,14 +65,16 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
      */
     public function testIncludesTheCreatedSessionWhenListingAllSessions(): void
     {
-        $request = (new SessionServiceListSessionsRequest())
-            ->setQueries([]);
+        $request = new SessionServiceListSessionsRequest();
+        $request->queries = new \Ds\Vector();
 
         $response = self::$client->sessions->listSessions($request);
-        $ids = array_map(
-            fn ($session) => $session->getId(),
-            $response->getSessions()
-        );
+        $this->assertNotNull($response->sessions);
+
+        $ids = [];
+        foreach ($response->sessions as $session) {
+            $ids[] = $session->id;
+        }
 
         $this->assertContains($this->sessionId, $ids);
     }
@@ -80,20 +84,20 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
      */
     public function testUpdatesTheSessionLifetimeAndReturnsANewToken(): void
     {
-        $request = (new SessionServiceSetSessionRequest())
-            ->setSessionId($this->sessionId)
-            ->setLifetime('36000s');
+        $request = new SessionServiceSetSessionRequest();
+        $request->sessionId = $this->sessionId;
+        $request->lifetime = new \DateInterval('PT36000S');
 
         $response = self::$client->sessions->setSession(
             $request
         );
-        $this->assertIsString($response->getSessionToken());
+        $this->assertIsString($response->sessionToken);
     }
 
     public function testRaisesAnApiExceptionWhenRetrievingANonExistentSession(): void
     {
-        $request = (new SessionServiceGetSessionRequest())
-            ->setSessionId(uniqid());
+        $request = new SessionServiceGetSessionRequest();
+        $request->sessionId = uniqid();
 
         $this->expectException(ApiException::class);
         self::$client->sessions->getSession(
@@ -107,37 +111,40 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
     protected function setUp(): void
     {
         $id = uniqid('user_');
-        $request = (new UserServiceAddHumanUserRequest())
-            ->setUsername($id)
-            ->setProfile(
-                (new UserServiceSetHumanProfile())
-                    ->setGivenName('John')
-                    ->setFamilyName('Doe')
-            )
-            ->setEmail(
-                (new UserServiceSetHumanEmail())
-                    ->setEmail('johndoe' . uniqid() . '@example.com')
-            );
+
+        $profile = new UserServiceSetHumanProfile();
+        $profile->givenName = 'John';
+        $profile->familyName = 'Doe';
+
+        $email = new UserServiceSetHumanEmail();
+        $email->email = 'johndoe' . uniqid() . '@example.com';
+
+        $request = new UserServiceAddHumanUserRequest();
+        $request->username = $id;
+        $request->profile = $profile;
+        $request->email = $email;
 
         self::$client->users->addHumanUser($request);
-        $request = (new SessionServiceCreateSessionRequest())
-            ->setChecks(
-                (new SessionServiceChecks())
-                    ->setUser(
-                        (new SessionServiceCheckUser())
-                            ->setLoginName($id)
-                    )
-            )
-            ->setLifetime('18000s');
 
-        $response = self::$client->sessions->createSession($request);
-        $this->sessionId = $response->getSessionId();
+        $checkUser = new SessionServiceCheckUser();
+        $checkUser->loginName = $id;
+
+        $checks = new SessionServiceChecks();
+        $checks->user = $checkUser;
+
+        $sessionRequest = new SessionServiceCreateSessionRequest();
+        $sessionRequest->checks = $checks;
+        $sessionRequest->lifetime = new \DateInterval('PT18000S');
+
+        $response = self::$client->sessions->createSession($sessionRequest);
+        $this->assertNotNull($response->sessionId);
+        $this->sessionId = $response->sessionId;
     }
 
     protected function tearDown(): void
     {
-        $request = (new SessionServiceDeleteSessionRequest())
-            ->setSessionId($this->sessionId);
+        $request = new SessionServiceDeleteSessionRequest();
+        $request->sessionId = $this->sessionId;
 
         try {
             self::$client->sessions->deleteSession(

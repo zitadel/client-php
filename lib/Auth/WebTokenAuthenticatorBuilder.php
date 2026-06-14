@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zitadel\Client\Auth;
 
 use DateInterval;
@@ -57,7 +59,6 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
      * Sets the token lifetime in seconds.
      *
      * @param int $seconds The lifetime of the JWT in seconds.
-     * @return self
      * @throws Exception
      * @noinspection PhpUnused
      */
@@ -71,7 +72,6 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
      * Sets the JWT signing algorithm.
      *
      * @param string $jwtAlgorithm The JWT signing algorithm (e.g., "RS256").
-     * @return self
      * @noinspection PhpUnused
      */
     public function jwtAlgorithm(string $jwtAlgorithm): self
@@ -93,7 +93,6 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
      * Generates a JWT assertion using the provided parameters and then constructs
      * a WebTokenAuthenticator.
      *
-     * @return WebTokenAuthenticator
      * @throws Exception if JWT generation fails.
      */
     public function build(): WebTokenAuthenticator
@@ -109,7 +108,6 @@ final class WebTokenAuthenticatorBuilder extends OAuthAuthenticatorBuilder
             $this->jwtLifetime,
             jwtAlgorithm: $this->jwtAlgorithm,
             keyId: $this->keyId,
-            transportOptions: $this->transportOptions,
         );
     }
 }

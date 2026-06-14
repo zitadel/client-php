@@ -29,7 +29,7 @@ class UseAccessTokenSpec extends AbstractIntegrationTest
     {
         $this->expectNotToPerformAssertions();
         $client = Zitadel::withAccessToken(self::getBaseUrl(), self::getAuthToken());
-        $client->settings->getGeneralSettings();
+        $client->settings->getGeneralSettings(new \stdClass());
     }
 
     /**
@@ -41,6 +41,6 @@ class UseAccessTokenSpec extends AbstractIntegrationTest
         $invalid = Zitadel::withAccessToken(self::getBaseUrl(), 'invalid');
 
         $this->expectException(ZitadelException::class);
-        $invalid->settings->getGeneralSettings();
+        $invalid->settings->getGeneralSettings(new \stdClass());
     }
 }

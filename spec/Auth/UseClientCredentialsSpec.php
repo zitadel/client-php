@@ -27,7 +27,7 @@ class UseClientCredentialsSpec extends AbstractIntegrationTest
     public function generateUserSecret(string $token, string $loginName = 'api-user'): array
     {
         $userIdResponse = @file_get_contents(
-            'http://localhost:8099/management/v1/global/users/_by_login_name?loginName=' . urlencode($loginName),
+            'http://localhost:18101/management/v1/global/users/_by_login_name?loginName=' . urlencode($loginName),
             false,
             stream_context_create(['http' => [
                 'header' => "Authorization: Bearer $token\r\nAccept: application/json",
@@ -36,11 +36,16 @@ class UseClientCredentialsSpec extends AbstractIntegrationTest
         );
 
         if ($userIdResponse !== false) {
-            $userId = json_decode($userIdResponse, true)['user']['id'] ?? null;
+            $decodedUser = json_decode($userIdResponse, true);
+            $userNode = is_array($decodedUser) && isset($decodedUser['user']) && is_array($decodedUser['user'])
+                ? $decodedUser['user']
+                : [];
+            $rawUserId = $userNode['id'] ?? null;
+            $userId = is_scalar($rawUserId) ? (string) $rawUserId : null;
 
-            if ($userId) {
+            if ($userId !== null && $userId !== '') {
                 $secretResponse = @file_get_contents(
-                    "http://localhost:8099/management/v1/users/$userId/secret",
+                    "http://localhost:18101/management/v1/users/$userId/secret",
                     false,
                     stream_context_create([
                         'http' => [
@@ -56,28 +61,26 @@ class UseClientCredentialsSpec extends AbstractIntegrationTest
 
                 if ($secretResponse !== false) {
                     $secretData = json_decode($secretResponse, true);
-                    $clientId = $secretData['clientId'] ?? null;
-                    $clientSecret = $secretData['clientSecret'] ?? null;
+                    $rawClientId = is_array($secretData) ? ($secretData['clientId'] ?? null) : null;
+                    $rawClientSecret = is_array($secretData) ? ($secretData['clientSecret'] ?? null) : null;
+                    $clientId = is_scalar($rawClientId) ? (string) $rawClientId : null;
+                    $clientSecret = is_scalar($rawClientSecret) ? (string) $rawClientSecret : null;
 
-                    if ($clientId && $clientSecret) {
+                    if ($clientId !== null && $clientId !== '' && $clientSecret !== null && $clientSecret !== '') {
                         return [
                             'clientId' => $clientId,
                             'clientSecret' => $clientSecret
                         ];
-                    } else {
-                        print_r($secretResponse);
-                        throw new Exception("API response for secret is missing 'clientId' or 'clientSecret'.");
                     }
-                } else {
-                    throw new Exception("API call to generate secret failed for user ID: '$userId'.");
+                    print_r($secretResponse);
+                    throw new Exception("API response for secret is missing 'clientId' or 'clientSecret'.");
                 }
-            } else {
-                print_r($userIdResponse);
-                throw new Exception("Could not parse a valid user ID from API response for login name: '$loginName'.");
+                throw new Exception("API call to generate secret failed for user ID: '$userId'.");
             }
-        } else {
-            throw new Exception("API call to retrieve user failed for login name: '$loginName'.");
+            print_r($userIdResponse);
+            throw new Exception("Could not parse a valid user ID from API response for login name: '$loginName'.");
         }
+        throw new Exception("API call to retrieve user failed for login name: '$loginName'.");
     }
 
     /**
@@ -93,7 +96,7 @@ class UseClientCredentialsSpec extends AbstractIntegrationTest
         $credentials = $this->generateUserSecret(self::getAuthToken());
         $client = Zitadel::withClientCredentials(self::getBaseUrl(), $credentials['clientId'], $credentials['clientSecret']);
 
-        $client->settings->getGeneralSettings();
+        $client->settings->getGeneralSettings(new \stdClass());
     }
 
     /**
@@ -105,6 +108,6 @@ class UseClientCredentialsSpec extends AbstractIntegrationTest
         $invalid = Zitadel::withClientCredentials(self::getBaseUrl(), 'invalid', 'invalid');
 
         $this->expectException(ZitadelException::class);
-        $invalid->settings->getGeneralSettings();
+        $invalid->settings->getGeneralSettings(new \stdClass());
     }
 }

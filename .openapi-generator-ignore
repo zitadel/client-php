@@ -1,0 +1,83 @@
+# Keep-list: files the generator must NOT overwrite, and the Makefile's
+# `prune` step must NOT delete. Everything else is generator-owned.
+
+# --- bespoke token-minting authenticators (to be ported onto the new
+#     Authenticator / HttpAwareAuthenticator interfaces) ---
+lib/Auth/ClientCredentialsAuthenticator.php
+lib/Auth/ClientCredentialsAuthenticatorBuilder.php
+lib/Auth/JwtBearer.php
+lib/Auth/NoAuthAuthenticator.php
+lib/Auth/OAuthAuthenticator.php
+lib/Auth/OAuthAuthenticatorBuilder.php
+lib/Auth/OpenId.php
+lib/Auth/PersonalAccessAuthenticator.php
+lib/Auth/WebTokenAuthenticator.php
+lib/Auth/WebTokenAuthenticatorBuilder.php
+
+# --- bespoke integration tests + Zitadel server fixtures ---
+spec/
+etc/
+
+# --- bespoke test files the generator does not emit: Zitadel authenticator
+#     unit tests, the facade/wiremock transport test, and the cert/proxy/
+#     wiremock fixtures. The spec-independent unit tests (ValueSerializer,
+#     HeaderSelector, Configuration, TransportOptions, TraceContextUtil,
+#     DefaultApiClient) are now generator-owned. ---
+test/ZitadelTest.php
+test/Auth/ClientCredentialsAuthenticatorTest.php
+test/Auth/NoAuthAuthenticatorTest.php
+test/Auth/OAuthAuthenticatorTestCase.php
+test/Auth/PersonalAccessAuthenticatorTest.php
+test/Auth/WebTokenAuthenticatorTest.php
+test/fixtures/
+
+# --- bespoke regression test the generator does not emit: hydration of
+#     \Ds\Vector<Model> list elements through DsAwareObjectNormalizer. ---
+tests/DsVectorModelHydrationTest.php
+
+# --- repo identity, docs, house tooling (team-owned, not generated) ---
+composer.json
+README.md
+LICENSE
+SECURITY.md
+VERSIONING.md
+phpunit.xml
+phpdoc.xml
+composer.lock
+composer.phar
+devbox.json
+devbox.lock
+lefthook.yml
+qodana.yaml
+.github/
+.idea/
+.releaserc.json
+.commitlintrc.json
+.pre-commit-config.yaml
+.claude/
+devbox.d/
+
+# --- repo-owned tooling the generator does not emit: the local secrets
+#     gitignore entries, the psysh REPL image built by the docker CI job,
+#     and the composer-unused config that whitelists deps resolved through
+#     Symfony service wiring (ext-curl, reflection-docblock). ---
+.gitignore
+Dockerfile
+composer-unused.php
+
+# --- generation tooling we added ---
+proc.yml
+Makefile
+.openapi-generator-ignore
+
+# bespoke facade (convenience wrapper over generated Client)
+lib/Zitadel.php
+
+# Transport options reconciled to the integration-test contract
+# (insecure / proxyUrl / defaults()); the generator emits a divergent
+# verifySsl / proxy surface — see generator bug report.
+lib/TransportOptions.php
+lib/TransportOptionsBuilder.php
+
+# bespoke base exception used by the auth integration specs
+lib/ZitadelException.php

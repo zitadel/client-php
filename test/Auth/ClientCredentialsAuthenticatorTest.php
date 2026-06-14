@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zitadel\Client\Test\Auth;
 
 use Exception;
@@ -20,16 +22,16 @@ class ClientCredentialsAuthenticatorTest extends OAuthAuthenticatorTestCase
     {
         sleep(20);
 
-        $authenticator = ClientCredentialsAuthenticator::builder(static::$oauthHost, "dummy-client", "dummy-secret")
-            ->scopes(["openid", "foo"])
-            ->build();
+        $authenticator = $this->withApiClient(
+            ClientCredentialsAuthenticator::builder(static::$oauthHost, "dummy-client", "dummy-secret")
+                ->build()
+        );
 
         $this->assertNotEmpty($authenticator->getAuthToken(), "Access token should not be empty");
         $token = $authenticator->refreshToken();
-        $this->assertNotEmpty($token->getToken(), "Access token should not be empty");
-        $this->assertFalse($token->hasExpired(), "Token expiry should be in the future");
-        $this->assertEquals($token->getToken(), $authenticator->getAuthToken());
-        $this->assertEquals($authenticator->getHost()->toString(), static::$oauthHost);
-        $this->assertNotEquals($authenticator->refreshToken()->getToken(), $authenticator->refreshToken()->getToken());
+        $this->assertNotEmpty($token, "Access token should not be empty");
+        $this->assertEquals($token, $authenticator->getAuthToken());
+        $this->assertEquals($authenticator->getHost(), static::$oauthHost);
+        $this->assertNotEquals($authenticator->refreshToken(), $authenticator->refreshToken());
     }
 }
