@@ -82,10 +82,43 @@ abstract class AbstractIntegrationTest extends TestCase
         echo "Loaded JWT_KEY path: " . self::$jwtKey . "\n";
 
 
-        self::$baseUrl = 'http://localhost:18101';
+        self::$baseUrl = self::discoverBaseUrl();
         echo "Exposed BASE_URL as: " . self::$baseUrl . "\n";
 
         sleep(20);
+    }
+
+    /**
+     * Discovers the base URL of the Zitadel service by asking Docker Compose
+     * for the host port that was ephemerally mapped to the container's
+     * port 8080. This avoids relying on a hardcoded host port.
+     *
+     * @return string The base URL (e.g. http://127.0.0.1:54321).
+     * @throws RuntimeException If the mapped port cannot be determined.
+     */
+    private static function discoverBaseUrl(): string
+    {
+        $command = "docker compose -f " . escapeshellarg(self::$composeFilePath)
+            . " port zitadel 8080";
+        exec($command, $output, $returnCode);
+
+        $mapping = trim(implode("\n", $output));
+        if ($returnCode !== 0 || $mapping === '') {
+            throw new RuntimeException(
+                "Failed to discover mapped port for zitadel service. Exit code: "
+                . $returnCode . "\n" . $mapping
+            );
+        }
+
+        // Output is of the form "host:port", e.g. "0.0.0.0:54321".
+        $port = substr($mapping, strrpos($mapping, ':') + 1);
+        if (!ctype_digit($port)) {
+            throw new RuntimeException(
+                "Could not parse mapped port from Docker Compose output: $mapping"
+            );
+        }
+
+        return 'http://localhost:' . $port;
     }
 
     /**

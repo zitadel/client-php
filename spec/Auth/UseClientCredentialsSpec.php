@@ -28,7 +28,7 @@ class UseClientCredentialsSpec extends AbstractIntegrationTest
     public function generateUserSecret(string $token, string $loginName = 'api-user'): array
     {
         $userIdResponse = @file_get_contents(
-            'http://localhost:18101/management/v1/global/users/_by_login_name?loginName=' . urlencode($loginName),
+            self::getBaseUrl() . '/management/v1/global/users/_by_login_name?loginName=' . urlencode($loginName),
             false,
             stream_context_create(['http' => [
                 'header' => "Authorization: Bearer $token\r\nAccept: application/json",
@@ -46,7 +46,7 @@ class UseClientCredentialsSpec extends AbstractIntegrationTest
 
             if ($userId !== null && $userId !== '') {
                 $secretResponse = @file_get_contents(
-                    "http://localhost:18101/management/v1/users/$userId/secret",
+                    self::getBaseUrl() . "/management/v1/users/$userId/secret",
                     false,
                     stream_context_create([
                         'http' => [
