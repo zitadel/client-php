@@ -2,7 +2,11 @@
 
 namespace Zitadel\Client\Test\Auth;
 
+use DateInterval;
 use Exception;
+use League\Uri\Uri;
+use ReflectionClass;
+use Zitadel\Client\Auth\OpenId;
 use Zitadel\Client\Auth\WebTokenAuthenticator;
 
 class WebTokenAuthenticatorTest extends OAuthAuthenticatorTestCase
@@ -23,6 +27,49 @@ class WebTokenAuthenticatorTest extends OAuthAuthenticatorTestCase
         $this->assertEquals($token, $authenticator->getAuthToken());
         $this->assertEquals($authenticator->getHost(), static::$oauthHost);
         $this->assertNotEquals($authenticator->refreshToken(), $authenticator->refreshToken());
+    }
+
+    /**
+     * The signing private key is masked in the default debug representation.
+     * Rendering through print_r() invokes __debugInfo() so the raw key material
+     * never leaks through var_dump() / stack traces / logs.
+     */
+    public function testRedactsSecret(): void
+    {
+        $privateKey = WebTokenAuthenticatorTest::getPrivateKey();
+
+        $authenticator = new WebTokenAuthenticator(
+            $this->fakeOpenId(),
+            'visible-client-id',
+            'openid',
+            'issuer',
+            'subject',
+            'audience',
+            $privateKey,
+            new DateInterval('PT1H')
+        );
+
+        $rendered = print_r($authenticator, true);
+
+        $this->assertStringNotContainsString($privateKey, $rendered);
+        $this->assertStringContainsString('***', $rendered);
+    }
+
+    /**
+     * Build an OpenId instance without performing the network discovery call its
+     * constructor would otherwise make. The endpoints are not exercised by the
+     * redaction assertions, so placeholder URIs are sufficient.
+     */
+    private function fakeOpenId(): OpenId
+    {
+        $openId = new ReflectionClass(OpenId::class)->newInstanceWithoutConstructor();
+
+        foreach (['hostEndpoint', 'tokenEndpoint', 'authorizationEndpoint', 'userinfoEndpoint'] as $field) {
+            $property = new ReflectionClass(OpenId::class)->getProperty($field);
+            $property->setValue($openId, Uri::new('https://api.example.com'));
+        }
+
+        return $openId;
     }
 
     private static function getPrivateKey(): string

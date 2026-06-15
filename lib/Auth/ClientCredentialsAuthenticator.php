@@ -60,6 +60,23 @@ class ClientCredentialsAuthenticator extends OAuthAuthenticator
     }
 
     /**
+     * Masks the client secret so it never leaks through var_dump() / print_r()
+     * / stack traces / error logs. The client id stays visible because it is
+     * not a credential; only the secret is redacted. Mirrors the masking idiom
+     * in {@see BearerAuthenticator} and folds in the cached-token redaction
+     * from {@see OAuthAuthenticator}.
+     *
+     * @return array<string, mixed>
+     */
+    public function __debugInfo(): array
+    {
+        return array_merge(
+            parent::__debugInfo(),
+            ['clientSecret' => '***']
+        );
+    }
+
+    /**
      * @return array<string, string>
      */
     protected function getAccessTokenOptions(): array
