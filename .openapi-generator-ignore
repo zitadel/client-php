@@ -16,9 +16,6 @@ lib/Auth/PersonalAccessAuthenticator.php
 lib/Auth/WebTokenAuthenticator.php
 lib/Auth/WebTokenAuthenticatorBuilder.php
 
-# --- bespoke support classes (facade the generator does not emit) ---
-lib/Zitadel.php
-
 # --- bespoke tests + fixtures the generator does not emit ---
 etc/
 spec/

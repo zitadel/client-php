@@ -13,6 +13,7 @@ use Zitadel\Client\Models\SessionServiceSetSessionRequest;
 use Zitadel\Client\Models\UserServiceAddHumanUserRequest;
 use Zitadel\Client\Models\UserServiceSetHumanEmail;
 use Zitadel\Client\Models\UserServiceSetHumanProfile;
+use Zitadel\Client\Auth\PersonalAccessAuthenticator;
 use Zitadel\Client\Zitadel;
 
 /**
@@ -39,7 +40,9 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::$client = Zitadel::withAccessToken(self::getBaseUrl(), self::getAuthToken());
+        self::$client = Zitadel::withAuthenticator(
+            new PersonalAccessAuthenticator(self::getBaseUrl(), self::getAuthToken()),
+        );
     }
 
     /**
@@ -50,7 +53,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
         $request = new SessionServiceGetSessionRequest();
         $request->sessionId = $this->sessionId;
 
-        $response = self::$client->sessions->getSession(
+        $response = self::$client->sessionService->getSession(
             $request,
         );
         $this->assertNotNull($response->session);
@@ -68,7 +71,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
         $request = new SessionServiceListSessionsRequest();
         $request->queries = new \Ds\Vector();
 
-        $response = self::$client->sessions->listSessions($request);
+        $response = self::$client->sessionService->listSessions($request);
         $this->assertNotNull($response->sessions);
 
         $ids = [];
@@ -88,7 +91,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
         $request->sessionId = $this->sessionId;
         $request->lifetime = new \DateInterval('PT36000S');
 
-        $response = self::$client->sessions->setSession(
+        $response = self::$client->sessionService->setSession(
             $request
         );
         $this->assertIsString($response->sessionToken);
@@ -100,7 +103,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
         $request->sessionId = uniqid();
 
         $this->expectException(ApiException::class);
-        self::$client->sessions->getSession(
+        self::$client->sessionService->getSession(
             $request,
         );
     }
@@ -124,7 +127,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
         $request->profile = $profile;
         $request->email = $email;
 
-        self::$client->users->addHumanUser($request);
+        self::$client->userService->addHumanUser($request);
 
         $checkUser = new SessionServiceCheckUser();
         $checkUser->loginName = $id;
@@ -136,7 +139,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
         $sessionRequest->checks = $checks;
         $sessionRequest->lifetime = new \DateInterval('PT18000S');
 
-        $response = self::$client->sessions->createSession($sessionRequest);
+        $response = self::$client->sessionService->createSession($sessionRequest);
         $this->assertNotNull($response->sessionId);
         $this->sessionId = $response->sessionId;
     }
@@ -147,7 +150,7 @@ class SessionServiceSanityCheckSpec extends AbstractIntegrationTest
         $request->sessionId = $this->sessionId;
 
         try {
-            self::$client->sessions->deleteSession(
+            self::$client->sessionService->deleteSession(
                 $request
             );
         } catch (ApiException) {

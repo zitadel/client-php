@@ -24,7 +24,7 @@ use Zitadel\Client\ApiClient;
  * use the same transport configuration (proxy, TLS, timeouts) as regular
  * API calls.
  *
- * The {@see ApiClient} is injected by the Client class after construction,
+ * The {@see ApiClient} is injected by the Zitadel class after construction,
  * via {@see setApiClient()}. Implementations must not make HTTP calls
  * before the client is injected.
  *
@@ -40,7 +40,7 @@ interface HttpAwareAuthenticator extends Authenticator
     /**
      * Inject the shared API client for making HTTP requests.
      *
-     * Called by the Client constructor after the ApiClient has been created
+     * Called by the Zitadel constructor after the ApiClient has been created
      * with the user's TransportOptions. Implementations should store this
      * reference and use it for all outbound HTTP calls (token exchange,
      * discovery, etc.).
