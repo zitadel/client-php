@@ -16,9 +16,8 @@ lib/Auth/PersonalAccessAuthenticator.php
 lib/Auth/WebTokenAuthenticator.php
 lib/Auth/WebTokenAuthenticatorBuilder.php
 
-# --- bespoke support classes (facade + base exception the generator does not emit) ---
+# --- bespoke support classes (facade the generator does not emit) ---
 lib/Zitadel.php
-lib/ZitadelException.php
 
 # --- bespoke tests + fixtures the generator does not emit ---
 etc/
