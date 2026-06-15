@@ -19,17 +19,18 @@ lib/Auth/WebTokenAuthenticatorBuilder.php
 # --- bespoke tests + fixtures the generator does not emit ---
 etc/
 spec/
-test/Auth/ClientCredentialsAuthenticatorTest.php
-test/Auth/NoAuthAuthenticatorTest.php
-test/Auth/OAuthAuthenticatorTestCase.php
-test/Auth/PersonalAccessAuthenticatorTest.php
-test/Auth/WebTokenAuthenticatorTest.php
-test/fixtures/
-test/ZitadelTest.php
+tests/Auth/ClientCredentialsAuthenticatorTest.php
+tests/Auth/NoAuthAuthenticatorTest.php
+tests/Auth/OAuthAuthenticatorTestCase.php
+tests/Auth/PersonalAccessAuthenticatorTest.php
+tests/Auth/WebTokenAuthenticatorTest.php
+tests/fixtures/
+tests/ZitadelTest.php
 
 # --- repo identity + docs (team-owned) ---
 LICENSE
 phpdoc.xml
+phpstan.neon
 phpunit.xml
 README.md
 SECURITY.md

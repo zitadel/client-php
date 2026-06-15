@@ -1425,7 +1425,6 @@ lib/Zitadel.php
 lib/ZitadelException.php
 phpcs.xml
 phpdoc.dist.xml
-phpstan.neon
 rector.php
 tests/ConfigurationTest.php
 tests/DefaultApiClientUnitTest.php
