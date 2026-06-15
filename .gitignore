@@ -11,9 +11,7 @@ composer.lock
 # Tool caches
 .phpcsf
 .phpstan/
-
-# Generator metadata (regenerated on every `make generate`)
-.openapi-generator/
+devbox.d/
 
 # Coverage output
 .out/
