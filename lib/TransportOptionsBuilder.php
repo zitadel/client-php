@@ -201,14 +201,14 @@ final class TransportOptionsBuilder
     public function build(): TransportOptions
     {
         return new TransportOptions(
-            defaultHeaders: $this->defaultHeaders,
+            verifySsl: $this->verifySsl,
             caCertPath: $this->caCertPath,
-            insecure: !$this->verifySsl,
-            proxyUrl: $this->proxy,
+            proxy: $this->proxy,
             timeout: $this->timeout,
             followRedirects: $this->followRedirects,
             maxRedirects: $this->maxRedirects,
             userAgent: $this->userAgent,
+            defaultHeaders: $this->defaultHeaders,
             injectRequestId: $this->injectRequestId,
         );
     }
