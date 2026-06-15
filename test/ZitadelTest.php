@@ -131,7 +131,7 @@ class ZitadelTest extends TestCase
             "https://" . self::$host . ":" . self::$httpsPort,
             "dummy-client",
             "dummy-secret",
-            new TransportOptions(insecure: true),
+            new TransportOptions(verifySsl: false),
         );
 
         $response = $zitadel->settings->getGeneralSettings(new \stdClass());
@@ -157,7 +157,7 @@ class ZitadelTest extends TestCase
         $zitadel = Zitadel::withAccessToken(
             "http://wiremock:8080",
             "test-token",
-            new TransportOptions(proxyUrl: "http://" . self::$host . ":" . self::$proxyPort),
+            new TransportOptions(proxy: "http://" . self::$host . ":" . self::$proxyPort),
         );
 
         $response = $zitadel->settings->getGeneralSettings(new \stdClass());

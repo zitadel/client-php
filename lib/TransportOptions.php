@@ -21,62 +21,42 @@ namespace Zitadel\Client;
  * are independent of API-level concerns (base URL, authentication headers)
  * which belong in {@see Configuration}.
  *
- * The public constructor exposes the four most commonly tuned options
- * ({@see $defaultHeaders}, {@see $caCertPath}, {@see $insecure},
- * {@see $proxyUrl}) as named parameters, e.g.:
+ * This class is immutable. Use {@see TransportOptions::builder()} to create instances:
  *
- *     $transport = new TransportOptions(
- *         caCertPath: '/etc/ssl/custom-ca.pem',
- *         insecure: false,
- *         proxyUrl: 'http://proxy:3128',
- *     );
- *
- * The remaining transport knobs (timeout, redirect handling, User-Agent,
- * request-id injection) are exposed through {@see TransportOptions::builder()}.
+ *     $transport = TransportOptions::builder()
+ *         ->verifySsl(false)
+ *         ->proxy('http://proxy.example.com:8080')
+ *         ->timeout(5000)
+ *         ->userAgent('MyApp/1.0')
+ *         ->build();
  *
  * @category Class
  * @package  Zitadel\Client
  */
 final class TransportOptions
 {
-    /** @var bool Whether TLS certificate verification is enabled. */
-    public readonly bool $verifySsl;
-
-    /** @var string|null HTTP or HTTPS proxy URL for all outbound requests. */
-    public readonly ?string $proxy;
-
     /**
-     * @param array<string, string> $defaultHeaders Transport-level default headers included in every request.
-     * @param string|null           $caCertPath     Path to a custom CA certificate bundle for TLS verification.
-     * @param bool                  $insecure       Whether to disable TLS certificate verification.
-     * @param string|null           $proxyUrl       HTTP or HTTPS proxy URL for all outbound requests.
-     * @param int|null              $timeout        End-to-end request timeout in milliseconds.
-     * @param bool                  $followRedirects Whether the client follows HTTP 3xx redirects automatically.
-     * @param int|null              $maxRedirects   Maximum number of consecutive redirects to follow.
-     * @param string|null           $userAgent      Custom User-Agent header value.
-     * @param bool                  $injectRequestId Whether to auto-inject an X-Request-ID header.
+     * @param bool                  $verifySsl      Whether TLS certificate verification is enabled
+     * @param string|null           $caCertPath     Path to a custom CA certificate bundle for TLS verification
+     * @param string|null           $proxy          HTTP or HTTPS proxy URL for all outbound requests
+     * @param int|null              $timeout        End-to-end request timeout in milliseconds
+     * @param bool                  $followRedirects Whether the client follows HTTP 3xx redirects automatically
+     * @param int|null              $maxRedirects   Maximum number of consecutive redirects to follow
+     * @param string|null           $userAgent      Custom User-Agent header value
+     * @param array<string, string> $defaultHeaders Transport-level default headers included in every request
+     * @param bool                  $injectRequestId Whether to auto-inject an X-Request-ID header
      */
     public function __construct(
-        public readonly array $defaultHeaders = [],
+        public readonly bool $verifySsl = true,
         public readonly ?string $caCertPath = null,
-        public readonly bool $insecure = false,
-        public readonly ?string $proxyUrl = null,
+        public readonly ?string $proxy = null,
         public readonly ?int $timeout = 10000,
         public readonly bool $followRedirects = true,
         public readonly ?int $maxRedirects = null,
         public readonly ?string $userAgent = 'Zitadel\Client/1.0.0 (php)',
+        public readonly array $defaultHeaders = [],
         public readonly bool $injectRequestId = false,
     ) {
-        $this->verifySsl = !$insecure;
-        $this->proxy = $proxyUrl;
-    }
-
-    /**
-     * Returns a TransportOptions instance with all default values.
-     */
-    public static function defaults(): self
-    {
-        return new self();
     }
 
     /**

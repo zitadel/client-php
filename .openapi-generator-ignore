@@ -73,11 +73,5 @@ Makefile
 # bespoke facade (convenience wrapper over generated Client)
 lib/Zitadel.php
 
-# Transport options reconciled to the integration-test contract
-# (insecure / proxyUrl / defaults()); the generator emits a divergent
-# verifySsl / proxy surface — see generator bug report.
-lib/TransportOptions.php
-lib/TransportOptionsBuilder.php
-
 # bespoke base exception used by the auth integration specs
 lib/ZitadelException.php
