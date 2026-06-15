@@ -68,6 +68,7 @@ class ClientCredentialsAuthenticator extends OAuthAuthenticator
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function __debugInfo(): array
     {
         return array_merge(
