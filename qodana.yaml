@@ -11,7 +11,6 @@ exclude:
       # Test code legitimately uses fixture classes, descriptive names and
       # reaches into internals; production-grade IDE inspections are noise here.
       - tests
-      - test
       - spec
   # Style is owned by php-cs-fixer (the CI cs-fixer job is authoritative).
   - name: PhpCSValidationInspection
@@ -124,17 +123,6 @@ exclude:
   # code duplication — pending a generator-template de-duplication; not hand-
   # edited here because the file is generator-owned.
   - name: DuplicatedCode
-    paths:
-      - lib/ObjectSerializer.php
-  # KNOWN generated-code defect, pending a generator-template fix: the
-  # DateTimeImmutable/Uuid dispatch emits `$class === Uuid::class || $class ===
-  # Uuid::class` (the second operand should be a distinct type). The duplicate
-  # clause is dead but harmless; phpstan/rector do not flag it. Scoped here so
-  # the file can be un-hidden now while the template fix lands separately.
-  - name: PhpExpressionWithSameOperandsInspection
-    paths:
-      - lib/ObjectSerializer.php
-  - name: PhpConditionAlreadyCheckedInspection
     paths:
       - lib/ObjectSerializer.php
 
