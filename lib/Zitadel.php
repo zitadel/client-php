@@ -82,7 +82,7 @@ class Zitadel
         ?callable $mutateConfig = null,
         ?TransportOptions $transportOptions = null,
     ) {
-        $resolved = $transportOptions ?? TransportOptions::defaults();
+        $resolved = $transportOptions ?? new TransportOptions();
         $apiClient = new DefaultApiClient($resolved);
 
         if ($authenticator instanceof HttpAwareAuthenticator) {
@@ -142,7 +142,7 @@ class Zitadel
         string $accessToken,
         ?TransportOptions $transportOptions = null,
     ): self {
-        $resolved = $transportOptions ?? TransportOptions::defaults();
+        $resolved = $transportOptions ?? new TransportOptions();
         return new self(
             new PersonalAccessAuthenticator($host, $accessToken),
             null,
@@ -167,7 +167,7 @@ class Zitadel
         string $clientSecret,
         ?TransportOptions $transportOptions = null,
     ): self {
-        $resolved = $transportOptions ?? TransportOptions::defaults();
+        $resolved = $transportOptions ?? new TransportOptions();
         return new self(
             ClientCredentialsAuthenticator::builder($host, $clientId, $clientSecret, $resolved)
                 ->build(),
@@ -191,7 +191,7 @@ class Zitadel
         string $keyFile,
         ?TransportOptions $transportOptions = null,
     ): self {
-        $resolved = $transportOptions ?? TransportOptions::defaults();
+        $resolved = $transportOptions ?? new TransportOptions();
         return new self(
             WebTokenAuthenticator::fromJson($host, $keyFile, $resolved),
             null,

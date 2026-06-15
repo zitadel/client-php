@@ -1,8 +1,10 @@
 # Keep-list: files the generator must NOT overwrite, and the Makefile's
 # `prune` step must NOT delete. Everything else is generator-owned.
+# Sections are shared across all six SDK repos for harmony; sort each
+# section alphabetically (case-insensitive) and keep `!` negations
+# immediately after the broad pattern they refine.
 
-# --- bespoke token-minting authenticators (to be ported onto the new
-#     Authenticator / HttpAwareAuthenticator interfaces) ---
+# --- bespoke authenticators (ported onto the generated auth interfaces) ---
 lib/Auth/ClientCredentialsAuthenticator.php
 lib/Auth/ClientCredentialsAuthenticatorBuilder.php
 lib/Auth/JwtBearer.php
@@ -14,64 +16,53 @@ lib/Auth/PersonalAccessAuthenticator.php
 lib/Auth/WebTokenAuthenticator.php
 lib/Auth/WebTokenAuthenticatorBuilder.php
 
-# --- bespoke integration tests + Zitadel server fixtures ---
-spec/
-etc/
+# --- bespoke support classes (facade + base exception the generator does not emit) ---
+lib/Zitadel.php
+lib/ZitadelException.php
 
-# --- bespoke test files the generator does not emit: Zitadel authenticator
-#     unit tests, the facade/wiremock transport test, and the cert/proxy/
-#     wiremock fixtures. The spec-independent unit tests (ValueSerializer,
-#     HeaderSelector, Configuration, TransportOptions, TraceContextUtil,
-#     DefaultApiClient) are now generator-owned. ---
-test/ZitadelTest.php
+# --- bespoke tests + fixtures the generator does not emit ---
+etc/
+spec/
 test/Auth/ClientCredentialsAuthenticatorTest.php
 test/Auth/NoAuthAuthenticatorTest.php
 test/Auth/OAuthAuthenticatorTestCase.php
 test/Auth/PersonalAccessAuthenticatorTest.php
 test/Auth/WebTokenAuthenticatorTest.php
 test/fixtures/
-
-# --- bespoke regression test the generator does not emit: hydration of
-#     \Ds\Vector<Model> list elements through DsAwareObjectNormalizer. ---
+test/ZitadelTest.php
 tests/DsVectorModelHydrationTest.php
 
-# --- repo identity, docs, house tooling (team-owned, not generated) ---
-composer.json
-README.md
+# --- repo identity + docs (team-owned) ---
 LICENSE
+phpdoc.xml
+phpunit.xml
+README.md
 SECURITY.md
 VERSIONING.md
-phpunit.xml
-phpdoc.xml
-composer.lock
-composer.phar
+
+# --- house tooling (team-owned) ---
+.claude/
+.commitlintrc.json
+.env
+.github/
+.gitignore
+.idea/
+.pre-commit-config.yaml
+.releaserc.json
+composer-unused.php
+devbox.d/
 devbox.json
 devbox.lock
+Dockerfile
 lefthook.yml
 qodana.yaml
-.github/
-.idea/
-.releaserc.json
-.commitlintrc.json
-.pre-commit-config.yaml
-.claude/
-devbox.d/
 
-# --- repo-owned tooling the generator does not emit: the local secrets
-#     gitignore entries, the psysh REPL image built by the docker CI job,
-#     and the composer-unused config that whitelists deps resolved through
-#     Symfony service wiring (ext-curl, reflection-docblock). ---
-.gitignore
-Dockerfile
-composer-unused.php
+# --- build / package config (team-owned) ---
+composer.json
+composer.lock
+composer.phar
 
 # --- generation tooling we added ---
-proc.yml
-Makefile
 .openapi-generator-ignore
-
-# bespoke facade (convenience wrapper over generated Client)
-lib/Zitadel.php
-
-# bespoke base exception used by the auth integration specs
-lib/ZitadelException.php
+Makefile
+proc.yml
