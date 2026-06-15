@@ -14,7 +14,9 @@ use Testcontainers\Container\GenericContainer;
 use Testcontainers\Container\StartedGenericContainer;
 use Testcontainers\Wait\WaitForHttp;
 use Testcontainers\Wait\WaitForHostPort;
+use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
 use Zitadel\Client\Auth\NoAuthAuthenticator;
+use Zitadel\Client\Auth\PersonalAccessAuthenticator;
 use Zitadel\Client\TransportOptions;
 use Zitadel\Client\Zitadel;
 
@@ -114,63 +116,79 @@ class ZitadelTest extends TestCase
 
     public function testCustomCaCert(): void
     {
-        $zitadel = Zitadel::withClientCredentials(
-            "https://" . self::$host . ":" . self::$httpsPort,
-            "dummy-client",
-            "dummy-secret",
-            new TransportOptions(caCertPath: self::$caCertPath),
+        $transport = new TransportOptions(caCertPath: self::$caCertPath);
+        $zitadel = Zitadel::withAuthenticator(
+            ClientCredentialsAuthenticator::builder(
+                "https://" . self::$host . ":" . self::$httpsPort,
+                "dummy-client",
+                "dummy-secret",
+                $transport,
+            )->build(),
+            $transport,
         );
 
-        $response = $zitadel->settings->getGeneralSettings(new \stdClass());
+        $response = $zitadel->settingsService->getGeneralSettings(new \stdClass());
         $this->assertEquals('https', $response->defaultLanguage);
     }
 
     public function testInsecureMode(): void
     {
-        $zitadel = Zitadel::withClientCredentials(
-            "https://" . self::$host . ":" . self::$httpsPort,
-            "dummy-client",
-            "dummy-secret",
-            new TransportOptions(verifySsl: false),
+        $transport = new TransportOptions(verifySsl: false);
+        $zitadel = Zitadel::withAuthenticator(
+            ClientCredentialsAuthenticator::builder(
+                "https://" . self::$host . ":" . self::$httpsPort,
+                "dummy-client",
+                "dummy-secret",
+                $transport,
+            )->build(),
+            $transport,
         );
 
-        $response = $zitadel->settings->getGeneralSettings(new \stdClass());
+        $response = $zitadel->settingsService->getGeneralSettings(new \stdClass());
         $this->assertEquals('https', $response->defaultLanguage);
     }
 
     public function testDefaultHeaders(): void
     {
-        $zitadel = Zitadel::withClientCredentials(
-            "http://" . self::$host . ":" . self::$httpPort,
-            "dummy-client",
-            "dummy-secret",
-            new TransportOptions(defaultHeaders: ["X-Custom-Header" => "test-value"]),
+        $transport = new TransportOptions(defaultHeaders: ["X-Custom-Header" => "test-value"]);
+        $zitadel = Zitadel::withAuthenticator(
+            ClientCredentialsAuthenticator::builder(
+                "http://" . self::$host . ":" . self::$httpPort,
+                "dummy-client",
+                "dummy-secret",
+                $transport,
+            )->build(),
+            $transport,
         );
 
-        $response = $zitadel->settings->getGeneralSettings(new \stdClass());
+        $response = $zitadel->settingsService->getGeneralSettings(new \stdClass());
         $this->assertEquals('http', $response->defaultLanguage);
         $this->assertEquals('test-value', $response->defaultOrgId);
     }
 
     public function testProxyUrl(): void
     {
-        $zitadel = Zitadel::withAccessToken(
-            "http://wiremock:8080",
-            "test-token",
+        $zitadel = Zitadel::withAuthenticator(
+            new PersonalAccessAuthenticator(
+                "http://wiremock:8080",
+                "test-token",
+            ),
             new TransportOptions(proxy: "http://" . self::$host . ":" . self::$proxyPort),
         );
 
-        $response = $zitadel->settings->getGeneralSettings(new \stdClass());
+        $response = $zitadel->settingsService->getGeneralSettings(new \stdClass());
         $this->assertEquals('http', $response->defaultLanguage);
     }
 
     public function testNoCaCertFails(): void
     {
         $this->expectException(Exception::class);
-        Zitadel::withClientCredentials(
-            "https://" . self::$host . ":" . self::$httpsPort,
-            "dummy-client",
-            "dummy-secret",
+        Zitadel::withAuthenticator(
+            ClientCredentialsAuthenticator::builder(
+                "https://" . self::$host . ":" . self::$httpsPort,
+                "dummy-client",
+                "dummy-secret",
+            )->build(),
         );
     }
 }

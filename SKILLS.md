@@ -11,9 +11,9 @@ composer require <vendor>/<package-name>
 ## Quick Start
 
 ```php
-use Zitadel\Client\Client;
+use Zitadel\Client\Zitadel;
 
-$client = Client::withToken('https://api.example.com', 'your-token');
+$client = Zitadel::withToken('https://api.example.com', 'your-token');
 ```
 
 ## Authentication
@@ -26,7 +26,7 @@ All authentication is handled via `Authenticator` implementations passed to the 
 use Zitadel\Client\Auth\BearerAuthenticator;
 
 $authenticator = new BearerAuthenticator('https://api.example.com', 'your-token');
-$client = new Client($authenticator);
+$client = new Zitadel($authenticator);
 ```
 
 ## Servers
@@ -36,7 +36,7 @@ If the OpenAPI spec defines multiple servers, the generated `Zitadel\Client\Serv
 ```php
 use Zitadel\Client\Servers;
 
-$client = Client::withToken(Servers::SERVER_0->url(), 'your-token');
+$client = Zitadel::withToken(Servers::SERVER_0->url(), 'your-token');
 ```
 
 ## Testing
@@ -51,7 +51,7 @@ $fake = new class implements Zitadel\Client\Auth\Authenticator {
     public function getHost(): string { return 'https://api.example.com'; }
 };
 
-$client = new Client($fake);
+$client = new Zitadel($fake);
 ```
 
 ## Error Handling
@@ -100,7 +100,7 @@ $transport = TransportOptions::builder()
     ->timeout(5000)
     ->build();
 
-$client = new Client($authenticator, $transport);
+$client = new Zitadel($authenticator, $transport);
 ```
 
 ## API Methods
