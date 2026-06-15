@@ -35,10 +35,11 @@
         "testcontainers/testcontainers": "^1.0",
         "vlucas/phpdotenv": "^5.6",
         "mridang/phpunit-reporters": "^1.0",
-        "icanhazstring/composer-unused": "^0.9.3"
+        "icanhazstring/composer-unused": "^0.9.3",
+        "mrpunyapal/peststan": "^0.2.10"
     },
     "scripts": {
-        "test": "pest --testsuite unit,tests --coverage --coverage-clover=build/coverage/clover.xml --log-junit=build/reports/junit.xml",
+        "test": "pest --testsuite unit --coverage --coverage-clover=build/coverage/clover.xml --log-junit=build/reports/junit.xml",
         "phpstan": "phpstan analyse --memory-limit=-1",
         "rector": "rector process",
         "format": "php-cs-fixer fix",
@@ -63,7 +64,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Zitadel\\Client\\Test\\": "test/",
+            "Zitadel\\Client\\Test\\": "tests/",
             "Zitadel\\Client\\Spec\\": "spec/"
         }
     }
