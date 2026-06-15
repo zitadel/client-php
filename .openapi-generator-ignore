@@ -26,7 +26,6 @@ test/Auth/PersonalAccessAuthenticatorTest.php
 test/Auth/WebTokenAuthenticatorTest.php
 test/fixtures/
 test/ZitadelTest.php
-tests/DsVectorModelHydrationTest.php
 
 # --- repo identity + docs (team-owned) ---
 LICENSE
