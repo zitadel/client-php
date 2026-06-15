@@ -1,0 +1,21 @@
+# Composer installs dependencies inside the image, so the local vendor/
+# directory must never be copied in.
+vendor/
+
+# VCS, editor, and local tooling state — irrelevant to the build.
+.git
+.github
+.idea
+.claude
+.devbox
+devbox.d
+
+# Tool caches and local-only output.
+.phpunit.cache
+.phpunit.result.cache
+.phpcsf
+.phpstan
+.out
+
+# Local secrets / test credentials (never bake into an image).
+.env

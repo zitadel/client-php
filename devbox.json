@@ -3,7 +3,6 @@
   "packages": [
     "php@8.5",
     "php85Extensions.xdebug@latest",
-    "lefthook@latest",
     "github:mridang/nixpkgs#qodana"
   ],
   "env": {
@@ -11,7 +10,6 @@
   },
   "shell": {
     "init_hook": [
-      "lefthook install",
       "composer install"
     ],
     "scripts": {

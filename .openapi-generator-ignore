@@ -38,14 +38,14 @@ VERSIONING.md
 # --- house tooling (team-owned) ---
 .claude/
 .commitlintrc.json
-.env
+.dockerignore
+.editorconfig
 .github/
 .gitignore
 .idea/
 .pre-commit-config.yaml
 .releaserc.json
 composer-unused.php
-devbox.d/
 devbox.json
 devbox.lock
 Dockerfile
@@ -61,3 +61,8 @@ composer.phar
 .openapi-generator-ignore
 Makefile
 proc.yml
+
+# --- generator bookkeeping (FILES manifest + VERSION; rewritten by the
+#     generator but keep-listed so prune does not orphan them — the FILES
+#     manifest does not list itself, so it would otherwise be deleted) ---
+.openapi-generator/
