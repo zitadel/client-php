@@ -122,6 +122,22 @@ class WebTokenAuthenticator extends OAuthAuthenticator
     }
 
     /**
+     * Masks the signing private key so it never leaks through var_dump() /
+     * print_r() / stack traces / error logs. Mirrors the masking idiom in
+     * {@see BearerAuthenticator} and folds in the cached-token redaction from
+     * {@see OAuthAuthenticator}.
+     *
+     * @return array<string, mixed>
+     */
+    public function __debugInfo(): array
+    {
+        return array_merge(
+            parent::__debugInfo(),
+            ['privateKey' => '***']
+        );
+    }
+
+    /**
      * @return array<string, string>
      */
     protected function getAccessTokenOptions(): array
