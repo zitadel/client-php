@@ -47,7 +47,11 @@ final readonly class JUnitReporter
             }
 
             while ($suite->attributes->length > 0) {
-                $suite->removeAttribute($suite->attributes->item(0)->name);
+                $firstAttr = $suite->attributes->item(0);
+                if ($firstAttr === null) {
+                    break;
+                }
+                $suite->removeAttribute($firstAttr->name);
             }
 
             $suite->setAttribute('name', $attrs['name'] ?? '');

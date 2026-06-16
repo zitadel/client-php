@@ -1,10 +1,40 @@
+includes:
+  # Teach phpstan about Pest's magic functions (test(), expect(),
+  # beforeEach(), etc.) so the Pest test suite can be analysed.
+  - vendor/mrpunyapal/peststan/extension.neon
+
 parameters:
-  level: 6
+  level: 9
+  tmpDir: .phpstan
   paths:
-    - lib
-    - test
-    - spec
+    - .
   excludePaths:
-    - lib/Model/*
-    - lib/Api/*
-    - lib/ObjectSerializer.php
+    - vendor
+  ignoreErrors:
+    # peststan's higher-order narrowing is incomplete: it does not propagate
+    # `expect($v)->toBeResource()` back onto $v, so phpstan still sees the raw
+    # `resource|false` from fopen(). Scoped to the test tree only; lib/ keeps
+    # full resource type-checking.
+    -
+      identifier: argument.type
+      message: '#Parameter \#1 \$stream of function (fwrite|rewind) expects resource, resource\|false given\.#'
+      path: tests/*
+    # peststan 0.2.10 does not expose PHPUnit's markTestSkipped()/fail() on the
+    # TestCall proxy returned by test(), though both resolve at runtime via
+    # Pest's TestCase forwarding. Scoped to the test tree only.
+    -
+      identifier: method.notFound
+      message: '#Call to an undefined method Pest\\PendingCalls\\TestCall::(markTestSkipped|fail)\(\)\.#'
+      path: tests/*
+    # peststan's EmptyTestClosureRule flags `test(...)->skip(...)` tests whose
+    # bodies are intentionally empty (the body never runs once skipped). These
+    # are valid Pest skip stubs, not unfinished tests.
+    -
+      identifier: pest.test.emptyClosure
+      path: tests/*
+    # peststan's RedundantExpectationRule flags assertions whose subject type is
+    # already narrowed (e.g. toBeInstanceOf() on a typed factory return). The
+    # generated unit tests assert these deliberately as cross-SDK invariants.
+    -
+      identifier: pest.expectation.redundant
+      path: tests/*
