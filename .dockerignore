@@ -1,21 +1,7 @@
-# Composer installs dependencies inside the image, so the local vendor/
-# directory must never be copied in.
-vendor/
+# Exclude everything by default
+*
 
-# VCS, editor, and local tooling state — irrelevant to the build.
-.git
-.github
-.idea
-.claude
-.devbox
-devbox.d
-
-# Tool caches and local-only output.
-.phpunit.cache
-.phpunit.result.cache
-.phpcsf
-.phpstan
-.out
-
-# Local secrets / test credentials (never bake into an image).
-.env
+# Include only the essential files needed for building the library
+!composer.json
+!composer.lock
+!lib/
