@@ -19,7 +19,6 @@ use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
 use Zitadel\Client\ValueSerializer;
-use Zitadel\Client\Auth\NoAuth;
 
 /**
  * AuthorizationServiceApi provides methods for the AuthorizationService API group.

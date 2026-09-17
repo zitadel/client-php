@@ -7,7 +7,6 @@ declare(strict_types=1);
 namespace Zitadel\Client\Test;
 
 use Zitadel\Client\ApiException;
-use Zitadel\Client\Models\PhotoMetadata;
 use Zitadel\Client\Psr18ApiClient;
 use Zitadel\Client\TransportOptions;
 use Zitadel\Client\TransportOptionsBuilder;
@@ -16,6 +15,30 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Serializer\Attribute\SerializedName;
+
+/**
+ * A stand-in model part for the multipart serialization test below. It is
+ * declared here rather than taken from the generated models so the test holds
+ * for EVERY spec this SDK is generated from — no spec is guaranteed to contain
+ * a model with these properties. It is shaped exactly like a generated model:
+ * the PHP property names ARE the wire names, which is what the SDK's
+ * ObjectSerializer emits (its normalizer is built without a name converter).
+ */
+final class MultipartModelPart
+{
+    #[SerializedName('isPrimary')]
+    public ?bool $isPrimary = null;
+
+    #[SerializedName('takenAt')]
+    public ?\DateTime $takenAt = null;
+
+    public function __construct(?bool $isPrimary = null, ?\DateTime $takenAt = null)
+    {
+        $this->isPrimary = $isPrimary;
+        $this->takenAt = $takenAt;
+    }
+}
 
 /**
  * A minimal PSR-18 client that replays a queue of canned responses and records
@@ -400,17 +423,17 @@ test('psr18 multipart non ascii field name preserved as utf 8', function (): voi
 
 /*
  * Cross-language multipart parity: a multipart/form-data body that carries a
- * MODEL part (as addPetPhotos does with its `metadata` PhotoMetadata) must
- * serialize that part through the SDK's configured ObjectSerializer, so the
- * JSON uses the WIRE property names ("isPrimary", "takenAt" — never the
- * snake_case "is_primary"/"taken_at") and the SDK's RFC 3339 date-time format.
- * The Psr18ApiClient's in-memory encodeMultipart() routes object parts through
- * ObjectSerializer::serialize(); this exercises that exact path and asserts the
- * emitted part JSON honours the SerializedName mapping and the date-time wire
- * format (sub-second precision preserved, e.g. ...05.123+00:00).
+ * MODEL part must serialize that part through the SDK's configured
+ * ObjectSerializer, so the JSON uses the WIRE property names ("isPrimary",
+ * "takenAt" — never the snake_case "is_primary"/"taken_at") and the SDK's
+ * RFC 3339 date-time format. The Psr18ApiClient's in-memory encodeMultipart()
+ * routes object parts through ObjectSerializer::serialize(); this exercises
+ * that exact path and asserts the emitted part JSON honours the SerializedName
+ * mapping and the date-time wire format (sub-second precision preserved, e.g.
+ * ...05.123+00:00).
  */
 test('psr18 multipart model part uses configured serializer wire names', function (): void {
-    $metadata = new PhotoMetadata(
+    $metadata = new MultipartModelPart(
         isPrimary: true,
         takenAt: new \DateTime('2020-01-02T03:04:05.123Z'),
     );

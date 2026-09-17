@@ -19,7 +19,6 @@ use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
 use Zitadel\Client\ValueSerializer;
-use Zitadel\Client\Auth\NoAuth;
 
 /**
  * UserServiceApi provides methods for the UserService API group.
