@@ -76,11 +76,7 @@ class IdentityProviderServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\IdentityProviderServiceGetIDPByIDResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\IdentityProviderServiceGetIDPByIDResponse::class
         );
         return $result;
     }

@@ -76,11 +76,7 @@ class OIDCServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            'object',
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            'object'
         );
         return $result;
     }
@@ -134,11 +130,7 @@ class OIDCServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\OIDCServiceCreateCallbackResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\OIDCServiceCreateCallbackResponse::class
         );
         return $result;
     }
@@ -192,11 +184,7 @@ class OIDCServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\OIDCServiceGetAuthRequestResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\OIDCServiceGetAuthRequestResponse::class
         );
         return $result;
     }
@@ -250,11 +238,7 @@ class OIDCServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\OIDCServiceGetDeviceAuthorizationRequestResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\OIDCServiceGetDeviceAuthorizationRequestResponse::class
         );
         return $result;
     }

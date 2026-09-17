@@ -76,11 +76,7 @@ class InternalPermissionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\InternalPermissionServiceCreateAdministratorResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\InternalPermissionServiceCreateAdministratorResponse::class
         );
         return $result;
     }
@@ -134,11 +130,7 @@ class InternalPermissionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\InternalPermissionServiceDeleteAdministratorResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\InternalPermissionServiceDeleteAdministratorResponse::class
         );
         return $result;
     }
@@ -192,11 +184,7 @@ class InternalPermissionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\InternalPermissionServiceListAdministratorsResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\InternalPermissionServiceListAdministratorsResponse::class
         );
         return $result;
     }
@@ -250,11 +238,7 @@ class InternalPermissionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\InternalPermissionServiceUpdateAdministratorResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\InternalPermissionServiceUpdateAdministratorResponse::class
         );
         return $result;
     }

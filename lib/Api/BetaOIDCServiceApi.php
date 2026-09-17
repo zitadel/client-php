@@ -76,11 +76,7 @@ class BetaOIDCServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOIDCServiceCreateCallbackResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOIDCServiceCreateCallbackResponse::class
         );
         return $result;
     }
@@ -134,11 +130,7 @@ class BetaOIDCServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOIDCServiceGetAuthRequestResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOIDCServiceGetAuthRequestResponse::class
         );
         return $result;
     }

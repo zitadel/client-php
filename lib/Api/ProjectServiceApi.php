@@ -76,11 +76,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceActivateProjectResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceActivateProjectResponse::class
         );
         return $result;
     }
@@ -134,11 +130,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceActivateProjectGrantResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceActivateProjectGrantResponse::class
         );
         return $result;
     }
@@ -192,11 +184,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceAddProjectRoleResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceAddProjectRoleResponse::class
         );
         return $result;
     }
@@ -250,11 +238,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceCreateProjectResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceCreateProjectResponse::class
         );
         return $result;
     }
@@ -308,11 +292,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceCreateProjectGrantResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceCreateProjectGrantResponse::class
         );
         return $result;
     }
@@ -366,11 +346,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceDeactivateProjectResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceDeactivateProjectResponse::class
         );
         return $result;
     }
@@ -424,11 +400,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceDeactivateProjectGrantResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceDeactivateProjectGrantResponse::class
         );
         return $result;
     }
@@ -482,11 +454,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceDeleteProjectResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceDeleteProjectResponse::class
         );
         return $result;
     }
@@ -540,11 +508,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceDeleteProjectGrantResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceDeleteProjectGrantResponse::class
         );
         return $result;
     }
@@ -598,11 +562,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceGetProjectResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceGetProjectResponse::class
         );
         return $result;
     }
@@ -656,11 +616,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceListProjectGrantsResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceListProjectGrantsResponse::class
         );
         return $result;
     }
@@ -714,11 +670,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceListProjectRolesResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceListProjectRolesResponse::class
         );
         return $result;
     }
@@ -772,11 +724,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceListProjectsResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceListProjectsResponse::class
         );
         return $result;
     }
@@ -830,11 +778,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceRemoveProjectRoleResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceRemoveProjectRoleResponse::class
         );
         return $result;
     }
@@ -888,11 +832,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceUpdateProjectResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceUpdateProjectResponse::class
         );
         return $result;
     }
@@ -946,11 +886,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceUpdateProjectGrantResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceUpdateProjectGrantResponse::class
         );
         return $result;
     }
@@ -1004,11 +940,7 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceUpdateProjectRoleResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ProjectServiceUpdateProjectRoleResponse::class
         );
         return $result;
     }

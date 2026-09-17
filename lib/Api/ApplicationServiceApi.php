@@ -76,11 +76,7 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceCreateApplicationResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ApplicationServiceCreateApplicationResponse::class
         );
         return $result;
     }
@@ -134,11 +130,7 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceCreateApplicationKeyResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ApplicationServiceCreateApplicationKeyResponse::class
         );
         return $result;
     }
@@ -192,11 +184,7 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceDeactivateApplicationResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ApplicationServiceDeactivateApplicationResponse::class
         );
         return $result;
     }
@@ -250,11 +238,7 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceDeleteApplicationResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ApplicationServiceDeleteApplicationResponse::class
         );
         return $result;
     }
@@ -308,11 +292,7 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceDeleteApplicationKeyResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ApplicationServiceDeleteApplicationKeyResponse::class
         );
         return $result;
     }
@@ -366,11 +346,7 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceGenerateClientSecretResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ApplicationServiceGenerateClientSecretResponse::class
         );
         return $result;
     }
@@ -424,11 +400,7 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceGetApplicationResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ApplicationServiceGetApplicationResponse::class
         );
         return $result;
     }
@@ -482,11 +454,7 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceGetApplicationKeyResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ApplicationServiceGetApplicationKeyResponse::class
         );
         return $result;
     }
@@ -540,11 +508,7 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceListApplicationKeysResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ApplicationServiceListApplicationKeysResponse::class
         );
         return $result;
     }
@@ -598,11 +562,7 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceListApplicationsResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ApplicationServiceListApplicationsResponse::class
         );
         return $result;
     }
@@ -656,11 +616,7 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceReactivateApplicationResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ApplicationServiceReactivateApplicationResponse::class
         );
         return $result;
     }
@@ -714,11 +670,7 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceUpdateApplicationResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\ApplicationServiceUpdateApplicationResponse::class
         );
         return $result;
     }

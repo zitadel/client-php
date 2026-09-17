@@ -76,11 +76,7 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceActivateOrganizationResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOrganizationServiceActivateOrganizationResponse::class
         );
         return $result;
     }
@@ -134,11 +130,7 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceAddOrganizationDomainResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOrganizationServiceAddOrganizationDomainResponse::class
         );
         return $result;
     }
@@ -192,11 +184,7 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceCreateOrganizationResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOrganizationServiceCreateOrganizationResponse::class
         );
         return $result;
     }
@@ -250,11 +238,7 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceDeactivateOrganizationResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOrganizationServiceDeactivateOrganizationResponse::class
         );
         return $result;
     }
@@ -308,11 +292,7 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationResponse::class
         );
         return $result;
     }
@@ -366,11 +346,7 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationDomainResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationDomainResponse::class
         );
         return $result;
     }
@@ -424,11 +400,7 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationMetadataResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationMetadataResponse::class
         );
         return $result;
     }
@@ -482,11 +454,7 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceGenerateOrganizationDomainValidationResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOrganizationServiceGenerateOrganizationDomainValidationResponse::class
         );
         return $result;
     }
@@ -540,11 +508,7 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationDomainsResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationDomainsResponse::class
         );
         return $result;
     }
@@ -598,11 +562,7 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationMetadataResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationMetadataResponse::class
         );
         return $result;
     }
@@ -656,11 +616,7 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationsResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationsResponse::class
         );
         return $result;
     }
@@ -714,11 +670,7 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceSetOrganizationMetadataResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOrganizationServiceSetOrganizationMetadataResponse::class
         );
         return $result;
     }
@@ -772,11 +724,7 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceUpdateOrganizationResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOrganizationServiceUpdateOrganizationResponse::class
         );
         return $result;
     }
@@ -830,11 +778,7 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceVerifyOrganizationDomainResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaOrganizationServiceVerifyOrganizationDomainResponse::class
         );
         return $result;
     }

@@ -76,11 +76,7 @@ class WebKeyServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\WebKeyServiceActivateWebKeyResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\WebKeyServiceActivateWebKeyResponse::class
         );
         return $result;
     }
@@ -134,11 +130,7 @@ class WebKeyServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\WebKeyServiceCreateWebKeyResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\WebKeyServiceCreateWebKeyResponse::class
         );
         return $result;
     }
@@ -192,11 +184,7 @@ class WebKeyServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\WebKeyServiceDeleteWebKeyResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\WebKeyServiceDeleteWebKeyResponse::class
         );
         return $result;
     }
@@ -250,11 +238,7 @@ class WebKeyServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\WebKeyServiceListWebKeysResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\WebKeyServiceListWebKeysResponse::class
         );
         return $result;
     }

@@ -76,11 +76,7 @@ class BetaTelemetryServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaTelemetryServiceReportBaseInformationResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaTelemetryServiceReportBaseInformationResponse::class
         );
         return $result;
     }
@@ -134,11 +130,7 @@ class BetaTelemetryServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaTelemetryServiceReportResourceCountsResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaTelemetryServiceReportResourceCountsResponse::class
         );
         return $result;
     }

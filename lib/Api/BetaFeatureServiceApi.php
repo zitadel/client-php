@@ -75,11 +75,7 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceGetInstanceFeaturesResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaFeatureServiceGetInstanceFeaturesResponse::class
         );
         return $result;
     }
@@ -132,11 +128,7 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceGetOrganizationFeaturesResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaFeatureServiceGetOrganizationFeaturesResponse::class
         );
         return $result;
     }
@@ -189,11 +181,7 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceGetSystemFeaturesResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaFeatureServiceGetSystemFeaturesResponse::class
         );
         return $result;
     }
@@ -246,11 +234,7 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceGetUserFeaturesResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaFeatureServiceGetUserFeaturesResponse::class
         );
         return $result;
     }
@@ -303,11 +287,7 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceResetInstanceFeaturesResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaFeatureServiceResetInstanceFeaturesResponse::class
         );
         return $result;
     }
@@ -360,11 +340,7 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceResetOrganizationFeaturesResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaFeatureServiceResetOrganizationFeaturesResponse::class
         );
         return $result;
     }
@@ -417,11 +393,7 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceResetSystemFeaturesResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaFeatureServiceResetSystemFeaturesResponse::class
         );
         return $result;
     }
@@ -474,11 +446,7 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceResetUserFeaturesResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaFeatureServiceResetUserFeaturesResponse::class
         );
         return $result;
     }
@@ -531,11 +499,7 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceSetInstanceFeaturesResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaFeatureServiceSetInstanceFeaturesResponse::class
         );
         return $result;
     }
@@ -588,11 +552,7 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceSetOrganizationFeaturesResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaFeatureServiceSetOrganizationFeaturesResponse::class
         );
         return $result;
     }
@@ -645,11 +605,7 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceSetSystemFeaturesResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaFeatureServiceSetSystemFeaturesResponse::class
         );
         return $result;
     }
@@ -702,11 +658,7 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceSetUserFeaturesResponse::class,
-            /* security:[] — explicitly unauthenticated; pass the NoAuth
-             * sentinel so BaseApi suppresses the client credential instead
-             * of falling back to it. */
-            NoAuth::instance()
+            \Zitadel\Client\Models\BetaFeatureServiceSetUserFeaturesResponse::class
         );
         return $result;
     }
