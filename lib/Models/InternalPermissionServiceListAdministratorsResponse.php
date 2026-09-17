@@ -17,14 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class InternalPermissionServiceListAdministratorsResponse
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\InternalPermissionServicePaginationResponse $pagination = null;
 
     /**
      * Administrators contains the list of administrators matching the request.
      * @var \Ds\Vector<\Zitadel\Client\Models\InternalPermissionServiceAdministrator>|null
-     * @example null
      */
     #[SerializedName('administrators')]
     public ?\Ds\Vector $administrators = null;

@@ -22,7 +22,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
  */
 class UserServiceStateQuery
 {
-    /** @example null */
     #[SerializedName('state')]
     public ?\Zitadel\Client\Models\UserServiceUserState $state = null;
 

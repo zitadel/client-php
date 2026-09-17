@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaAppServiceOIDCGrantType is an enumeration of allowed values.
+ */
 enum BetaAppServiceOIDCGrantType: string
 {
     case OIDC_GRANT_TYPE_AUTHORIZATION_CODE = 'OIDC_GRANT_TYPE_AUTHORIZATION_CODE';

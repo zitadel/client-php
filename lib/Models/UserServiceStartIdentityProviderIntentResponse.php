@@ -17,25 +17,20 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceStartIdentityProviderIntentResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\UserServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('authUrl')]
     public ?string $authUrl = null;
 
-    /** @example null */
     #[SerializedName('formData')]
     public ?\Zitadel\Client\Models\UserServiceFormData $formData = null;
 
-    /** @example null */
     #[SerializedName('idpIntent')]
     public ?\Zitadel\Client\Models\UserServiceIDPIntent $idpIntent = null;
 
     /**
      * POST call information  Deprecated: Use form_data instead
-     * @example null
      */
     #[SerializedName('postForm')]
     public ?string $postForm = null;

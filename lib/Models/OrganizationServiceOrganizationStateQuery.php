@@ -19,7 +19,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class OrganizationServiceOrganizationStateQuery
 {
-    /** @example null */
     #[SerializedName('state')]
     public ?\Zitadel\Client\Models\OrganizationServiceOrganizationState $state = null;
 

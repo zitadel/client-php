@@ -19,7 +19,6 @@ class BetaProjectServiceDeactivateProjectRequest
 {
     /**
      * The unique identifier of the project.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;

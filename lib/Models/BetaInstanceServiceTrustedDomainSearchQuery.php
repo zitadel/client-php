@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaInstanceServiceTrustedDomainSearchQuery
 {
-    /** @example null */
     #[SerializedName('domainQuery')]
     public ?\Zitadel\Client\Models\BetaInstanceServiceDomainQuery $domainQuery = null;
 

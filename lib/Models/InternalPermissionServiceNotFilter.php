@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class InternalPermissionServiceNotFilter
 {
-    /** @example null */
     #[SerializedName('query')]
     public ?\Zitadel\Client\Models\InternalPermissionServiceAdministratorSearchFilter $query = null;
 

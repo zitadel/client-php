@@ -19,14 +19,12 @@ class InstanceServiceRemoveTrustedDomainRequest
 {
     /**
      * InstanceID is the unique ID of the instance from which the trusted domain will be removed.  If not set, the instance in the current context (e.g. identified by the host header) will be used.  If an ID is set, the caller must have additional permissions.
-     * @example null
      */
     #[SerializedName('instanceId')]
     public ?string $instanceId = null;
 
     /**
      * The trusted domain to remove from the instance.
-     * @example null
      */
     #[SerializedName('trustedDomain')]
     public ?string $trustedDomain = null;

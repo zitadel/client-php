@@ -19,14 +19,12 @@ class BetaProjectServiceUpdateProjectGrantRequest
 {
     /**
      * ID of the project.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
     /**
      * Organization the project is granted to.
-     * @example null
      */
     #[SerializedName('grantedOrganizationId')]
     public ?string $grantedOrganizationId = null;
@@ -34,7 +32,6 @@ class BetaProjectServiceUpdateProjectGrantRequest
     /**
      * Keys of the role available for the project grant.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('roleKeys')]
     public ?\Ds\Vector $roleKeys = null;

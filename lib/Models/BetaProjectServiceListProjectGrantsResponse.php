@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaProjectServiceListProjectGrantsResponse
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaProjectServicePaginationResponse $pagination = null;
 

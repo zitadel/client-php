@@ -19,14 +19,12 @@ class ProjectServiceCreateProjectGrantRequest
 {
     /**
      * ProjectID is the unique identifier of the project.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
     /**
      * GrantedOrganizationID is the unique identifier of the organization the project will be granted to.
-     * @example null
      */
     #[SerializedName('grantedOrganizationId')]
     public ?string $grantedOrganizationId = null;
@@ -34,7 +32,6 @@ class ProjectServiceCreateProjectGrantRequest
     /**
      * RoleKeys is a list of roles to be granted to the organization for self management.  The roles are identified by their keys.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('roleKeys')]
     public ?\Ds\Vector $roleKeys = null;

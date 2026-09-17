@@ -19,7 +19,6 @@ class SettingsServiceEmbeddedIframeSettings
 {
     /**
      * Enabled states if iframe embedding is enabled or disabled.
-     * @example null
      */
     #[SerializedName('enabled')]
     public ?bool $enabled = null;
@@ -27,7 +26,6 @@ class SettingsServiceEmbeddedIframeSettings
     /**
      * AllowedOrigins defines which origins are allowed to embed ZITADEL in an iframe.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('allowedOrigins')]
     public ?\Ds\Vector $allowedOrigins = null;

@@ -19,19 +19,16 @@ class ApplicationServiceSAMLConfiguration
 {
     /**
      * The Metadata XML is the provided or fetched metadata stored at Zitadel.  If either the metadata was provided as XML or when Zitadel fetched it at the provided URL,  it is stored here.
-     * @example null
      */
     #[SerializedName('metadataXml')]
     public ?string $metadataXml = null;
 
     /**
      * The Metadata URL is the URL where the metadata was fetched from.  In case the metadata was provided as raw XML, this field is empty.
-     * @example null
      */
     #[SerializedName('metadataUrl')]
     public ?string $metadataUrl = null;
 
-    /** @example null */
     #[SerializedName('loginVersion')]
     public ?\Zitadel\Client\Models\ApplicationServiceLoginVersion $loginVersion = null;
 

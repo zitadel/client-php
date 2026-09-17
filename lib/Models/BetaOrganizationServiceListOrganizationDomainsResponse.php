@@ -17,14 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaOrganizationServiceListOrganizationDomainsResponse
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaOrganizationServicePaginationResponse $pagination = null;
 
     /**
      * The domains requested.
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaOrganizationServiceDomain>|null
-     * @example null
      */
     #[SerializedName('domains')]
     public ?\Ds\Vector $domains = null;

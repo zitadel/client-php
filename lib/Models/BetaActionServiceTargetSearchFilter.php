@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaActionServiceTargetSearchFilter
 {
-    /** @example null */
     #[SerializedName('inTargetIdsFilter')]
     public ?\Zitadel\Client\Models\BetaActionServiceInTargetIDsFilter $inTargetIdsFilter = null;
 
-    /** @example null */
     #[SerializedName('targetNameFilter')]
     public ?\Zitadel\Client\Models\BetaActionServiceTargetNameFilter $targetNameFilter = null;
 

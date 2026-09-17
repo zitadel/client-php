@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SettingsServiceSetSecuritySettingsResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\SettingsServiceDetails $details = null;
 

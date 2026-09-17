@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceVerifyTOTPRegistrationResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\BetaUserServiceDetails $details = null;
 

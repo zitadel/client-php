@@ -19,11 +19,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAppServiceApplicationNameQuery
 {
-    /** @example null */
     #[SerializedName('name')]
     public ?string $name = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\BetaAppServiceTextFilterMethod $method = null;
 

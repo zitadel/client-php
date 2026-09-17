@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * ApplicationServiceApplicationKeysSorting is an enumeration of allowed values.
+ */
 enum ApplicationServiceApplicationKeysSorting: string
 {
     case APPLICATION_KEYS_SORT_BY_ID = 'APPLICATION_KEYS_SORT_BY_ID';

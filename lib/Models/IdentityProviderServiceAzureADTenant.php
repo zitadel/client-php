@@ -19,11 +19,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class IdentityProviderServiceAzureADTenant
 {
-    /** @example null */
     #[SerializedName('tenantId')]
     public ?string $tenantId = null;
 
-    /** @example null */
     #[SerializedName('tenantType')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceAzureADTenantType $tenantType = null;
 

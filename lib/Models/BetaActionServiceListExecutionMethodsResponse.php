@@ -20,7 +20,6 @@ class BetaActionServiceListExecutionMethodsResponse
     /**
      * All available methods
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('methods')]
     public ?\Ds\Vector $methods = null;

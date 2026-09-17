@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaOIDCServiceSession
 {
-    /** @example null */
     #[SerializedName('sessionId')]
     public ?string $sessionId = null;
 
-    /** @example null */
     #[SerializedName('sessionToken')]
     public ?string $sessionToken = null;
 

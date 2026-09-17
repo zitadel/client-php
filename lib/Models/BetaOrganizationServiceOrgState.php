@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaOrganizationServiceOrgState is an enumeration of allowed values.
+ */
 enum BetaOrganizationServiceOrgState: string
 {
     case ORG_STATE_UNSPECIFIED = 'ORG_STATE_UNSPECIFIED';

@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceLockUserRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 

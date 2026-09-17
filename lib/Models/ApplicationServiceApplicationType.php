@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * ApplicationServiceApplicationType is an enumeration of allowed values.
+ */
 enum ApplicationServiceApplicationType: string
 {
     case APPLICATION_TYPE_UNSPECIFIED = 'APPLICATION_TYPE_UNSPECIFIED';

@@ -19,18 +19,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ApplicationServiceListApplicationsRequest
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\ApplicationServicePaginationRequest $pagination = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\ApplicationServiceApplicationSorting $sortingColumn = null;
 
     /**
      * Criteria to filter the applications.  All provided filters are combined with a logical AND.
      * @var \Ds\Vector<\Zitadel\Client\Models\ApplicationServiceApplicationSearchFilter>|null
-     * @example null
      */
     #[SerializedName('filters')]
     public ?\Ds\Vector $filters = null;

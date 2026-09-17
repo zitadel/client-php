@@ -21,40 +21,34 @@ class SettingsServicePasswordComplexitySettings
 {
     /**
      * The minimum length a password must have.
-     * @example null
      */
     #[SerializedName('minLength')]
     public mixed $minLength = null;
 
     /**
      * Defines if the password MUST contain an upper case letter.
-     * @example null
      */
     #[SerializedName('requiresUppercase')]
     public ?bool $requiresUppercase = null;
 
     /**
      * Defines if the password MUST contain a lowercase letter.
-     * @example null
      */
     #[SerializedName('requiresLowercase')]
     public ?bool $requiresLowercase = null;
 
     /**
      * Defines if the password MUST contain a number.
-     * @example null
      */
     #[SerializedName('requiresNumber')]
     public ?bool $requiresNumber = null;
 
     /**
-     * Defines if the password MUST contain a symbol or special character. E.g. \"$\"
-     * @example null
+     * Defines if the password MUST contain a symbol or special character. E.g. "$"
      */
     #[SerializedName('requiresSymbol')]
     public ?bool $requiresSymbol = null;
 
-    /** @example null */
     #[SerializedName('resourceOwnerType')]
     public ?\Zitadel\Client\Models\SettingsServiceResourceOwnerType $resourceOwnerType = null;
 

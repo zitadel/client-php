@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * UserServiceUserFieldName is an enumeration of allowed values.
+ */
 enum UserServiceUserFieldName: string
 {
     case USER_FIELD_NAME_UNSPECIFIED = 'USER_FIELD_NAME_UNSPECIFIED';

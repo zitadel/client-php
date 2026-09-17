@@ -17,13 +17,11 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class IdentityProviderServiceGitLabSelfHostedConfig
 {
-    /** @example null */
     #[SerializedName('issuer')]
     public ?string $issuer = null;
 
     /**
      * Client id of the GitLab application.
-     * @example null
      */
     #[SerializedName('clientId')]
     public ?string $clientId = null;
@@ -31,7 +29,6 @@ class IdentityProviderServiceGitLabSelfHostedConfig
     /**
      * The scopes requested by ZITADEL during the request to GitLab.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('scopes')]
     public ?\Ds\Vector $scopes = null;

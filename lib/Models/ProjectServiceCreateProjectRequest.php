@@ -21,47 +21,40 @@ class ProjectServiceCreateProjectRequest
 {
     /**
      * OrganizationID is the unique identifier of the organization the project belongs to.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
     /**
      * ProjectID is the unique identifier of the new project. This field is optional.  If omitted, the system will generate a unique ID for you. This is the  recommended way. The generated ID will be returned in the response.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
     /**
      * Name of the project. This might be presented to users, e.g. in sign-in flows.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;
 
     /**
      * ProjectRoleAssertion is a  setting that can be enabled to have role information  included in the user info endpoint.  It is also dependent on your application settings to include it in tokens and other types.
-     * @example null
      */
     #[SerializedName('projectRoleAssertion')]
     public ?bool $projectRoleAssertion = null;
 
     /**
      * AuthorizationRequired is a boolean flag that can be enabled to check if a user has  an authorization to use this project assigned when login into an application of this project.
-     * @example null
      */
     #[SerializedName('authorizationRequired')]
     public ?bool $authorizationRequired = null;
 
     /**
      * ProjectAccessRequired is a boolean flag that can be enabled to check if the organization  of the user, that is trying to log in,  has access to this project (either owns the project or is granted).
-     * @example null
      */
     #[SerializedName('projectAccessRequired')]
     public ?bool $projectAccessRequired = null;
 
-    /** @example null */
     #[SerializedName('privateLabelingSetting')]
     public ?\Zitadel\Client\Models\ProjectServicePrivateLabelingSetting $privateLabelingSetting = null;
 

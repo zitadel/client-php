@@ -19,40 +19,33 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SettingsServiceBrandingSettings
 {
-    /** @example null */
     #[SerializedName('lightTheme')]
     public ?\Zitadel\Client\Models\SettingsServiceTheme $lightTheme = null;
 
-    /** @example null */
     #[SerializedName('darkTheme')]
     public ?\Zitadel\Client\Models\SettingsServiceTheme $darkTheme = null;
 
     /**
      * The url where the font is served.
-     * @example null
      */
     #[SerializedName('fontUrl')]
     public ?string $fontUrl = null;
 
     /**
-     * If enabled, the organization suffix will be hidden on the login form if the scope \\\"urn:zitadel:iam:org:domain:primary:{domainname}\\\" is used.
-     * @example null
+     * If enabled, the organization suffix will be hidden on the login form if the scope \"urn:zitadel:iam:org:domain:primary:{domainname}\" is used.
      */
     #[SerializedName('hideLoginNameSuffix')]
     public ?bool $hideLoginNameSuffix = null;
 
     /**
      * If enabled, the Zitadel logo will not be displayed on the login screen.
-     * @example null
      */
     #[SerializedName('disableWatermark')]
     public ?bool $disableWatermark = null;
 
-    /** @example null */
     #[SerializedName('resourceOwnerType')]
     public ?\Zitadel\Client\Models\SettingsServiceResourceOwnerType $resourceOwnerType = null;
 
-    /** @example null */
     #[SerializedName('themeMode')]
     public ?\Zitadel\Client\Models\SettingsServiceThemeMode $themeMode = null;
 

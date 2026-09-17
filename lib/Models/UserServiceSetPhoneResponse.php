@@ -17,13 +17,11 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceSetPhoneResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\UserServiceDetails $details = null;
 
     /**
      * in case the verification was set to return_code, the code will be returned
-     * @example null
      */
     #[SerializedName('verificationCode')]
     public ?string $verificationCode = null;

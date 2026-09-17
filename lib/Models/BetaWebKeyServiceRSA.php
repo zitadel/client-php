@@ -19,11 +19,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaWebKeyServiceRSA
 {
-    /** @example null */
     #[SerializedName('bits')]
     public ?\Zitadel\Client\Models\BetaWebKeyServiceRSABits $bits = null;
 
-    /** @example null */
     #[SerializedName('hasher')]
     public ?\Zitadel\Client\Models\BetaWebKeyServiceRSAHasher $hasher = null;
 

@@ -19,6 +19,7 @@ use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
 use Zitadel\Client\ValueSerializer;
+use Zitadel\Client\Auth\NoAuth;
 
 /**
  * BetaOrganizationServiceApi provides methods for the BetaOrganizationService API group.
@@ -43,8 +44,8 @@ class BetaOrganizationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for activateOrganization but received none',
                 $apiResult->statusCode,
+                'Expected a response body for activateOrganization but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -75,7 +76,11 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceActivateOrganizationResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceActivateOrganizationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -97,8 +102,8 @@ class BetaOrganizationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for addOrganizationDomain but received none',
                 $apiResult->statusCode,
+                'Expected a response body for addOrganizationDomain but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -129,7 +134,11 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceAddOrganizationDomainResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceAddOrganizationDomainResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -151,8 +160,8 @@ class BetaOrganizationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for createOrganization but received none',
                 $apiResult->statusCode,
+                'Expected a response body for createOrganization but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -183,7 +192,11 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceCreateOrganizationResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceCreateOrganizationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -205,8 +218,8 @@ class BetaOrganizationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for deactivateOrganization but received none',
                 $apiResult->statusCode,
+                'Expected a response body for deactivateOrganization but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -237,7 +250,11 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceDeactivateOrganizationResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceDeactivateOrganizationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -259,8 +276,8 @@ class BetaOrganizationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for deleteOrganization but received none',
                 $apiResult->statusCode,
+                'Expected a response body for deleteOrganization but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -291,7 +308,11 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -313,8 +334,8 @@ class BetaOrganizationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for deleteOrganizationDomain but received none',
                 $apiResult->statusCode,
+                'Expected a response body for deleteOrganizationDomain but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -345,7 +366,11 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationDomainResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationDomainResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -367,8 +392,8 @@ class BetaOrganizationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for deleteOrganizationMetadata but received none',
                 $apiResult->statusCode,
+                'Expected a response body for deleteOrganizationMetadata but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -399,7 +424,11 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationMetadataResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationMetadataResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -421,8 +450,8 @@ class BetaOrganizationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for generateOrganizationDomainValidation but received none',
                 $apiResult->statusCode,
+                'Expected a response body for generateOrganizationDomainValidation but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -453,7 +482,11 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceGenerateOrganizationDomainValidationResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceGenerateOrganizationDomainValidationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -475,8 +508,8 @@ class BetaOrganizationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for listOrganizationDomains but received none',
                 $apiResult->statusCode,
+                'Expected a response body for listOrganizationDomains but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -507,7 +540,11 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationDomainsResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationDomainsResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -529,8 +566,8 @@ class BetaOrganizationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for listOrganizationMetadata but received none',
                 $apiResult->statusCode,
+                'Expected a response body for listOrganizationMetadata but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -561,7 +598,11 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationMetadataResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationMetadataResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -583,8 +624,8 @@ class BetaOrganizationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for listOrganizations but received none',
                 $apiResult->statusCode,
+                'Expected a response body for listOrganizations but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -615,7 +656,11 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationsResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationsResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -637,8 +682,8 @@ class BetaOrganizationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for setOrganizationMetadata but received none',
                 $apiResult->statusCode,
+                'Expected a response body for setOrganizationMetadata but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -669,7 +714,11 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceSetOrganizationMetadataResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceSetOrganizationMetadataResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -691,8 +740,8 @@ class BetaOrganizationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for updateOrganization but received none',
                 $apiResult->statusCode,
+                'Expected a response body for updateOrganization but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -723,7 +772,11 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceUpdateOrganizationResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceUpdateOrganizationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -745,8 +798,8 @@ class BetaOrganizationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for verifyOrganizationDomain but received none',
                 $apiResult->statusCode,
+                'Expected a response body for verifyOrganizationDomain but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -777,7 +830,11 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceVerifyOrganizationDomainResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceVerifyOrganizationDomainResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }

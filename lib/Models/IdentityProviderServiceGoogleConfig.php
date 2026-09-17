@@ -19,7 +19,6 @@ class IdentityProviderServiceGoogleConfig
 {
     /**
      * Client id of the Google application.
-     * @example null
      */
     #[SerializedName('clientId')]
     public ?string $clientId = null;
@@ -27,7 +26,6 @@ class IdentityProviderServiceGoogleConfig
     /**
      * The scopes requested by ZITADEL during the request to Google.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('scopes')]
     public ?\Ds\Vector $scopes = null;

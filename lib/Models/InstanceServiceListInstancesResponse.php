@@ -20,12 +20,10 @@ class InstanceServiceListInstancesResponse
     /**
      * The instances matching the query.
      * @var \Ds\Vector<\Zitadel\Client\Models\InstanceServiceInstance>|null
-     * @example null
      */
     #[SerializedName('instances')]
     public ?\Ds\Vector $instances = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\InstanceServicePaginationResponse $pagination = null;
 

@@ -19,7 +19,6 @@ class SAMLServiceGetSAMLRequestRequest
 {
     /**
      * ID of the SAML Request, as obtained from the redirect URL.
-     * @example null
      */
     #[SerializedName('samlRequestId')]
     public ?string $samlRequestId = null;

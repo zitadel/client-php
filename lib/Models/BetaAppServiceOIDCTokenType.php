@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaAppServiceOIDCTokenType is an enumeration of allowed values.
+ */
 enum BetaAppServiceOIDCTokenType: string
 {
     case OIDC_TOKEN_TYPE_BEARER = 'OIDC_TOKEN_TYPE_BEARER';

@@ -19,14 +19,12 @@ class OrganizationServiceAddOrganizationDomainRequest
 {
     /**
      * OrganizationID is the unique identifier of the organization to which the domain is to be added.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
     /**
      * Domain is the full qualified domain name to be added to the organization.  Note that the domain has to be unique across the instance.  Depending on the settings, you might have to verify the domain before it can be used.
-     * @example null
      */
     #[SerializedName('domain')]
     public ?string $domain = null;

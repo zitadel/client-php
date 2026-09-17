@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaOrganizationServiceGender is an enumeration of allowed values.
+ */
 enum BetaOrganizationServiceGender: string
 {
     case GENDER_UNSPECIFIED = 'GENDER_UNSPECIFIED';

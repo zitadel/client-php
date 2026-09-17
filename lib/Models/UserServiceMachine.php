@@ -19,14 +19,12 @@ class UserServiceMachine
 {
     /**
      * The machine users name is a human readable field that helps identifying the user.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;
 
     /**
      * The description is a field that helps to remember the purpose of the user.
-     * @example null
      */
     #[SerializedName('description')]
     public ?string $description = null;

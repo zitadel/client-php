@@ -17,31 +17,24 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceFactors
 {
-    /** @example null */
     #[SerializedName('user')]
     public ?\Zitadel\Client\Models\BetaSessionServiceUserFactor $user = null;
 
-    /** @example null */
     #[SerializedName('password')]
     public ?\Zitadel\Client\Models\BetaSessionServicePasswordFactor $password = null;
 
-    /** @example null */
     #[SerializedName('webAuthN')]
     public ?\Zitadel\Client\Models\BetaSessionServiceWebAuthNFactor $webAuthN = null;
 
-    /** @example null */
     #[SerializedName('intent')]
     public ?\Zitadel\Client\Models\BetaSessionServiceIntentFactor $intent = null;
 
-    /** @example null */
     #[SerializedName('totp')]
     public ?\Zitadel\Client\Models\BetaSessionServiceTOTPFactor $totp = null;
 
-    /** @example null */
     #[SerializedName('otpSms')]
     public ?\Zitadel\Client\Models\BetaSessionServiceOTPFactor $otpSms = null;
 
-    /** @example null */
     #[SerializedName('otpEmail')]
     public ?\Zitadel\Client\Models\BetaSessionServiceOTPFactor $otpEmail = null;
 

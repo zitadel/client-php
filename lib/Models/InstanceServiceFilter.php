@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class InstanceServiceFilter
 {
-    /** @example null */
     #[SerializedName('customDomainsFilter')]
     public ?\Zitadel\Client\Models\InstanceServiceCustomDomainsFilter $customDomainsFilter = null;
 
-    /** @example null */
     #[SerializedName('inIdsFilter')]
     public ?\Zitadel\Client\Models\InstanceServiceInIDsFilter $inIdsFilter = null;
 

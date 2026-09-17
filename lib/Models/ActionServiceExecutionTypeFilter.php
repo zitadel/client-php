@@ -19,7 +19,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ActionServiceExecutionTypeFilter
 {
-    /** @example null */
     #[SerializedName('executionType')]
     public ?\Zitadel\Client\Models\ActionServiceExecutionType $executionType = null;
 

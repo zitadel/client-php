@@ -19,7 +19,6 @@ class BetaOrganizationServiceOrgIDFilter
 {
     /**
      * The Organization id.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;

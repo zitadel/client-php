@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaInstanceServiceQuery
 {
-    /** @example null */
     #[SerializedName('domainQuery')]
     public ?\Zitadel\Client\Models\BetaInstanceServiceDomainsQuery $domainQuery = null;
 
-    /** @example null */
     #[SerializedName('idQuery')]
     public ?\Zitadel\Client\Models\BetaInstanceServiceIdsQuery $idQuery = null;
 

@@ -19,6 +19,7 @@ use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
 use Zitadel\Client\ValueSerializer;
+use Zitadel\Client\Auth\NoAuth;
 
 /**
  * IdentityProviderServiceApi provides methods for the IdentityProviderService API group.
@@ -43,8 +44,8 @@ class IdentityProviderServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for getIDPByID but received none',
                 $apiResult->statusCode,
+                'Expected a response body for getIDPByID but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -75,7 +76,11 @@ class IdentityProviderServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\IdentityProviderServiceGetIDPByIDResponse::class
+            \Zitadel\Client\Models\IdentityProviderServiceGetIDPByIDResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }

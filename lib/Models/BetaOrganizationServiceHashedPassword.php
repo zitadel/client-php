@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaOrganizationServiceHashedPassword
 {
-    /** @example null */
     #[SerializedName('hash')]
     public ?string $hash = null;
 
-    /** @example null */
     #[SerializedName('changeRequired')]
     public ?bool $changeRequired = null;
 

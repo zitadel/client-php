@@ -19,6 +19,7 @@ use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
 use Zitadel\Client\ValueSerializer;
+use Zitadel\Client\Auth\NoAuth;
 
 /**
  * ApplicationServiceApi provides methods for the ApplicationService API group.
@@ -43,8 +44,8 @@ class ApplicationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for createApplication but received none',
                 $apiResult->statusCode,
+                'Expected a response body for createApplication but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -75,7 +76,11 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceCreateApplicationResponse::class
+            \Zitadel\Client\Models\ApplicationServiceCreateApplicationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -97,8 +102,8 @@ class ApplicationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for createApplicationKey but received none',
                 $apiResult->statusCode,
+                'Expected a response body for createApplicationKey but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -129,7 +134,11 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceCreateApplicationKeyResponse::class
+            \Zitadel\Client\Models\ApplicationServiceCreateApplicationKeyResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -151,8 +160,8 @@ class ApplicationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for deactivateApplication but received none',
                 $apiResult->statusCode,
+                'Expected a response body for deactivateApplication but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -183,7 +192,11 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceDeactivateApplicationResponse::class
+            \Zitadel\Client\Models\ApplicationServiceDeactivateApplicationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -205,8 +218,8 @@ class ApplicationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for deleteApplication but received none',
                 $apiResult->statusCode,
+                'Expected a response body for deleteApplication but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -237,7 +250,11 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceDeleteApplicationResponse::class
+            \Zitadel\Client\Models\ApplicationServiceDeleteApplicationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -259,8 +276,8 @@ class ApplicationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for deleteApplicationKey but received none',
                 $apiResult->statusCode,
+                'Expected a response body for deleteApplicationKey but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -291,7 +308,11 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceDeleteApplicationKeyResponse::class
+            \Zitadel\Client\Models\ApplicationServiceDeleteApplicationKeyResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -313,8 +334,8 @@ class ApplicationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for generateClientSecret but received none',
                 $apiResult->statusCode,
+                'Expected a response body for generateClientSecret but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -345,7 +366,11 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceGenerateClientSecretResponse::class
+            \Zitadel\Client\Models\ApplicationServiceGenerateClientSecretResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -367,8 +392,8 @@ class ApplicationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for getApplication but received none',
                 $apiResult->statusCode,
+                'Expected a response body for getApplication but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -399,7 +424,11 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceGetApplicationResponse::class
+            \Zitadel\Client\Models\ApplicationServiceGetApplicationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -421,8 +450,8 @@ class ApplicationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for getApplicationKey but received none',
                 $apiResult->statusCode,
+                'Expected a response body for getApplicationKey but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -453,7 +482,11 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceGetApplicationKeyResponse::class
+            \Zitadel\Client\Models\ApplicationServiceGetApplicationKeyResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -475,8 +508,8 @@ class ApplicationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for listApplicationKeys but received none',
                 $apiResult->statusCode,
+                'Expected a response body for listApplicationKeys but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -507,7 +540,11 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceListApplicationKeysResponse::class
+            \Zitadel\Client\Models\ApplicationServiceListApplicationKeysResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -529,8 +566,8 @@ class ApplicationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for listApplications but received none',
                 $apiResult->statusCode,
+                'Expected a response body for listApplications but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -561,7 +598,11 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceListApplicationsResponse::class
+            \Zitadel\Client\Models\ApplicationServiceListApplicationsResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -583,8 +624,8 @@ class ApplicationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for reactivateApplication but received none',
                 $apiResult->statusCode,
+                'Expected a response body for reactivateApplication but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -615,7 +656,11 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceReactivateApplicationResponse::class
+            \Zitadel\Client\Models\ApplicationServiceReactivateApplicationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -637,8 +682,8 @@ class ApplicationServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for updateApplication but received none',
                 $apiResult->statusCode,
+                'Expected a response body for updateApplication but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -669,7 +714,11 @@ class ApplicationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ApplicationServiceUpdateApplicationResponse::class
+            \Zitadel\Client\Models\ApplicationServiceUpdateApplicationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }

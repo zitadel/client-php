@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceRemoveU2FRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('u2fId')]
     public ?string $u2fId = null;
 

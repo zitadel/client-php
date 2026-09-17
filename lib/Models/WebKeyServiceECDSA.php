@@ -19,7 +19,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class WebKeyServiceECDSA
 {
-    /** @example null */
     #[SerializedName('curve')]
     public ?\Zitadel\Client\Models\WebKeyServiceECDSACurve $curve = null;
 

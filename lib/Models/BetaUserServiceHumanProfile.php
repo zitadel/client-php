@@ -19,31 +19,24 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceHumanProfile
 {
-    /** @example null */
     #[SerializedName('givenName')]
     public ?string $givenName = null;
 
-    /** @example null */
     #[SerializedName('familyName')]
     public ?string $familyName = null;
 
-    /** @example null */
     #[SerializedName('nickName')]
     public ?string $nickName = null;
 
-    /** @example null */
     #[SerializedName('displayName')]
     public ?string $displayName = null;
 
-    /** @example null */
     #[SerializedName('preferredLanguage')]
     public ?string $preferredLanguage = null;
 
-    /** @example null */
     #[SerializedName('gender')]
     public ?\Zitadel\Client\Models\BetaUserServiceGender $gender = null;
 
-    /** @example null */
     #[SerializedName('avatarUrl')]
     public ?string $avatarUrl = null;
 

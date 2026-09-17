@@ -24,6 +24,6 @@ class ConflictException extends ClientException
         ?string $responseBody = null,
         mixed $errorBody = null
     ) {
-        parent::__construct($message, 409, $responseHeaders, $responseBody, $errorBody);
+        parent::__construct(409, $message, $responseHeaders, $responseBody, $errorBody);
     }
 }

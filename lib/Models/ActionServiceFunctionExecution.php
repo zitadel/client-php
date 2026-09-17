@@ -20,7 +20,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
  */
 class ActionServiceFunctionExecution
 {
-    /** @example null */
     #[SerializedName('name')]
     public ?string $name = null;
 

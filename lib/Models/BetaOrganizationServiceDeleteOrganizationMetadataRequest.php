@@ -19,7 +19,6 @@ class BetaOrganizationServiceDeleteOrganizationMetadataRequest
 {
     /**
      * Organization ID of Orgalization which metadata is to be deleted is stored on.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
@@ -27,7 +26,6 @@ class BetaOrganizationServiceDeleteOrganizationMetadataRequest
     /**
      * The keys for the Organization metadata to be deleted.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('keys')]
     public ?\Ds\Vector $keys = null;

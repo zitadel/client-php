@@ -19,27 +19,21 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ApplicationServiceApplicationSearchFilter
 {
-    /** @example null */
     #[SerializedName('clientIdFilter')]
     public ?\Zitadel\Client\Models\ApplicationServiceClientIDFilter $clientIdFilter = null;
 
-    /** @example null */
     #[SerializedName('entityIdFilter')]
     public ?\Zitadel\Client\Models\ApplicationServiceEntityIDFilter $entityIdFilter = null;
 
-    /** @example null */
     #[SerializedName('nameFilter')]
     public ?\Zitadel\Client\Models\ApplicationServiceApplicationNameFilter $nameFilter = null;
 
-    /** @example null */
     #[SerializedName('projectIdFilter')]
     public ?\Zitadel\Client\Models\ApplicationServiceProjectIDFilter $projectIdFilter = null;
 
-    /** @example null */
     #[SerializedName('stateFilter')]
     public ?\Zitadel\Client\Models\ApplicationServiceApplicationState $stateFilter = null;
 
-    /** @example null */
     #[SerializedName('typeFilter')]
     public ?\Zitadel\Client\Models\ApplicationServiceApplicationType $typeFilter = null;
 

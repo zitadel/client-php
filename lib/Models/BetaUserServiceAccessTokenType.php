@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaUserServiceAccessTokenType is an enumeration of allowed values.
+ */
 enum BetaUserServiceAccessTokenType: string
 {
     case ACCESS_TOKEN_TYPE_BEARER = 'ACCESS_TOKEN_TYPE_BEARER';

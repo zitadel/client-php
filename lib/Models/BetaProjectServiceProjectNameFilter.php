@@ -21,12 +21,10 @@ class BetaProjectServiceProjectNameFilter
 {
     /**
      * Defines the name of the project to query for.
-     * @example null
      */
     #[SerializedName('projectName')]
     public ?string $projectName = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\BetaProjectServiceTextFilterMethod $method = null;
 

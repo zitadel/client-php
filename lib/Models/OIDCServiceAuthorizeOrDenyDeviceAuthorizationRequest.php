@@ -19,16 +19,13 @@ class OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest
 {
     /**
      * The device authorization id returned when submitting the user code.
-     * @example null
      */
     #[SerializedName('deviceAuthorizationId')]
     public ?string $deviceAuthorizationId = null;
 
-    /** @example null */
     #[SerializedName('deny')]
     public ?object $deny = null;
 
-    /** @example null */
     #[SerializedName('session')]
     public ?\Zitadel\Client\Models\OIDCServiceSession $session = null;
 

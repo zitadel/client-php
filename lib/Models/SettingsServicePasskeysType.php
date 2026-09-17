@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * SettingsServicePasskeysType is an enumeration of allowed values.
+ */
 enum SettingsServicePasskeysType: string
 {
     case PASSKEYS_TYPE_NOT_ALLOWED = 'PASSKEYS_TYPE_NOT_ALLOWED';

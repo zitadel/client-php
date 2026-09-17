@@ -17,31 +17,24 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaFeatureServiceGetInstanceFeaturesResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\BetaFeatureServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('loginDefaultOrg')]
     public ?\Zitadel\Client\Models\BetaFeatureServiceFeatureFlag $loginDefaultOrg = null;
 
-    /** @example null */
     #[SerializedName('userSchema')]
     public ?\Zitadel\Client\Models\BetaFeatureServiceFeatureFlag $userSchema = null;
 
-    /** @example null */
     #[SerializedName('oidcTokenExchange')]
     public ?\Zitadel\Client\Models\BetaFeatureServiceFeatureFlag $oidcTokenExchange = null;
 
-    /** @example null */
     #[SerializedName('improvedPerformance')]
     public ?\Zitadel\Client\Models\BetaFeatureServiceImprovedPerformanceFeatureFlag $improvedPerformance = null;
 
-    /** @example null */
     #[SerializedName('debugOidcParentError')]
     public ?\Zitadel\Client\Models\BetaFeatureServiceFeatureFlag $debugOidcParentError = null;
 
-    /** @example null */
     #[SerializedName('oidcSingleV1SessionTermination')]
     public ?\Zitadel\Client\Models\BetaFeatureServiceFeatureFlag $oidcSingleV1SessionTermination = null;
 

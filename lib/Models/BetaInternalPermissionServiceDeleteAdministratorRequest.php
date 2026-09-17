@@ -19,12 +19,10 @@ class BetaInternalPermissionServiceDeleteAdministratorRequest
 {
     /**
      * UserID is the ID of the user who should have his administrator roles removed.
-     * @example null
      */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('resource')]
     public ?\Zitadel\Client\Models\BetaInternalPermissionServiceResourceType $resource = null;
 

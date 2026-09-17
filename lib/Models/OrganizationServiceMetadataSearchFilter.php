@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class OrganizationServiceMetadataSearchFilter
 {
-    /** @example null */
     #[SerializedName('keyFilter')]
     public ?\Zitadel\Client\Models\OrganizationServiceMetadataKeyFilter $keyFilter = null;
 

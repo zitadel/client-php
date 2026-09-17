@@ -17,51 +17,39 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAuthorizationServiceAuthorizationsSearchFilter
 {
-    /** @example null */
     #[SerializedName('authorizationIds')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceInIDsFilter $authorizationIds = null;
 
-    /** @example null */
     #[SerializedName('inUserIds')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceInIDsFilter $inUserIds = null;
 
-    /** @example null */
     #[SerializedName('organizationId')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceIDFilter $organizationId = null;
 
-    /** @example null */
     #[SerializedName('projectGrantId')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceIDFilter $projectGrantId = null;
 
-    /** @example null */
     #[SerializedName('projectId')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceIDFilter $projectId = null;
 
-    /** @example null */
     #[SerializedName('projectName')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceProjectNameQuery $projectName = null;
 
-    /** @example null */
     #[SerializedName('roleKey')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceRoleKeyQuery $roleKey = null;
 
-    /** @example null */
     #[SerializedName('state')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceStateQuery $state = null;
 
-    /** @example null */
     #[SerializedName('userDisplayName')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceUserDisplayNameQuery $userDisplayName = null;
 
-    /** @example null */
     #[SerializedName('userId')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceIDFilter $userId = null;
 
-    /** @example null */
     #[SerializedName('userOrganizationId')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceIDFilter $userOrganizationId = null;
 
-    /** @example null */
     #[SerializedName('userPreferredLoginName')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceUserPreferredLoginNameQuery $userPreferredLoginName = null;
 

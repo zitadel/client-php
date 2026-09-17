@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSettingsServiceGetGeneralSettingsResponse
 {
-    /** @example null */
     #[SerializedName('defaultOrgId')]
     public ?string $defaultOrgId = null;
 
-    /** @example null */
     #[SerializedName('defaultLanguage')]
     public ?string $defaultLanguage = null;
 

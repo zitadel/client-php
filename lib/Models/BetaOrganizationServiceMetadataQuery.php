@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaOrganizationServiceMetadataQuery
 {
-    /** @example null */
     #[SerializedName('keyQuery')]
     public ?\Zitadel\Client\Models\BetaOrganizationServiceMetadataKeyQuery $keyQuery = null;
 

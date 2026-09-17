@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * from proto/zitadel/org.proto
+ */
 enum BetaOrganizationServiceDomainValidationType: string
 {
     case DOMAIN_VALIDATION_TYPE_UNSPECIFIED = 'DOMAIN_VALIDATION_TYPE_UNSPECIFIED';

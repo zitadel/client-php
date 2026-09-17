@@ -19,14 +19,12 @@ class BetaProjectServiceDeleteProjectGrantRequest
 {
     /**
      * ID of the project.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
     /**
      * Organization the project is granted to.
-     * @example null
      */
     #[SerializedName('grantedOrganizationId')]
     public ?string $grantedOrganizationId = null;

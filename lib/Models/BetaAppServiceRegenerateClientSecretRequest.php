@@ -17,19 +17,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAppServiceRegenerateClientSecretRequest
 {
-    /** @example null */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
-    /** @example null */
     #[SerializedName('applicationId')]
     public ?string $applicationId = null;
 
-    /** @example null */
     #[SerializedName('isApi')]
     public ?bool $isApi = null;
 
-    /** @example null */
     #[SerializedName('isOidc')]
     public ?bool $isOidc = null;
 

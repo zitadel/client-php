@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaSettingsServiceMultiFactorType is an enumeration of allowed values.
+ */
 enum BetaSettingsServiceMultiFactorType: string
 {
     case MULTI_FACTOR_TYPE_UNSPECIFIED = 'MULTI_FACTOR_TYPE_UNSPECIFIED';

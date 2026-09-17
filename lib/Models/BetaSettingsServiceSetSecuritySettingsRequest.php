@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSettingsServiceSetSecuritySettingsRequest
 {
-    /** @example null */
     #[SerializedName('embeddedIframe')]
     public ?\Zitadel\Client\Models\BetaSettingsServiceEmbeddedIframeSettings $embeddedIframe = null;
 
-    /** @example null */
     #[SerializedName('enableImpersonation')]
     public ?bool $enableImpersonation = null;
 

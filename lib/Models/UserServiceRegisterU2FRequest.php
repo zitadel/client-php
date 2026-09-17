@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceRegisterU2FRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('domain')]
     public ?string $domain = null;
 

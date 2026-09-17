@@ -19,7 +19,6 @@ class BetaAppServiceLoginV2
 {
     /**
      * Optionally specify a base uri of the login UI. If unspecified the default URI will be used.
-     * @example null
      */
     #[SerializedName('baseUri')]
     public ?string $baseUri = null;

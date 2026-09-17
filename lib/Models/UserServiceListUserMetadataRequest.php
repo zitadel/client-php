@@ -19,19 +19,16 @@ class UserServiceListUserMetadataRequest
 {
     /**
      * ID of the user under which the metadata is to be listed.
-     * @example null
      */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\UserServicePaginationRequest $pagination = null;
 
     /**
      * Define the criteria to query for.
      * @var \Ds\Vector<\Zitadel\Client\Models\UserServiceMetadataSearchFilter>|null
-     * @example null
      */
     #[SerializedName('filters')]
     public ?\Ds\Vector $filters = null;

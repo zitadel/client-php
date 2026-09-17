@@ -41,7 +41,16 @@ use Symfony\Component\Serializer\Serializer;
  */
 class ObjectSerializer
 {
-    private const string DATE_TIME_FORMAT = \DateTime::ATOM;
+    /* H4: emit sub-second precision on the wire. \DateTime::ATOM
+     * ("Y-m-d\TH:i:sP") has no fractional-second component, so a date-time
+     * carrying milliseconds (2020-01-02T03:04:05.123Z) serialized to whole
+     * seconds — a lossy, asymmetric round-trip, since the decoder
+     * (new \DateTime($wire)) happily parses the fraction back. RFC3339_EXTENDED
+     * ("Y-m-d\TH:i:s.vP") appends the 3-digit millisecond fraction (.v) while
+     * keeping the same numeric UTC offset (+00:00) the offset tests and the
+     * decoder already expect, so the fraction the decoder accepts is now also
+     * emitted and the round-trip is lossless to the millisecond. */
+    private const string DATE_TIME_FORMAT = \DateTime::RFC3339_EXTENDED;
 
     private static ?Serializer $serializer = null;
 
@@ -135,6 +144,27 @@ class ObjectSerializer
         }
 
         if (is_object($data)) {
+            /* anyOf retain-all: a non-discriminated anyOf wrapper holds EVERY
+             * variant that matched at deserialize (see resolveAnyOfAll). Merge
+             * the sanitized field-set of each retained variant so the union of
+             * all variants' fields round-trips losslessly — a payload that
+             * co-satisfied two variants re-emits both variants' fields rather
+             * than silently dropping all but the first. Later variants win on a
+             * key collision, but anyOf branches that share a wire key carry the
+             * same value for it, so the merge is order-insensitive in practice. */
+            if (method_exists($data, 'getActualInstances')) {
+                /** @var array<int, mixed> $instances */
+                $instances = $data->getActualInstances();
+                $merged = [];
+                foreach ($instances as $instance) {
+                    $sanitized = self::sanitizeForSerialization($instance);
+                    if (is_array($sanitized)) {
+                        $merged = array_merge($merged, $sanitized);
+                    }
+                }
+                return $merged;
+            }
+
             if (method_exists($data, 'getActualInstance')) {
                 return self::sanitizeForSerialization($data->getActualInstance());
             }
@@ -143,6 +173,27 @@ class ObjectSerializer
             $normalized = self::getSerializer()->normalize($data, null, [
                 AbstractObjectNormalizer::SKIP_NULL_VALUES => true,
             ]);
+            /* OAS `additionalProperties` flatten. A model that declares an open
+             * additionalProperties map carries a public `?\Ds\Map
+             * $additionalProperties` property. The normalizer above walks every
+             * public property, so the map is emitted under a literal nested
+             * `additionalProperties` key — but the wire contract requires those
+             * entries flattened to the top level (matching Python's re-flatten
+             * and Java's `@JsonAnyGetter`). Lift each entry to the top level and
+             * drop the synthetic key. */
+            if (
+                property_exists($data, 'additionalProperties')
+                && $data->additionalProperties instanceof \Ds\Map
+            ) {
+                unset($normalized['additionalProperties']);
+                /* Iterate via toArray() so the keys are typed as the native PHP
+                 * array-key (int|string) rather than the Ds\Map's mixed key type;
+                 * additionalProperties keys are always JSON strings, and an
+                 * int|string casts to string cleanly (no phpstan cast.string). */
+                foreach ($data->additionalProperties->toArray() as $extraKey => $extraValue) {
+                    $normalized[(string) $extraKey] = self::sanitizeForSerialization($extraValue);
+                }
+            }
             return $normalized;
         }
 
@@ -303,15 +354,27 @@ class ObjectSerializer
 
         /* Phase-2 PHP type-surface: when the api template hands us a
          * typed container hint like `Ds\Vector<Pet>` /
-         * `Ds\Set<Pet>` / `Ds\Map<integer>` (compiled from the
-         * operation's returnType + returnBaseType pair), decode the
-         * JSON body, recursively deserialize each element against
-         * the inner type so model instances / DateTime / URI / enum
-         * fields route through their dedicated normalizers, then wrap
-         * the result in the matching Ds container. The inner type
-         * string is run through qualifySchemaName so short model
-         * names (e.g. "Pet") resolve to their FQN while primitives
-         * ("integer", "string") pass through unchanged. */
+         * `Ds\Set<Pet>` / `Ds\Map<integer>` (compiled by the
+         * deserialize_arg partial from the operation's returnProperty
+         * item tree), decode the JSON body, recursively deserialize
+         * each element against the inner type so model instances /
+         * DateTime / URI / enum fields route through their dedicated
+         * normalizers, then wrap the result in the matching Ds
+         * container. The inner type string is run through
+         * qualifySchemaName so short model names (e.g. "Pet") resolve
+         * to their FQN while primitives ("integer", "string") pass
+         * through unchanged.
+         *
+         * Nested generic containers recurse: a return type such as
+         * `\Ds\Vector<\Ds\Map<Category>>` (array of map of model)
+         * captures `\Ds\Map<Category>` as the inner type, which
+         * qualifySchemaName leaves intact (it already carries a
+         * backslash) and the per-element deserializeInternal() call
+         * re-enters this same branch, descending one container level
+         * per recursion so the innermost leaves become typed Category
+         * instances rather than raw maps. The greedy `(.+)` captures
+         * everything between the first `<` and the final `>`, keeping
+         * any nested `<...>` payload intact. */
         if (preg_match('/^Ds\\\\(Vector|Set|Map)<(.+)>$/', $class, $containerMatch)) {
             $container = $containerMatch[1];
             $inner = self::qualifySchemaName(trim($containerMatch[2]));
@@ -374,9 +437,31 @@ class ObjectSerializer
             return $deserialized;
         }
 
+        /* A top-level `format: byte` response carried as application/json is a
+         * JSON string literal holding the base64-encoded bytes (e.g.
+         * "dGVzdC1pbWFnZQ=="). Unlike a non-JSON binary body — which the
+         * transport layer base64-decodes in BaseApi — this body reaches the
+         * deserializer as JSON text, so JSON-parse the literal and then
+         * base64-decode the inner string to recover the raw bytes. Returning
+         * the un-decoded base64 string (or the quoted literal) would diverge
+         * from the byte-decoding SDKs (python/go/java/rust). */
+        if ($class === 'byte') {
+            $data = is_string($data) ? json_decode($data, true) : $data;
+            if ($data === null || $data === '') {
+                return null;
+            }
+            if (!is_string($data)) {
+                throw new \InvalidArgumentException(
+                    "Expected a base64 string for 'byte' but got " . gettype($data)
+                );
+            }
+            $decoded = base64_decode($data, true);
+            return $decoded === false ? $data : $decoded;
+        }
+
         $primitives = [
             'string', 'int', 'integer', 'float', 'number',
-            'bool', 'boolean', 'mixed', 'void', 'byte',
+            'bool', 'boolean', 'mixed', 'void',
         ];
         if (in_array($class, $primitives, true)) {
             /* For int-typed fields use JSON_BIGINT_AS_STRING so json_decode
@@ -537,6 +622,29 @@ class ObjectSerializer
             return $result;
         }
 
+        /* Gap AU-residual: a oneOf/anyOf composed model carries a static
+         * build() + a getActualInstance() accessor instead of
+         * SerializedName-decorated typed properties. Routing it through the
+         * generic Symfony denormalize() below would silently wrap the raw
+         * decoded array in an empty union container — including a payload
+         * that is missing the discriminator property. build() owns the
+         * discriminator routing and THROWS on a missing / unknown / non-string
+         * discriminator value (matching the other 10 SDKs); dispatch composed
+         * classes through it so the contract violation surfaces loudly instead
+         * of producing an un-typeable wrapper. The native
+         * \InvalidArgumentException build() raises is wrapped in
+         * SerializationException by the public deserialize() entry point. */
+        if (
+            class_exists($class)
+            && method_exists($class, 'build')
+            && method_exists($class, 'getActualInstance')
+        ) {
+            $decoded = is_string($data) ? json_decode($data, true) : $data;
+            /** @var object $built */
+            $built = $class::build($decoded);
+            return $built;
+        }
+
         if (is_string($data)) {
             try {
                 $decoded = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
@@ -547,9 +655,19 @@ class ObjectSerializer
                 }
                 self::assertRequiredPresent($decoded, $class);
                 self::assertPrimitiveTypes($decoded, $class);
+                self::assertNoUnknownProperties($decoded, $class);
+                /* Canonical #4: pass the JSON format so Symfony widens an
+                 * integral JSON value to a `float` property (e.g. {"lat":5}
+                 * into a `?float $lat`). validateAndDenormalize only applies
+                 * the int->float widening when the format string contains
+                 * "json"; called without a format it raises
+                 * NotNormalizableValueException for the integral value. The
+                 * body always arrives as decoded JSON here, so naming the
+                 * format is correct and matches the int-from-double widening
+                 * the other SDKs perform. */
                 /** @var object $result */
-                $result = self::getSerializer()->denormalize($decoded, $class);
-                return $result;
+                $result = self::getSerializer()->denormalize($decoded, $class, JsonEncoder::FORMAT);
+                return self::captureAdditionalProperties($result, $decoded);
             } catch (\Throwable $e) {
                 throw new SerializationException($e->getMessage(), 0, $e);
             }
@@ -559,9 +677,16 @@ class ObjectSerializer
             if (is_array($data)) {
                 self::assertRequiredPresent($data, $class);
                 self::assertPrimitiveTypes($data, $class);
+                self::assertNoUnknownProperties($data, $class);
             }
+            /* Pass the JSON format so Symfony widens an integral JSON value
+             * to a `float` property (Canonical #4); see the string-data
+             * branch above for the full rationale. */
             /** @var object $result */
-            $result = self::getSerializer()->denormalize($data, $class);
+            $result = self::getSerializer()->denormalize($data, $class, JsonEncoder::FORMAT);
+            if (is_array($data)) {
+                return self::captureAdditionalProperties($result, $data);
+            }
             return $result;
         } catch (\Throwable $e) {
             throw new SerializationException($e->getMessage(), 0, $e);
@@ -709,6 +834,99 @@ class ObjectSerializer
     }
 
     /**
+     * OAS 3.1 / JSON Schema 2020-12 `unevaluatedProperties: false` enforcement.
+     *
+     * The model template emits a static `assertNoUnknownProperties(array $data)`
+     * helper on every schema that declares `unevaluatedProperties: false`; that
+     * helper throws when the decoded payload carries a key not declared on the
+     * schema. Symfony's denormalizer is permissive and silently drops extra
+     * attributes, so the per-model helper has to run BEFORE denormalize() for
+     * the contract to bite. This guard dispatches to the model's own helper
+     * when present (and is a no-op for every other class), aligning PHP with
+     * Python's `extra="forbid"` and Java's throwing `@JsonAnySetter`.
+     *
+     * @param array<array-key, mixed> $data
+     */
+    private static function assertNoUnknownProperties(array $data, string $class): void
+    {
+        if (!class_exists($class) || !method_exists($class, 'assertNoUnknownProperties')) {
+            return;
+        }
+        /* Dispatch via Reflection rather than a dynamic `$class::method()` call:
+         * the static method's presence was confirmed by method_exists, and
+         * ReflectionMethod::invoke keeps the call statically analysable at
+         * PHPStan level 9 (a string-typed class-string static call is not). The
+         * model-side helper throws \InvalidArgumentException on an unknown key;
+         * the surrounding deserialize() try/catch wraps it in
+         * SerializationException. */
+        new \ReflectionMethod($class, 'assertNoUnknownProperties')->invoke(null, $data);
+    }
+
+    /**
+     * OAS `additionalProperties` capture.
+     *
+     * The model template emits a public `?\Ds\Map $additionalProperties`
+     * property on every schema that declares an open `additionalProperties`
+     * map. Symfony's denormalizer maps only the declared/SerializedName-tagged
+     * properties and drops every other decoded key, so without this step the
+     * undeclared keys are lost (data loss) and `$additionalProperties` stays
+     * null. This collects every decoded key that does NOT correspond to a
+     * declared property (matched by its wire / SerializedName) into a
+     * `\Ds\Map` and assigns it, mirroring Python's capture validator and
+     * Java's `@JsonAnySetter`. Returns the object unchanged when it has no
+     * `additionalProperties` property.
+     *
+     * @param array<array-key, mixed> $data
+     */
+    private static function captureAdditionalProperties(object $result, array $data): object
+    {
+        if (!property_exists($result, 'additionalProperties')) {
+            return $result;
+        }
+        $reflection = new \ReflectionClass($result);
+        /* Build the set of wire names that map to a declared property so they
+         * are NOT swept into the additionalProperties bag. Each declared
+         * property contributes its SerializedName (or, absent the attribute,
+         * its PHP name). The synthetic `additionalProperties` property itself
+         * is never a wire key. */
+        $declaredWireNames = [];
+        foreach ($reflection->getProperties() as $property) {
+            if ($property->getName() === 'additionalProperties') {
+                continue;
+            }
+            $wireName = $property->getName();
+            foreach (
+                $property->getAttributes(
+                    \Symfony\Component\Serializer\Attribute\SerializedName::class
+                ) as $attr
+            ) {
+                $args = $attr->getArguments();
+                if (isset($args[0]) && is_string($args[0])) {
+                    $wireName = $args[0];
+                } elseif (isset($args['name']) && is_string($args['name'])) {
+                    $wireName = $args['name'];
+                }
+            }
+            $declaredWireNames[$wireName] = true;
+        }
+
+        /** @var array<string, mixed> $extra */
+        $extra = [];
+        foreach ($data as $key => $value) {
+            if (!isset($declaredWireNames[(string) $key])) {
+                $extra[(string) $key] = $value;
+            }
+        }
+        if ($extra !== []) {
+            /* The declared property type is `?\Ds\Map`; assign a populated map
+             * so callers read undeclared keys back through the same container
+             * type the model documents. */
+            $result->additionalProperties = new \Ds\Map($extra);
+        }
+        return $result;
+    }
+
+    /**
      * Convert a value to a string suitable for use as a URL path parameter.
      */
     public static function toPathValue(mixed $value): string
@@ -834,6 +1052,45 @@ class ObjectSerializer
     }
 
     /**
+     * Resolve an anyOf schema by collecting EVERY candidate that successfully
+     * deserializes, not just the first. The OAS `anyOf` keyword matches when
+     * the data satisfies one OR MORE of the listed schemas, so a payload that
+     * co-satisfies several variants must retain all of them — returning only
+     * the first would silently drop the other variants' fields and break a
+     * lossless round-trip. Each retained variant is held independently; the
+     * union of their fields is re-emitted on serialize via
+     * {@see sanitizeForSerialization} (which merges the field-set of every
+     * variant exposed through getActualInstances()).
+     *
+     * @param mixed           $data       the data to match
+     * @param array<callable> $candidates list of deserializer closures
+     *
+     * @return array<int, mixed> every successfully deserialized variant, in
+     *         declaration order
+     *
+     * @throws \UnexpectedValueException when the data matches no candidate
+     *         schema. Throws rather than returning an empty list so a
+     *         shape-mismatch surfaces loudly, mirroring {@see resolveOneOf}.
+     */
+    public static function resolveAnyOfAll(mixed $data, array $candidates): array
+    {
+        $matched = [];
+        foreach ($candidates as $candidate) {
+            try {
+                $matched[] = $candidate($data);
+            } catch (\Throwable) {
+                continue;
+            }
+        }
+        if ($matched === []) {
+            throw new \UnexpectedValueException(
+                'JSON did not match any schema in the oneOf/anyOf union'
+            );
+        }
+        return $matched;
+    }
+
+    /**
      * Qualify an unqualified model class name with the model namespace.
      * Primitive types (string, int, etc.) and already-qualified names are returned as-is.
      */
@@ -873,6 +1130,65 @@ class ObjectSerializer
             return null;
         }
         return base64_encode($raw);
+    }
+
+    /**
+     * Resolve the scalar `format: byte` branch of a oneOf/anyOf union.
+     *
+     * The wire form for `format: byte` is a base64 STRING. This candidate is
+     * invoked by {@see resolveOneOf} with already-decoded PHP data (the
+     * composed model's build() json_decodes the body before dispatching), so
+     * it receives a PHP string for the scalar branch and returns it unchanged
+     * as the union's actual instance — the same wire-form-in-place convention
+     * the bare scalar byte field uses, so serializing the union re-emits the
+     * base64 string verbatim. A non-string payload (e.g. a decoded JSON array)
+     * throws so {@see resolveOneOf} falls through to the next declared branch;
+     * this is what keeps a scalar base64 string from being mis-parsed as the
+     * array variant when both byte branches exist.
+     */
+    public static function decodeByteOneOfScalar(mixed $data): string
+    {
+        if (!is_string($data)) {
+            throw new \InvalidArgumentException(
+                'Expected a base64 string for the scalar byte variant but got '
+                . get_debug_type($data)
+            );
+        }
+        return $data;
+    }
+
+    /**
+     * Resolve the array `format: byte` branch of a oneOf/anyOf union.
+     *
+     * Each element travels on the wire as a base64 STRING. This candidate is
+     * invoked by {@see resolveOneOf} with already-decoded PHP data, so it
+     * receives a PHP array of strings for the array branch, validates every
+     * element is a string, and returns a {@see \Ds\Vector} holding the base64
+     * strings unchanged — serializing the union re-emits the array of base64
+     * strings verbatim. A non-array payload, or one with a non-string element,
+     * throws so {@see resolveOneOf} falls through to the next branch.
+     *
+     * @return \Ds\Vector<string>
+     */
+    public static function decodeByteOneOfArray(mixed $data): \Ds\Vector
+    {
+        if (!is_array($data)) {
+            throw new \InvalidArgumentException(
+                'Expected an array of base64 strings for the array byte variant'
+                . ' but got ' . get_debug_type($data)
+            );
+        }
+        $items = [];
+        foreach ($data as $element) {
+            if (!is_string($element)) {
+                throw new \InvalidArgumentException(
+                    'Expected every array byte element to be a base64 string but got '
+                    . get_debug_type($element)
+                );
+            }
+            $items[] = $element;
+        }
+        return new \Ds\Vector($items);
     }
 
     /**

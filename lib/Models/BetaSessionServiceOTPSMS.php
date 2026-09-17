@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceOTPSMS
 {
-    /** @example null */
     #[SerializedName('returnCode')]
     public ?bool $returnCode = null;
 

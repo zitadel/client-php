@@ -17,31 +17,24 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceChecks
 {
-    /** @example null */
     #[SerializedName('user')]
     public ?\Zitadel\Client\Models\BetaSessionServiceCheckUser $user = null;
 
-    /** @example null */
     #[SerializedName('password')]
     public ?\Zitadel\Client\Models\BetaSessionServiceCheckPassword $password = null;
 
-    /** @example null */
     #[SerializedName('webAuthN')]
     public ?\Zitadel\Client\Models\BetaSessionServiceCheckWebAuthN $webAuthN = null;
 
-    /** @example null */
     #[SerializedName('idpIntent')]
     public ?\Zitadel\Client\Models\BetaSessionServiceCheckIDPIntent $idpIntent = null;
 
-    /** @example null */
     #[SerializedName('totp')]
     public ?\Zitadel\Client\Models\BetaSessionServiceCheckTOTP $totp = null;
 
-    /** @example null */
     #[SerializedName('otpSms')]
     public ?\Zitadel\Client\Models\BetaSessionServiceCheckOTP $otpSms = null;
 
-    /** @example null */
     #[SerializedName('otpEmail')]
     public ?\Zitadel\Client\Models\BetaSessionServiceCheckOTP $otpEmail = null;
 

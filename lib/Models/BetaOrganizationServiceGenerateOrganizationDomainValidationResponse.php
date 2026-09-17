@@ -19,14 +19,12 @@ class BetaOrganizationServiceGenerateOrganizationDomainValidationResponse
 {
     /**
      * The token verify domain.
-     * @example null
      */
     #[SerializedName('token')]
     public ?string $token = null;
 
     /**
      * URL used to verify the domain.
-     * @example null
      */
     #[SerializedName('url')]
     public ?string $url = null;

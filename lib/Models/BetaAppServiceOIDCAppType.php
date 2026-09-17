@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaAppServiceOIDCAppType is an enumeration of allowed values.
+ */
 enum BetaAppServiceOIDCAppType: string
 {
     case OIDC_APP_TYPE_WEB = 'OIDC_APP_TYPE_WEB';

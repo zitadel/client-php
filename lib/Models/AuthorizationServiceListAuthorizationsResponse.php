@@ -17,14 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class AuthorizationServiceListAuthorizationsResponse
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\AuthorizationServicePaginationResponse $pagination = null;
 
     /**
      * Authorizations contains the list of authorizations matching the request.
      * @var \Ds\Vector<\Zitadel\Client\Models\AuthorizationServiceAuthorization>|null
-     * @example null
      */
     #[SerializedName('authorizations')]
     public ?\Ds\Vector $authorizations = null;

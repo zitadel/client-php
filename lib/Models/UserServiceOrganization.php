@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceOrganization
 {
-    /** @example null */
     #[SerializedName('orgDomain')]
     public ?string $orgDomain = null;
 
-    /** @example null */
     #[SerializedName('orgId')]
     public ?string $orgId = null;
 

@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaOrganizationServiceCreatedAdmin
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('emailCode')]
     public ?string $emailCode = null;
 
-    /** @example null */
     #[SerializedName('phoneCode')]
     public ?string $phoneCode = null;
 

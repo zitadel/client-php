@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * FeatureServiceSource is an enumeration of allowed values.
+ */
 enum FeatureServiceSource: string
 {
     case SOURCE_UNSPECIFIED = 'SOURCE_UNSPECIFIED';

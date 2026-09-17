@@ -20,7 +20,6 @@ class ActionServiceListExecutionMethodsResponse
     /**
      * All available methods to use in conditions.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('methods')]
     public ?\Ds\Vector $methods = null;

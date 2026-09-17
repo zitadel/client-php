@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * InstanceServiceTrustedDomainFieldName is an enumeration of allowed values.
+ */
 enum InstanceServiceTrustedDomainFieldName: string
 {
     case TRUSTED_DOMAIN_FIELD_NAME_UNSPECIFIED = 'TRUSTED_DOMAIN_FIELD_NAME_UNSPECIFIED';

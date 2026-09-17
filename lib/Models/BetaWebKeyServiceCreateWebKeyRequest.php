@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaWebKeyServiceCreateWebKeyRequest
 {
-    /** @example null */
     #[SerializedName('ecdsa')]
     public ?\Zitadel\Client\Models\BetaWebKeyServiceECDSA $ecdsa = null;
 
-    /** @example null */
     #[SerializedName('ed25519')]
     public ?object $ed25519 = null;
 
-    /** @example null */
     #[SerializedName('rsa')]
     public ?\Zitadel\Client\Models\BetaWebKeyServiceRSA $rsa = null;
 

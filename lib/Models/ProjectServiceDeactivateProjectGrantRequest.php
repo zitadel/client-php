@@ -19,14 +19,12 @@ class ProjectServiceDeactivateProjectGrantRequest
 {
     /**
      * ProjectID is the unique identifier of the project.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
     /**
      * GrantedOrganizationID is the unique identifier of the organization the project was granted to.
-     * @example null
      */
     #[SerializedName('grantedOrganizationId')]
     public ?string $grantedOrganizationId = null;

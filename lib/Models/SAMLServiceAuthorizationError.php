@@ -19,11 +19,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SAMLServiceAuthorizationError
 {
-    /** @example null */
     #[SerializedName('error')]
     public ?\Zitadel\Client\Models\SAMLServiceErrorReason $error = null;
 
-    /** @example null */
     #[SerializedName('errorDescription')]
     public ?string $errorDescription = null;
 

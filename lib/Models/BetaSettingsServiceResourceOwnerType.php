@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaSettingsServiceResourceOwnerType is an enumeration of allowed values.
+ */
 enum BetaSettingsServiceResourceOwnerType: string
 {
     case RESOURCE_OWNER_TYPE_UNSPECIFIED = 'RESOURCE_OWNER_TYPE_UNSPECIFIED';

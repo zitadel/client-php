@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaFeatureServiceSetOrganizationFeaturesRequest
 {
-    /** @example null */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 

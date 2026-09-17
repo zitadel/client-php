@@ -19,19 +19,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSettingsServiceDomainSettings
 {
-    /** @example null */
     #[SerializedName('loginNameIncludesDomain')]
     public ?bool $loginNameIncludesDomain = null;
 
-    /** @example null */
     #[SerializedName('requireOrgDomainVerification')]
     public ?bool $requireOrgDomainVerification = null;
 
-    /** @example null */
     #[SerializedName('smtpSenderAddressMatchesInstanceDomain')]
     public ?bool $smtpSenderAddressMatchesInstanceDomain = null;
 
-    /** @example null */
     #[SerializedName('resourceOwnerType')]
     public ?\Zitadel\Client\Models\BetaSettingsServiceResourceOwnerType $resourceOwnerType = null;
 

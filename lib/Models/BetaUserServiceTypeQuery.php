@@ -22,7 +22,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
  */
 class BetaUserServiceTypeQuery
 {
-    /** @example null */
     #[SerializedName('type')]
     public ?\Zitadel\Client\Models\BetaUserServiceType $type = null;
 

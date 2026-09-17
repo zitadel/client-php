@@ -19,25 +19,21 @@ class InternalPermissionServiceResourceType
 {
     /**
      * Instance is the resource type for granting administrator privileges on the instance level.
-     * @example null
      */
     #[SerializedName('instance')]
     public ?bool $instance = null;
 
     /**
      * OrganizationID is required to grant administrator privileges for a specific organization.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
-    /** @example null */
     #[SerializedName('projectGrant')]
     public ?\Zitadel\Client\Models\InternalPermissionServiceProjectGrant $projectGrant = null;
 
     /**
      * ProjectID is required to grant administrator privileges for a specific project.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;

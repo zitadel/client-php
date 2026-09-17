@@ -19,7 +19,6 @@ class WebKeyServiceActivateWebKeyRequest
 {
     /**
      * The unique identifier of the key to activate.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;

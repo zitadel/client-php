@@ -19,14 +19,12 @@ class ActionServiceActivatePublicKeyRequest
 {
     /**
      * TargetID is the unique identifier of the target to activate the public key for.
-     * @example null
      */
     #[SerializedName('targetId')]
     public ?string $targetId = null;
 
     /**
      * KeyID is the unique identifier of the public key to activate.
-     * @example null
      */
     #[SerializedName('keyId')]
     public ?string $keyId = null;

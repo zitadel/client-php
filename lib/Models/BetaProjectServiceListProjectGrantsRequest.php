@@ -19,18 +19,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaProjectServiceListProjectGrantsRequest
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaProjectServicePaginationRequest $pagination = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\BetaProjectServiceProjectGrantFieldName $sortingColumn = null;
 
     /**
      * Define the criteria to query for.
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaProjectServiceProjectGrantSearchFilter>|null
-     * @example null
      */
     #[SerializedName('filters')]
     public ?\Ds\Vector $filters = null;

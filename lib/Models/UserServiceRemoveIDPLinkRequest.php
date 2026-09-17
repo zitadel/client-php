@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceRemoveIDPLinkRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('idpId')]
     public ?string $idpId = null;
 
-    /** @example null */
     #[SerializedName('linkedUserId')]
     public ?string $linkedUserId = null;
 

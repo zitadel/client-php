@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaOrganizationServiceOrganizationAdmin
 {
-    /** @example null */
     #[SerializedName('assignedAdmin')]
     public ?\Zitadel\Client\Models\BetaOrganizationServiceAssignedAdmin $assignedAdmin = null;
 
-    /** @example null */
     #[SerializedName('createdAdmin')]
     public ?\Zitadel\Client\Models\BetaOrganizationServiceCreatedAdmin $createdAdmin = null;
 

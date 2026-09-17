@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceAddIDPLinkRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('idpLink')]
     public ?\Zitadel\Client\Models\UserServiceIDPLink $idpLink = null;
 

@@ -19,14 +19,12 @@ class BetaProjectServiceRemoveProjectRoleRequest
 {
     /**
      * ID of the project.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
     /**
      * The key is the only relevant attribute for ZITADEL regarding the authorization checks.
-     * @example null
      */
     #[SerializedName('roleKey')]
     public ?string $roleKey = null;

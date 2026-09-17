@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaProjectServiceProjectFieldName is an enumeration of allowed values.
+ */
 enum BetaProjectServiceProjectFieldName: string
 {
     case PROJECT_FIELD_NAME_UNSPECIFIED = 'PROJECT_FIELD_NAME_UNSPECIFIED';

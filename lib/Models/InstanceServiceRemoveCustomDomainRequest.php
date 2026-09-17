@@ -19,14 +19,12 @@ class InstanceServiceRemoveCustomDomainRequest
 {
     /**
      * InstanceID is the unique ID of the instance from which the domain will be removed.
-     * @example null
      */
     #[SerializedName('instanceId')]
     public ?string $instanceId = null;
 
     /**
      * CustomDomain is the the domain to remove from the instance.
-     * @example null
      */
     #[SerializedName('customDomain')]
     public ?string $customDomain = null;

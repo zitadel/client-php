@@ -19,7 +19,6 @@ class ApplicationServiceApplicationKeyProjectIDFilter
 {
     /**
      * Search for application keys belonging to applications in the project with this ID.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;

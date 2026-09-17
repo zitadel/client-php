@@ -20,12 +20,10 @@ class InstanceServiceListCustomDomainsResponse
     /**
      * The list of custom domains matching the query.
      * @var \Ds\Vector<\Zitadel\Client\Models\InstanceServiceCustomDomain>|null
-     * @example null
      */
     #[SerializedName('domains')]
     public ?\Ds\Vector $domains = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\InstanceServicePaginationResponse $pagination = null;
 

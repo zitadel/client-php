@@ -21,12 +21,10 @@ class ApplicationServiceAPIConfiguration
 {
     /**
      * The unique OAuth2 client_id used for authentication of the API,  e.g. at the introspection endpoint.
-     * @example null
      */
     #[SerializedName('clientId')]
     public ?string $clientId = null;
 
-    /** @example null */
     #[SerializedName('authMethodType')]
     public ?\Zitadel\Client\Models\ApplicationServiceAPIAuthMethodType $authMethodType = null;
 

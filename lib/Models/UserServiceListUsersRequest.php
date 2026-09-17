@@ -19,18 +19,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceListUsersRequest
 {
-    /** @example null */
     #[SerializedName('query')]
     public ?\Zitadel\Client\Models\UserServiceListQuery $query = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\UserServiceUserFieldName $sortingColumn = null;
 
     /**
      * criteria the client is looking for
      * @var \Ds\Vector<\Zitadel\Client\Models\UserServiceSearchQuery>|null
-     * @example null
      */
     #[SerializedName('queries')]
     public ?\Ds\Vector $queries = null;

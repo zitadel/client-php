@@ -19,7 +19,6 @@ class SessionServiceCreatorQuery
 {
     /**
      * ID of the user who created the session. If empty, the calling user's ID is used.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;

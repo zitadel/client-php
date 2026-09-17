@@ -17,14 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ProjectServiceListProjectRolesResponse
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\ProjectServicePaginationResponse $pagination = null;
 
     /**
      * ProjectRoles is a list of roles matching the query.
      * @var \Ds\Vector<\Zitadel\Client\Models\ProjectServiceProjectRole>|null
-     * @example null
      */
     #[SerializedName('projectRoles')]
     public ?\Ds\Vector $projectRoles = null;

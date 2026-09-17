@@ -17,19 +17,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaActionServiceCondition
 {
-    /** @example null */
     #[SerializedName('event')]
     public ?\Zitadel\Client\Models\BetaActionServiceEventExecution $event = null;
 
-    /** @example null */
     #[SerializedName('function')]
     public ?\Zitadel\Client\Models\BetaActionServiceFunctionExecution $function_ = null;
 
-    /** @example null */
     #[SerializedName('request')]
     public ?\Zitadel\Client\Models\BetaActionServiceRequestExecution $request = null;
 
-    /** @example null */
     #[SerializedName('response')]
     public ?\Zitadel\Client\Models\BetaActionServiceResponseExecution $response = null;
 

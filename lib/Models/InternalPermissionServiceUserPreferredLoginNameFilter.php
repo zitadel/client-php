@@ -21,12 +21,10 @@ class InternalPermissionServiceUserPreferredLoginNameFilter
 {
     /**
      * Search for administrators by the preferred login name of the user.
-     * @example null
      */
     #[SerializedName('preferredLoginName')]
     public ?string $preferredLoginName = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\InternalPermissionServiceTextFilterMethod $method = null;
 

@@ -20,7 +20,6 @@ class ActionServiceInConditionsFilter
     /**
      * Defines the conditions to query for.
      * @var \Ds\Vector<\Zitadel\Client\Models\ActionServiceCondition>|null
-     * @example null
      */
     #[SerializedName('conditions')]
     public ?\Ds\Vector $conditions = null;

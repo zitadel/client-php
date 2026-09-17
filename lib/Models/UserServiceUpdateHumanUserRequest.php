@@ -17,27 +17,21 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceUpdateHumanUserRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('username')]
     public ?string $username = null;
 
-    /** @example null */
     #[SerializedName('profile')]
     public ?\Zitadel\Client\Models\UserServiceSetHumanProfile $profile = null;
 
-    /** @example null */
     #[SerializedName('email')]
     public ?\Zitadel\Client\Models\UserServiceSetHumanEmail $email = null;
 
-    /** @example null */
     #[SerializedName('phone')]
     public ?\Zitadel\Client\Models\UserServiceSetHumanPhone $phone = null;
 
-    /** @example null */
     #[SerializedName('password')]
     public ?\Zitadel\Client\Models\UserServiceSetPassword $password = null;
 

@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class IdentityProviderServiceGetIDPByIDResponse
 {
-    /** @example null */
     #[SerializedName('idp')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceIDP $idp = null;
 

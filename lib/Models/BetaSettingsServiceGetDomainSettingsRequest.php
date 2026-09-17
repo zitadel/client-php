@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSettingsServiceGetDomainSettingsRequest
 {
-    /** @example null */
     #[SerializedName('ctx')]
     public ?\Zitadel\Client\Models\BetaSettingsServiceRequestContext $ctx = null;
 

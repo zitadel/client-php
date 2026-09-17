@@ -19,11 +19,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceMetadataKeyFilter
 {
-    /** @example null */
     #[SerializedName('key')]
     public ?string $key = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\UserServiceTextFilterMethod $method = null;
 

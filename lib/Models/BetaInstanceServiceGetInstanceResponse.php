@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaInstanceServiceGetInstanceResponse
 {
-    /** @example null */
     #[SerializedName('instance')]
     public ?\Zitadel\Client\Models\BetaInstanceServiceInstance $instance = null;
 

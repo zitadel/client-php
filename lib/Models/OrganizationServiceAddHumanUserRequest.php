@@ -19,31 +19,25 @@ class OrganizationServiceAddHumanUserRequest
 {
     /**
      * optionally set your own id unique for the user.
-     * @example null
      */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
     /**
      * optionally set a unique username, if none is provided the email will be used.
-     * @example null
      */
     #[SerializedName('username')]
     public ?string $username = null;
 
-    /** @example null */
     #[SerializedName('organization')]
     public ?\Zitadel\Client\Models\OrganizationServiceOrganization $organization = null;
 
-    /** @example null */
     #[SerializedName('profile')]
     public ?\Zitadel\Client\Models\OrganizationServiceSetHumanProfile $profile = null;
 
-    /** @example null */
     #[SerializedName('email')]
     public ?\Zitadel\Client\Models\OrganizationServiceSetHumanEmail $email = null;
 
-    /** @example null */
     #[SerializedName('phone')]
     public ?\Zitadel\Client\Models\OrganizationServiceSetHumanPhone $phone = null;
 
@@ -57,16 +51,13 @@ class OrganizationServiceAddHumanUserRequest
 
     /**
      * An Implementation of RFC 6238 is used, with HMAC-SHA-1 and time-step of 30 seconds.  Currently no other options are supported, and if anything different is used the validation will fail.
-     * @example null
      */
     #[SerializedName('totpSecret')]
     public ?string $totpSecret = null;
 
-    /** @example null */
     #[SerializedName('hashedPassword')]
     public ?\Zitadel\Client\Models\OrganizationServiceHashedPassword $hashedPassword = null;
 
-    /** @example null */
     #[SerializedName('password')]
     public ?\Zitadel\Client\Models\OrganizationServicePassword $password = null;
 

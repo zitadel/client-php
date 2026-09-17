@@ -17,35 +17,27 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SessionServiceChecks
 {
-    /** @example null */
     #[SerializedName('user')]
     public ?\Zitadel\Client\Models\SessionServiceCheckUser $user = null;
 
-    /** @example null */
     #[SerializedName('password')]
     public ?\Zitadel\Client\Models\SessionServiceCheckPassword $password = null;
 
-    /** @example null */
     #[SerializedName('webAuthN')]
     public ?\Zitadel\Client\Models\SessionServiceCheckWebAuthN $webAuthN = null;
 
-    /** @example null */
     #[SerializedName('idpIntent')]
     public ?\Zitadel\Client\Models\SessionServiceCheckIDPIntent $idpIntent = null;
 
-    /** @example null */
     #[SerializedName('totp')]
     public ?\Zitadel\Client\Models\SessionServiceCheckTOTP $totp = null;
 
-    /** @example null */
     #[SerializedName('otpSms')]
     public ?\Zitadel\Client\Models\SessionServiceCheckOTP $otpSms = null;
 
-    /** @example null */
     #[SerializedName('otpEmail')]
     public ?\Zitadel\Client\Models\SessionServiceCheckOTP $otpEmail = null;
 
-    /** @example null */
     #[SerializedName('recoveryCode')]
     public ?\Zitadel\Client\Models\SessionServiceCheckRecoveryCode $recoveryCode = null;
 

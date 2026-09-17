@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * ApplicationServiceOIDCVersion is an enumeration of allowed values.
+ */
 enum ApplicationServiceOIDCVersion: string
 {
     case OIDC_VERSION_1_0 = 'OIDC_VERSION_1_0';

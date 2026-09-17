@@ -19,19 +19,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SettingsServiceIdentityProvider
 {
-    /** @example null */
     #[SerializedName('id')]
     public ?string $id = null;
 
-    /** @example null */
     #[SerializedName('name')]
     public ?string $name = null;
 
-    /** @example null */
     #[SerializedName('type')]
     public ?\Zitadel\Client\Models\SettingsServiceIdentityProviderType $type = null;
 
-    /** @example null */
     #[SerializedName('options')]
     public ?\Zitadel\Client\Models\SettingsServiceOptions $options = null;
 

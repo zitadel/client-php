@@ -21,28 +21,22 @@ class IdentityProviderServiceIDP
 {
     /**
      * Unique identifier for the identity provider.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;
 
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('state')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceIDPState $state = null;
 
-    /** @example null */
     #[SerializedName('name')]
     public ?string $name = null;
 
-    /** @example null */
     #[SerializedName('type')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceIDPType $type = null;
 
-    /** @example null */
     #[SerializedName('config')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceIDPConfig $config = null;
 

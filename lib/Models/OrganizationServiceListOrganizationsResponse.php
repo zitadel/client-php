@@ -19,18 +19,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class OrganizationServiceListOrganizationsResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\OrganizationServiceListDetails $details = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\OrganizationServiceOrganizationFieldName $sortingColumn = null;
 
     /**
      * The Result is a list of organizations matching the query.
      * @var \Ds\Vector<\Zitadel\Client\Models\OrganizationServiceOrganization>|null
-     * @example null
      */
     #[SerializedName('result')]
     public ?\Ds\Vector $result = null;

@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceIDPOAuthAccessInformation
 {
-    /** @example null */
     #[SerializedName('accessToken')]
     public ?string $accessToken = null;
 
-    /** @example null */
     #[SerializedName('idToken')]
     public ?string $idToken = null;
 

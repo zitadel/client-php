@@ -19,14 +19,12 @@ class OIDCServiceDeviceAuthorizationRequest
 {
     /**
      * The unique identifier of the device authorization request to be used for authorizing or denying the request.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;
 
     /**
      * The client_id of the application that initiated the device authorization request.
-     * @example null
      */
     #[SerializedName('clientId')]
     public ?string $clientId = null;
@@ -34,21 +32,18 @@ class OIDCServiceDeviceAuthorizationRequest
     /**
      * The scopes requested by the application.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('scope')]
     public ?\Ds\Vector $scope = null;
 
     /**
      * Name of the client application.
-     * @example null
      */
     #[SerializedName('appName')]
     public ?string $appName = null;
 
     /**
      * Name of the project the client application is part of.
-     * @example null
      */
     #[SerializedName('projectName')]
     public ?string $projectName = null;

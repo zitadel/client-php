@@ -21,19 +21,16 @@ class OrganizationServiceGenerateOrganizationDomainValidationRequest
 {
     /**
      * OrganizationID is the unique identifier of the organization for which the domain validation is to be generated.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
     /**
      * Domain is the full qualified domain name for which the validation is to be generated.
-     * @example null
      */
     #[SerializedName('domain')]
     public ?string $domain = null;
 
-    /** @example null */
     #[SerializedName('type')]
     public ?\Zitadel\Client\Models\OrganizationServiceDomainValidationType $type = null;
 

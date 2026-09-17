@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * FeatureServiceImprovedPerformance is an enumeration of allowed values.
+ */
 enum FeatureServiceImprovedPerformance: string
 {
     case IMPROVED_PERFORMANCE_UNSPECIFIED = 'IMPROVED_PERFORMANCE_UNSPECIFIED';

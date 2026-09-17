@@ -19,7 +19,6 @@ class UserServiceDeleteUserMetadataRequest
 {
     /**
      * ID of the user which metadata is to be deleted is stored on.
-     * @example null
      */
     #[SerializedName('userId')]
     public ?string $userId = null;
@@ -27,7 +26,6 @@ class UserServiceDeleteUserMetadataRequest
     /**
      * The keys for the user metadata to be deleted.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('keys')]
     public ?\Ds\Vector $keys = null;

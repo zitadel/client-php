@@ -19,7 +19,6 @@ class BetaTelemetryServiceReportBaseInformationResponse
 {
     /**
      * The report ID is a unique identifier for the report.  It is used to identify the report to be able to link it to the resource counts or other reports.  Note that the report ID is only valid for the same system ID.
-     * @example null
      */
     #[SerializedName('reportId')]
     public ?string $reportId = null;

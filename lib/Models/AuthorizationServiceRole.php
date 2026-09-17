@@ -19,21 +19,18 @@ class AuthorizationServiceRole
 {
     /**
      * Key is the unique key of the role. It's the only relevant attribute for ZITADEL and  will be used for authorization checks and as claim in tokens and user info responses.
-     * @example null
      */
     #[SerializedName('key')]
     public ?string $key = null;
 
     /**
      * Human readable name for the role, which might be displayed to users.
-     * @example null
      */
     #[SerializedName('displayName')]
     public ?string $displayName = null;
 
     /**
      * The group the role belongs to. This is used to group roles in the UI.
-     * @example null
      */
     #[SerializedName('group')]
     public ?string $group = null;

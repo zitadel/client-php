@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * InternalPermissionServiceAdministratorFieldName is an enumeration of allowed values.
+ */
 enum InternalPermissionServiceAdministratorFieldName: string
 {
     case ADMINISTRATOR_FIELD_NAME_UNSPECIFIED = 'ADMINISTRATOR_FIELD_NAME_UNSPECIFIED';

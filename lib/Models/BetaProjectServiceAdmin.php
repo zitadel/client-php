@@ -17,14 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaProjectServiceAdmin
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
     /**
      * specify the Project Member Roles for the provided user (default is PROJECT_OWNER if roles are empty
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('roles')]
     public ?\Ds\Vector $roles = null;

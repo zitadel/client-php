@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaInstanceServiceDomainGeneratedQuery
 {
-    /** @example null */
     #[SerializedName('generated')]
     public ?bool $generated = null;
 

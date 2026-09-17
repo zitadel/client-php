@@ -19,7 +19,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaOrganizationServiceOrgStateFilter
 {
-    /** @example null */
     #[SerializedName('state')]
     public ?\Zitadel\Client\Models\BetaOrganizationServiceOrgState $state = null;
 

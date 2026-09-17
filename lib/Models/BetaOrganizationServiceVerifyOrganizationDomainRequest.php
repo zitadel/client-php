@@ -19,14 +19,12 @@ class BetaOrganizationServiceVerifyOrganizationDomainRequest
 {
     /**
      * Organization Id for the Organization doman to be verified.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
     /**
      * Organization Id for the Organization doman to be verified.
-     * @example null
      */
     #[SerializedName('domain')]
     public ?string $domain = null;

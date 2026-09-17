@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaFeatureServiceGetInstanceFeaturesRequest
 {
-    /** @example null */
     #[SerializedName('inheritance')]
     public ?bool $inheritance = null;
 

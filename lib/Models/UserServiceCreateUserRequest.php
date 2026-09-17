@@ -19,30 +19,25 @@ class UserServiceCreateUserRequest
 {
     /**
      * The unique identifier of the organization the user belongs to.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
     /**
      * The ID is a unique identifier for the user in the instance.  If not specified, it will be generated.  You can set your own user id that is unique within the instance.  This is useful in migration scenarios, for example if the user already has an ID in another Zitadel system.  If not specified, it will be generated.  It can't be changed after creation.
-     * @example null
      */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
     /**
      * The username is a unique identifier for the user in the organization.  If not specified, Zitadel sets the username to the email for users of type human and to the user_id for users of type machine.  It is used to identify the user in the organization and can be used for login.
-     * @example null
      */
     #[SerializedName('username')]
     public ?string $username = null;
 
-    /** @example null */
     #[SerializedName('human')]
     public ?\Zitadel\Client\Models\UserServiceHuman $human = null;
 
-    /** @example null */
     #[SerializedName('machine')]
     public ?\Zitadel\Client\Models\UserServiceMachine $machine = null;
 

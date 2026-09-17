@@ -19,19 +19,16 @@ class BetaOrganizationServiceListOrganizationMetadataRequest
 {
     /**
      * Organization ID of Orgalization which metadata is to be listed.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaOrganizationServicePaginationRequest $pagination = null;
 
     /**
      * Define the criteria to query for.
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaOrganizationServiceMetadataQuery>|null
-     * @example null
      */
     #[SerializedName('filter')]
     public ?\Ds\Vector $filter = null;

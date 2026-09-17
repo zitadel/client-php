@@ -20,7 +20,6 @@ class AuthorizationServiceInIDsFilter
     /**
      * Defines the ids to query for.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('ids')]
     public ?\Ds\Vector $ids = null;

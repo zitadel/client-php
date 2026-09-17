@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * UserServiceNotificationType is an enumeration of allowed values.
+ */
 enum UserServiceNotificationType: string
 {
     case NOTIFICATION_TYPE_UNSPECIFIED = 'NOTIFICATION_TYPE_Unspecified';

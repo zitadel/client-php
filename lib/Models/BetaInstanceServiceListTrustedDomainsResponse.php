@@ -21,7 +21,6 @@ class BetaInstanceServiceListTrustedDomainsResponse
     #[SerializedName('trustedDomain')]
     public ?\Ds\Vector $trustedDomain = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaInstanceServicePaginationResponse $pagination = null;
 

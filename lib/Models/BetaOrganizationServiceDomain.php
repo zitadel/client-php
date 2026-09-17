@@ -24,33 +24,28 @@ class BetaOrganizationServiceDomain
 {
     /**
      * The Organization id.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
     /**
      * The domain name.
-     * @example null
      */
     #[SerializedName('domainName')]
     public ?string $domainName = null;
 
     /**
      * Defines if the domain is verified.
-     * @example null
      */
     #[SerializedName('isVerified')]
     public ?bool $isVerified = null;
 
     /**
      * Defines if the domain is the primary domain.
-     * @example null
      */
     #[SerializedName('isPrimary')]
     public ?bool $isPrimary = null;
 
-    /** @example null */
     #[SerializedName('validationType')]
     public ?\Zitadel\Client\Models\BetaOrganizationServiceDomainValidationType $validationType = null;
 

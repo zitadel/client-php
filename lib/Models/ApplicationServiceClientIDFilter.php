@@ -19,7 +19,6 @@ class ApplicationServiceClientIDFilter
 {
     /**
      * The clientID to search for. The search is performed as an exact match.
-     * @example null
      */
     #[SerializedName('clientId')]
     public ?string $clientId = null;

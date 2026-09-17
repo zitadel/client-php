@@ -19,14 +19,12 @@ class BetaTelemetryServiceReportBaseInformationRequest
 {
     /**
      * The system ID is a unique identifier for the ZITADEL system.
-     * @example null
      */
     #[SerializedName('systemId')]
     public ?string $systemId = null;
 
     /**
      * The current version of the ZITADEL system.
-     * @example null
      */
     #[SerializedName('version')]
     public ?string $version = null;
@@ -34,7 +32,6 @@ class BetaTelemetryServiceReportBaseInformationRequest
     /**
      * A list of instances in the ZITADEL system and their information.
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaTelemetryServiceInstanceInformation>|null
-     * @example null
      */
     #[SerializedName('instances')]
     public ?\Ds\Vector $instances = null;

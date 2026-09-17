@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class OrganizationServiceDomainSearchFilter
 {
-    /** @example null */
     #[SerializedName('domainFilter')]
     public ?\Zitadel\Client\Models\OrganizationServiceOrganizationDomainQuery $domainFilter = null;
 

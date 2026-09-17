@@ -24,6 +24,6 @@ class InternalServerErrorException extends ServerException
         ?string $responseBody = null,
         mixed $errorBody = null
     ) {
-        parent::__construct($message, 500, $responseHeaders, $responseBody, $errorBody);
+        parent::__construct(500, $message, $responseHeaders, $responseBody, $errorBody);
     }
 }

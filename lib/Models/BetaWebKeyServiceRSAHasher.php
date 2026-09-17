@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaWebKeyServiceRSAHasher is an enumeration of allowed values.
+ */
 enum BetaWebKeyServiceRSAHasher: string
 {
     case RSA_HASHER_UNSPECIFIED = 'RSA_HASHER_UNSPECIFIED';

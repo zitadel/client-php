@@ -19,18 +19,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaOrganizationServiceListOrganizationsRequest
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaOrganizationServicePaginationRequest $pagination = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\BetaOrganizationServiceOrgFieldName $sortingColumn = null;
 
     /**
      * Define the criteria to query for.  repeated ProjectRoleQuery filters = 4;
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaOrganizationServiceOrganizationSearchFilter>|null
-     * @example null
      */
     #[SerializedName('filter')]
     public ?\Ds\Vector $filter = null;

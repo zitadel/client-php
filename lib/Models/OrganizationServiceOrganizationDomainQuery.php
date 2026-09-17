@@ -21,12 +21,10 @@ class OrganizationServiceOrganizationDomainQuery
 {
     /**
      * Domain used in organization, not necessary primary domain.
-     * @example null
      */
     #[SerializedName('domain')]
     public ?string $domain = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\OrganizationServiceTextQueryMethod $method = null;
 

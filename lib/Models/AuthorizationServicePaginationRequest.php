@@ -19,21 +19,18 @@ class AuthorizationServicePaginationRequest
 {
     /**
      * Starting point for retrieval, in combination of offset used to query a set list of objects.
-     * @example null
      */
     #[SerializedName('offset')]
     public mixed $offset = null;
 
     /**
      * limit is the maximum amount of objects returned. The default is set to 100  with a maximum of 1000 in the runtime configuration.  If the limit exceeds the maximum configured ZITADEL will throw an error.  If no limit is present the default is taken.
-     * @example null
      */
     #[SerializedName('limit')]
     public ?int $limit = null;
 
     /**
      * Asc is the sorting order. If true the list is sorted ascending, if false  the list is sorted descending. The default is descending.
-     * @example null
      */
     #[SerializedName('asc')]
     public ?bool $asc = null;

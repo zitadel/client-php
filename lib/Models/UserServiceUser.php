@@ -19,19 +19,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceUser
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\UserServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('state')]
     public ?\Zitadel\Client\Models\UserServiceUserState $state = null;
 
-    /** @example null */
     #[SerializedName('username')]
     public ?string $username = null;
 
@@ -39,15 +35,12 @@ class UserServiceUser
     #[SerializedName('loginNames')]
     public ?\Ds\Vector $loginNames = null;
 
-    /** @example null */
     #[SerializedName('preferredLoginName')]
     public ?string $preferredLoginName = null;
 
-    /** @example null */
     #[SerializedName('human')]
     public ?\Zitadel\Client\Models\UserServiceHumanUser $human = null;
 
-    /** @example null */
     #[SerializedName('machine')]
     public ?\Zitadel\Client\Models\UserServiceMachineUser $machine = null;
 

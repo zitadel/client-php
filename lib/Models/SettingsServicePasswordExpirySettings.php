@@ -21,19 +21,16 @@ class SettingsServicePasswordExpirySettings
 {
     /**
      * Amount of days after which a password will expire. The user will be forced to change the password on the following authentication.
-     * @example null
      */
     #[SerializedName('maxAgeDays')]
     public mixed $maxAgeDays = null;
 
     /**
      * Amount of days after which the user should be notified of the upcoming expiry. ZITADEL will not notify the user.
-     * @example null
      */
     #[SerializedName('expireWarnDays')]
     public mixed $expireWarnDays = null;
 
-    /** @example null */
     #[SerializedName('resourceOwnerType')]
     public ?\Zitadel\Client\Models\SettingsServiceResourceOwnerType $resourceOwnerType = null;
 

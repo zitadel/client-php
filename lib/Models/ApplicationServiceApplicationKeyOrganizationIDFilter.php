@@ -19,7 +19,6 @@ class ApplicationServiceApplicationKeyOrganizationIDFilter
 {
     /**
      * Search for application keys belonging to applications in the organization with this ID.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;

@@ -19,18 +19,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAuthorizationServiceListAuthorizationsRequest
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServicePaginationRequest $pagination = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceAuthorizationFieldName $sortingColumn = null;
 
     /**
      * Define the criteria to query for.
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaAuthorizationServiceAuthorizationsSearchFilter>|null
-     * @example null
      */
     #[SerializedName('filters')]
     public ?\Ds\Vector $filters = null;

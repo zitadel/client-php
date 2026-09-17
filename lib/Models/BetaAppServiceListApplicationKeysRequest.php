@@ -19,23 +19,18 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAppServiceListApplicationKeysRequest
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaAppServicePaginationRequest $pagination = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\BetaAppServiceApplicationKeysSorting $sortingColumn = null;
 
-    /** @example null */
     #[SerializedName('applicationId')]
     public ?string $applicationId = null;
 
-    /** @example null */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
-    /** @example null */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 

@@ -20,7 +20,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
  */
 class BetaOrganizationServiceDomainSearchFilter
 {
-    /** @example null */
     #[SerializedName('domainNameFilter')]
     public ?\Zitadel\Client\Models\BetaOrganizationServiceDomainNameFilter $domainNameFilter = null;
 

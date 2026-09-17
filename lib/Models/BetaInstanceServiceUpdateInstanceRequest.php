@@ -19,12 +19,10 @@ class BetaInstanceServiceUpdateInstanceRequest
 {
     /**
      * used only to identify the instance to change.
-     * @example null
      */
     #[SerializedName('instanceId')]
     public ?string $instanceId = null;
 
-    /** @example null */
     #[SerializedName('instanceName')]
     public ?string $instanceName = null;
 

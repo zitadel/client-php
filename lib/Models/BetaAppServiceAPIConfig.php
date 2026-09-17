@@ -19,11 +19,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAppServiceAPIConfig
 {
-    /** @example null */
     #[SerializedName('clientId')]
     public ?string $clientId = null;
 
-    /** @example null */
     #[SerializedName('authMethodType')]
     public ?\Zitadel\Client\Models\BetaAppServiceAPIAuthMethodType $authMethodType = null;
 

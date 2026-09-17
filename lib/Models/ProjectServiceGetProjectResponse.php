@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ProjectServiceGetProjectResponse
 {
-    /** @example null */
     #[SerializedName('project')]
     public ?\Zitadel\Client\Models\ProjectServiceProject $project = null;
 

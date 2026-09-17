@@ -19,14 +19,12 @@ class OrganizationServiceVerifyOrganizationDomainRequest
 {
     /**
      * Organization ID is the unique identifier of the organization whose domain is to be verified.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
     /**
      * Domain is the full qualified domain name to be verified.
-     * @example null
      */
     #[SerializedName('domain')]
     public ?string $domain = null;

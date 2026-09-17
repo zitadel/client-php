@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaAppServiceOIDCAuthMethodType is an enumeration of allowed values.
+ */
 enum BetaAppServiceOIDCAuthMethodType: string
 {
     case OIDC_AUTH_METHOD_TYPE_BASIC = 'OIDC_AUTH_METHOD_TYPE_BASIC';

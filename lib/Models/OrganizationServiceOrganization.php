@@ -21,29 +21,24 @@ class OrganizationServiceOrganization
 {
     /**
      * ID is the unique identifier of the organization.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;
 
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\OrganizationServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('state')]
     public ?\Zitadel\Client\Models\OrganizationServiceOrganizationState $state = null;
 
     /**
      * Name of the organization.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;
 
     /**
      * Primary domain used in the organization.
-     * @example null
      */
     #[SerializedName('primaryDomain')]
     public ?string $primaryDomain = null;

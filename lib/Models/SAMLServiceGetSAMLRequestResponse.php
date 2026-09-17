@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SAMLServiceGetSAMLRequestResponse
 {
-    /** @example null */
     #[SerializedName('samlRequest')]
     public ?\Zitadel\Client\Models\SAMLServiceSAMLRequest $samlRequest = null;
 

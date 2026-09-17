@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class FeatureServiceGetOrganizationFeaturesRequest
 {
-    /** @example null */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
-    /** @example null */
     #[SerializedName('inheritance')]
     public ?bool $inheritance = null;
 

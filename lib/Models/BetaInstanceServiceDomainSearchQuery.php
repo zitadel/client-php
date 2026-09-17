@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaInstanceServiceDomainSearchQuery
 {
-    /** @example null */
     #[SerializedName('domainQuery')]
     public ?\Zitadel\Client\Models\BetaInstanceServiceDomainQuery $domainQuery = null;
 
-    /** @example null */
     #[SerializedName('generatedQuery')]
     public ?\Zitadel\Client\Models\BetaInstanceServiceDomainGeneratedQuery $generatedQuery = null;
 
-    /** @example null */
     #[SerializedName('primaryQuery')]
     public ?\Zitadel\Client\Models\BetaInstanceServiceDomainPrimaryQuery $primaryQuery = null;
 

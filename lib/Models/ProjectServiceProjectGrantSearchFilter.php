@@ -17,23 +17,18 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ProjectServiceProjectGrantSearchFilter
 {
-    /** @example null */
     #[SerializedName('grantedOrganizationIdFilter')]
     public ?\Zitadel\Client\Models\ProjectServiceIDFilter $grantedOrganizationIdFilter = null;
 
-    /** @example null */
     #[SerializedName('inProjectIdsFilter')]
     public ?\Zitadel\Client\Models\ProjectServiceInIDsFilter $inProjectIdsFilter = null;
 
-    /** @example null */
     #[SerializedName('organizationIdFilter')]
     public ?\Zitadel\Client\Models\ProjectServiceIDFilter $organizationIdFilter = null;
 
-    /** @example null */
     #[SerializedName('projectNameFilter')]
     public ?\Zitadel\Client\Models\ProjectServiceProjectNameFilter $projectNameFilter = null;
 
-    /** @example null */
     #[SerializedName('roleKeyFilter')]
     public ?\Zitadel\Client\Models\ProjectServiceProjectRoleKeyFilter $roleKeyFilter = null;
 

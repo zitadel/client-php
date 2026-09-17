@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * SettingsServiceResourceOwnerType is an enumeration of allowed values.
+ */
 enum SettingsServiceResourceOwnerType: string
 {
     case RESOURCE_OWNER_TYPE_UNSPECIFIED = 'RESOURCE_OWNER_TYPE_UNSPECIFIED';

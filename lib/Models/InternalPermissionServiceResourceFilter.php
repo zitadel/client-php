@@ -19,25 +19,21 @@ class InternalPermissionServiceResourceFilter
 {
     /**
      * Search for administrators granted on the instance level.
-     * @example null
      */
     #[SerializedName('instance')]
     public ?bool $instance = null;
 
     /**
      * Search for administrators granted on a specific organization.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
-    /** @example null */
     #[SerializedName('projectGrant')]
     public ?\Zitadel\Client\Models\InternalPermissionServiceProjectGrant $projectGrant = null;
 
     /**
      * Search for administrators granted on a specific project.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;

@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAppServiceCreateOIDCApplicationResponse
 {
-    /** @example null */
     #[SerializedName('clientId')]
     public ?string $clientId = null;
 
-    /** @example null */
     #[SerializedName('clientSecret')]
     public ?string $clientSecret = null;
 
-    /** @example null */
     #[SerializedName('noneCompliant')]
     public ?bool $noneCompliant = null;
 

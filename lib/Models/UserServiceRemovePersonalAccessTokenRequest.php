@@ -19,14 +19,12 @@ class UserServiceRemovePersonalAccessTokenRequest
 {
     /**
      * The users resource ID.
-     * @example null
      */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
     /**
      * The tokens ID.
-     * @example null
      */
     #[SerializedName('tokenId')]
     public ?string $tokenId = null;

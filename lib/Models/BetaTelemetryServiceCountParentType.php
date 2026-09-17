@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaTelemetryServiceCountParentType is an enumeration of allowed values.
+ */
 enum BetaTelemetryServiceCountParentType: string
 {
     case COUNT_PARENT_TYPE_UNSPECIFIED = 'COUNT_PARENT_TYPE_UNSPECIFIED';

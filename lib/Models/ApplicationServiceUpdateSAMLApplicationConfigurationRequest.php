@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ApplicationServiceUpdateSAMLApplicationConfigurationRequest
 {
-    /** @example null */
     #[SerializedName('loginVersion')]
     public ?\Zitadel\Client\Models\ApplicationServiceLoginVersion $loginVersion = null;
 
-    /** @example null */
     #[SerializedName('metadataUrl')]
     public ?string $metadataUrl = null;
 
-    /** @example null */
     #[SerializedName('metadataXml')]
     public ?string $metadataXml = null;
 

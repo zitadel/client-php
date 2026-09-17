@@ -111,6 +111,7 @@ abstract class OAuthAuthenticator extends BaseAuthenticator implements HttpAware
     {
         if (!$this->apiClient instanceof ApiClient) {
             throw new ApiException(
+                0,
                 'OAuthAuthenticator has no ApiClient; it must be used via the '
                 . 'Zitadel\\Client\\Client, which injects the shared transport '
                 . 'before any token exchange.'
@@ -137,8 +138,8 @@ abstract class OAuthAuthenticator extends BaseAuthenticator implements HttpAware
 
         if ($response->statusCode < 200 || $response->statusCode >= 300) {
             throw new ApiException(
-                'Token refresh failed: token endpoint returned HTTP ' . $response->statusCode,
                 $response->statusCode,
+                'Token refresh failed: token endpoint returned HTTP ' . $response->statusCode,
                 $response->headers,
                 $response->body
             );
@@ -148,8 +149,8 @@ abstract class OAuthAuthenticator extends BaseAuthenticator implements HttpAware
         $payload = json_decode($response->body, true);
         if (!is_array($payload) || !isset($payload['access_token']) || !is_string($payload['access_token'])) {
             throw new ApiException(
-                'Token refresh failed: token endpoint response did not contain an access_token.',
                 $response->statusCode,
+                'Token refresh failed: token endpoint response did not contain an access_token.',
                 $response->headers,
                 $response->body
             );

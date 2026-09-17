@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * IdentityProviderServiceSAMLNameIDFormat is an enumeration of allowed values.
+ */
 enum IdentityProviderServiceSAMLNameIDFormat: string
 {
     case SAML_NAME_ID_FORMAT_UNSPECIFIED = 'SAML_NAME_ID_FORMAT_UNSPECIFIED';

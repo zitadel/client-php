@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceCheckIDPIntent
 {
-    /** @example null */
     #[SerializedName('idpIntentId')]
     public ?string $idpIntentId = null;
 
-    /** @example null */
     #[SerializedName('idpIntentToken')]
     public ?string $idpIntentToken = null;
 

@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceRedirectURLs
 {
-    /** @example null */
     #[SerializedName('successUrl')]
     public ?string $successUrl = null;
 
-    /** @example null */
     #[SerializedName('failureUrl')]
     public ?string $failureUrl = null;
 

@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaProjectServicePrivateLabelingSetting is an enumeration of allowed values.
+ */
 enum BetaProjectServicePrivateLabelingSetting: string
 {
     case PRIVATE_LABELING_SETTING_UNSPECIFIED = 'PRIVATE_LABELING_SETTING_UNSPECIFIED';

@@ -21,7 +21,6 @@ class BetaAppServiceListApplicationsResponse
     #[SerializedName('applications')]
     public ?\Ds\Vector $applications = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaAppServicePaginationResponse $pagination = null;
 

@@ -17,47 +17,36 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaInternalPermissionServiceAdministratorSearchFilter
 {
-    /** @example null */
     #[SerializedName('and')]
     public ?\Zitadel\Client\Models\BetaInternalPermissionServiceAndFilter $and_ = null;
 
-    /** @example null */
     #[SerializedName('changeDate')]
     public ?\Zitadel\Client\Models\BetaInternalPermissionServiceTimestampFilter $changeDate = null;
 
-    /** @example null */
     #[SerializedName('creationDate')]
     public ?\Zitadel\Client\Models\BetaInternalPermissionServiceTimestampFilter $creationDate = null;
 
-    /** @example null */
     #[SerializedName('inUserIdsFilter')]
     public ?\Zitadel\Client\Models\BetaInternalPermissionServiceInIDsFilter $inUserIdsFilter = null;
 
-    /** @example null */
     #[SerializedName('not')]
     public ?\Zitadel\Client\Models\BetaInternalPermissionServiceNotFilter $not = null;
 
-    /** @example null */
     #[SerializedName('or')]
     public ?\Zitadel\Client\Models\BetaInternalPermissionServiceOrFilter $or_ = null;
 
-    /** @example null */
     #[SerializedName('resource')]
     public ?\Zitadel\Client\Models\BetaInternalPermissionServiceResourceFilter $resource = null;
 
-    /** @example null */
     #[SerializedName('role')]
     public ?\Zitadel\Client\Models\BetaInternalPermissionServiceRoleFilter $role = null;
 
-    /** @example null */
     #[SerializedName('userDisplayName')]
     public ?\Zitadel\Client\Models\BetaInternalPermissionServiceUserDisplayNameFilter $userDisplayName = null;
 
-    /** @example null */
     #[SerializedName('userOrganizationId')]
     public ?\Zitadel\Client\Models\BetaInternalPermissionServiceIDFilter $userOrganizationId = null;
 
-    /** @example null */
     #[SerializedName('userPreferredLoginName')]
     public ?\Zitadel\Client\Models\BetaInternalPermissionServiceUserPreferredLoginNameFilter $userPreferredLoginName = null;
 

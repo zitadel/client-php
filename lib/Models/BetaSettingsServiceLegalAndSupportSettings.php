@@ -19,35 +19,27 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSettingsServiceLegalAndSupportSettings
 {
-    /** @example null */
     #[SerializedName('tosLink')]
     public ?string $tosLink = null;
 
-    /** @example null */
     #[SerializedName('privacyPolicyLink')]
     public ?string $privacyPolicyLink = null;
 
-    /** @example null */
     #[SerializedName('helpLink')]
     public ?string $helpLink = null;
 
-    /** @example null */
     #[SerializedName('supportEmail')]
     public ?string $supportEmail = null;
 
-    /** @example null */
     #[SerializedName('resourceOwnerType')]
     public ?\Zitadel\Client\Models\BetaSettingsServiceResourceOwnerType $resourceOwnerType = null;
 
-    /** @example null */
     #[SerializedName('docsLink')]
     public ?string $docsLink = null;
 
-    /** @example null */
     #[SerializedName('customLink')]
     public ?string $customLink = null;
 
-    /** @example null */
     #[SerializedName('customLinkText')]
     public ?string $customLinkText = null;
 

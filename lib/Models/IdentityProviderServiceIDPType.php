@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * IdentityProviderServiceIDPType is an enumeration of allowed values.
+ */
 enum IdentityProviderServiceIDPType: string
 {
     case IDP_TYPE_UNSPECIFIED = 'IDP_TYPE_UNSPECIFIED';

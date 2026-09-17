@@ -19,14 +19,12 @@ class AuthorizationServiceOrganization
 {
     /**
      * ID is the unique identifier of the organization.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;
 
     /**
      * Name is the name of the organization.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;

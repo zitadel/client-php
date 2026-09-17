@@ -20,7 +20,6 @@ class BetaActionServiceInTargetIDsFilter
     /**
      * Defines the ids to query for.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('targetIds')]
     public ?\Ds\Vector $targetIds = null;

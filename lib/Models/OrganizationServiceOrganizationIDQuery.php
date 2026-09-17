@@ -19,7 +19,6 @@ class OrganizationServiceOrganizationIDQuery
 {
     /**
      * Unique identifier of the organization.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;

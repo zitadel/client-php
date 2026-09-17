@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SettingsServiceGetPasswordComplexitySettingsRequest
 {
-    /** @example null */
     #[SerializedName('ctx')]
     public ?\Zitadel\Client\Models\SettingsServiceRequestContext $ctx = null;
 

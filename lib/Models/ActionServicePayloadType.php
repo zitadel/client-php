@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * ActionServicePayloadType is an enumeration of allowed values.
+ */
 enum ActionServicePayloadType: string
 {
     case PAYLOAD_TYPE_UNSPECIFIED = 'PAYLOAD_TYPE_UNSPECIFIED';

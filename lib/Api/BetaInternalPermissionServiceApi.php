@@ -19,6 +19,7 @@ use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
 use Zitadel\Client\ValueSerializer;
+use Zitadel\Client\Auth\NoAuth;
 
 /**
  * BetaInternalPermissionServiceApi provides methods for the BetaInternalPermissionService API group.
@@ -43,8 +44,8 @@ class BetaInternalPermissionServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for createAdministrator but received none',
                 $apiResult->statusCode,
+                'Expected a response body for createAdministrator but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -75,7 +76,11 @@ class BetaInternalPermissionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaInternalPermissionServiceCreateAdministratorResponse::class
+            \Zitadel\Client\Models\BetaInternalPermissionServiceCreateAdministratorResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -97,8 +102,8 @@ class BetaInternalPermissionServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for deleteAdministrator but received none',
                 $apiResult->statusCode,
+                'Expected a response body for deleteAdministrator but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -129,7 +134,11 @@ class BetaInternalPermissionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaInternalPermissionServiceDeleteAdministratorResponse::class
+            \Zitadel\Client\Models\BetaInternalPermissionServiceDeleteAdministratorResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -151,8 +160,8 @@ class BetaInternalPermissionServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for listAdministrators but received none',
                 $apiResult->statusCode,
+                'Expected a response body for listAdministrators but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -183,7 +192,11 @@ class BetaInternalPermissionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaInternalPermissionServiceListAdministratorsResponse::class
+            \Zitadel\Client\Models\BetaInternalPermissionServiceListAdministratorsResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -205,8 +218,8 @@ class BetaInternalPermissionServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for updateAdministrator but received none',
                 $apiResult->statusCode,
+                'Expected a response body for updateAdministrator but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -237,7 +250,11 @@ class BetaInternalPermissionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaInternalPermissionServiceUpdateAdministratorResponse::class
+            \Zitadel\Client\Models\BetaInternalPermissionServiceUpdateAdministratorResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }

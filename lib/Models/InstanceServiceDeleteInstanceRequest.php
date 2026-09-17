@@ -19,7 +19,6 @@ class InstanceServiceDeleteInstanceRequest
 {
     /**
      * InstanceID is the unique ID of the instance to be deleted.
-     * @example null
      */
     #[SerializedName('instanceId')]
     public ?string $instanceId = null;

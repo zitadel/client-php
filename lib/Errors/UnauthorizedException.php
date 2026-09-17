@@ -24,6 +24,6 @@ class UnauthorizedException extends ClientException
         ?string $responseBody = null,
         mixed $errorBody = null
     ) {
-        parent::__construct($message, 401, $responseHeaders, $responseBody, $errorBody);
+        parent::__construct(401, $message, $responseHeaders, $responseBody, $errorBody);
     }
 }

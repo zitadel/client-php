@@ -21,12 +21,10 @@ class AuthorizationServiceProjectNameQuery
 {
     /**
      * Specify the name of the project the user was granted the authorization for to search for.  Note that this will also include authorizations granted for project grants of the same project.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\AuthorizationServiceTextFilterMethod $method = null;
 

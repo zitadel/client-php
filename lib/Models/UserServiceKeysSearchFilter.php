@@ -17,23 +17,18 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceKeysSearchFilter
 {
-    /** @example null */
     #[SerializedName('createdDateFilter')]
     public ?\Zitadel\Client\Models\UserServiceTimestampFilter $createdDateFilter = null;
 
-    /** @example null */
     #[SerializedName('expirationDateFilter')]
     public ?\Zitadel\Client\Models\UserServiceTimestampFilter $expirationDateFilter = null;
 
-    /** @example null */
     #[SerializedName('keyIdFilter')]
     public ?\Zitadel\Client\Models\UserServiceIDFilter $keyIdFilter = null;
 
-    /** @example null */
     #[SerializedName('organizationIdFilter')]
     public ?\Zitadel\Client\Models\UserServiceIDFilter $organizationIdFilter = null;
 
-    /** @example null */
     #[SerializedName('userIdFilter')]
     public ?\Zitadel\Client\Models\UserServiceIDFilter $userIdFilter = null;
 

@@ -21,54 +21,46 @@ class BetaProjectServiceCreateProjectRequest
 {
     /**
      * The unique identifier of the organization the project belongs to.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
     /**
      * The unique identifier of the project.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;
 
     /**
      * Name of the project.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;
 
     /**
      * Enable this setting to provide role information to your application. For OpenID Connect, the roles can be requested from the UserInfo endpoint or sent in the ID or Access Token, based on your application's configuration.
-     * @example null
      */
     #[SerializedName('projectRoleAssertion')]
     public ?bool $projectRoleAssertion = null;
 
     /**
      * Deny authentication if the user has no authorization assigned to this project. Authorizations to the project without assigned a specific role to the user are allowed.
-     * @example null
      */
     #[SerializedName('authorizationRequired')]
     public ?bool $authorizationRequired = null;
 
     /**
      * Before a user can be authenticated, it is verified that their affiliated organization has been granted access to this project. Authentication is not permitted for users from unauthorized organizations.
-     * @example null
      */
     #[SerializedName('projectAccessRequired')]
     public ?bool $projectAccessRequired = null;
 
-    /** @example null */
     #[SerializedName('privateLabelingSetting')]
     public ?\Zitadel\Client\Models\BetaProjectServicePrivateLabelingSetting $privateLabelingSetting = null;
 
     /**
      * List of users and Project Member roles (PROJECT_OWNER, by default) to be assigned to those users.
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaProjectServiceAdmin>|null
-     * @example null
      */
     #[SerializedName('admins')]
     public ?\Ds\Vector $admins = null;

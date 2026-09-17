@@ -19,14 +19,12 @@ class UserServiceSendInviteCode
 {
     /**
      * Optionally set a url_template, which will be used in the invite mail sent by ZITADEL to guide the user to your invitation page.  If no template is set and no previous code was created, the default ZITADEL url will be used.   The following placeholders can be used: UserID, OrgID, Code
-     * @example null
      */
     #[SerializedName('urlTemplate')]
     public ?string $urlTemplate = null;
 
     /**
      * Optionally set an application name, which will be used in the invite mail sent by ZITADEL.  If no application name is set and no previous code was created, ZITADEL will be used as default.
-     * @example null
      */
     #[SerializedName('applicationName')]
     public ?string $applicationName = null;

@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * OIDCServicePrompt is an enumeration of allowed values.
+ */
 enum OIDCServicePrompt: string
 {
     case PROMPT_UNSPECIFIED = 'PROMPT_UNSPECIFIED';

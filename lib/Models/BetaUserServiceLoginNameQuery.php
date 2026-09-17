@@ -22,11 +22,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
  */
 class BetaUserServiceLoginNameQuery
 {
-    /** @example null */
     #[SerializedName('loginName')]
     public ?string $loginName = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\BetaUserServiceTextQueryMethod $method = null;
 

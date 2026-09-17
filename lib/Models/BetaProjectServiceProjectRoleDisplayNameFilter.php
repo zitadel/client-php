@@ -19,11 +19,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaProjectServiceProjectRoleDisplayNameFilter
 {
-    /** @example null */
     #[SerializedName('displayName')]
     public ?string $displayName = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\BetaProjectServiceTextFilterMethod $method = null;
 

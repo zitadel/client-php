@@ -19,6 +19,7 @@ use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
 use Zitadel\Client\ValueSerializer;
+use Zitadel\Client\Auth\NoAuth;
 
 /**
  * ProjectServiceApi provides methods for the ProjectService API group.
@@ -43,8 +44,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for activateProject but received none',
                 $apiResult->statusCode,
+                'Expected a response body for activateProject but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -75,7 +76,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceActivateProjectResponse::class
+            \Zitadel\Client\Models\ProjectServiceActivateProjectResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -97,8 +102,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for activateProjectGrant but received none',
                 $apiResult->statusCode,
+                'Expected a response body for activateProjectGrant but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -129,7 +134,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceActivateProjectGrantResponse::class
+            \Zitadel\Client\Models\ProjectServiceActivateProjectGrantResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -151,8 +160,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for addProjectRole but received none',
                 $apiResult->statusCode,
+                'Expected a response body for addProjectRole but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -183,7 +192,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceAddProjectRoleResponse::class
+            \Zitadel\Client\Models\ProjectServiceAddProjectRoleResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -205,8 +218,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for createProject but received none',
                 $apiResult->statusCode,
+                'Expected a response body for createProject but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -237,7 +250,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceCreateProjectResponse::class
+            \Zitadel\Client\Models\ProjectServiceCreateProjectResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -259,8 +276,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for createProjectGrant but received none',
                 $apiResult->statusCode,
+                'Expected a response body for createProjectGrant but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -291,7 +308,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceCreateProjectGrantResponse::class
+            \Zitadel\Client\Models\ProjectServiceCreateProjectGrantResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -313,8 +334,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for deactivateProject but received none',
                 $apiResult->statusCode,
+                'Expected a response body for deactivateProject but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -345,7 +366,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceDeactivateProjectResponse::class
+            \Zitadel\Client\Models\ProjectServiceDeactivateProjectResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -367,8 +392,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for deactivateProjectGrant but received none',
                 $apiResult->statusCode,
+                'Expected a response body for deactivateProjectGrant but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -399,7 +424,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceDeactivateProjectGrantResponse::class
+            \Zitadel\Client\Models\ProjectServiceDeactivateProjectGrantResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -421,8 +450,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for deleteProject but received none',
                 $apiResult->statusCode,
+                'Expected a response body for deleteProject but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -453,7 +482,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceDeleteProjectResponse::class
+            \Zitadel\Client\Models\ProjectServiceDeleteProjectResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -475,8 +508,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for deleteProjectGrant but received none',
                 $apiResult->statusCode,
+                'Expected a response body for deleteProjectGrant but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -507,7 +540,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceDeleteProjectGrantResponse::class
+            \Zitadel\Client\Models\ProjectServiceDeleteProjectGrantResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -529,8 +566,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for getProject but received none',
                 $apiResult->statusCode,
+                'Expected a response body for getProject but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -561,7 +598,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceGetProjectResponse::class
+            \Zitadel\Client\Models\ProjectServiceGetProjectResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -583,8 +624,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for listProjectGrants but received none',
                 $apiResult->statusCode,
+                'Expected a response body for listProjectGrants but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -615,7 +656,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceListProjectGrantsResponse::class
+            \Zitadel\Client\Models\ProjectServiceListProjectGrantsResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -637,8 +682,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for listProjectRoles but received none',
                 $apiResult->statusCode,
+                'Expected a response body for listProjectRoles but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -669,7 +714,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceListProjectRolesResponse::class
+            \Zitadel\Client\Models\ProjectServiceListProjectRolesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -691,8 +740,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for listProjects but received none',
                 $apiResult->statusCode,
+                'Expected a response body for listProjects but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -723,7 +772,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceListProjectsResponse::class
+            \Zitadel\Client\Models\ProjectServiceListProjectsResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -745,8 +798,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for removeProjectRole but received none',
                 $apiResult->statusCode,
+                'Expected a response body for removeProjectRole but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -777,7 +830,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceRemoveProjectRoleResponse::class
+            \Zitadel\Client\Models\ProjectServiceRemoveProjectRoleResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -799,8 +856,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for updateProject but received none',
                 $apiResult->statusCode,
+                'Expected a response body for updateProject but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -831,7 +888,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceUpdateProjectResponse::class
+            \Zitadel\Client\Models\ProjectServiceUpdateProjectResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -853,8 +914,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for updateProjectGrant but received none',
                 $apiResult->statusCode,
+                'Expected a response body for updateProjectGrant but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -885,7 +946,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceUpdateProjectGrantResponse::class
+            \Zitadel\Client\Models\ProjectServiceUpdateProjectGrantResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -907,8 +972,8 @@ class ProjectServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for updateProjectRole but received none',
                 $apiResult->statusCode,
+                'Expected a response body for updateProjectRole but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -939,7 +1004,11 @@ class ProjectServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\ProjectServiceUpdateProjectRoleResponse::class
+            \Zitadel\Client\Models\ProjectServiceUpdateProjectRoleResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }

@@ -19,37 +19,32 @@ class SettingsServiceGetGeneralSettingsResponse
 {
     /**
      * The unique identifier of the default organization.  The default organization is used to assign new users to an organization if no other organization is specified.  Deprecated: use default_organization_id instead.
-     * @example null
      */
     #[SerializedName('defaultOrgId')]
     public ?string $defaultOrgId = null;
 
     /**
-     * The default language is use if no other language is specified or detected.  The format is a BCP 47 language tag (e.g. \"en\", \"de\", \"fr-CH\").
-     * @example null
+     * The default language is use if no other language is specified or detected.  The format is a BCP 47 language tag (e.g. "en", "de", "fr-CH").
      */
     #[SerializedName('defaultLanguage')]
     public ?string $defaultLanguage = null;
 
     /**
-     * The list of supported languages.  Note that the instance might restrict the languages further  only allowing a subset of these languages to be used.  The format is a BCP 47 language tag (e.g. \"en\", \"de\", \"fr-CH\").
+     * The list of supported languages.  Note that the instance might restrict the languages further  only allowing a subset of these languages to be used.  The format is a BCP 47 language tag (e.g. "en", "de", "fr-CH").
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('supportedLanguages')]
     public ?\Ds\Vector $supportedLanguages = null;
 
     /**
      * The unique identifier of the default organization.  The default organization is used to assign new users to an organization if no other organization is specified.
-     * @example null
      */
     #[SerializedName('defaultOrganizationId')]
     public ?string $defaultOrganizationId = null;
 
     /**
-     * The list of allowed languages for the instance.  This is a subset of the supported languages to be used in the instance  e.g. for user selection during registration or language detection in the UI.  The format is a BCP 47 language tag (e.g. \"en\", \"de\", \"fr-CH\").
+     * The list of allowed languages for the instance.  This is a subset of the supported languages to be used in the instance  e.g. for user selection during registration or language detection in the UI.  The format is a BCP 47 language tag (e.g. "en", "de", "fr-CH").
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('allowedLanguages')]
     public ?\Ds\Vector $allowedLanguages = null;

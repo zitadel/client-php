@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * UserServicePersonalAccessTokenFieldName is an enumeration of allowed values.
+ */
 enum UserServicePersonalAccessTokenFieldName: string
 {
     case PERSONAL_ACCESS_TOKEN_FIELD_NAME_UNSPECIFIED = 'PERSONAL_ACCESS_TOKEN_FIELD_NAME_UNSPECIFIED';

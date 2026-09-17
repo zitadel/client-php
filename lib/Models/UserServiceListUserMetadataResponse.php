@@ -17,14 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceListUserMetadataResponse
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\UserServicePaginationResponse $pagination = null;
 
     /**
      * The user metadata requested.
      * @var \Ds\Vector<\Zitadel\Client\Models\UserServiceMetadata>|null
-     * @example null
      */
     #[SerializedName('metadata')]
     public ?\Ds\Vector $metadata = null;

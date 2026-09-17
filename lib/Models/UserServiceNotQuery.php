@@ -20,7 +20,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
  */
 class UserServiceNotQuery
 {
-    /** @example null */
     #[SerializedName('query')]
     public ?\Zitadel\Client\Models\UserServiceSearchQuery $query = null;
 

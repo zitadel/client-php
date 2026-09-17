@@ -19,15 +19,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class OIDCServiceAuthorizationError
 {
-    /** @example null */
     #[SerializedName('error')]
     public ?\Zitadel\Client\Models\OIDCServiceErrorReason $error = null;
 
-    /** @example null */
     #[SerializedName('errorDescription')]
     public ?string $errorDescription = null;
 
-    /** @example null */
     #[SerializedName('errorUri')]
     public ?string $errorUri = null;
 

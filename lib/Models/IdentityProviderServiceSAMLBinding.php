@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * IdentityProviderServiceSAMLBinding is an enumeration of allowed values.
+ */
 enum IdentityProviderServiceSAMLBinding: string
 {
     case SAML_BINDING_UNSPECIFIED = 'SAML_BINDING_UNSPECIFIED';

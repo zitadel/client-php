@@ -19,14 +19,12 @@ class BetaOrganizationServiceCreateOrganizationRequest
 {
     /**
      * name of the Organization to be created.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;
 
     /**
      * Optionally set your own id unique for the organization.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;
@@ -34,7 +32,6 @@ class BetaOrganizationServiceCreateOrganizationRequest
     /**
      * Additional Admins for the Organization.
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaOrganizationServiceAdmin>|null
-     * @example null
      */
     #[SerializedName('admins')]
     public ?\Ds\Vector $admins = null;

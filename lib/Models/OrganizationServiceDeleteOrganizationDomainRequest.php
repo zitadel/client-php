@@ -19,14 +19,12 @@ class OrganizationServiceDeleteOrganizationDomainRequest
 {
     /**
      * OrganizationID is the unique identifier of the organization from which the domain is to be deleted.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
     /**
      * Domain is the full qualified domain name to be deleted from the organization.  Note that if the domain is used as suffix for user logins,  those users will not be able to log in anymore. They have to use another domain instead.  Also if the domain was used for domain discovery,  users will not be able to find the organization by the domain anymore.
-     * @example null
      */
     #[SerializedName('domain')]
     public ?string $domain = null;

@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServicePasskeyRegistrationCode
 {
-    /** @example null */
     #[SerializedName('id')]
     public ?string $id = null;
 
-    /** @example null */
     #[SerializedName('code')]
     public ?string $code = null;
 

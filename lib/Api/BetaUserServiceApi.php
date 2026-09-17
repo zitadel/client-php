@@ -19,6 +19,7 @@ use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
 use Zitadel\Client\ValueSerializer;
+use Zitadel\Client\Auth\NoAuth;
 
 /**
  * BetaUserServiceApi provides methods for the BetaUserService API group.
@@ -43,8 +44,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for addHumanUser but received none',
                 $apiResult->statusCode,
+                'Expected a response body for addHumanUser but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -75,7 +76,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceAddHumanUserResponse::class
+            \Zitadel\Client\Models\BetaUserServiceAddHumanUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -97,8 +102,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for addIDPLink but received none',
                 $apiResult->statusCode,
+                'Expected a response body for addIDPLink but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -129,7 +134,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceAddIDPLinkResponse::class
+            \Zitadel\Client\Models\BetaUserServiceAddIDPLinkResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -151,8 +160,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for addOTPEmail but received none',
                 $apiResult->statusCode,
+                'Expected a response body for addOTPEmail but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -183,7 +192,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceAddOTPEmailResponse::class
+            \Zitadel\Client\Models\BetaUserServiceAddOTPEmailResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -205,8 +218,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for addOTPSMS but received none',
                 $apiResult->statusCode,
+                'Expected a response body for addOTPSMS but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -237,7 +250,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceAddOTPSMSResponse::class
+            \Zitadel\Client\Models\BetaUserServiceAddOTPSMSResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -259,8 +276,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for createPasskeyRegistrationLink but received none',
                 $apiResult->statusCode,
+                'Expected a response body for createPasskeyRegistrationLink but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -291,7 +308,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceCreatePasskeyRegistrationLinkResponse::class
+            \Zitadel\Client\Models\BetaUserServiceCreatePasskeyRegistrationLinkResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -313,8 +334,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for deactivateUser but received none',
                 $apiResult->statusCode,
+                'Expected a response body for deactivateUser but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -345,7 +366,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceDeactivateUserResponse::class
+            \Zitadel\Client\Models\BetaUserServiceDeactivateUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -367,8 +392,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for deleteUser but received none',
                 $apiResult->statusCode,
+                'Expected a response body for deleteUser but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -399,7 +424,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceDeleteUserResponse::class
+            \Zitadel\Client\Models\BetaUserServiceDeleteUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -421,8 +450,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for getUserByID but received none',
                 $apiResult->statusCode,
+                'Expected a response body for getUserByID but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -453,7 +482,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceGetUserByIDResponse::class
+            \Zitadel\Client\Models\BetaUserServiceGetUserByIDResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -475,8 +508,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for listAuthenticationMethodTypes but received none',
                 $apiResult->statusCode,
+                'Expected a response body for listAuthenticationMethodTypes but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -507,7 +540,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceListAuthenticationMethodTypesResponse::class
+            \Zitadel\Client\Models\BetaUserServiceListAuthenticationMethodTypesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -529,8 +566,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for listUsers but received none',
                 $apiResult->statusCode,
+                'Expected a response body for listUsers but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -561,7 +598,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceListUsersResponse::class
+            \Zitadel\Client\Models\BetaUserServiceListUsersResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -583,8 +624,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for lockUser but received none',
                 $apiResult->statusCode,
+                'Expected a response body for lockUser but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -615,7 +656,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceLockUserResponse::class
+            \Zitadel\Client\Models\BetaUserServiceLockUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -637,8 +682,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for passwordReset but received none',
                 $apiResult->statusCode,
+                'Expected a response body for passwordReset but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -669,7 +714,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServicePasswordResetResponse::class
+            \Zitadel\Client\Models\BetaUserServicePasswordResetResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -691,8 +740,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for reactivateUser but received none',
                 $apiResult->statusCode,
+                'Expected a response body for reactivateUser but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -723,7 +772,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceReactivateUserResponse::class
+            \Zitadel\Client\Models\BetaUserServiceReactivateUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -745,8 +798,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for registerPasskey but received none',
                 $apiResult->statusCode,
+                'Expected a response body for registerPasskey but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -777,7 +830,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceRegisterPasskeyResponse::class
+            \Zitadel\Client\Models\BetaUserServiceRegisterPasskeyResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -799,8 +856,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for registerTOTP but received none',
                 $apiResult->statusCode,
+                'Expected a response body for registerTOTP but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -831,7 +888,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceRegisterTOTPResponse::class
+            \Zitadel\Client\Models\BetaUserServiceRegisterTOTPResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -853,8 +914,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for registerU2F but received none',
                 $apiResult->statusCode,
+                'Expected a response body for registerU2F but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -885,7 +946,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceRegisterU2FResponse::class
+            \Zitadel\Client\Models\BetaUserServiceRegisterU2FResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -907,8 +972,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for removeOTPEmail but received none',
                 $apiResult->statusCode,
+                'Expected a response body for removeOTPEmail but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -939,7 +1004,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceRemoveOTPEmailResponse::class
+            \Zitadel\Client\Models\BetaUserServiceRemoveOTPEmailResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -961,8 +1030,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for removeOTPSMS but received none',
                 $apiResult->statusCode,
+                'Expected a response body for removeOTPSMS but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -993,7 +1062,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceRemoveOTPSMSResponse::class
+            \Zitadel\Client\Models\BetaUserServiceRemoveOTPSMSResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1015,8 +1088,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for removePhone but received none',
                 $apiResult->statusCode,
+                'Expected a response body for removePhone but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1047,7 +1120,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceRemovePhoneResponse::class
+            \Zitadel\Client\Models\BetaUserServiceRemovePhoneResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1069,8 +1146,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for removeTOTP but received none',
                 $apiResult->statusCode,
+                'Expected a response body for removeTOTP but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1101,7 +1178,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceRemoveTOTPResponse::class
+            \Zitadel\Client\Models\BetaUserServiceRemoveTOTPResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1123,8 +1204,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for resendEmailCode but received none',
                 $apiResult->statusCode,
+                'Expected a response body for resendEmailCode but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1155,7 +1236,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceResendEmailCodeResponse::class
+            \Zitadel\Client\Models\BetaUserServiceResendEmailCodeResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1177,8 +1262,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for resendPhoneCode but received none',
                 $apiResult->statusCode,
+                'Expected a response body for resendPhoneCode but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1209,7 +1294,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceResendPhoneCodeResponse::class
+            \Zitadel\Client\Models\BetaUserServiceResendPhoneCodeResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1231,8 +1320,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for retrieveIdentityProviderIntent but received none',
                 $apiResult->statusCode,
+                'Expected a response body for retrieveIdentityProviderIntent but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1263,7 +1352,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceRetrieveIdentityProviderIntentResponse::class
+            \Zitadel\Client\Models\BetaUserServiceRetrieveIdentityProviderIntentResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1285,8 +1378,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for setEmail but received none',
                 $apiResult->statusCode,
+                'Expected a response body for setEmail but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1317,7 +1410,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceSetEmailResponse::class
+            \Zitadel\Client\Models\BetaUserServiceSetEmailResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1339,8 +1436,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for setPassword but received none',
                 $apiResult->statusCode,
+                'Expected a response body for setPassword but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1371,7 +1468,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceSetPasswordResponse::class
+            \Zitadel\Client\Models\BetaUserServiceSetPasswordResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1393,8 +1494,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for setPhone but received none',
                 $apiResult->statusCode,
+                'Expected a response body for setPhone but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1425,7 +1526,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceSetPhoneResponse::class
+            \Zitadel\Client\Models\BetaUserServiceSetPhoneResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1447,8 +1552,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for startIdentityProviderIntent but received none',
                 $apiResult->statusCode,
+                'Expected a response body for startIdentityProviderIntent but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1479,7 +1584,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceStartIdentityProviderIntentResponse::class
+            \Zitadel\Client\Models\BetaUserServiceStartIdentityProviderIntentResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1501,8 +1610,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for unlockUser but received none',
                 $apiResult->statusCode,
+                'Expected a response body for unlockUser but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1533,7 +1642,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceUnlockUserResponse::class
+            \Zitadel\Client\Models\BetaUserServiceUnlockUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1555,8 +1668,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for updateHumanUser but received none',
                 $apiResult->statusCode,
+                'Expected a response body for updateHumanUser but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1587,7 +1700,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceUpdateHumanUserResponse::class
+            \Zitadel\Client\Models\BetaUserServiceUpdateHumanUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1609,8 +1726,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for verifyEmail but received none',
                 $apiResult->statusCode,
+                'Expected a response body for verifyEmail but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1641,7 +1758,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceVerifyEmailResponse::class
+            \Zitadel\Client\Models\BetaUserServiceVerifyEmailResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1663,8 +1784,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for verifyPasskeyRegistration but received none',
                 $apiResult->statusCode,
+                'Expected a response body for verifyPasskeyRegistration but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1695,7 +1816,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceVerifyPasskeyRegistrationResponse::class
+            \Zitadel\Client\Models\BetaUserServiceVerifyPasskeyRegistrationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1717,8 +1842,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for verifyPhone but received none',
                 $apiResult->statusCode,
+                'Expected a response body for verifyPhone but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1749,7 +1874,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceVerifyPhoneResponse::class
+            \Zitadel\Client\Models\BetaUserServiceVerifyPhoneResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1771,8 +1900,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for verifyTOTPRegistration but received none',
                 $apiResult->statusCode,
+                'Expected a response body for verifyTOTPRegistration but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1803,7 +1932,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceVerifyTOTPRegistrationResponse::class
+            \Zitadel\Client\Models\BetaUserServiceVerifyTOTPRegistrationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -1825,8 +1958,8 @@ class BetaUserServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for verifyU2FRegistration but received none',
                 $apiResult->statusCode,
+                'Expected a response body for verifyU2FRegistration but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -1857,7 +1990,11 @@ class BetaUserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaUserServiceVerifyU2FRegistrationResponse::class
+            \Zitadel\Client\Models\BetaUserServiceVerifyU2FRegistrationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }

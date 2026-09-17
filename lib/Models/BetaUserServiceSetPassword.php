@@ -17,19 +17,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceSetPassword
 {
-    /** @example null */
     #[SerializedName('hashedPassword')]
     public ?\Zitadel\Client\Models\BetaUserServiceHashedPassword $hashedPassword = null;
 
-    /** @example null */
     #[SerializedName('password')]
     public ?\Zitadel\Client\Models\BetaUserServicePassword $password = null;
 
-    /** @example null */
     #[SerializedName('currentPassword')]
     public ?string $currentPassword = null;
 
-    /** @example null */
     #[SerializedName('verificationCode')]
     public ?string $verificationCode = null;
 

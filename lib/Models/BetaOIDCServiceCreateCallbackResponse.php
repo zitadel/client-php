@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaOIDCServiceCreateCallbackResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\BetaOIDCServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('callbackUrl')]
     public ?string $callbackUrl = null;
 

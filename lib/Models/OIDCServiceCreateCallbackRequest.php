@@ -19,16 +19,13 @@ class OIDCServiceCreateCallbackRequest
 {
     /**
      * The ID of the Auth Request to finalize.
-     * @example null
      */
     #[SerializedName('authRequestId')]
     public ?string $authRequestId = null;
 
-    /** @example null */
     #[SerializedName('error')]
     public ?\Zitadel\Client\Models\OIDCServiceAuthorizationError $error = null;
 
-    /** @example null */
     #[SerializedName('session')]
     public ?\Zitadel\Client\Models\OIDCServiceSession $session = null;
 

@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaInstanceServiceAddCustomDomainRequest
 {
-    /** @example null */
     #[SerializedName('instanceId')]
     public ?string $instanceId = null;
 
-    /** @example null */
     #[SerializedName('domain')]
     public ?string $domain = null;
 

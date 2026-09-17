@@ -17,28 +17,23 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceStartIdentityProviderIntentResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\BetaUserServiceDetails $details = null;
 
     /**
      * URL to which the client should redirect
-     * @example null
      */
     #[SerializedName('authUrl')]
     public ?string $authUrl = null;
 
-    /** @example null */
     #[SerializedName('formData')]
     public ?\Zitadel\Client\Models\BetaUserServiceFormData $formData = null;
 
-    /** @example null */
     #[SerializedName('idpIntent')]
     public ?\Zitadel\Client\Models\BetaUserServiceIDPIntent $idpIntent = null;
 
     /**
      * POST call information  Deprecated: Use form_data instead
-     * @example null
      */
     #[SerializedName('postForm')]
     public ?string $postForm = null;

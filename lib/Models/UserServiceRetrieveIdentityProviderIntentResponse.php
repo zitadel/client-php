@@ -17,23 +17,18 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceRetrieveIdentityProviderIntentResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\UserServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('idpInformation')]
     public ?\Zitadel\Client\Models\UserServiceIDPInformation $idpInformation = null;
 
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('addHumanUser')]
     public ?\Zitadel\Client\Models\UserServiceAddHumanUserRequest $addHumanUser = null;
 
-    /** @example null */
     #[SerializedName('updateHumanUser')]
     public ?\Zitadel\Client\Models\UserServiceUpdateHumanUserRequest $updateHumanUser = null;
 

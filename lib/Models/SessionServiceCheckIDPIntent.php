@@ -19,14 +19,12 @@ class SessionServiceCheckIDPIntent
 {
     /**
      * The ID of the idp intent, previously returned on the success response of the IDP callback.
-     * @example null
      */
     #[SerializedName('idpIntentId')]
     public ?string $idpIntentId = null;
 
     /**
      * The token of the idp intent, previously returned on the success response of the IDP callback.
-     * @example null
      */
     #[SerializedName('idpIntentToken')]
     public ?string $idpIntentToken = null;

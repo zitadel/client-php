@@ -19,7 +19,6 @@ class OIDCServiceGetDeviceAuthorizationRequestRequest
 {
     /**
      * The user_code returned by the device authorization request and provided to the user by the device.
-     * @example null
      */
     #[SerializedName('userCode')]
     public ?string $userCode = null;

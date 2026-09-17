@@ -19,15 +19,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSettingsServiceLockoutSettings
 {
-    /** @example null */
     #[SerializedName('maxPasswordAttempts')]
     public mixed $maxPasswordAttempts = null;
 
-    /** @example null */
     #[SerializedName('resourceOwnerType')]
     public ?\Zitadel\Client\Models\BetaSettingsServiceResourceOwnerType $resourceOwnerType = null;
 
-    /** @example null */
     #[SerializedName('maxOtpAttempts')]
     public mixed $maxOtpAttempts = null;
 

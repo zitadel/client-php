@@ -17,19 +17,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceCreateSessionResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\BetaSessionServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('sessionId')]
     public ?string $sessionId = null;
 
-    /** @example null */
     #[SerializedName('sessionToken')]
     public ?string $sessionToken = null;
 
-    /** @example null */
     #[SerializedName('challenges')]
     public ?\Zitadel\Client\Models\BetaSessionServiceChallenges $challenges = null;
 

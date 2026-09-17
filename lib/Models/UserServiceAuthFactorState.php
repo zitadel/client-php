@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * UserServiceAuthFactorState is an enumeration of allowed values.
+ */
 enum UserServiceAuthFactorState: string
 {
     case AUTH_FACTOR_STATE_UNSPECIFIED = 'AUTH_FACTOR_STATE_UNSPECIFIED';

@@ -19,35 +19,30 @@ class AuthorizationServiceUser
 {
     /**
      * ID represents the ID of the user who was granted the authorization.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;
 
     /**
      * PreferredLoginName represents the preferred login name of the granted user.
-     * @example null
      */
     #[SerializedName('preferredLoginName')]
     public ?string $preferredLoginName = null;
 
     /**
      * DisplayName represents the public display name of the granted user.
-     * @example null
      */
     #[SerializedName('displayName')]
     public ?string $displayName = null;
 
     /**
      * AvatarURL is the URL to the user's public avatar image.
-     * @example null
      */
     #[SerializedName('avatarUrl')]
     public ?string $avatarUrl = null;
 
     /**
      * The organization the user belong to.  This does not have to correspond with the authorizations organization.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;

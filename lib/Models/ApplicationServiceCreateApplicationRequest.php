@@ -19,34 +19,28 @@ class ApplicationServiceCreateApplicationRequest
 {
     /**
      * The ID of the project the application will be created in.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
     /**
      * Optionally, provide the unique ID of the new application. If omitted, the system will generate one for you,  which is the recommended way. The generated ID will be returned in the response.
-     * @example null
      */
     #[SerializedName('applicationId')]
     public ?string $applicationId = null;
 
     /**
      * Publicly visible name of the application. This might be presented to users if they sign in.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;
 
-    /** @example null */
     #[SerializedName('apiConfiguration')]
     public ?\Zitadel\Client\Models\ApplicationServiceCreateAPIApplicationRequest $apiConfiguration = null;
 
-    /** @example null */
     #[SerializedName('oidcConfiguration')]
     public ?\Zitadel\Client\Models\ApplicationServiceCreateOIDCApplicationRequest $oidcConfiguration = null;
 
-    /** @example null */
     #[SerializedName('samlConfiguration')]
     public ?\Zitadel\Client\Models\ApplicationServiceCreateSAMLApplicationRequest $samlConfiguration = null;
 

@@ -19,7 +19,6 @@ class SettingsServiceGetHostedLoginTranslationResponse
 {
     /**
      * hash of the payload
-     * @example null
      */
     #[SerializedName('etag')]
     public ?string $etag = null;
@@ -27,7 +26,6 @@ class SettingsServiceGetHostedLoginTranslationResponse
     /**
      * `Struct` represents a structured data value, consisting of fields  which map to dynamically typed values. In some languages, `Struct`  might be supported by a native representation. For example, in  scripting languages like JS a struct is represented as an  object. The details of that representation are described together  with the proto support for the language.   The JSON representation for `Struct` is JSON object.
      * @var \Ds\Map<string, mixed>|null
-     * @example null
      */
     #[SerializedName('translations')]
     public ?\Ds\Map $translations = null;

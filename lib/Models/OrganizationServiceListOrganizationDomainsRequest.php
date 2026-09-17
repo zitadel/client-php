@@ -21,24 +21,20 @@ class OrganizationServiceListOrganizationDomainsRequest
 {
     /**
      * OrganizationID is the unique identifier of the organization from which the domains are to be listed.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\OrganizationServicePaginationRequest $pagination = null;
 
     /**
      * Filters define the criteria to query for.
      * @var \Ds\Vector<\Zitadel\Client\Models\OrganizationServiceDomainSearchFilter>|null
-     * @example null
      */
     #[SerializedName('filters')]
     public ?\Ds\Vector $filters = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\OrganizationServiceDomainFieldName $sortingColumn = null;
 

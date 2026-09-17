@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaInternalPermissionServiceTimestampFilterMethod is an enumeration of allowed values.
+ */
 enum BetaInternalPermissionServiceTimestampFilterMethod: string
 {
     case TIMESTAMP_FILTER_METHOD_EQUALS = 'TIMESTAMP_FILTER_METHOD_EQUALS';

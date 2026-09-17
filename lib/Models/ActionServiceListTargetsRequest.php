@@ -19,18 +19,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ActionServiceListTargetsRequest
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\ActionServicePaginationRequest $pagination = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\ActionServiceTargetFieldName $sortingColumn = null;
 
     /**
      * Define the criteria to query for.
      * @var \Ds\Vector<\Zitadel\Client\Models\ActionServiceTargetSearchFilter>|null
-     * @example null
      */
     #[SerializedName('filters')]
     public ?\Ds\Vector $filters = null;

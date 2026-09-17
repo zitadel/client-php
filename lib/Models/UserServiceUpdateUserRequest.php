@@ -19,23 +19,19 @@ class UserServiceUpdateUserRequest
 {
     /**
      * The user id is the users unique identifier in the instance.  It can't be changed.
-     * @example null
      */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
     /**
      * Set a new username that is unique within the instance.  Beware that active tokens and sessions are invalidated when the username is changed.
-     * @example null
      */
     #[SerializedName('username')]
     public ?string $username = null;
 
-    /** @example null */
     #[SerializedName('human')]
     public ?\Zitadel\Client\Models\UserServiceHuman $human = null;
 
-    /** @example null */
     #[SerializedName('machine')]
     public ?\Zitadel\Client\Models\UserServiceMachine $machine = null;
 

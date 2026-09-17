@@ -17,75 +17,57 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceSearchQuery
 {
-    /** @example null */
     #[SerializedName('andQuery')]
     public ?\Zitadel\Client\Models\UserServiceAndQuery $andQuery = null;
 
-    /** @example null */
     #[SerializedName('displayNameQuery')]
     public ?\Zitadel\Client\Models\UserServiceDisplayNameQuery $displayNameQuery = null;
 
-    /** @example null */
     #[SerializedName('emailQuery')]
     public ?\Zitadel\Client\Models\UserServiceEmailQuery $emailQuery = null;
 
-    /** @example null */
     #[SerializedName('firstNameQuery')]
     public ?\Zitadel\Client\Models\UserServiceFirstNameQuery $firstNameQuery = null;
 
-    /** @example null */
     #[SerializedName('inUserEmailsQuery')]
     public ?\Zitadel\Client\Models\UserServiceInUserEmailsQuery $inUserEmailsQuery = null;
 
-    /** @example null */
     #[SerializedName('inUserIdsQuery')]
     public ?\Zitadel\Client\Models\UserServiceInUserIDQuery $inUserIdsQuery = null;
 
-    /** @example null */
     #[SerializedName('lastNameQuery')]
     public ?\Zitadel\Client\Models\UserServiceLastNameQuery $lastNameQuery = null;
 
-    /** @example null */
     #[SerializedName('loginNameQuery')]
     public ?\Zitadel\Client\Models\UserServiceLoginNameQuery $loginNameQuery = null;
 
-    /** @example null */
     #[SerializedName('metadataKeyFilter')]
     public ?\Zitadel\Client\Models\UserServiceMetadataKeyFilter $metadataKeyFilter = null;
 
-    /** @example null */
     #[SerializedName('metadataValueFilter')]
     public ?\Zitadel\Client\Models\UserServiceMetadataValueFilter $metadataValueFilter = null;
 
-    /** @example null */
     #[SerializedName('nickNameQuery')]
     public ?\Zitadel\Client\Models\UserServiceNickNameQuery $nickNameQuery = null;
 
-    /** @example null */
     #[SerializedName('notQuery')]
     public ?\Zitadel\Client\Models\UserServiceNotQuery $notQuery = null;
 
-    /** @example null */
     #[SerializedName('orQuery')]
     public ?\Zitadel\Client\Models\UserServiceOrQuery $orQuery = null;
 
-    /** @example null */
     #[SerializedName('organizationIdQuery')]
     public ?\Zitadel\Client\Models\UserServiceOrganizationIdQuery $organizationIdQuery = null;
 
-    /** @example null */
     #[SerializedName('phoneQuery')]
     public ?\Zitadel\Client\Models\UserServicePhoneQuery $phoneQuery = null;
 
-    /** @example null */
     #[SerializedName('stateQuery')]
     public ?\Zitadel\Client\Models\UserServiceStateQuery $stateQuery = null;
 
-    /** @example null */
     #[SerializedName('typeQuery')]
     public ?\Zitadel\Client\Models\UserServiceTypeQuery $typeQuery = null;
 
-    /** @example null */
     #[SerializedName('userNameQuery')]
     public ?\Zitadel\Client\Models\UserServiceUserNameQuery $userNameQuery = null;
 

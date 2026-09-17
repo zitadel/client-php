@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ApplicationServiceLoginVersion
 {
-    /** @example null */
     #[SerializedName('loginV1')]
     public ?object $loginV1 = null;
 
-    /** @example null */
     #[SerializedName('loginV2')]
     public ?\Zitadel\Client\Models\ApplicationServiceLoginV2 $loginV2 = null;
 

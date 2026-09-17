@@ -19,6 +19,7 @@ use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
 use Zitadel\Client\ValueSerializer;
+use Zitadel\Client\Auth\NoAuth;
 
 /**
  * BetaFeatureServiceApi provides methods for the BetaFeatureService API group.
@@ -42,8 +43,8 @@ class BetaFeatureServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for getInstanceFeatures but received none',
                 $apiResult->statusCode,
+                'Expected a response body for getInstanceFeatures but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -74,7 +75,11 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceGetInstanceFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceGetInstanceFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -95,8 +100,8 @@ class BetaFeatureServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for getOrganizationFeatures but received none',
                 $apiResult->statusCode,
+                'Expected a response body for getOrganizationFeatures but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -127,7 +132,11 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceGetOrganizationFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceGetOrganizationFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -148,8 +157,8 @@ class BetaFeatureServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for getSystemFeatures but received none',
                 $apiResult->statusCode,
+                'Expected a response body for getSystemFeatures but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -180,7 +189,11 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceGetSystemFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceGetSystemFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -201,8 +214,8 @@ class BetaFeatureServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for getUserFeatures but received none',
                 $apiResult->statusCode,
+                'Expected a response body for getUserFeatures but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -233,7 +246,11 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceGetUserFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceGetUserFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -254,8 +271,8 @@ class BetaFeatureServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for resetInstanceFeatures but received none',
                 $apiResult->statusCode,
+                'Expected a response body for resetInstanceFeatures but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -286,7 +303,11 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceResetInstanceFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceResetInstanceFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -307,8 +328,8 @@ class BetaFeatureServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for resetOrganizationFeatures but received none',
                 $apiResult->statusCode,
+                'Expected a response body for resetOrganizationFeatures but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -339,7 +360,11 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceResetOrganizationFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceResetOrganizationFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -360,8 +385,8 @@ class BetaFeatureServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for resetSystemFeatures but received none',
                 $apiResult->statusCode,
+                'Expected a response body for resetSystemFeatures but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -392,7 +417,11 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceResetSystemFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceResetSystemFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -413,8 +442,8 @@ class BetaFeatureServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for resetUserFeatures but received none',
                 $apiResult->statusCode,
+                'Expected a response body for resetUserFeatures but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -445,7 +474,11 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceResetUserFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceResetUserFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -466,8 +499,8 @@ class BetaFeatureServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for setInstanceFeatures but received none',
                 $apiResult->statusCode,
+                'Expected a response body for setInstanceFeatures but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -498,7 +531,11 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceSetInstanceFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceSetInstanceFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -519,8 +556,8 @@ class BetaFeatureServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for setOrganizationFeatures but received none',
                 $apiResult->statusCode,
+                'Expected a response body for setOrganizationFeatures but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -551,7 +588,11 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceSetOrganizationFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceSetOrganizationFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -572,8 +613,8 @@ class BetaFeatureServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for setSystemFeatures but received none',
                 $apiResult->statusCode,
+                'Expected a response body for setSystemFeatures but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -604,7 +645,11 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceSetSystemFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceSetSystemFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }
@@ -625,8 +670,8 @@ class BetaFeatureServiceApi extends BaseApi
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
             throw new \Zitadel\Client\ApiException(
-                'Expected a response body for setUserFeatures but received none',
                 $apiResult->statusCode,
+                'Expected a response body for setUserFeatures but received none',
                 $apiResult->headers,
                 $apiResult->rawBody
             );
@@ -657,7 +702,11 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceSetUserFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceSetUserFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            NoAuth::instance()
         );
         return $result;
     }

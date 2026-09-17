@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaActionServiceExecutionType is an enumeration of allowed values.
+ */
 enum BetaActionServiceExecutionType: string
 {
     case EXECUTION_TYPE_UNSPECIFIED = 'EXECUTION_TYPE_UNSPECIFIED';

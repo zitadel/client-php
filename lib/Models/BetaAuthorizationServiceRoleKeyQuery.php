@@ -21,12 +21,10 @@ class BetaAuthorizationServiceRoleKeyQuery
 {
     /**
      * Specify the key of the role the user was granted to search for.
-     * @example null
      */
     #[SerializedName('key')]
     public ?string $key = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceTextFilterMethod $method = null;
 

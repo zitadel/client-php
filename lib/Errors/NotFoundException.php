@@ -24,6 +24,6 @@ class NotFoundException extends ClientException
         ?string $responseBody = null,
         mixed $errorBody = null
     ) {
-        parent::__construct($message, 404, $responseHeaders, $responseBody, $errorBody);
+        parent::__construct(404, $message, $responseHeaders, $responseBody, $errorBody);
     }
 }

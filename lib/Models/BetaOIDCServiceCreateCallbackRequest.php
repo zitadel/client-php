@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaOIDCServiceCreateCallbackRequest
 {
-    /** @example null */
     #[SerializedName('authRequestId')]
     public ?string $authRequestId = null;
 
-    /** @example null */
     #[SerializedName('error')]
     public ?\Zitadel\Client\Models\BetaOIDCServiceAuthorizationError $error = null;
 
-    /** @example null */
     #[SerializedName('session')]
     public ?\Zitadel\Client\Models\BetaOIDCServiceSession $session = null;
 

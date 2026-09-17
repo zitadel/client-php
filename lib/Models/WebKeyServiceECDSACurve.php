@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * WebKeyServiceECDSACurve is an enumeration of allowed values.
+ */
 enum WebKeyServiceECDSACurve: string
 {
     case ECDSA_CURVE_UNSPECIFIED = 'ECDSA_CURVE_UNSPECIFIED';

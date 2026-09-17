@@ -17,67 +17,51 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceSearchQuery
 {
-    /** @example null */
     #[SerializedName('andQuery')]
     public ?\Zitadel\Client\Models\BetaUserServiceAndQuery $andQuery = null;
 
-    /** @example null */
     #[SerializedName('displayNameQuery')]
     public ?\Zitadel\Client\Models\BetaUserServiceDisplayNameQuery $displayNameQuery = null;
 
-    /** @example null */
     #[SerializedName('emailQuery')]
     public ?\Zitadel\Client\Models\BetaUserServiceEmailQuery $emailQuery = null;
 
-    /** @example null */
     #[SerializedName('firstNameQuery')]
     public ?\Zitadel\Client\Models\BetaUserServiceFirstNameQuery $firstNameQuery = null;
 
-    /** @example null */
     #[SerializedName('inUserEmailsQuery')]
     public ?\Zitadel\Client\Models\BetaUserServiceInUserEmailsQuery $inUserEmailsQuery = null;
 
-    /** @example null */
     #[SerializedName('inUserIdsQuery')]
     public ?\Zitadel\Client\Models\BetaUserServiceInUserIDQuery $inUserIdsQuery = null;
 
-    /** @example null */
     #[SerializedName('lastNameQuery')]
     public ?\Zitadel\Client\Models\BetaUserServiceLastNameQuery $lastNameQuery = null;
 
-    /** @example null */
     #[SerializedName('loginNameQuery')]
     public ?\Zitadel\Client\Models\BetaUserServiceLoginNameQuery $loginNameQuery = null;
 
-    /** @example null */
     #[SerializedName('nickNameQuery')]
     public ?\Zitadel\Client\Models\BetaUserServiceNickNameQuery $nickNameQuery = null;
 
-    /** @example null */
     #[SerializedName('notQuery')]
     public ?\Zitadel\Client\Models\BetaUserServiceNotQuery $notQuery = null;
 
-    /** @example null */
     #[SerializedName('orQuery')]
     public ?\Zitadel\Client\Models\BetaUserServiceOrQuery $orQuery = null;
 
-    /** @example null */
     #[SerializedName('organizationIdQuery')]
     public ?\Zitadel\Client\Models\BetaUserServiceOrganizationIdQuery $organizationIdQuery = null;
 
-    /** @example null */
     #[SerializedName('phoneQuery')]
     public ?\Zitadel\Client\Models\BetaUserServicePhoneQuery $phoneQuery = null;
 
-    /** @example null */
     #[SerializedName('stateQuery')]
     public ?\Zitadel\Client\Models\BetaUserServiceStateQuery $stateQuery = null;
 
-    /** @example null */
     #[SerializedName('typeQuery')]
     public ?\Zitadel\Client\Models\BetaUserServiceTypeQuery $typeQuery = null;
 
-    /** @example null */
     #[SerializedName('userNameQuery')]
     public ?\Zitadel\Client\Models\BetaUserServiceUserNameQuery $userNameQuery = null;
 

@@ -20,12 +20,10 @@ class BetaInstanceServiceListInstancesResponse
     /**
      * The list of instances.
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaInstanceServiceInstance>|null
-     * @example null
      */
     #[SerializedName('instances')]
     public ?\Ds\Vector $instances = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaInstanceServicePaginationResponse $pagination = null;
 

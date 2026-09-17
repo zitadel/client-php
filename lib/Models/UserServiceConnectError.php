@@ -44,14 +44,12 @@ class UserServiceConnectError
 {
     /**
      * The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
-     * @example null
      */
     #[SerializedName('code')]
     public ?UserServiceConnectErrorCodeEnum $code = null;
 
     /**
      * A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
-     * @example null
      */
     #[SerializedName('message')]
     public ?string $message = null;
@@ -59,7 +57,6 @@ class UserServiceConnectError
     /**
      * A list of messages that carry the error details. There is no limit on the number of messages.
      * @var \Ds\Vector<\Zitadel\Client\Models\UserServiceAny>|null
-     * @example null
      */
     #[SerializedName('details')]
     public ?\Ds\Vector $details = null;

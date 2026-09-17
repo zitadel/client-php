@@ -19,15 +19,13 @@ class UserServiceFormData
 {
     /**
      * The URL to which the form should be submitted using the POST method.
-     * @example null
      */
     #[SerializedName('url')]
     public ?string $url = null;
 
     /**
-     * The form fields to be submitted.  Each field is represented as a key-value pair, where the key is the field / input name  and the value is the field / input value.  All fields need to be submitted as is and as input type \"text\".
+     * The form fields to be submitted.  Each field is represented as a key-value pair, where the key is the field / input name  and the value is the field / input value.  All fields need to be submitted as is and as input type "text".
      * @var \Ds\Map<string, string>|null
-     * @example null
      */
     #[SerializedName('fields')]
     public ?\Ds\Map $fields = null;

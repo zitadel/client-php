@@ -21,12 +21,10 @@ class BetaOrganizationServiceOrgDomainFilter
 {
     /**
      * The domain.
-     * @example null
      */
     #[SerializedName('domain')]
     public ?string $domain = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\BetaOrganizationServiceTextQueryMethod $method = null;
 

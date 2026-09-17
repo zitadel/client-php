@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaOrganizationServiceOrgFieldName is an enumeration of allowed values.
+ */
 enum BetaOrganizationServiceOrgFieldName: string
 {
     case ORG_FIELD_NAME_UNSPECIFIED = 'ORG_FIELD_NAME_UNSPECIFIED';

@@ -21,23 +21,19 @@ class ActionServiceListPublicKeysRequest
 {
     /**
      * TargetID is the unique identifier of the target to list the public keys for.
-     * @example null
      */
     #[SerializedName('targetId')]
     public ?string $targetId = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\ActionServicePaginationRequest $pagination = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\ActionServicePublicKeyFieldName $sortingColumn = null;
 
     /**
      * Define the criteria to query for.
      * @var \Ds\Vector<\Zitadel\Client\Models\ActionServicePublicKeySearchFilter>|null
-     * @example null
      */
     #[SerializedName('filters')]
     public ?\Ds\Vector $filters = null;

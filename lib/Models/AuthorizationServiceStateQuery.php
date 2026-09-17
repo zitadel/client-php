@@ -19,7 +19,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class AuthorizationServiceStateQuery
 {
-    /** @example null */
     #[SerializedName('state')]
     public ?\Zitadel\Client\Models\AuthorizationServiceState $state = null;
 

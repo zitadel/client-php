@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceDeleteSessionRequest
 {
-    /** @example null */
     #[SerializedName('sessionId')]
     public ?string $sessionId = null;
 
-    /** @example null */
     #[SerializedName('sessionToken')]
     public ?string $sessionToken = null;
 

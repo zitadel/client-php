@@ -18,28 +18,23 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 class SettingsServiceGetHostedLoginTranslationRequest
 {
     /**
-     * The locale of the translations to be returned.  Needs to be a BCP 47 language tag (e.g. \"en\", \"de\", \"fr-CH\").
-     * @example null
+     * The locale of the translations to be returned.  Needs to be a BCP 47 language tag (e.g. "en", "de", "fr-CH").
      */
     #[SerializedName('locale')]
     public ?string $locale = null;
 
     /**
      * if set to true, higher levels are ignored, if false higher levels are merged into the file
-     * @example null
      */
     #[SerializedName('ignoreInheritance')]
     public ?bool $ignoreInheritance = null;
 
-    /** @example null */
     #[SerializedName('instance')]
     public ?bool $instance = null;
 
-    /** @example null */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
-    /** @example null */
     #[SerializedName('system')]
     public ?bool $system = null;
 

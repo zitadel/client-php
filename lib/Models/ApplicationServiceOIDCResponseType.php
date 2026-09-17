@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * ApplicationServiceOIDCResponseType is an enumeration of allowed values.
+ */
 enum ApplicationServiceOIDCResponseType: string
 {
     case OIDC_RESPONSE_TYPE_UNSPECIFIED = 'OIDC_RESPONSE_TYPE_UNSPECIFIED';

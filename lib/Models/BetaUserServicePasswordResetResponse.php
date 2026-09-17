@@ -17,13 +17,11 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServicePasswordResetResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\BetaUserServiceDetails $details = null;
 
     /**
      * in case the medium was set to return_code, the code will be returned
-     * @example null
      */
     #[SerializedName('verificationCode')]
     public ?string $verificationCode = null;

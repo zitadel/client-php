@@ -22,11 +22,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
  */
 class UserServicePhoneQuery
 {
-    /** @example null */
     #[SerializedName('number')]
     public ?string $number = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\UserServiceTextQueryMethod $method = null;
 

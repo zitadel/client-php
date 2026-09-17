@@ -19,21 +19,18 @@ class ApplicationServiceCreateOIDCApplicationResponse
 {
     /**
      * The unique OAuth2/OIDC client_id used for authentication of the application,  e.g. at the token endpoint.
-     * @example null
      */
     #[SerializedName('clientId')]
     public ?string $clientId = null;
 
     /**
      * In case of using the OIDCAuthMethodType.OIDC_AUTH_METHOD_TYPE_CLIENT_SECRET_BASIC  or OIDCAuthMethodType.OIDC_AUTH_METHOD_TYPE_CLIENT_SECRET_POST the client_secret is generated and returned.  It must be stored safely, as it will not be possible to retrieve it again.  A new client_secret can be generated using the GenerateClientSecret endpoint.
-     * @example null
      */
     #[SerializedName('clientSecret')]
     public ?string $clientSecret = null;
 
     /**
      * NonCompliant specifies whether the config is OIDC compliant. A production configuration SHOULD be compliant.  Non-compliant configurations can run into interoperability issues with OIDC libraries and tools.  Compliance problems are listed in the compliance_problems field.
-     * @example null
      */
     #[SerializedName('nonCompliant')]
     public ?bool $nonCompliant = null;
@@ -41,7 +38,6 @@ class ApplicationServiceCreateOIDCApplicationResponse
     /**
      * ComplianceProblems lists the problems for non-compliant configurations.  In case of a compliant configuration, this list is empty.
      * @var \Ds\Vector<\Zitadel\Client\Models\ApplicationServiceOIDCLocalizedMessage>|null
-     * @example null
      */
     #[SerializedName('complianceProblems')]
     public ?\Ds\Vector $complianceProblems = null;

@@ -17,14 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ActionServiceListTargetsResponse
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\ActionServicePaginationResponse $pagination = null;
 
     /**
      * List of all targets matching the query.
      * @var \Ds\Vector<\Zitadel\Client\Models\ActionServiceTarget>|null
-     * @example null
      */
     #[SerializedName('targets')]
     public ?\Ds\Vector $targets = null;

@@ -20,7 +20,6 @@ class InstanceServiceCustomDomainsFilter
     /**
      * The domains to query for. All instances that have at least one of the  specified domains will be returned.  A maximum of 20 domains can be specified.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('domains')]
     public ?\Ds\Vector $domains = null;

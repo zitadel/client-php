@@ -17,19 +17,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ActionServiceCondition
 {
-    /** @example null */
     #[SerializedName('event')]
     public ?\Zitadel\Client\Models\ActionServiceEventExecution $event = null;
 
-    /** @example null */
     #[SerializedName('function')]
     public ?\Zitadel\Client\Models\ActionServiceFunctionExecution $function_ = null;
 
-    /** @example null */
     #[SerializedName('request')]
     public ?\Zitadel\Client\Models\ActionServiceRequestExecution $request = null;
 
-    /** @example null */
     #[SerializedName('response')]
     public ?\Zitadel\Client\Models\ActionServiceResponseExecution $response = null;
 

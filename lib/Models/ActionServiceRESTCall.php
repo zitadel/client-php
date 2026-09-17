@@ -19,7 +19,6 @@ class ActionServiceRESTCall
 {
     /**
      * Define if any error stops the whole execution. By default the process continues as normal.
-     * @example null
      */
     #[SerializedName('interruptOnError')]
     public ?bool $interruptOnError = null;

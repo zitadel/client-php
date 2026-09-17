@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * UserServiceAuthFactors is an enumeration of allowed values.
+ */
 enum UserServiceAuthFactors: string
 {
     case OTP = 'OTP';

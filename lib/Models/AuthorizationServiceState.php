@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * AuthorizationServiceState is an enumeration of allowed values.
+ */
 enum AuthorizationServiceState: string
 {
     case STATE_UNSPECIFIED = 'STATE_UNSPECIFIED';

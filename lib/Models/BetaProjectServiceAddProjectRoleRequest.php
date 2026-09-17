@@ -19,28 +19,24 @@ class BetaProjectServiceAddProjectRoleRequest
 {
     /**
      * ID of the project.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
     /**
      * The key is the only relevant attribute for ZITADEL regarding the authorization checks.
-     * @example null
      */
     #[SerializedName('roleKey')]
     public ?string $roleKey = null;
 
     /**
      * Name displayed for the role.
-     * @example null
      */
     #[SerializedName('displayName')]
     public ?string $displayName = null;
 
     /**
      * The group is only used for display purposes. That you have better handling, like giving all the roles from a group to a user.
-     * @example null
      */
     #[SerializedName('group')]
     public ?string $group = null;

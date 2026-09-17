@@ -19,19 +19,16 @@ class BetaOrganizationServiceListOrganizationDomainsRequest
 {
     /**
      * Organization Id for the Organization which domains are to be listed.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaOrganizationServicePaginationRequest $pagination = null;
 
     /**
      * Define the criteria to query for.
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaOrganizationServiceDomainSearchFilter>|null
-     * @example null
      */
     #[SerializedName('filters')]
     public ?\Ds\Vector $filters = null;

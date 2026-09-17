@@ -19,27 +19,22 @@ class IdentityProviderServiceGitHubEnterpriseServerConfig
 {
     /**
      * The client ID of the GitHub App.
-     * @example null
      */
     #[SerializedName('clientId')]
     public ?string $clientId = null;
 
-    /** @example null */
     #[SerializedName('authorizationEndpoint')]
     public ?string $authorizationEndpoint = null;
 
-    /** @example null */
     #[SerializedName('tokenEndpoint')]
     public ?string $tokenEndpoint = null;
 
-    /** @example null */
     #[SerializedName('userEndpoint')]
     public ?string $userEndpoint = null;
 
     /**
      * The scopes requested by ZITADEL during the request to GitHub.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('scopes')]
     public ?\Ds\Vector $scopes = null;

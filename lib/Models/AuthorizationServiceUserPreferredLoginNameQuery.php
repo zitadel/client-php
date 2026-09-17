@@ -21,12 +21,10 @@ class AuthorizationServiceUserPreferredLoginNameQuery
 {
     /**
      * Specify the preferred login name of the granted user to search for.
-     * @example null
      */
     #[SerializedName('loginName')]
     public ?string $loginName = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\AuthorizationServiceTextFilterMethod $method = null;
 

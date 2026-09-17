@@ -17,59 +17,45 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class IdentityProviderServiceLDAPAttributes
 {
-    /** @example null */
     #[SerializedName('idAttribute')]
     public ?string $idAttribute = null;
 
-    /** @example null */
     #[SerializedName('firstNameAttribute')]
     public ?string $firstNameAttribute = null;
 
-    /** @example null */
     #[SerializedName('lastNameAttribute')]
     public ?string $lastNameAttribute = null;
 
-    /** @example null */
     #[SerializedName('displayNameAttribute')]
     public ?string $displayNameAttribute = null;
 
-    /** @example null */
     #[SerializedName('nickNameAttribute')]
     public ?string $nickNameAttribute = null;
 
-    /** @example null */
     #[SerializedName('preferredUsernameAttribute')]
     public ?string $preferredUsernameAttribute = null;
 
-    /** @example null */
     #[SerializedName('emailAttribute')]
     public ?string $emailAttribute = null;
 
-    /** @example null */
     #[SerializedName('emailVerifiedAttribute')]
     public ?string $emailVerifiedAttribute = null;
 
-    /** @example null */
     #[SerializedName('phoneAttribute')]
     public ?string $phoneAttribute = null;
 
-    /** @example null */
     #[SerializedName('phoneVerifiedAttribute')]
     public ?string $phoneVerifiedAttribute = null;
 
-    /** @example null */
     #[SerializedName('preferredLanguageAttribute')]
     public ?string $preferredLanguageAttribute = null;
 
-    /** @example null */
     #[SerializedName('avatarUrlAttribute')]
     public ?string $avatarUrlAttribute = null;
 
-    /** @example null */
     #[SerializedName('profileAttribute')]
     public ?string $profileAttribute = null;
 
-    /** @example null */
     #[SerializedName('rootCa')]
     public ?string $rootCa = null;
 

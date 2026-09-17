@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAppServiceCreateSAMLApplicationRequest
 {
-    /** @example null */
     #[SerializedName('loginVersion')]
     public ?\Zitadel\Client\Models\BetaAppServiceLoginVersion $loginVersion = null;
 
-    /** @example null */
     #[SerializedName('metadataUrl')]
     public ?string $metadataUrl = null;
 
-    /** @example null */
     #[SerializedName('metadataXml')]
     public ?string $metadataXml = null;
 

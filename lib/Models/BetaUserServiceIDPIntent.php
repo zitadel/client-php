@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceIDPIntent
 {
-    /** @example null */
     #[SerializedName('idpIntentId')]
     public ?string $idpIntentId = null;
 
-    /** @example null */
     #[SerializedName('idpIntentToken')]
     public ?string $idpIntentToken = null;
 
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 

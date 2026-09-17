@@ -19,19 +19,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceRegisterPasskeyRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('code')]
     public ?\Zitadel\Client\Models\BetaUserServicePasskeyRegistrationCode $code = null;
 
-    /** @example null */
     #[SerializedName('authenticator')]
     public ?\Zitadel\Client\Models\BetaUserServicePasskeyAuthenticator $authenticator = null;
 
-    /** @example null */
     #[SerializedName('domain')]
     public ?string $domain = null;
 

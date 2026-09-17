@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * SAMLServiceErrorReason is an enumeration of allowed values.
+ */
 enum SAMLServiceErrorReason: string
 {
     case ERROR_REASON_UNSPECIFIED = 'ERROR_REASON_UNSPECIFIED';

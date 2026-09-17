@@ -19,19 +19,16 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SessionServiceListSessionsRequest
 {
-    /** @example null */
     #[SerializedName('query')]
     public ?\Zitadel\Client\Models\SessionServiceListQuery $query = null;
 
     /**
      * The criteria to be used when searching for sessions.  Multiple queries will be combined with a logical AND.
      * @var \Ds\Vector<\Zitadel\Client\Models\SessionServiceSearchQuery>|null
-     * @example null
      */
     #[SerializedName('queries')]
     public ?\Ds\Vector $queries = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\SessionServiceSessionFieldName $sortingColumn = null;
 

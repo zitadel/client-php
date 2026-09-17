@@ -19,14 +19,12 @@ class ActionServiceDeactivatePublicKeyRequest
 {
     /**
      * TargetID is the unique identifier of the target to deactivate the public key for.
-     * @example null
      */
     #[SerializedName('targetId')]
     public ?string $targetId = null;
 
     /**
      * KeyID is the unique identifier of the public key to deactivate.
-     * @example null
      */
     #[SerializedName('keyId')]
     public ?string $keyId = null;

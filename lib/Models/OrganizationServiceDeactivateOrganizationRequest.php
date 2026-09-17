@@ -19,7 +19,6 @@ class OrganizationServiceDeactivateOrganizationRequest
 {
     /**
      * OrganizationID is the unique identifier of the organization to be deactivated.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;

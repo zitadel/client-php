@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceRetrieveIdentityProviderIntentResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\BetaUserServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('idpInformation')]
     public ?\Zitadel\Client\Models\BetaUserServiceIDPInformation $idpInformation = null;
 
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 

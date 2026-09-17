@@ -19,28 +19,24 @@ class ProjectServiceAddProjectRoleRequest
 {
     /**
      * ProjectID is the unique identifier of the project.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
     /**
      * RoleKey identifies the role. It's the only relevant attribute for ZITADEL and  will be used for authorization checks and as claim in tokens and user info responses.
-     * @example null
      */
     #[SerializedName('roleKey')]
     public ?string $roleKey = null;
 
     /**
      * DisplayName is a human readable name for the role, which might be displayed to users.
-     * @example null
      */
     #[SerializedName('displayName')]
     public ?string $displayName = null;
 
     /**
      * Group allows grouping roles for display purposes. Zitadel will not handle it in any way.  It can be used to group roles in a UI to allow easier management for administrators.  This attribute is not to be confused with groups as a collection of users.
-     * @example null
      */
     #[SerializedName('group')]
     public ?string $group = null;

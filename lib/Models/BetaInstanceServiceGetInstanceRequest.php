@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaInstanceServiceGetInstanceRequest
 {
-    /** @example null */
     #[SerializedName('instanceId')]
     public ?string $instanceId = null;
 

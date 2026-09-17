@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class OrganizationServiceIDPLink
 {
-    /** @example null */
     #[SerializedName('idpId')]
     public ?string $idpId = null;
 
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('userName')]
     public ?string $userName = null;
 

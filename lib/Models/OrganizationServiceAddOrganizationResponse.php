@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class OrganizationServiceAddOrganizationResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\OrganizationServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 

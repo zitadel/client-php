@@ -21,23 +21,19 @@ class InstanceServiceListTrustedDomainsRequest
 {
     /**
      * InstanceID is the unique ID of the instance whose trusted domains will be listed.  If not set, the instance in the current context (e.g. identified by the host header) will be used.  If an ID is set, the caller must have additional permissions.
-     * @example null
      */
     #[SerializedName('instanceId')]
     public ?string $instanceId = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\InstanceServicePaginationRequest $pagination = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\InstanceServiceTrustedDomainFieldName $sortingColumn = null;
 
     /**
      * Filter the domains to be returned.
      * @var \Ds\Vector<\Zitadel\Client\Models\InstanceServiceTrustedDomainFilter>|null
-     * @example null
      */
     #[SerializedName('filters')]
     public ?\Ds\Vector $filters = null;

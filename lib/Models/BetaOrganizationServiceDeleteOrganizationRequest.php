@@ -19,7 +19,6 @@ class BetaOrganizationServiceDeleteOrganizationRequest
 {
     /**
      * Organization Id for the Organization to be deleted
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;

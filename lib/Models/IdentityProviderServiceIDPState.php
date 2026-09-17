@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * IdentityProviderServiceIDPState is an enumeration of allowed values.
+ */
 enum IdentityProviderServiceIDPState: string
 {
     case IDP_STATE_UNSPECIFIED = 'IDP_STATE_UNSPECIFIED';

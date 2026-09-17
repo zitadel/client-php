@@ -19,11 +19,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceSendPasswordResetLink
 {
-    /** @example null */
     #[SerializedName('notificationType')]
     public ?\Zitadel\Client\Models\BetaUserServiceNotificationType $notificationType = null;
 
-    /** @example null */
     #[SerializedName('urlTemplate')]
     public ?string $urlTemplate = null;
 

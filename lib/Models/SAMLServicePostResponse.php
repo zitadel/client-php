@@ -19,14 +19,12 @@ class SAMLServicePostResponse
 {
     /**
      * The SAML RelaySate, that needs to be returned to the application to match the response to the request.
-     * @example null
      */
     #[SerializedName('relayState')]
     public ?string $relayState = null;
 
     /**
      * The SAML Response, that needs to be returned to the application to complete the SAML flow.
-     * @example null
      */
     #[SerializedName('samlResponse')]
     public ?string $samlResponse = null;

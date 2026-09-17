@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * SessionServiceSessionFieldName is an enumeration of allowed values.
+ */
 enum SessionServiceSessionFieldName: string
 {
     case SESSION_FIELD_NAME_UNSPECIFIED = 'SESSION_FIELD_NAME_UNSPECIFIED';

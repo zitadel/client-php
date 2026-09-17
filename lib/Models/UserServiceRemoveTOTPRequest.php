@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceRemoveTOTPRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 

@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * ActionServiceExecutionFieldName is an enumeration of allowed values.
+ */
 enum ActionServiceExecutionFieldName: string
 {
     case EXECUTION_FIELD_NAME_UNSPECIFIED = 'EXECUTION_FIELD_NAME_UNSPECIFIED';

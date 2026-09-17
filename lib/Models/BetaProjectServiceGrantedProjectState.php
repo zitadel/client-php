@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaProjectServiceGrantedProjectState is an enumeration of allowed values.
+ */
 enum BetaProjectServiceGrantedProjectState: string
 {
     case GRANTED_PROJECT_STATE_UNSPECIFIED = 'GRANTED_PROJECT_STATE_UNSPECIFIED';

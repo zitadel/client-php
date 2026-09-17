@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaInstanceServiceDomainFieldName is an enumeration of allowed values.
+ */
 enum BetaInstanceServiceDomainFieldName: string
 {
     case DOMAIN_FIELD_NAME_UNSPECIFIED = 'DOMAIN_FIELD_NAME_UNSPECIFIED';

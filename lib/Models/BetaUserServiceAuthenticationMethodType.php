@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaUserServiceAuthenticationMethodType is an enumeration of allowed values.
+ */
 enum BetaUserServiceAuthenticationMethodType: string
 {
     case AUTHENTICATION_METHOD_TYPE_UNSPECIFIED = 'AUTHENTICATION_METHOD_TYPE_UNSPECIFIED';

@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaFeatureServiceSource is an enumeration of allowed values.
+ */
 enum BetaFeatureServiceSource: string
 {
     case SOURCE_UNSPECIFIED = 'SOURCE_UNSPECIFIED';

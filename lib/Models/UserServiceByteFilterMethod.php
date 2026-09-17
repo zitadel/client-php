@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * UserServiceByteFilterMethod is an enumeration of allowed values.
+ */
 enum UserServiceByteFilterMethod: string
 {
     case BYTE_FILTER_METHOD_EQUALS = 'BYTE_FILTER_METHOD_EQUALS';

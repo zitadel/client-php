@@ -19,7 +19,6 @@ class OrganizationServiceDeleteOrganizationMetadataRequest
 {
     /**
      * Organization ID is the unique identifier of the organization whose metadata is to be deleted.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
@@ -27,7 +26,6 @@ class OrganizationServiceDeleteOrganizationMetadataRequest
     /**
      * Keys are the organization metadata entries to be deleted by their key.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('keys')]
     public ?\Ds\Vector $keys = null;

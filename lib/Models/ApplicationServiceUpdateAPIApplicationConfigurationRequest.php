@@ -19,7 +19,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ApplicationServiceUpdateAPIApplicationConfigurationRequest
 {
-    /** @example null */
     #[SerializedName('authMethodType')]
     public ?\Zitadel\Client\Models\ApplicationServiceAPIAuthMethodType $authMethodType = null;
 

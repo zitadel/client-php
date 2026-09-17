@@ -19,19 +19,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceMachineUser
 {
-    /** @example null */
     #[SerializedName('name')]
     public ?string $name = null;
 
-    /** @example null */
     #[SerializedName('description')]
     public ?string $description = null;
 
-    /** @example null */
     #[SerializedName('hasSecret')]
     public ?bool $hasSecret = null;
 
-    /** @example null */
     #[SerializedName('accessTokenType')]
     public ?\Zitadel\Client\Models\UserServiceAccessTokenType $accessTokenType = null;
 

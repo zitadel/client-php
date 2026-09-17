@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * AuthorizationServiceAuthorizationFieldName is an enumeration of allowed values.
+ */
 enum AuthorizationServiceAuthorizationFieldName: string
 {
     case AUTHORIZATION_FIELD_NAME_UNSPECIFIED = 'AUTHORIZATION_FIELD_NAME_UNSPECIFIED';

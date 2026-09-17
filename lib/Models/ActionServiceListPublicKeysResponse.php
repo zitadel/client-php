@@ -17,14 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ActionServiceListPublicKeysResponse
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\ActionServicePaginationResponse $pagination = null;
 
     /**
      * List of all public keys for the target.
      * @var \Ds\Vector<\Zitadel\Client\Models\ActionServicePublicKey>|null
-     * @example null
      */
     #[SerializedName('publicKeys')]
     public ?\Ds\Vector $publicKeys = null;

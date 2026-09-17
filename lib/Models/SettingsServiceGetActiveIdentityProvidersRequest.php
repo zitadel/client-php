@@ -17,23 +17,18 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SettingsServiceGetActiveIdentityProvidersRequest
 {
-    /** @example null */
     #[SerializedName('ctx')]
     public ?\Zitadel\Client\Models\SettingsServiceRequestContext $ctx = null;
 
-    /** @example null */
     #[SerializedName('creationAllowed')]
     public ?bool $creationAllowed = null;
 
-    /** @example null */
     #[SerializedName('linkingAllowed')]
     public ?bool $linkingAllowed = null;
 
-    /** @example null */
     #[SerializedName('autoCreation')]
     public ?bool $autoCreation = null;
 
-    /** @example null */
     #[SerializedName('autoLinking')]
     public ?bool $autoLinking = null;
 

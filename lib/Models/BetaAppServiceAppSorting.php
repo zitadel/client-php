@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaAppServiceAppSorting is an enumeration of allowed values.
+ */
 enum BetaAppServiceAppSorting: string
 {
     case APP_SORT_BY_ID = 'APP_SORT_BY_ID';

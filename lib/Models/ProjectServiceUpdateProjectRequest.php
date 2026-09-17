@@ -21,40 +21,34 @@ class ProjectServiceUpdateProjectRequest
 {
     /**
      * ProjectID is the unique identifier of the project to be updated.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
     /**
      * Name is used to update the name of the project. This field is optional.  If omitted, the name will remain unchanged.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;
 
     /**
      * ProjectRoleAssertion is a setting that can be enabled to have role information  included in the user info endpoint.  It is also dependent on your application settings to include it in tokens and other types.  If omitted, the setting will remain unchanged.
-     * @example null
      */
     #[SerializedName('projectRoleAssertion')]
     public ?bool $projectRoleAssertion = null;
 
     /**
      * AuthorizationRequired is a boolean flag that can be enabled to check if a user has  a role of this project assigned when logging into an application of this project.  If omitted, the setting will remain unchanged.
-     * @example null
      */
     #[SerializedName('authorizationRequired')]
     public ?bool $authorizationRequired = null;
 
     /**
      * ProjectAccessRequired is a boolean flag that can be enabled to check if the organization  of the user has a grant to this project.  If omitted, the setting will remain unchanged.
-     * @example null
      */
     #[SerializedName('projectAccessRequired')]
     public ?bool $projectAccessRequired = null;
 
-    /** @example null */
     #[SerializedName('privateLabelingSetting')]
     public ?\Zitadel\Client\Models\ProjectServicePrivateLabelingSetting $privateLabelingSetting = null;
 

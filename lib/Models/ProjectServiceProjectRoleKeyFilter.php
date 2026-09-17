@@ -21,12 +21,10 @@ class ProjectServiceProjectRoleKeyFilter
 {
     /**
      * The key of the project role to query for.
-     * @example null
      */
     #[SerializedName('key')]
     public ?string $key = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\ProjectServiceTextFilterMethod $method = null;
 

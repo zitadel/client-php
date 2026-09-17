@@ -21,12 +21,10 @@ class ActionServiceTargetNameFilter
 {
     /**
      * Defines the name of the target to query for.
-     * @example null
      */
     #[SerializedName('targetName')]
     public ?string $targetName = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\ActionServiceTextFilterMethod $method = null;
 

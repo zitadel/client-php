@@ -19,21 +19,18 @@ class ApplicationServiceDeleteApplicationKeyRequest
 {
     /**
      * The unique ID of the application key to be deleted.
-     * @example null
      */
     #[SerializedName('keyId')]
     public ?string $keyId = null;
 
     /**
      * The ID of the application the key belongs to.
-     * @example null
      */
     #[SerializedName('applicationId')]
     public ?string $applicationId = null;
 
     /**
      * The ID of the project the application belongs to.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;

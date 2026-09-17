@@ -19,23 +19,18 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceAuthFactor
 {
-    /** @example null */
     #[SerializedName('state')]
     public ?\Zitadel\Client\Models\UserServiceAuthFactorState $state = null;
 
-    /** @example null */
     #[SerializedName('otp')]
     public ?object $otp = null;
 
-    /** @example null */
     #[SerializedName('otpEmail')]
     public ?object $otpEmail = null;
 
-    /** @example null */
     #[SerializedName('otpSms')]
     public ?object $otpSms = null;
 
-    /** @example null */
     #[SerializedName('u2f')]
     public ?\Zitadel\Client\Models\UserServiceAuthFactorU2F $u2f = null;
 

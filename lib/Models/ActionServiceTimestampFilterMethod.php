@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * ActionServiceTimestampFilterMethod is an enumeration of allowed values.
+ */
 enum ActionServiceTimestampFilterMethod: string
 {
     case TIMESTAMP_FILTER_METHOD_EQUALS = 'TIMESTAMP_FILTER_METHOD_EQUALS';

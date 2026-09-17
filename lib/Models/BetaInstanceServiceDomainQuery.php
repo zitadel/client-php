@@ -19,11 +19,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaInstanceServiceDomainQuery
 {
-    /** @example null */
     #[SerializedName('domain')]
     public ?string $domain = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\BetaInstanceServiceTextQueryMethod $method = null;
 

@@ -19,14 +19,12 @@ class UserServiceRemoveKeyRequest
 {
     /**
      * The users resource ID.
-     * @example null
      */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
     /**
      * The keys ID.
-     * @example null
      */
     #[SerializedName('keyId')]
     public ?string $keyId = null;

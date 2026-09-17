@@ -19,15 +19,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServicePasskey
 {
-    /** @example null */
     #[SerializedName('id')]
     public ?string $id = null;
 
-    /** @example null */
     #[SerializedName('state')]
     public ?\Zitadel\Client\Models\UserServiceAuthFactorState $state = null;
 
-    /** @example null */
     #[SerializedName('name')]
     public ?string $name = null;
 

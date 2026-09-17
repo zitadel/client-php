@@ -17,47 +17,36 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class FeatureServiceGetInstanceFeaturesResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\FeatureServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('loginDefaultOrg')]
     public ?\Zitadel\Client\Models\FeatureServiceFeatureFlag $loginDefaultOrg = null;
 
-    /** @example null */
     #[SerializedName('userSchema')]
     public ?\Zitadel\Client\Models\FeatureServiceFeatureFlag $userSchema = null;
 
-    /** @example null */
     #[SerializedName('oidcTokenExchange')]
     public ?\Zitadel\Client\Models\FeatureServiceFeatureFlag $oidcTokenExchange = null;
 
-    /** @example null */
     #[SerializedName('improvedPerformance')]
     public ?\Zitadel\Client\Models\FeatureServiceImprovedPerformanceFeatureFlag $improvedPerformance = null;
 
-    /** @example null */
     #[SerializedName('debugOidcParentError')]
     public ?\Zitadel\Client\Models\FeatureServiceFeatureFlag $debugOidcParentError = null;
 
-    /** @example null */
     #[SerializedName('oidcSingleV1SessionTermination')]
     public ?\Zitadel\Client\Models\FeatureServiceFeatureFlag $oidcSingleV1SessionTermination = null;
 
-    /** @example null */
     #[SerializedName('enableBackChannelLogout')]
     public ?\Zitadel\Client\Models\FeatureServiceFeatureFlag $enableBackChannelLogout = null;
 
-    /** @example null */
     #[SerializedName('loginV2')]
     public ?\Zitadel\Client\Models\FeatureServiceLoginV2FeatureFlag $loginV2 = null;
 
-    /** @example null */
     #[SerializedName('permissionCheckV2')]
     public ?\Zitadel\Client\Models\FeatureServiceFeatureFlag $permissionCheckV2 = null;
 
-    /** @example null */
     #[SerializedName('consoleUseV2UserApi')]
     public ?\Zitadel\Client\Models\FeatureServiceFeatureFlag $consoleUseV2UserApi = null;
 

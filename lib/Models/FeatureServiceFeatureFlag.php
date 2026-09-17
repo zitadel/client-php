@@ -22,11 +22,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
  */
 class FeatureServiceFeatureFlag
 {
-    /** @example null */
     #[SerializedName('enabled')]
     public ?bool $enabled = null;
 
-    /** @example null */
     #[SerializedName('source')]
     public ?\Zitadel\Client\Models\FeatureServiceSource $source = null;
 

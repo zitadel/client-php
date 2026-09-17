@@ -19,34 +19,28 @@ class ApplicationServiceUpdateApplicationRequest
 {
     /**
      * The unique ID of the application to be updated.
-     * @example null
      */
     #[SerializedName('applicationId')]
     public ?string $applicationId = null;
 
     /**
      * The ID of the project the application belongs to.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
     /**
      * Publicly visible name of the application. This might be presented to users if they sign in.  If not set, the name will not be changed.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;
 
-    /** @example null */
     #[SerializedName('apiConfiguration')]
     public ?\Zitadel\Client\Models\ApplicationServiceUpdateAPIApplicationConfigurationRequest $apiConfiguration = null;
 
-    /** @example null */
     #[SerializedName('oidcConfiguration')]
     public ?\Zitadel\Client\Models\ApplicationServiceUpdateOIDCApplicationConfigurationRequest $oidcConfiguration = null;
 
-    /** @example null */
     #[SerializedName('samlConfiguration')]
     public ?\Zitadel\Client\Models\ApplicationServiceUpdateSAMLApplicationConfigurationRequest $samlConfiguration = null;
 

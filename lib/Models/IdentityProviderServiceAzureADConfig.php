@@ -19,18 +19,15 @@ class IdentityProviderServiceAzureADConfig
 {
     /**
      * Client id of the Azure AD application
-     * @example null
      */
     #[SerializedName('clientId')]
     public ?string $clientId = null;
 
-    /** @example null */
     #[SerializedName('tenant')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceAzureADTenant $tenant = null;
 
     /**
      * Azure AD doesn't send if the email has been verified. Enable this if the  user email should always be added verified in ZITADEL (no verification  emails will be sent).
-     * @example null
      */
     #[SerializedName('emailVerified')]
     public ?bool $emailVerified = null;
@@ -38,7 +35,6 @@ class IdentityProviderServiceAzureADConfig
     /**
      * The scopes requested by ZITADEL during the request to Azure AD.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('scopes')]
     public ?\Ds\Vector $scopes = null;

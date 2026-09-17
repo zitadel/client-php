@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceUserIDQuery
 {
-    /** @example null */
     #[SerializedName('id')]
     public ?string $id = null;
 

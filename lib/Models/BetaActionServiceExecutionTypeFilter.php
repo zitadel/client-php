@@ -19,7 +19,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaActionServiceExecutionTypeFilter
 {
-    /** @example null */
     #[SerializedName('executionType')]
     public ?\Zitadel\Client\Models\BetaActionServiceExecutionType $executionType = null;
 

@@ -19,19 +19,16 @@ class OrganizationServiceListOrganizationMetadataRequest
 {
     /**
      * Organization ID is the unique identifier of the organization whose metadata is to be listed.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\OrganizationServicePaginationRequest $pagination = null;
 
     /**
      * Filters define the criteria to query the metadata for.
      * @var \Ds\Vector<\Zitadel\Client\Models\OrganizationServiceMetadataSearchFilter>|null
-     * @example null
      */
     #[SerializedName('filters')]
     public ?\Ds\Vector $filters = null;

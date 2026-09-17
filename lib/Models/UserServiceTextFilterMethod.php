@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * UserServiceTextFilterMethod is an enumeration of allowed values.
+ */
 enum UserServiceTextFilterMethod: string
 {
     case TEXT_FILTER_METHOD_EQUALS = 'TEXT_FILTER_METHOD_EQUALS';

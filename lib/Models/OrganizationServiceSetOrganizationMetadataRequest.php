@@ -19,7 +19,6 @@ class OrganizationServiceSetOrganizationMetadataRequest
 {
     /**
      * Organization ID is the unique identifier of the organization whose metadata is to be set.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
@@ -27,7 +26,6 @@ class OrganizationServiceSetOrganizationMetadataRequest
     /**
      * Metadata is a list of metadata entries to set.
      * @var \Ds\Vector<\Zitadel\Client\Models\OrganizationServiceMetadata>|null
-     * @example null
      */
     #[SerializedName('metadata')]
     public ?\Ds\Vector $metadata = null;

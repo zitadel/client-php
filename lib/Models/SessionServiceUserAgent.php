@@ -19,21 +19,18 @@ class SessionServiceUserAgent
 {
     /**
      * FingerprintID is a unique identifier for the user agent's fingerprint.  It can be used to group sessions by device or browser.
-     * @example null
      */
     #[SerializedName('fingerprintId')]
     public ?string $fingerprintId = null;
 
     /**
      * IP is the IP address from which the session was created.
-     * @example null
      */
     #[SerializedName('ip')]
     public ?string $ip = null;
 
     /**
      * Description is a human-readable description of the user agent.
-     * @example null
      */
     #[SerializedName('description')]
     public ?string $description = null;

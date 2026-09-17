@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceAddOTPSMSRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 

@@ -19,21 +19,18 @@ class BetaInternalPermissionServiceProject
 {
     /**
      * ID is the unique identifier of the project the user was granted the administrator role for.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;
 
     /**
      * Name is the name of the project the user was granted the administrator role for.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;
 
     /**
      * OrganizationID is the ID of the organization the project belongs to.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;

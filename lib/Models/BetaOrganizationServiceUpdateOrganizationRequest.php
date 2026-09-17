@@ -19,14 +19,12 @@ class BetaOrganizationServiceUpdateOrganizationRequest
 {
     /**
      * Organization Id for the Organization to be updated
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;
 
     /**
      * New Name for the Organization to be updated
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;

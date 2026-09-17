@@ -24,6 +24,6 @@ class ForbiddenException extends ClientException
         ?string $responseBody = null,
         mixed $errorBody = null
     ) {
-        parent::__construct($message, 403, $responseHeaders, $responseBody, $errorBody);
+        parent::__construct(403, $message, $responseHeaders, $responseBody, $errorBody);
     }
 }

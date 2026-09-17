@@ -19,14 +19,12 @@ class ApplicationServiceDeleteApplicationRequest
 {
     /**
      * The unique ID of the application to be deleted.
-     * @example null
      */
     #[SerializedName('applicationId')]
     public ?string $applicationId = null;
 
     /**
      * The ID of the project the application belongs to.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;

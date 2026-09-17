@@ -23,7 +23,6 @@ class BetaFeatureServiceImprovedPerformanceFeatureFlag
     #[SerializedName('executionPaths')]
     public ?\Ds\Vector $executionPaths = null;
 
-    /** @example null */
     #[SerializedName('source')]
     public ?\Zitadel\Client\Models\BetaFeatureServiceSource $source = null;
 

@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceCheckPassword
 {
-    /** @example null */
     #[SerializedName('password')]
     public ?string $password = null;
 

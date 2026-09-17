@@ -19,7 +19,6 @@ class IdentityProviderServiceGitHubConfig
 {
     /**
      * The client ID of the GitHub App.
-     * @example null
      */
     #[SerializedName('clientId')]
     public ?string $clientId = null;
@@ -27,7 +26,6 @@ class IdentityProviderServiceGitHubConfig
     /**
      * The scopes requested by ZITADEL during the request to GitHub.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('scopes')]
     public ?\Ds\Vector $scopes = null;

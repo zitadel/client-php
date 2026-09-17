@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * IdentityProviderServiceSAMLSignatureAlgorithm is an enumeration of allowed values.
+ */
 enum IdentityProviderServiceSAMLSignatureAlgorithm: string
 {
     case SAML_SIGNATURE_UNSPECIFIED = 'SAML_SIGNATURE_UNSPECIFIED';

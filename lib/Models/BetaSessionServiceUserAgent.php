@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceUserAgent
 {
-    /** @example null */
     #[SerializedName('fingerprintId')]
     public ?string $fingerprintId = null;
 
-    /** @example null */
     #[SerializedName('ip')]
     public ?string $ip = null;
 
-    /** @example null */
     #[SerializedName('description')]
     public ?string $description = null;
 

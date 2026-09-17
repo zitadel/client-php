@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaAppServiceAppState is an enumeration of allowed values.
+ */
 enum BetaAppServiceAppState: string
 {
     case APP_STATE_UNSPECIFIED = 'APP_STATE_UNSPECIFIED';

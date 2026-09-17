@@ -19,23 +19,19 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAppServiceListApplicationsRequest
 {
-    /** @example null */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaAppServicePaginationRequest $pagination = null;
 
     /**
      * criteria the client is looking for
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaAppServiceApplicationSearchFilter>|null
-     * @example null
      */
     #[SerializedName('filters')]
     public ?\Ds\Vector $filters = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\BetaAppServiceAppSorting $sortingColumn = null;
 

@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceIDPSAMLAccessInformation
 {
-    /** @example null */
     #[SerializedName('assertion')]
     public ?string $assertion = null;
 

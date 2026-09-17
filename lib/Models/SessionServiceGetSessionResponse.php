@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SessionServiceGetSessionResponse
 {
-    /** @example null */
     #[SerializedName('session')]
     public ?\Zitadel\Client\Models\SessionServiceSession $session = null;
 

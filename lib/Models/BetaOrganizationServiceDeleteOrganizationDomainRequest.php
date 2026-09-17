@@ -19,12 +19,10 @@ class BetaOrganizationServiceDeleteOrganizationDomainRequest
 {
     /**
      * Organization Id for the Organization which domain is to be deleted.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
-    /** @example null */
     #[SerializedName('domain')]
     public ?string $domain = null;
 

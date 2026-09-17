@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceStartIdentityProviderIntentRequest
 {
-    /** @example null */
     #[SerializedName('idpId')]
     public ?string $idpId = null;
 
-    /** @example null */
     #[SerializedName('ldap')]
     public ?\Zitadel\Client\Models\UserServiceLDAPCredentials $ldap = null;
 
-    /** @example null */
     #[SerializedName('urls')]
     public ?\Zitadel\Client\Models\UserServiceRedirectURLs $urls = null;
 

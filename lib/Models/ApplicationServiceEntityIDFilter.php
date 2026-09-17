@@ -19,7 +19,6 @@ class ApplicationServiceEntityIDFilter
 {
     /**
      * The entityID to search for. The search is performed as an exact match.
-     * @example null
      */
     #[SerializedName('entityId')]
     public ?string $entityId = null;

@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * SessionServiceTimestampQueryMethod is an enumeration of allowed values.
+ */
 enum SessionServiceTimestampQueryMethod: string
 {
     case TIMESTAMP_QUERY_METHOD_EQUALS = 'TIMESTAMP_QUERY_METHOD_EQUALS';

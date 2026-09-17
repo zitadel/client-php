@@ -17,27 +17,21 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SessionServiceSearchQuery
 {
-    /** @example null */
     #[SerializedName('creationDateQuery')]
     public ?\Zitadel\Client\Models\SessionServiceCreationDateQuery $creationDateQuery = null;
 
-    /** @example null */
     #[SerializedName('creatorQuery')]
     public ?\Zitadel\Client\Models\SessionServiceCreatorQuery $creatorQuery = null;
 
-    /** @example null */
     #[SerializedName('expirationDateQuery')]
     public ?\Zitadel\Client\Models\SessionServiceExpirationDateQuery $expirationDateQuery = null;
 
-    /** @example null */
     #[SerializedName('idsQuery')]
     public ?\Zitadel\Client\Models\SessionServiceIDsQuery $idsQuery = null;
 
-    /** @example null */
     #[SerializedName('userAgentQuery')]
     public ?\Zitadel\Client\Models\SessionServiceUserAgentQuery $userAgentQuery = null;
 
-    /** @example null */
     #[SerializedName('userIdQuery')]
     public ?\Zitadel\Client\Models\SessionServiceUserIDQuery $userIdQuery = null;
 

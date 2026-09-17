@@ -19,7 +19,6 @@ class AuthorizationServiceIDFilter
 {
     /**
      * Only return resources that belong to this id.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;

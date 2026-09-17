@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ActionServiceExecutionSearchFilter
 {
-    /** @example null */
     #[SerializedName('executionTypeFilter')]
     public ?\Zitadel\Client\Models\ActionServiceExecutionTypeFilter $executionTypeFilter = null;
 
-    /** @example null */
     #[SerializedName('inConditionsFilter')]
     public ?\Zitadel\Client\Models\ActionServiceInConditionsFilter $inConditionsFilter = null;
 
-    /** @example null */
     #[SerializedName('targetFilter')]
     public ?\Zitadel\Client\Models\ActionServiceTargetFilter $targetFilter = null;
 

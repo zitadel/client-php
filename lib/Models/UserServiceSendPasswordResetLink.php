@@ -19,13 +19,11 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceSendPasswordResetLink
 {
-    /** @example null */
     #[SerializedName('notificationType')]
     public ?\Zitadel\Client\Models\UserServiceNotificationType $notificationType = null;
 
     /**
      * Optionally set a url_template, which will be used in the password reset mail sent by ZITADEL to guide the user to your password change page.  If no template is set, the default ZITADEL url will be used.   The following placeholders can be used: UserID, OrgID, Code
-     * @example null
      */
     #[SerializedName('urlTemplate')]
     public ?string $urlTemplate = null;

@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class IdentityProviderServiceGetIDPByIDRequest
 {
-    /** @example null */
     #[SerializedName('id')]
     public ?string $id = null;
 

@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSettingsServiceGetPasswordExpirySettingsRequest
 {
-    /** @example null */
     #[SerializedName('ctx')]
     public ?\Zitadel\Client\Models\BetaSettingsServiceRequestContext $ctx = null;
 

@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceCreateInviteCodeRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('returnCode')]
     public ?object $returnCode = null;
 
-    /** @example null */
     #[SerializedName('sendCode')]
     public ?\Zitadel\Client\Models\UserServiceSendInviteCode $sendCode = null;
 

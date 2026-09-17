@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ApplicationServiceApplicationKeySearchFilter
 {
-    /** @example null */
     #[SerializedName('applicationIdFilter')]
     public ?\Zitadel\Client\Models\ApplicationServiceApplicationKeyApplicationIDFilter $applicationIdFilter = null;
 
-    /** @example null */
     #[SerializedName('organizationIdFilter')]
     public ?\Zitadel\Client\Models\ApplicationServiceApplicationKeyOrganizationIDFilter $organizationIdFilter = null;
 
-    /** @example null */
     #[SerializedName('projectIdFilter')]
     public ?\Zitadel\Client\Models\ApplicationServiceApplicationKeyProjectIDFilter $projectIdFilter = null;
 

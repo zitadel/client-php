@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaSessionServiceUserVerificationRequirement is an enumeration of allowed values.
+ */
 enum BetaSessionServiceUserVerificationRequirement: string
 {
     case USER_VERIFICATION_REQUIREMENT_UNSPECIFIED = 'USER_VERIFICATION_REQUIREMENT_UNSPECIFIED';

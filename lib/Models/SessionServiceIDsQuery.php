@@ -20,7 +20,6 @@ class SessionServiceIDsQuery
     /**
      * List of session IDs to search for.  If multiple IDs are provided, sessions matching any of the IDs will be returned.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('ids')]
     public ?\Ds\Vector $ids = null;

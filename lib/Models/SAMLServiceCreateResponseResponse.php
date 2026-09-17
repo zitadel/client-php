@@ -17,22 +17,18 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SAMLServiceCreateResponseResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\SAMLServiceDetails $details = null;
 
     /**
      * URL including the Assertion Consumer Service where the user should be redirected or has to call per POST, depending on the binding. Contains details for the application to obtain the response on success, or error details on failure. Note that this field must be treated as credentials, as the contained SAMLResponse or code can be used on behalve of the user.
-     * @example null
      */
     #[SerializedName('url')]
     public ?string $url = null;
 
-    /** @example null */
     #[SerializedName('post')]
     public ?\Zitadel\Client\Models\SAMLServicePostResponse $post = null;
 
-    /** @example null */
     #[SerializedName('redirect')]
     public ?object $redirect = null;
 

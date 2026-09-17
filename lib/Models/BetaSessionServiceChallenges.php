@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceChallenges
 {
-    /** @example null */
     #[SerializedName('webAuthN')]
     public ?\Zitadel\Client\Models\BetaSessionServiceWebAuthN $webAuthN = null;
 
-    /** @example null */
     #[SerializedName('otpSms')]
     public ?string $otpSms = null;
 
-    /** @example null */
     #[SerializedName('otpEmail')]
     public ?string $otpEmail = null;
 

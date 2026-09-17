@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * IdentityProviderServiceAzureADTenantType is an enumeration of allowed values.
+ */
 enum IdentityProviderServiceAzureADTenantType: string
 {
     case AZURE_AD_TENANT_TYPE_COMMON = 'AZURE_AD_TENANT_TYPE_COMMON';

@@ -19,16 +19,13 @@ class ActionServicePublicKeySearchFilter
 {
     /**
      * Filter the keys by their active status.
-     * @example null
      */
     #[SerializedName('activeFilter')]
     public ?bool $activeFilter = null;
 
-    /** @example null */
     #[SerializedName('expirationDateFilter')]
     public ?\Zitadel\Client\Models\ActionServiceTimestampFilter $expirationDateFilter = null;
 
-    /** @example null */
     #[SerializedName('keyIdsFilter')]
     public ?\Zitadel\Client\Models\ActionServiceInIDsFilter $keyIdsFilter = null;
 

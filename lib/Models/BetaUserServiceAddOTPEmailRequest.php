@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceAddOTPEmailRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 

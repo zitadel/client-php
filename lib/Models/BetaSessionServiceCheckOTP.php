@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceCheckOTP
 {
-    /** @example null */
     #[SerializedName('code')]
     public ?string $code = null;
 

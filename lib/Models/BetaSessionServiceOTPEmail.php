@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceOTPEmail
 {
-    /** @example null */
     #[SerializedName('returnCode')]
     public ?object $returnCode = null;
 
-    /** @example null */
     #[SerializedName('sendCode')]
     public ?\Zitadel\Client\Models\BetaSessionServiceSendCode $sendCode = null;
 

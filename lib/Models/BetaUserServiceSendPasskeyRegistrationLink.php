@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceSendPasskeyRegistrationLink
 {
-    /** @example null */
     #[SerializedName('urlTemplate')]
     public ?string $urlTemplate = null;
 

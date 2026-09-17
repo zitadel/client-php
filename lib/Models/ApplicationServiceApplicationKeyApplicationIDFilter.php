@@ -19,7 +19,6 @@ class ApplicationServiceApplicationKeyApplicationIDFilter
 {
     /**
      * Search for application keys belonging to the application with this ID.
-     * @example null
      */
     #[SerializedName('applicationId')]
     public ?string $applicationId = null;

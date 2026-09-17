@@ -21,19 +21,16 @@ class BetaOrganizationServiceGenerateOrganizationDomainValidationRequest
 {
     /**
      * Organization Id for the Organization which doman to be validated.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
     /**
      * The domain which to be deleted.
-     * @example null
      */
     #[SerializedName('domain')]
     public ?string $domain = null;
 
-    /** @example null */
     #[SerializedName('type')]
     public ?\Zitadel\Client\Models\BetaOrganizationServiceDomainValidationType $type = null;
 

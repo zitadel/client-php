@@ -21,12 +21,10 @@ class InstanceServiceDomainFilter
 {
     /**
      * The domain to filter for.
-     * @example null
      */
     #[SerializedName('domain')]
     public ?string $domain = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\InstanceServiceTextQueryMethod $method = null;
 

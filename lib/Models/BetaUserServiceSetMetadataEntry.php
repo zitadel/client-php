@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceSetMetadataEntry
 {
-    /** @example null */
     #[SerializedName('key')]
     public ?string $key = null;
 
-    /** @example null */
     #[SerializedName('value')]
     public ?string $value = null;
 

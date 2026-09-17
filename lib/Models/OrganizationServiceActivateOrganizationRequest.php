@@ -19,7 +19,6 @@ class OrganizationServiceActivateOrganizationRequest
 {
     /**
      * OrganizationID is the unique identifier of the organization to be activated.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;

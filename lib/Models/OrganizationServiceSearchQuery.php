@@ -17,23 +17,18 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class OrganizationServiceSearchQuery
 {
-    /** @example null */
     #[SerializedName('defaultQuery')]
     public ?object $defaultQuery = null;
 
-    /** @example null */
     #[SerializedName('domainQuery')]
     public ?\Zitadel\Client\Models\OrganizationServiceOrganizationDomainQuery $domainQuery = null;
 
-    /** @example null */
     #[SerializedName('idQuery')]
     public ?\Zitadel\Client\Models\OrganizationServiceOrganizationIDQuery $idQuery = null;
 
-    /** @example null */
     #[SerializedName('nameQuery')]
     public ?\Zitadel\Client\Models\OrganizationServiceOrganizationNameQuery $nameQuery = null;
 
-    /** @example null */
     #[SerializedName('stateQuery')]
     public ?\Zitadel\Client\Models\OrganizationServiceOrganizationStateQuery $stateQuery = null;
 

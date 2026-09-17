@@ -19,7 +19,6 @@ class BetaAuthorizationServiceUpdateAuthorizationRequest
 {
     /**
      * ID is the unique identifier of the authorization.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;
@@ -27,7 +26,6 @@ class BetaAuthorizationServiceUpdateAuthorizationRequest
     /**
      * RoleKeys are the keys of the roles the user should be granted.  Note that any role keys previously granted to the user and not present in the list will be revoked.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('roleKeys')]
     public ?\Ds\Vector $roleKeys = null;

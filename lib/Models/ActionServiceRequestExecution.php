@@ -19,21 +19,18 @@ class ActionServiceRequestExecution
 {
     /**
      * Define all calls as condition.  When a call to any available service happens, the execution is triggered.
-     * @example null
      */
     #[SerializedName('all')]
     public ?bool $all = null;
 
     /**
      * Define a GRPC-method as condition.  When a request to this method happens, the execution is triggered.
-     * @example null
      */
     #[SerializedName('method')]
     public ?string $method = null;
 
     /**
      * Define a GRPC-service as condition.  When a request to any method of this service happens, the execution is triggered.
-     * @example null
      */
     #[SerializedName('service')]
     public ?string $service = null;

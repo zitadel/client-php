@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceCheckUser
 {
-    /** @example null */
     #[SerializedName('loginName')]
     public ?string $loginName = null;
 
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 

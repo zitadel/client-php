@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaInstanceServiceDomainPrimaryQuery
 {
-    /** @example null */
     #[SerializedName('primary')]
     public ?bool $primary = null;
 

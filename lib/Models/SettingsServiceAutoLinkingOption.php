@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * SettingsServiceAutoLinkingOption is an enumeration of allowed values.
+ */
 enum SettingsServiceAutoLinkingOption: string
 {
     case AUTO_LINKING_OPTION_UNSPECIFIED = 'AUTO_LINKING_OPTION_UNSPECIFIED';

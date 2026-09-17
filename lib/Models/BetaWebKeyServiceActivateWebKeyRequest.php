@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaWebKeyServiceActivateWebKeyRequest
 {
-    /** @example null */
     #[SerializedName('id')]
     public ?string $id = null;
 

@@ -21,12 +21,10 @@ class InternalPermissionServiceUserDisplayNameFilter
 {
     /**
      * Search for administrators by the display name of the user.
-     * @example null
      */
     #[SerializedName('displayName')]
     public ?string $displayName = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\InternalPermissionServiceTextFilterMethod $method = null;
 

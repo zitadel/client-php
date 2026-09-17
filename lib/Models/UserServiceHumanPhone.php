@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceHumanPhone
 {
-    /** @example null */
     #[SerializedName('phone')]
     public ?string $phone = null;
 
-    /** @example null */
     #[SerializedName('isVerified')]
     public ?bool $isVerified = null;
 

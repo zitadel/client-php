@@ -19,16 +19,13 @@ class SAMLServiceCreateResponseRequest
 {
     /**
      * ID of the SAML Request.
-     * @example null
      */
     #[SerializedName('samlRequestId')]
     public ?string $samlRequestId = null;
 
-    /** @example null */
     #[SerializedName('error')]
     public ?\Zitadel\Client\Models\SAMLServiceAuthorizationError $error = null;
 
-    /** @example null */
     #[SerializedName('session')]
     public ?\Zitadel\Client\Models\SAMLServiceSession $session = null;
 

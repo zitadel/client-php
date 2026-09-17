@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaSettingsServiceSecondFactorType is an enumeration of allowed values.
+ */
 enum BetaSettingsServiceSecondFactorType: string
 {
     case SECOND_FACTOR_TYPE_UNSPECIFIED = 'SECOND_FACTOR_TYPE_UNSPECIFIED';

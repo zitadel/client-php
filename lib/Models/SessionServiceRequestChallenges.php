@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SessionServiceRequestChallenges
 {
-    /** @example null */
     #[SerializedName('webAuthN')]
     public ?\Zitadel\Client\Models\SessionServiceWebAuthN $webAuthN = null;
 
-    /** @example null */
     #[SerializedName('otpSms')]
     public ?\Zitadel\Client\Models\SessionServiceOTPSMS $otpSms = null;
 
-    /** @example null */
     #[SerializedName('otpEmail')]
     public ?\Zitadel\Client\Models\SessionServiceOTPEmail $otpEmail = null;
 

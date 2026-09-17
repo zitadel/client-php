@@ -19,15 +19,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class FeatureServiceLoginV2FeatureFlag
 {
-    /** @example null */
     #[SerializedName('required')]
     public ?bool $required = null;
 
-    /** @example null */
     #[SerializedName('baseUri')]
     public ?string $baseUri = null;
 
-    /** @example null */
     #[SerializedName('source')]
     public ?\Zitadel\Client\Models\FeatureServiceSource $source = null;
 

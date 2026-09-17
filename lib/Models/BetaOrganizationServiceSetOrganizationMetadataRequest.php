@@ -19,7 +19,6 @@ class BetaOrganizationServiceSetOrganizationMetadataRequest
 {
     /**
      * Organization Id for the Organization doman to be verified.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
@@ -27,7 +26,6 @@ class BetaOrganizationServiceSetOrganizationMetadataRequest
     /**
      * Metadata to set.
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaOrganizationServiceMetadata>|null
-     * @example null
      */
     #[SerializedName('metadata')]
     public ?\Ds\Vector $metadata = null;

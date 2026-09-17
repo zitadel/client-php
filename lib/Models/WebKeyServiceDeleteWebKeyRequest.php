@@ -19,7 +19,6 @@ class WebKeyServiceDeleteWebKeyRequest
 {
     /**
      * The unique identifier of the key to delete.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;

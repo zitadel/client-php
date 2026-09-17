@@ -17,19 +17,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAppServiceDeleteApplicationKeyRequest
 {
-    /** @example null */
     #[SerializedName('id')]
     public ?string $id = null;
 
-    /** @example null */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
-    /** @example null */
     #[SerializedName('applicationId')]
     public ?string $applicationId = null;
 
-    /** @example null */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 

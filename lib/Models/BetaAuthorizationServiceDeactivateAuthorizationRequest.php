@@ -19,7 +19,6 @@ class BetaAuthorizationServiceDeactivateAuthorizationRequest
 {
     /**
      * ID is the unique identifier of the authorization that should be deactivated.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;

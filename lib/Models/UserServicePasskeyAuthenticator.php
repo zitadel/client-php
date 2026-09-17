@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * UserServicePasskeyAuthenticator is an enumeration of allowed values.
+ */
 enum UserServicePasskeyAuthenticator: string
 {
     case PASSKEY_AUTHENTICATOR_UNSPECIFIED = 'PASSKEY_AUTHENTICATOR_UNSPECIFIED';

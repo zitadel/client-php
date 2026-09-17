@@ -19,14 +19,12 @@ class BetaInternalPermissionServiceOrganization
 {
     /**
      * ID is the unique identifier of the organization the user was granted the administrator role for.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;
 
     /**
      * Name is the name of the organization the user was granted the administrator role for.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;

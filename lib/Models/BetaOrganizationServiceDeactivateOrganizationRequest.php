@@ -19,7 +19,6 @@ class BetaOrganizationServiceDeactivateOrganizationRequest
 {
     /**
      * Organization Id for the Organization to be deactivated
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;

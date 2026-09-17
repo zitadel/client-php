@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceGetUserByIDResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\UserServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('user')]
     public ?\Zitadel\Client\Models\UserServiceUser $user = null;
 

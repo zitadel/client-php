@@ -24,6 +24,6 @@ class BadRequestException extends ClientException
         ?string $responseBody = null,
         mixed $errorBody = null
     ) {
-        parent::__construct($message, 400, $responseHeaders, $responseBody, $errorBody);
+        parent::__construct(400, $message, $responseHeaders, $responseBody, $errorBody);
     }
 }

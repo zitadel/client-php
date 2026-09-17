@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceRegisterTOTPResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\BetaUserServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('uri')]
     public ?string $uri = null;
 
-    /** @example null */
     #[SerializedName('secret')]
     public ?string $secret = null;
 

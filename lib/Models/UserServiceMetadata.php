@@ -19,14 +19,12 @@ class UserServiceMetadata
 {
     /**
      * Key in the metadata key/value pair.
-     * @example null
      */
     #[SerializedName('key')]
     public ?string $key = null;
 
     /**
      * Value in the metadata key/value pair.
-     * @example null
      */
     #[SerializedName('value')]
     public ?string $value = null;

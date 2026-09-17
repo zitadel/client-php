@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * ActionServiceExecutionType is an enumeration of allowed values.
+ */
 enum ActionServiceExecutionType: string
 {
     case EXECUTION_TYPE_UNSPECIFIED = 'EXECUTION_TYPE_UNSPECIFIED';

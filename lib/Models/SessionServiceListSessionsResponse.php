@@ -17,14 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SessionServiceListSessionsResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\SessionServiceListDetails $details = null;
 
     /**
      * The sessions matching the search query. There might be more sessions available  than returned in this response. Use the details field to see if there are more sessions  available and to get the total count of sessions matching the query.
      * @var \Ds\Vector<\Zitadel\Client\Models\SessionServiceSession>|null
-     * @example null
      */
     #[SerializedName('sessions')]
     public ?\Ds\Vector $sessions = null;

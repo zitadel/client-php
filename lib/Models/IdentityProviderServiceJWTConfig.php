@@ -19,28 +19,24 @@ class IdentityProviderServiceJWTConfig
 {
     /**
      * The endpoint where the JWT can be extracted.
-     * @example null
      */
     #[SerializedName('jwtEndpoint')]
     public ?string $jwtEndpoint = null;
 
     /**
      * The issuer of the JWT (for validation).
-     * @example null
      */
     #[SerializedName('issuer')]
     public ?string $issuer = null;
 
     /**
      * The endpoint to the key (JWK) which is used to sign the JWT with.
-     * @example null
      */
     #[SerializedName('keysEndpoint')]
     public ?string $keysEndpoint = null;
 
     /**
      * The name of the header where the JWT is sent in, default is authorization.
-     * @example null
      */
     #[SerializedName('headerName')]
     public ?string $headerName = null;

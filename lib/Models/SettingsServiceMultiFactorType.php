@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * SettingsServiceMultiFactorType is an enumeration of allowed values.
+ */
 enum SettingsServiceMultiFactorType: string
 {
     case MULTI_FACTOR_TYPE_UNSPECIFIED = 'MULTI_FACTOR_TYPE_UNSPECIFIED';

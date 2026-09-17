@@ -21,33 +21,28 @@ class SettingsServiceOptions
 {
     /**
      * Enable if users should be able to link an existing ZITADEL user with an  external account.
-     * @example null
      */
     #[SerializedName('isLinkingAllowed')]
     public ?bool $isLinkingAllowed = null;
 
     /**
      * Enable if users should be able to create a new account in ZITADEL when  using an external account.
-     * @example null
      */
     #[SerializedName('isCreationAllowed')]
     public ?bool $isCreationAllowed = null;
 
     /**
      * Enable if a new account in ZITADEL should be created automatically when  login with an external account.
-     * @example null
      */
     #[SerializedName('isAutoCreation')]
     public ?bool $isAutoCreation = null;
 
     /**
      * Enable if a the ZITADEL account fields should be updated automatically on  each login.
-     * @example null
      */
     #[SerializedName('isAutoUpdate')]
     public ?bool $isAutoUpdate = null;
 
-    /** @example null */
     #[SerializedName('autoLinking')]
     public ?\Zitadel\Client\Models\SettingsServiceAutoLinkingOption $autoLinking = null;
 

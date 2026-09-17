@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaSettingsServiceThemeMode is an enumeration of allowed values.
+ */
 enum BetaSettingsServiceThemeMode: string
 {
     case THEME_MODE_UNSPECIFIED = 'THEME_MODE_UNSPECIFIED';

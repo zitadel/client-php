@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAppServiceDeactivateApplicationRequest
 {
-    /** @example null */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
-    /** @example null */
     #[SerializedName('id')]
     public ?string $id = null;
 

@@ -19,21 +19,18 @@ class ActionServiceResponseExecution
 {
     /**
      * Define all calls as condition.  Before a response is returned to the client from any available service,  the execution is triggered.
-     * @example null
      */
     #[SerializedName('all')]
     public ?bool $all = null;
 
     /**
      * Define a GRPC-method as condition.  Before a response is returned to the client from this method, the execution is triggered.
-     * @example null
      */
     #[SerializedName('method')]
     public ?string $method = null;
 
     /**
      * Define a GRPC-service as condition.  Before a response is returned to the client from any method of this service, the execution is triggered.
-     * @example null
      */
     #[SerializedName('service')]
     public ?string $service = null;

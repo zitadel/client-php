@@ -19,14 +19,12 @@ class OrganizationServiceUpdateOrganizationRequest
 {
     /**
      * OrganizationID is the unique identifier of the organization to be updated.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
     /**
      * Name is the new name for the organization to be set.  Note that since the name is used to generate the organization's default domain,  changing the name will also change the domain.  Additionally, if the domain is used as suffix for user logins,  their login names will also change accordingly.  It will not affect any custom domains added to the organization.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;

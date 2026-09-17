@@ -19,18 +19,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaInternalPermissionServiceListAdministratorsRequest
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaInternalPermissionServicePaginationRequest $pagination = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\BetaInternalPermissionServiceAdministratorFieldName $sortingColumn = null;
 
     /**
      * Filter the administrator roles to be returned.
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaInternalPermissionServiceAdministratorSearchFilter>|null
-     * @example null
      */
     #[SerializedName('filters')]
     public ?\Ds\Vector $filters = null;

@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAppServiceCreateAPIApplicationResponse
 {
-    /** @example null */
     #[SerializedName('clientId')]
     public ?string $clientId = null;
 
-    /** @example null */
     #[SerializedName('clientSecret')]
     public ?string $clientSecret = null;
 

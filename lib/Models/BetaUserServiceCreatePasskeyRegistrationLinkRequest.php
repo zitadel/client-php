@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceCreatePasskeyRegistrationLinkRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('returnCode')]
     public ?object $returnCode = null;
 
-    /** @example null */
     #[SerializedName('sendLink')]
     public ?\Zitadel\Client\Models\BetaUserServiceSendPasskeyRegistrationLink $sendLink = null;
 

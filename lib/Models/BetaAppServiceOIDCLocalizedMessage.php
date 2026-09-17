@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAppServiceOIDCLocalizedMessage
 {
-    /** @example null */
     #[SerializedName('key')]
     public ?string $key = null;
 
-    /** @example null */
     #[SerializedName('localizedMessage')]
     public ?string $localizedMessage = null;
 

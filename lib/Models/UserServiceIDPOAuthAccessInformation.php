@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceIDPOAuthAccessInformation
 {
-    /** @example null */
     #[SerializedName('accessToken')]
     public ?string $accessToken = null;
 
-    /** @example null */
     #[SerializedName('idToken')]
     public ?string $idToken = null;
 

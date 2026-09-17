@@ -19,28 +19,24 @@ class BetaInternalPermissionServiceUser
 {
     /**
      * ID is the unique identifier of the user.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;
 
     /**
      * PreferredLoginName is the preferred login name of the user. This value is unique across the whole instance.
-     * @example null
      */
     #[SerializedName('preferredLoginName')]
     public ?string $preferredLoginName = null;
 
     /**
      * DisplayName is the public display name of the user.  By default it's the user's given name and family name, their username or their email address.
-     * @example null
      */
     #[SerializedName('displayName')]
     public ?string $displayName = null;
 
     /**
      * The organization the user belong to.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;

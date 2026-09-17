@@ -19,7 +19,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceListSessionsRequest
 {
-    /** @example null */
     #[SerializedName('query')]
     public ?\Zitadel\Client\Models\BetaSessionServiceListQuery $query = null;
 
@@ -27,7 +26,6 @@ class BetaSessionServiceListSessionsRequest
     #[SerializedName('queries')]
     public ?\Ds\Vector $queries = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\BetaSessionServiceSessionFieldName $sortingColumn = null;
 

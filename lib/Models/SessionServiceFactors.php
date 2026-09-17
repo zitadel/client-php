@@ -17,35 +17,27 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SessionServiceFactors
 {
-    /** @example null */
     #[SerializedName('user')]
     public ?\Zitadel\Client\Models\SessionServiceUserFactor $user = null;
 
-    /** @example null */
     #[SerializedName('password')]
     public ?\Zitadel\Client\Models\SessionServicePasswordFactor $password = null;
 
-    /** @example null */
     #[SerializedName('webAuthN')]
     public ?\Zitadel\Client\Models\SessionServiceWebAuthNFactor $webAuthN = null;
 
-    /** @example null */
     #[SerializedName('intent')]
     public ?\Zitadel\Client\Models\SessionServiceIntentFactor $intent = null;
 
-    /** @example null */
     #[SerializedName('totp')]
     public ?\Zitadel\Client\Models\SessionServiceTOTPFactor $totp = null;
 
-    /** @example null */
     #[SerializedName('otpSms')]
     public ?\Zitadel\Client\Models\SessionServiceOTPFactor $otpSms = null;
 
-    /** @example null */
     #[SerializedName('otpEmail')]
     public ?\Zitadel\Client\Models\SessionServiceOTPFactor $otpEmail = null;
 
-    /** @example null */
     #[SerializedName('recoveryCode')]
     public ?\Zitadel\Client\Models\SessionServiceRecoveryCodeFactor $recoveryCode = null;
 

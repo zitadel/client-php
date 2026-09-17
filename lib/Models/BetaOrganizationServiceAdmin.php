@@ -23,16 +23,13 @@ class BetaOrganizationServiceAdmin
     /**
      * specify Organization Member Roles for the provided user (default is ORG_OWNER if roles are empty)
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('roles')]
     public ?\Ds\Vector $roles = null;
 
-    /** @example null */
     #[SerializedName('human')]
     public ?\Zitadel\Client\Models\BetaOrganizationServiceAddHumanUserRequest $human = null;
 
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 

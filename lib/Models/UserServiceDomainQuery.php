@@ -19,14 +19,12 @@ class UserServiceDomainQuery
 {
     /**
      * List also auth method types without domain information like passkey and U2F added through V1 APIs / Login UI.
-     * @example null
      */
     #[SerializedName('includeWithoutDomain')]
     public ?bool $includeWithoutDomain = null;
 
     /**
      * List only auth methods with specific domain.
-     * @example null
      */
     #[SerializedName('domain')]
     public ?string $domain = null;

@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaFeatureServiceResetUserFeaturesRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 

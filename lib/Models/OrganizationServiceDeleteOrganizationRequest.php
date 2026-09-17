@@ -19,7 +19,6 @@ class OrganizationServiceDeleteOrganizationRequest
 {
     /**
      * OrganizationID is the unique identifier of the organization to be deleted.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;

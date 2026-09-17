@@ -49,11 +49,17 @@ class ApiException extends ZitadelException
     protected readonly mixed $errorBody;
 
     /**
+     * The positional parameters lead with the HTTP status code to match the
+     * cross-SDK convention — every other SDK's base error type (Java, C#,
+     * Kotlin, Node, Go, Rust, Swift, …) constructs as
+     * `(statusCode, message, …)`. The internal `parent::__construct` below
+     * still follows native PHP `\Exception(message, code, previous)` order.
+     *
      * @param array<string, string>|null $responseHeaders HTTP response headers
      */
     public function __construct(
-        string $message = "",
         int $statusCode = 0,
+        string $message = "",
         ?array $responseHeaders = [],
         ?string $responseBody = null,
         mixed $errorBody = null,

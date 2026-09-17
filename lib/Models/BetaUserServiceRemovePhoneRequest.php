@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceRemovePhoneRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 

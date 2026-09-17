@@ -19,21 +19,18 @@ class AuthorizationServiceProject
 {
     /**
      * ID is the unique identifier of the project.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;
 
     /**
      * Name is the name of the project.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;
 
     /**
      * OrganizationID is the ID of the organization the project belongs to.  This does not have to correspond with the authorizations organization.  In case the authorization is given on a granted project, this is the organization  that owns the project and granted it.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;

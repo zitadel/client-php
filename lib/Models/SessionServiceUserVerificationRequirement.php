@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * SessionServiceUserVerificationRequirement is an enumeration of allowed values.
+ */
 enum SessionServiceUserVerificationRequirement: string
 {
     case USER_VERIFICATION_REQUIREMENT_UNSPECIFIED = 'USER_VERIFICATION_REQUIREMENT_UNSPECIFIED';

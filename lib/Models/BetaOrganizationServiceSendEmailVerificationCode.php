@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaOrganizationServiceSendEmailVerificationCode
 {
-    /** @example null */
     #[SerializedName('urlTemplate')]
     public ?string $urlTemplate = null;
 

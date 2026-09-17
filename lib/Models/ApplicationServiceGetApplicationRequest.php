@@ -19,7 +19,6 @@ class ApplicationServiceGetApplicationRequest
 {
     /**
      * The unique ID of the application to be retrieved.
-     * @example null
      */
     #[SerializedName('applicationId')]
     public ?string $applicationId = null;

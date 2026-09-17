@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaSettingsServiceIdentityProviderType is an enumeration of allowed values.
+ */
 enum BetaSettingsServiceIdentityProviderType: string
 {
     case IDENTITY_PROVIDER_TYPE_UNSPECIFIED = 'IDENTITY_PROVIDER_TYPE_UNSPECIFIED';

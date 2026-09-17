@@ -19,7 +19,6 @@ class ProjectServiceDeactivateProjectRequest
 {
     /**
      * ProjectID is the unique identifier of the project.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;

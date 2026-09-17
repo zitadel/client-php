@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * ProjectServiceProjectState is an enumeration of allowed values.
+ */
 enum ProjectServiceProjectState: string
 {
     case PROJECT_STATE_UNSPECIFIED = 'PROJECT_STATE_UNSPECIFIED';

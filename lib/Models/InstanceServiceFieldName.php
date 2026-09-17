@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * InstanceServiceFieldName is an enumeration of allowed values.
+ */
 enum InstanceServiceFieldName: string
 {
     case FIELD_NAME_UNSPECIFIED = 'FIELD_NAME_UNSPECIFIED';

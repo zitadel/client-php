@@ -19,7 +19,6 @@ class SessionServiceUserIDQuery
 {
     /**
      * ID of the user whose sessions are being searched for.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;

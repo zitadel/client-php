@@ -19,12 +19,10 @@ class InternalPermissionServiceDeleteAdministratorRequest
 {
     /**
      * UserID is the ID of the user whose administrator roles should be removed.
-     * @example null
      */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('resource')]
     public ?\Zitadel\Client\Models\InternalPermissionServiceResourceType $resource = null;
 

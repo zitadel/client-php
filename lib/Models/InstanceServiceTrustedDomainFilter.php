@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class InstanceServiceTrustedDomainFilter
 {
-    /** @example null */
     #[SerializedName('domainFilter')]
     public ?\Zitadel\Client\Models\InstanceServiceDomainFilter $domainFilter = null;
 

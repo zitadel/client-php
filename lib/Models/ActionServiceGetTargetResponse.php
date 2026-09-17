@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ActionServiceGetTargetResponse
 {
-    /** @example null */
     #[SerializedName('target')]
     public ?\Zitadel\Client\Models\ActionServiceTarget $target = null;
 

@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceListAuthenticationMethodTypesRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('domainQuery')]
     public ?\Zitadel\Client\Models\UserServiceDomainQuery $domainQuery = null;
 

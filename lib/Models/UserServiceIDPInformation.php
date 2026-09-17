@@ -17,35 +17,28 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceIDPInformation
 {
-    /** @example null */
     #[SerializedName('idpId')]
     public ?string $idpId = null;
 
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('userName')]
     public ?string $userName = null;
 
     /**
      * `Struct` represents a structured data value, consisting of fields  which map to dynamically typed values. In some languages, `Struct`  might be supported by a native representation. For example, in  scripting languages like JS a struct is represented as an  object. The details of that representation are described together  with the proto support for the language.   The JSON representation for `Struct` is JSON object.
      * @var \Ds\Map<string, mixed>|null
-     * @example null
      */
     #[SerializedName('rawInformation')]
     public ?\Ds\Map $rawInformation = null;
 
-    /** @example null */
     #[SerializedName('ldap')]
     public ?\Zitadel\Client\Models\UserServiceIDPLDAPAccessInformation $ldap = null;
 
-    /** @example null */
     #[SerializedName('oauth')]
     public ?\Zitadel\Client\Models\UserServiceIDPOAuthAccessInformation $oauth = null;
 
-    /** @example null */
     #[SerializedName('saml')]
     public ?\Zitadel\Client\Models\UserServiceIDPSAMLAccessInformation $saml = null;
 

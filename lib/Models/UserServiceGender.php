@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * UserServiceGender is an enumeration of allowed values.
+ */
 enum UserServiceGender: string
 {
     case GENDER_UNSPECIFIED = 'GENDER_UNSPECIFIED';

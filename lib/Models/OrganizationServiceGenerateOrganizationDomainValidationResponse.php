@@ -19,14 +19,12 @@ class OrganizationServiceGenerateOrganizationDomainValidationResponse
 {
     /**
      * Token is a verification token that needs to be added to the DNS records or as a file to the webserver.  Zitadel will check for this token to verify the domain.
-     * @example null
      */
     #[SerializedName('token')]
     public ?string $token = null;
 
     /**
      * URL is the location where the token needs to be placed for HTTP challenge.
-     * @example null
      */
     #[SerializedName('url')]
     public ?string $url = null;

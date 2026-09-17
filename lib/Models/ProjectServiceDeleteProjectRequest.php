@@ -19,7 +19,6 @@ class ProjectServiceDeleteProjectRequest
 {
     /**
      * ProjectID is the unique identifier of the project to be deleted.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;

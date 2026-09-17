@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * OrganizationServiceDomainFieldName is an enumeration of allowed values.
+ */
 enum OrganizationServiceDomainFieldName: string
 {
     case DOMAIN_FIELD_NAME_UNSPECIFIED = 'DOMAIN_FIELD_NAME_UNSPECIFIED';

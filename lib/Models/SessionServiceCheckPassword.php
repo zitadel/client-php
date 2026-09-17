@@ -19,7 +19,6 @@ class SessionServiceCheckPassword
 {
     /**
      * The password of the user to be checked.
-     * @example null
      */
     #[SerializedName('password')]
     public ?string $password = null;

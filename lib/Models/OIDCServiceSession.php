@@ -19,14 +19,12 @@ class OIDCServiceSession
 {
     /**
      * ID of the session, used to login the user. Connects the session to the Auth Request.
-     * @example null
      */
     #[SerializedName('sessionId')]
     public ?string $sessionId = null;
 
     /**
      * Token of the session used to login the user. This token verifies that the session is valid.
-     * @example null
      */
     #[SerializedName('sessionToken')]
     public ?string $sessionToken = null;

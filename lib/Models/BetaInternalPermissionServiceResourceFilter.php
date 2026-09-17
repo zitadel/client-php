@@ -19,28 +19,24 @@ class BetaInternalPermissionServiceResourceFilter
 {
     /**
      * Search for administrators granted on the instance level.
-     * @example null
      */
     #[SerializedName('instance')]
     public ?bool $instance = null;
 
     /**
      * Search for administrators granted on a specific organization.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
     /**
      * Search for administrators granted on a specific project grant.
-     * @example null
      */
     #[SerializedName('projectGrantId')]
     public ?string $projectGrantId = null;
 
     /**
      * Search for administrators granted on a specific project.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;

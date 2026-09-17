@@ -19,11 +19,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceWebAuthN
 {
-    /** @example null */
     #[SerializedName('domain')]
     public ?string $domain = null;
 
-    /** @example null */
     #[SerializedName('userVerificationRequirement')]
     public ?\Zitadel\Client\Models\BetaSessionServiceUserVerificationRequirement $userVerificationRequirement = null;
 

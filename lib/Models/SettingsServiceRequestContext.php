@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SettingsServiceRequestContext
 {
-    /** @example null */
     #[SerializedName('instance')]
     public ?bool $instance = null;
 
-    /** @example null */
     #[SerializedName('orgId')]
     public ?string $orgId = null;
 

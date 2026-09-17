@@ -21,12 +21,10 @@ class ApplicationServiceApplicationNameFilter
 {
     /**
      * The name of the application to search for.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\ApplicationServiceTextFilterMethod $method = null;
 

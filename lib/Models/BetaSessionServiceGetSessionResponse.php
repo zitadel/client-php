@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceGetSessionResponse
 {
-    /** @example null */
     #[SerializedName('session')]
     public ?\Zitadel\Client\Models\BetaSessionServiceSession $session = null;
 

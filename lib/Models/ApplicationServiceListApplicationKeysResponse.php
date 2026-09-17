@@ -20,12 +20,10 @@ class ApplicationServiceListApplicationKeysResponse
     /**
      * The list of application keys matching the query. Depending on the applied limit,  there might be more keys available than returned in this list.  Use the returned pagination information to request further keys.
      * @var \Ds\Vector<\Zitadel\Client\Models\ApplicationServiceApplicationKey>|null
-     * @example null
      */
     #[SerializedName('keys')]
     public ?\Ds\Vector $keys = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\ApplicationServicePaginationResponse $pagination = null;
 

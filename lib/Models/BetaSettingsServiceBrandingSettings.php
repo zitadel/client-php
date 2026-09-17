@@ -19,34 +19,27 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSettingsServiceBrandingSettings
 {
-    /** @example null */
     #[SerializedName('lightTheme')]
     public ?\Zitadel\Client\Models\BetaSettingsServiceTheme $lightTheme = null;
 
-    /** @example null */
     #[SerializedName('darkTheme')]
     public ?\Zitadel\Client\Models\BetaSettingsServiceTheme $darkTheme = null;
 
-    /** @example null */
     #[SerializedName('fontUrl')]
     public ?string $fontUrl = null;
 
     /**
-     * hides the org suffix on the login form if the scope \\\"urn:zitadel:iam:org:domain:primary:{domainname}\\\" is set
-     * @example null
+     * hides the org suffix on the login form if the scope \"urn:zitadel:iam:org:domain:primary:{domainname}\" is set
      */
     #[SerializedName('hideLoginNameSuffix')]
     public ?bool $hideLoginNameSuffix = null;
 
-    /** @example null */
     #[SerializedName('disableWatermark')]
     public ?bool $disableWatermark = null;
 
-    /** @example null */
     #[SerializedName('resourceOwnerType')]
     public ?\Zitadel\Client\Models\BetaSettingsServiceResourceOwnerType $resourceOwnerType = null;
 
-    /** @example null */
     #[SerializedName('themeMode')]
     public ?\Zitadel\Client\Models\BetaSettingsServiceThemeMode $themeMode = null;
 

@@ -21,53 +21,45 @@ class SettingsServiceLegalAndSupportSettings
 {
     /**
      * Link to the Terms of Service. Can be a relative or absolute URL.
-     * @example null
      */
     #[SerializedName('tosLink')]
     public ?string $tosLink = null;
 
     /**
      * Link to the Privacy Policy. Can be a relative or absolute URL.
-     * @example null
      */
     #[SerializedName('privacyPolicyLink')]
     public ?string $privacyPolicyLink = null;
 
     /**
      * Link to a help page. Can be a relative or absolute URL.
-     * @example null
      */
     #[SerializedName('helpLink')]
     public ?string $helpLink = null;
 
     /**
      * Email address for support issues.
-     * @example null
      */
     #[SerializedName('supportEmail')]
     public ?string $supportEmail = null;
 
-    /** @example null */
     #[SerializedName('resourceOwnerType')]
     public ?\Zitadel\Client\Models\SettingsServiceResourceOwnerType $resourceOwnerType = null;
 
     /**
      * Link to documentation to be shown in the console.
-     * @example null
      */
     #[SerializedName('docsLink')]
     public ?string $docsLink = null;
 
     /**
      * Link to an external resource that will be available to users in the console.
-     * @example null
      */
     #[SerializedName('customLink')]
     public ?string $customLink = null;
 
     /**
      * The button text that would be shown in console pointing to custom link.
-     * @example null
      */
     #[SerializedName('customLinkText')]
     public ?string $customLinkText = null;

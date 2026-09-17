@@ -19,7 +19,6 @@ class BetaOrganizationServiceActivateOrganizationRequest
 {
     /**
      * Organization Id for the Organization to be activated
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;

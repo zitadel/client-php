@@ -19,7 +19,6 @@ class SettingsServiceSetHostedLoginTranslationResponse
 {
     /**
      * hash of the saved translation. Valid only when ignore_inheritance = true
-     * @example null
      */
     #[SerializedName('etag')]
     public ?string $etag = null;

@@ -19,7 +19,6 @@ class SessionServiceCheckOTP
 {
     /**
      * The One-Time Password sent over SMS or Email of the user to be checked.
-     * @example null
      */
     #[SerializedName('code')]
     public ?string $code = null;

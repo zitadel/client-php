@@ -1,5 +1,6 @@
 .php-cs-fixer.dist.php
 SKILLS.md
+lib/AbstractApiClient.php
 lib/Api/ActionServiceApi.php
 lib/Api/ApplicationServiceApi.php
 lib/Api/AuthorizationServiceApi.php
@@ -38,6 +39,7 @@ lib/Auth/Authenticator.php
 lib/Auth/BaseAuthenticator.php
 lib/Auth/BearerAuthenticator.php
 lib/Auth/HttpAwareAuthenticator.php
+lib/Auth/NoAuth.php
 lib/Auth/ZitadelAccessTokenAuthenticator.php
 lib/CancellationException.php
 lib/CancellationToken.php
@@ -1407,6 +1409,8 @@ lib/Models/WebKeyServiceState.php
 lib/Models/WebKeyServiceWebKey.php
 lib/ObjectSerializer.php
 lib/PreciseDuration.php
+lib/Psr18ApiClient.php
+lib/RawHttpResponse.php
 lib/SerializationException.php
 lib/Serializer/DsAwareObjectNormalizer.php
 lib/Serializer/DsMapNormalizer.php
@@ -1426,9 +1430,13 @@ lib/ZitadelException.php
 phpcs.xml
 phpdoc.dist.xml
 rector.php
+tests/ApiResultTest.php
 tests/ConfigurationTest.php
 tests/DefaultApiClientUnitTest.php
 tests/HeaderSelectorTest.php
+tests/Psr18ApiClientUnitTest.php
+tests/ServerConfigurationTest.php
+tests/ServerVariableTest.php
 tests/TraceContextUtilTest.php
 tests/TransportOptionsTest.php
 tests/ValueSerializerTest.php

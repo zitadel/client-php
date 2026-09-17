@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class OrganizationServiceListQuery
 {
-    /** @example null */
     #[SerializedName('offset')]
     public mixed $offset = null;
 
-    /** @example null */
     #[SerializedName('limit')]
     public ?int $limit = null;
 
-    /** @example null */
     #[SerializedName('asc')]
     public ?bool $asc = null;
 

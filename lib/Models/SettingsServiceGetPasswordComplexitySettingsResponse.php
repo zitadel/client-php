@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SettingsServiceGetPasswordComplexitySettingsResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\SettingsServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('settings')]
     public ?\Zitadel\Client\Models\SettingsServicePasswordComplexitySettings $settings = null;
 

@@ -19,7 +19,6 @@ class UserServiceSetUserMetadataRequest
 {
     /**
      * ID of the user under which the metadata gets set.
-     * @example null
      */
     #[SerializedName('userId')]
     public ?string $userId = null;
@@ -27,7 +26,6 @@ class UserServiceSetUserMetadataRequest
     /**
      * Metadata to bet set. The values have to be base64 encoded.
      * @var \Ds\Vector<\Zitadel\Client\Models\UserServiceMetadata>|null
-     * @example null
      */
     #[SerializedName('metadata')]
     public ?\Ds\Vector $metadata = null;

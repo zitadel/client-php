@@ -19,39 +19,33 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaProjectServiceUpdateProjectRequest
 {
-    /** @example null */
     #[SerializedName('id')]
     public ?string $id = null;
 
     /**
      * Name of the project.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;
 
     /**
      * Enable this setting to have role information included in the user info endpoint. It is also dependent on your application settings to include it in tokens and other types.
-     * @example null
      */
     #[SerializedName('projectRoleAssertion')]
     public ?bool $projectRoleAssertion = null;
 
     /**
      * When enabled ZITADEL will check if a user has a role of this project assigned when login into an application of this project.
-     * @example null
      */
     #[SerializedName('projectRoleCheck')]
     public ?bool $projectRoleCheck = null;
 
     /**
      * When enabled ZITADEL will check if the organization of the user, that is trying to log in, has a grant to this project.
-     * @example null
      */
     #[SerializedName('hasProjectCheck')]
     public ?bool $hasProjectCheck = null;
 
-    /** @example null */
     #[SerializedName('privateLabelingSetting')]
     public ?\Zitadel\Client\Models\BetaProjectServicePrivateLabelingSetting $privateLabelingSetting = null;
 

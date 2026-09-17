@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaAppServiceAPIAuthMethodType is an enumeration of allowed values.
+ */
 enum BetaAppServiceAPIAuthMethodType: string
 {
     case API_AUTH_METHOD_TYPE_BASIC = 'API_AUTH_METHOD_TYPE_BASIC';

@@ -19,21 +19,18 @@ class BetaActionServiceResponseExecution
 {
     /**
      * All calls to any available services and methods as condition.
-     * @example null
      */
     #[SerializedName('all')]
     public ?bool $all = null;
 
     /**
      * GRPC-method as condition.
-     * @example null
      */
     #[SerializedName('method')]
     public ?string $method = null;
 
     /**
      * GRPC-service as condition.
-     * @example null
      */
     #[SerializedName('service')]
     public ?string $service = null;

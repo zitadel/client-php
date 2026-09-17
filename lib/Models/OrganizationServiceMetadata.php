@@ -19,14 +19,12 @@ class OrganizationServiceMetadata
 {
     /**
      * Key is identifier of the metadata entry.
-     * @example null
      */
     #[SerializedName('key')]
     public ?string $key = null;
 
     /**
      * Value is the values of the metadata entry.
-     * @example null
      */
     #[SerializedName('value')]
     public ?string $value = null;

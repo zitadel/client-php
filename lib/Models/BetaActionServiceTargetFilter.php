@@ -19,7 +19,6 @@ class BetaActionServiceTargetFilter
 {
     /**
      * Defines the id to query for.
-     * @example null
      */
     #[SerializedName('targetId')]
     public ?string $targetId = null;

@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaInstanceServiceDeleteInstanceRequest
 {
-    /** @example null */
     #[SerializedName('instanceId')]
     public ?string $instanceId = null;
 

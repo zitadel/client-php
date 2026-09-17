@@ -19,21 +19,18 @@ class BetaActionServiceEventExecution
 {
     /**
      * all events as condition.
-     * @example null
      */
     #[SerializedName('all')]
     public ?bool $all = null;
 
     /**
      * Event name as condition.
-     * @example null
      */
     #[SerializedName('event')]
     public ?string $event = null;
 
     /**
      * Event group as condition, all events under this group.
-     * @example null
      */
     #[SerializedName('group')]
     public ?string $group = null;

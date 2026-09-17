@@ -21,12 +21,10 @@ class ProjectServiceProjectOrganizationIDFilter
 {
     /**
      * OrganizationID Is the ID of the organization to query for.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
-    /** @example null */
     #[SerializedName('type')]
     public ?\Zitadel\Client\Models\ProjectServiceType $type = null;
 

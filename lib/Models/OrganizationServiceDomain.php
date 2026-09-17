@@ -21,33 +21,28 @@ class OrganizationServiceDomain
 {
     /**
      * OrganizationID is the unique identifier of the organization the domain belongs to.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
     /**
      * Domain is the fully qualified domain name.
-     * @example null
      */
     #[SerializedName('domain')]
     public ?string $domain = null;
 
     /**
      * IsVerified is a boolean flag indicating if the domain has been verified.
-     * @example null
      */
     #[SerializedName('isVerified')]
     public ?bool $isVerified = null;
 
     /**
      * IsPrimary is a boolean flag indicating if the domain is the primary domain of the organization.
-     * @example null
      */
     #[SerializedName('isPrimary')]
     public ?bool $isPrimary = null;
 
-    /** @example null */
     #[SerializedName('validationType')]
     public ?\Zitadel\Client\Models\OrganizationServiceDomainValidationType $validationType = null;
 

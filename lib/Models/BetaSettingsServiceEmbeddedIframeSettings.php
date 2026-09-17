@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSettingsServiceEmbeddedIframeSettings
 {
-    /** @example null */
     #[SerializedName('enabled')]
     public ?bool $enabled = null;
 

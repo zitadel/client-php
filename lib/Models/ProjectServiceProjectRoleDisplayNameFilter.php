@@ -21,12 +21,10 @@ class ProjectServiceProjectRoleDisplayNameFilter
 {
     /**
      * The display name of the project role to query for.
-     * @example null
      */
     #[SerializedName('displayName')]
     public ?string $displayName = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\ProjectServiceTextFilterMethod $method = null;
 

@@ -21,12 +21,10 @@ class OrganizationServiceOrganizationNameQuery
 {
     /**
      * Name of the organization.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\OrganizationServiceTextQueryMethod $method = null;
 

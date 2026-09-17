@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * OrganizationServiceDomainValidationType is an enumeration of allowed values.
+ */
 enum OrganizationServiceDomainValidationType: string
 {
     case DOMAIN_VALIDATION_TYPE_UNSPECIFIED = 'DOMAIN_VALIDATION_TYPE_UNSPECIFIED';

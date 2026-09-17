@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * ApplicationServiceApplicationState is an enumeration of allowed values.
+ */
 enum ApplicationServiceApplicationState: string
 {
     case APPLICATION_STATE_UNSPECIFIED = 'APPLICATION_STATE_UNSPECIFIED';

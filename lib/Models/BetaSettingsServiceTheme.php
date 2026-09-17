@@ -19,42 +19,36 @@ class BetaSettingsServiceTheme
 {
     /**
      * hex value for primary color
-     * @example null
      */
     #[SerializedName('primaryColor')]
     public ?string $primaryColor = null;
 
     /**
      * hex value for background color
-     * @example null
      */
     #[SerializedName('backgroundColor')]
     public ?string $backgroundColor = null;
 
     /**
      * hex value for warning color
-     * @example null
      */
     #[SerializedName('warnColor')]
     public ?string $warnColor = null;
 
     /**
      * hex value for font color
-     * @example null
      */
     #[SerializedName('fontColor')]
     public ?string $fontColor = null;
 
     /**
      * url where the logo is served
-     * @example null
      */
     #[SerializedName('logoUrl')]
     public ?string $logoUrl = null;
 
     /**
      * url where the icon is served
-     * @example null
      */
     #[SerializedName('iconUrl')]
     public ?string $iconUrl = null;

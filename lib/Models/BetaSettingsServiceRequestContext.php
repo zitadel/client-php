@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSettingsServiceRequestContext
 {
-    /** @example null */
     #[SerializedName('instance')]
     public ?bool $instance = null;
 
-    /** @example null */
     #[SerializedName('orgId')]
     public ?string $orgId = null;
 

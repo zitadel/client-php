@@ -19,14 +19,12 @@ class BetaOrganizationServiceAddOrganizationDomainRequest
 {
     /**
      * Organization Id for the Organization for which the domain is to be added to.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
     /**
      * The domain you want to add to the organization.
-     * @example null
      */
     #[SerializedName('domain')]
     public ?string $domain = null;

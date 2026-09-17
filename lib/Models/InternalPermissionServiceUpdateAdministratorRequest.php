@@ -19,19 +19,16 @@ class InternalPermissionServiceUpdateAdministratorRequest
 {
     /**
      * UserID is the ID of the user whose administrator roles should be updated.
-     * @example null
      */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('resource')]
     public ?\Zitadel\Client\Models\InternalPermissionServiceResourceType $resource = null;
 
     /**
      * Roles are the roles that the user should be granted.  Note that any role previously granted to the user and not present in the list will be revoked.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('roles')]
     public ?\Ds\Vector $roles = null;

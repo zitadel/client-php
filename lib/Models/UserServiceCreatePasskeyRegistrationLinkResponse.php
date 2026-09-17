@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceCreatePasskeyRegistrationLinkResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\UserServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('code')]
     public ?\Zitadel\Client\Models\UserServicePasskeyRegistrationCode $code = null;
 

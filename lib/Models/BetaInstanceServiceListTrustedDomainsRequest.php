@@ -19,22 +19,18 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaInstanceServiceListTrustedDomainsRequest
 {
-    /** @example null */
     #[SerializedName('instanceId')]
     public ?string $instanceId = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaInstanceServicePaginationRequest $pagination = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\BetaInstanceServiceTrustedDomainFieldName $sortingColumn = null;
 
     /**
      * Criterias the client is looking for.
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaInstanceServiceTrustedDomainSearchQuery>|null
-     * @example null
      */
     #[SerializedName('queries')]
     public ?\Ds\Vector $queries = null;

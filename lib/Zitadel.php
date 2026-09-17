@@ -168,11 +168,20 @@ class Zitadel
      *
      * @param Authenticator       $authenticator    Provides host URL and auth headers.
      * @param TransportOptions|null $transportOptions HTTP transport configuration (proxy, TLS, timeouts, etc.)
+     * @param ApiClient|null      $apiClient        Custom transport. Defaults to {@see DefaultApiClient}
+     *                                              (Symfony HTTP client); supply your own — e.g. a
+     *                                              {@see Psr18ApiClient} wrapping a framework-managed
+     *                                              PSR-18 client — to drive the SDK with a different stack.
+     *                                              When provided, $transportOptions' transport-level settings
+     *                                              (TLS/proxy/timeout) are owned by your client, not applied here.
      */
-    public function __construct(Authenticator $authenticator, ?TransportOptions $transportOptions = null)
-    {
+    public function __construct(
+        Authenticator $authenticator,
+        ?TransportOptions $transportOptions = null,
+        ?ApiClient $apiClient = null
+    ) {
         $transportOptions ??= TransportOptions::builder()->build();
-        $apiClient = new DefaultApiClient($transportOptions);
+        $apiClient ??= new DefaultApiClient($transportOptions);
 
         if ($authenticator instanceof HttpAwareAuthenticator) {
             $authenticator->setApiClient($apiClient);
@@ -218,14 +227,16 @@ class Zitadel
      * @param string $host API base URL.
      * @param string $accessToken Bearer token.
      * @param TransportOptions|null $transportOptions Optional HTTP transport configuration.
+     * @param ApiClient|null $apiClient Optional custom transport (e.g. a {@see Psr18ApiClient}).
      * @return self Configured client instance.
      */
     public static function withToken(
         string $host,
         string $accessToken,
-        ?TransportOptions $transportOptions = null
+        ?TransportOptions $transportOptions = null,
+        ?ApiClient $apiClient = null
     ): self {
-        return new self(new BearerAuthenticator($host, $accessToken), $transportOptions);
+        return new self(new BearerAuthenticator($host, $accessToken), $transportOptions, $apiClient);
     }
 
     /**
@@ -240,12 +251,14 @@ class Zitadel
      *
      * @param Authenticator $authenticator Provides host URL and auth headers.
      * @param TransportOptions|null $transportOptions Optional HTTP transport configuration.
+     * @param ApiClient|null $apiClient Optional custom transport (e.g. a {@see Psr18ApiClient}).
      * @return self Configured client instance.
      */
     public static function withAuthenticator(
         Authenticator $authenticator,
-        ?TransportOptions $transportOptions = null
+        ?TransportOptions $transportOptions = null,
+        ?ApiClient $apiClient = null
     ): self {
-        return new self($authenticator, $transportOptions);
+        return new self($authenticator, $transportOptions, $apiClient);
     }
 }

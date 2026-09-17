@@ -20,12 +20,10 @@ class ApplicationServiceListApplicationsResponse
     /**
      * The list of applications matching the query. Depending on the applied limit,  there might be more applications available than included in this list.  Use the returned pagination information to request further applications.
      * @var \Ds\Vector<\Zitadel\Client\Models\ApplicationServiceApplication>|null
-     * @example null
      */
     #[SerializedName('applications')]
     public ?\Ds\Vector $applications = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\ApplicationServicePaginationResponse $pagination = null;
 

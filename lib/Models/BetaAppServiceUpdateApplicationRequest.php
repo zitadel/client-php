@@ -17,27 +17,21 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAppServiceUpdateApplicationRequest
 {
-    /** @example null */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
-    /** @example null */
     #[SerializedName('id')]
     public ?string $id = null;
 
-    /** @example null */
     #[SerializedName('name')]
     public ?string $name = null;
 
-    /** @example null */
     #[SerializedName('apiConfigurationRequest')]
     public ?\Zitadel\Client\Models\BetaAppServiceUpdateAPIApplicationConfigurationRequest $apiConfigurationRequest = null;
 
-    /** @example null */
     #[SerializedName('oidcConfigurationRequest')]
     public ?\Zitadel\Client\Models\BetaAppServiceUpdateOIDCApplicationConfigurationRequest $oidcConfigurationRequest = null;
 
-    /** @example null */
     #[SerializedName('samlConfigurationRequest')]
     public ?\Zitadel\Client\Models\BetaAppServiceUpdateSAMLApplicationConfigurationRequest $samlConfigurationRequest = null;
 

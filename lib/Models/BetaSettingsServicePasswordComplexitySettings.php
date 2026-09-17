@@ -19,27 +19,21 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSettingsServicePasswordComplexitySettings
 {
-    /** @example null */
     #[SerializedName('minLength')]
     public mixed $minLength = null;
 
-    /** @example null */
     #[SerializedName('requiresUppercase')]
     public ?bool $requiresUppercase = null;
 
-    /** @example null */
     #[SerializedName('requiresLowercase')]
     public ?bool $requiresLowercase = null;
 
-    /** @example null */
     #[SerializedName('requiresNumber')]
     public ?bool $requiresNumber = null;
 
-    /** @example null */
     #[SerializedName('requiresSymbol')]
     public ?bool $requiresSymbol = null;
 
-    /** @example null */
     #[SerializedName('resourceOwnerType')]
     public ?\Zitadel\Client\Models\BetaSettingsServiceResourceOwnerType $resourceOwnerType = null;
 

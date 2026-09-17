@@ -22,16 +22,13 @@ class BetaInstanceServiceListInstancesRequest
     /**
      * Criterias the client is looking for.
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaInstanceServiceQuery>|null
-     * @example null
      */
     #[SerializedName('queries')]
     public ?\Ds\Vector $queries = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaInstanceServicePaginationRequest $pagination = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\BetaInstanceServiceFieldName $sortingColumn = null;
 

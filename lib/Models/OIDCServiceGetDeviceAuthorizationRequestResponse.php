@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class OIDCServiceGetDeviceAuthorizationRequestResponse
 {
-    /** @example null */
     #[SerializedName('deviceAuthorizationRequest')]
     public ?\Zitadel\Client\Models\OIDCServiceDeviceAuthorizationRequest $deviceAuthorizationRequest = null;
 

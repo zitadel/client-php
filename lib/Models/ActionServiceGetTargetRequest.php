@@ -19,7 +19,6 @@ class ActionServiceGetTargetRequest
 {
     /**
      * The unique identifier of the target to retrieve.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;

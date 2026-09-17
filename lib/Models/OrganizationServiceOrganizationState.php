@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * OrganizationServiceOrganizationState is an enumeration of allowed values.
+ */
 enum OrganizationServiceOrganizationState: string
 {
     case ORGANIZATION_STATE_UNSPECIFIED = 'ORGANIZATION_STATE_UNSPECIFIED';

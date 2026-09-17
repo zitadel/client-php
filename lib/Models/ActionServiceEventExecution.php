@@ -19,21 +19,18 @@ class ActionServiceEventExecution
 {
     /**
      * Define all events as condition.  After any event is created, the execution is triggered.
-     * @example null
      */
     #[SerializedName('all')]
     public ?bool $all = null;
 
     /**
      * Define a specific event as condition.  After this event is created, the execution is triggered.
-     * @example null
      */
     #[SerializedName('event')]
     public ?string $event = null;
 
     /**
      * Define an event group as condition.  After any event under this group is created, the execution is triggered.
-     * @example null
      */
     #[SerializedName('group')]
     public ?string $group = null;

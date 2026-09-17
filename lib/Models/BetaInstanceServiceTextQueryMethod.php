@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaInstanceServiceTextQueryMethod is an enumeration of allowed values.
+ */
 enum BetaInstanceServiceTextQueryMethod: string
 {
     case TEXT_QUERY_METHOD_EQUALS = 'TEXT_QUERY_METHOD_EQUALS';

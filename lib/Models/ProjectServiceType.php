@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * ProjectServiceType is an enumeration of allowed values.
+ */
 enum ProjectServiceType: string
 {
     case TYPE_UNSPECIFIED = 'TYPE_UNSPECIFIED';

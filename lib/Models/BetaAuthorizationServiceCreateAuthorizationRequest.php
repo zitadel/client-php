@@ -19,21 +19,18 @@ class BetaAuthorizationServiceCreateAuthorizationRequest
 {
     /**
      * UserID is the ID of the user who should be granted the authorization.
-     * @example null
      */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
     /**
      * Project ID is the ID of the project the user should be authorized for.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
     /**
      * OrganizationID is the ID of the organization on which the authorization should be created.  The organization must either own the project or have a grant for the project.  If omitted, the authorization is created on the projects organization.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
@@ -41,7 +38,6 @@ class BetaAuthorizationServiceCreateAuthorizationRequest
     /**
      * RoleKeys are the keys of the roles the user should be granted.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('roleKeys')]
     public ?\Ds\Vector $roleKeys = null;

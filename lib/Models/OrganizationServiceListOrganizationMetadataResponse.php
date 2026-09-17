@@ -17,14 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class OrganizationServiceListOrganizationMetadataResponse
 {
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\OrganizationServicePaginationResponse $pagination = null;
 
     /**
      * Metadata is a list of organization metadata that matched the query.
      * @var \Ds\Vector<\Zitadel\Client\Models\OrganizationServiceMetadata>|null
-     * @example null
      */
     #[SerializedName('metadata')]
     public ?\Ds\Vector $metadata = null;

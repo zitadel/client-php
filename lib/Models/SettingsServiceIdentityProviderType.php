@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * SettingsServiceIdentityProviderType is an enumeration of allowed values.
+ */
 enum SettingsServiceIdentityProviderType: string
 {
     case IDENTITY_PROVIDER_TYPE_UNSPECIFIED = 'IDENTITY_PROVIDER_TYPE_UNSPECIFIED';

@@ -19,14 +19,12 @@ class SessionServiceGetSessionRequest
 {
     /**
      * The unique identifier of the session to be retrieved.
-     * @example null
      */
     #[SerializedName('sessionId')]
     public ?string $sessionId = null;
 
     /**
      * The current token of the session, previously returned on the create / update request.  The token is required unless either of the following conditions is met:  - the caller created the session  - the authenticated user requests their own session (checked user)  - the security token provided in the authorization header has the same user agent as the session  - the caller is granted the permission session.read permission on either the instance or on the checked user's organization
-     * @example null
      */
     #[SerializedName('sessionToken')]
     public ?string $sessionToken = null;

@@ -19,14 +19,12 @@ class ActionServicePaginationResponse
 {
     /**
      * Absolute number of objects matching the query, regardless of applied limit.
-     * @example null
      */
     #[SerializedName('totalResult')]
     public mixed $totalResult = null;
 
     /**
      * Applied limit from query, defines maximum amount of objects per request, to compare if all objects are returned.
-     * @example null
      */
     #[SerializedName('appliedLimit')]
     public mixed $appliedLimit = null;

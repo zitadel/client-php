@@ -19,7 +19,6 @@ class ApplicationServiceGetApplicationKeyRequest
 {
     /**
      * The unique ID of the application key to be retrieved.
-     * @example null
      */
     #[SerializedName('keyId')]
     public ?string $keyId = null;

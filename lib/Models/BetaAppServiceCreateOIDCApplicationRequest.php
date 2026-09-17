@@ -22,7 +22,6 @@ class BetaAppServiceCreateOIDCApplicationRequest
     /**
      * Callback URI of the authorization request where the code or tokens will be sent to
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('redirectUris')]
     public ?\Ds\Vector $redirectUris = null;
@@ -35,49 +34,39 @@ class BetaAppServiceCreateOIDCApplicationRequest
     #[SerializedName('grantTypes')]
     public ?\Ds\Vector $grantTypes = null;
 
-    /** @example null */
     #[SerializedName('appType')]
     public ?\Zitadel\Client\Models\BetaAppServiceOIDCAppType $appType = null;
 
-    /** @example null */
     #[SerializedName('authMethodType')]
     public ?\Zitadel\Client\Models\BetaAppServiceOIDCAuthMethodType $authMethodType = null;
 
     /**
      * ZITADEL will redirect to this link after a successful logout
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('postLogoutRedirectUris')]
     public ?\Ds\Vector $postLogoutRedirectUris = null;
 
-    /** @example null */
     #[SerializedName('version')]
     public ?\Zitadel\Client\Models\BetaAppServiceOIDCVersion $version = null;
 
-    /** @example null */
     #[SerializedName('devMode')]
     public ?bool $devMode = null;
 
-    /** @example null */
     #[SerializedName('accessTokenType')]
     public ?\Zitadel\Client\Models\BetaAppServiceOIDCTokenType $accessTokenType = null;
 
-    /** @example null */
     #[SerializedName('accessTokenRoleAssertion')]
     public ?bool $accessTokenRoleAssertion = null;
 
-    /** @example null */
     #[SerializedName('idTokenRoleAssertion')]
     public ?bool $idTokenRoleAssertion = null;
 
-    /** @example null */
     #[SerializedName('idTokenUserinfoAssertion')]
     public ?bool $idTokenUserinfoAssertion = null;
 
     /**
-     * A Duration represents a signed, fixed-length span of time represented  as a count of seconds and fractions of seconds at nanosecond  resolution. It is independent of any calendar and concepts like \"day\"  or \"month\". It is related to Timestamp in that the difference between  two Timestamp values is a Duration and it can be added or subtracted  from a Timestamp. Range is approximately +-10,000 years.   # Examples   Example 1: Compute Duration from two Timestamps in pseudo code.       Timestamp start = ...;      Timestamp end = ...;      Duration duration = ...;       duration.seconds = end.seconds - start.seconds;      duration.nanos = end.nanos - start.nanos;       if (duration.seconds < 0 && duration.nanos > 0) {        duration.seconds += 1;        duration.nanos -= 1000000000;      } else if (duration.seconds > 0 && duration.nanos < 0) {        duration.seconds -= 1;        duration.nanos += 1000000000;      }   Example 2: Compute Timestamp from Timestamp + Duration in pseudo code.       Timestamp start = ...;      Duration duration = ...;      Timestamp end = ...;       end.seconds = start.seconds + duration.seconds;      end.nanos = start.nanos + duration.nanos;       if (end.nanos < 0) {        end.seconds -= 1;        end.nanos += 1000000000;      } else if (end.nanos >= 1000000000) {        end.seconds += 1;        end.nanos -= 1000000000;      }   Example 3: Compute Duration from datetime.timedelta in Python.       td = datetime.timedelta(days=3, minutes=10)      duration = Duration()      duration.FromTimedelta(td)   # JSON Mapping   In JSON format, the Duration type is encoded as a string rather than an  object, where the string ends in the suffix \"s\" (indicating seconds) and  is preceded by the number of seconds, with nanoseconds expressed as  fractional seconds. For example, 3 seconds with 0 nanoseconds should be  encoded in JSON format as \"3s\", while 3 seconds and 1 nanosecond should  be expressed in JSON format as \"3.000000001s\", and 3 seconds and 1  microsecond should be expressed in JSON format as \"3.000001s\".
-     * @example null
+     * A Duration represents a signed, fixed-length span of time represented  as a count of seconds and fractions of seconds at nanosecond  resolution. It is independent of any calendar and concepts like "day"  or "month". It is related to Timestamp in that the difference between  two Timestamp values is a Duration and it can be added or subtracted  from a Timestamp. Range is approximately +-10,000 years.   # Examples   Example 1: Compute Duration from two Timestamps in pseudo code.       Timestamp start = ...;      Timestamp end = ...;      Duration duration = ...;       duration.seconds = end.seconds - start.seconds;      duration.nanos = end.nanos - start.nanos;       if (duration.seconds < 0 && duration.nanos > 0) {        duration.seconds += 1;        duration.nanos -= 1000000000;      } else if (duration.seconds > 0 && duration.nanos < 0) {        duration.seconds -= 1;        duration.nanos += 1000000000;      }   Example 2: Compute Timestamp from Timestamp + Duration in pseudo code.       Timestamp start = ...;      Duration duration = ...;      Timestamp end = ...;       end.seconds = start.seconds + duration.seconds;      end.nanos = start.nanos + duration.nanos;       if (end.nanos < 0) {        end.seconds -= 1;        end.nanos += 1000000000;      } else if (end.nanos >= 1000000000) {        end.seconds += 1;        end.nanos -= 1000000000;      }   Example 3: Compute Duration from datetime.timedelta in Python.       td = datetime.timedelta(days=3, minutes=10)      duration = Duration()      duration.FromTimedelta(td)   # JSON Mapping   In JSON format, the Duration type is encoded as a string rather than an  object, where the string ends in the suffix "s" (indicating seconds) and  is preceded by the number of seconds, with nanoseconds expressed as  fractional seconds. For example, 3 seconds with 0 nanoseconds should be  encoded in JSON format as "3s", while 3 seconds and 1 nanosecond should  be expressed in JSON format as "3.000000001s", and 3 seconds and 1  microsecond should be expressed in JSON format as "3.000001s".
      */
     #[SerializedName('clockSkew')]
     public ?\DateInterval $clockSkew = null;
@@ -86,15 +75,12 @@ class BetaAppServiceCreateOIDCApplicationRequest
     #[SerializedName('additionalOrigins')]
     public ?\Ds\Vector $additionalOrigins = null;
 
-    /** @example null */
     #[SerializedName('skipNativeAppSuccessPage')]
     public ?bool $skipNativeAppSuccessPage = null;
 
-    /** @example null */
     #[SerializedName('backChannelLogoutUri')]
     public ?string $backChannelLogoutUri = null;
 
-    /** @example null */
     #[SerializedName('loginVersion')]
     public ?\Zitadel\Client\Models\BetaAppServiceLoginVersion $loginVersion = null;
 

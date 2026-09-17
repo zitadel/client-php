@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaActionServiceTargetFieldName is an enumeration of allowed values.
+ */
 enum BetaActionServiceTargetFieldName: string
 {
     case TARGET_FIELD_NAME_UNSPECIFIED = 'TARGET_FIELD_NAME_UNSPECIFIED';

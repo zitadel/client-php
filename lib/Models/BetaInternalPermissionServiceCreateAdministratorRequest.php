@@ -19,19 +19,16 @@ class BetaInternalPermissionServiceCreateAdministratorRequest
 {
     /**
      * UserID is the ID of the user who should be granted the administrator role.
-     * @example null
      */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('resource')]
     public ?\Zitadel\Client\Models\BetaInternalPermissionServiceResourceType $resource = null;
 
     /**
      * Roles are the roles that should be granted to the user for the specified resource.  Note that roles are currently specific to the resource type.  This means that if you want to grant a user the administrator role for an organization and a project,  you need to create two administrator roles.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('roles')]
     public ?\Ds\Vector $roles = null;

@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceListAuthenticationMethodTypesRequest
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 

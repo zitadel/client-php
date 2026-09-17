@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaOIDCServiceGetAuthRequestRequest
 {
-    /** @example null */
     #[SerializedName('authRequestId')]
     public ?string $authRequestId = null;
 

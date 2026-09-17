@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class ApplicationServiceGetApplicationResponse
 {
-    /** @example null */
     #[SerializedName('application')]
     public ?\Zitadel\Client\Models\ApplicationServiceApplication $application = null;
 

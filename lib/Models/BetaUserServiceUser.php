@@ -19,19 +19,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceUser
 {
-    /** @example null */
     #[SerializedName('userId')]
     public ?string $userId = null;
 
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\BetaUserServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('state')]
     public ?\Zitadel\Client\Models\BetaUserServiceUserState $state = null;
 
-    /** @example null */
     #[SerializedName('username')]
     public ?string $username = null;
 
@@ -39,15 +35,12 @@ class BetaUserServiceUser
     #[SerializedName('loginNames')]
     public ?\Ds\Vector $loginNames = null;
 
-    /** @example null */
     #[SerializedName('preferredLoginName')]
     public ?string $preferredLoginName = null;
 
-    /** @example null */
     #[SerializedName('human')]
     public ?\Zitadel\Client\Models\BetaUserServiceHumanUser $human = null;
 
-    /** @example null */
     #[SerializedName('machine')]
     public ?\Zitadel\Client\Models\BetaUserServiceMachineUser $machine = null;
 

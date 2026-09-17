@@ -17,15 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSessionServiceSearchQuery
 {
-    /** @example null */
     #[SerializedName('creationDateQuery')]
     public ?\Zitadel\Client\Models\BetaSessionServiceCreationDateQuery $creationDateQuery = null;
 
-    /** @example null */
     #[SerializedName('idsQuery')]
     public ?\Zitadel\Client\Models\BetaSessionServiceIDsQuery $idsQuery = null;
 
-    /** @example null */
     #[SerializedName('userIdQuery')]
     public ?\Zitadel\Client\Models\BetaSessionServiceUserIDQuery $userIdQuery = null;
 

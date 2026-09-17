@@ -21,12 +21,10 @@ class BetaAuthorizationServiceUserDisplayNameQuery
 {
     /**
      * Specify the public display name of the granted user to search for.
-     * @example null
      */
     #[SerializedName('displayName')]
     public ?string $displayName = null;
 
-    /** @example null */
     #[SerializedName('method')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceTextFilterMethod $method = null;
 

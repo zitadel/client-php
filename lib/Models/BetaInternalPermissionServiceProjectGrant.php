@@ -19,14 +19,12 @@ class BetaInternalPermissionServiceProjectGrant
 {
     /**
      * ProjectID is required to grant administrator privileges for a specific project.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
     /**
      * OrganizationID is required to grant administrator privileges for a specific project grant.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;

@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * BetaUserServiceUserState is an enumeration of allowed values.
+ */
 enum BetaUserServiceUserState: string
 {
     case USER_STATE_UNSPECIFIED = 'USER_STATE_UNSPECIFIED';

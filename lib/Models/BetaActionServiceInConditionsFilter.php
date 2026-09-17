@@ -20,7 +20,6 @@ class BetaActionServiceInConditionsFilter
     /**
      * Defines the conditions to query for.
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaActionServiceCondition>|null
-     * @example null
      */
     #[SerializedName('conditions')]
     public ?\Ds\Vector $conditions = null;

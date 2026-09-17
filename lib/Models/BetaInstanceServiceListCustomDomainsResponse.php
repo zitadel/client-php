@@ -21,7 +21,6 @@ class BetaInstanceServiceListCustomDomainsResponse
     #[SerializedName('domains')]
     public ?\Ds\Vector $domains = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\BetaInstanceServicePaginationResponse $pagination = null;
 

@@ -19,14 +19,12 @@ class ActionServiceRemovePublicKeyRequest
 {
     /**
      * TargetID is the unique identifier of the target to remove the public key from.
-     * @example null
      */
     #[SerializedName('targetId')]
     public ?string $targetId = null;
 
     /**
      * KeyID is the unique identifier of the public key to remove.
-     * @example null
      */
     #[SerializedName('keyId')]
     public ?string $keyId = null;

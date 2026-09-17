@@ -17,20 +17,17 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class InstanceServiceCustomDomainFilter
 {
-    /** @example null */
     #[SerializedName('domainFilter')]
     public ?\Zitadel\Client\Models\InstanceServiceDomainFilter $domainFilter = null;
 
     /**
      * Filter whether the domain is auto-generated.
-     * @example null
      */
     #[SerializedName('generatedFilter')]
     public ?bool $generatedFilter = null;
 
     /**
      * Filter whether the domain is the primary domain of the instance.
-     * @example null
      */
     #[SerializedName('primaryFilter')]
     public ?bool $primaryFilter = null;

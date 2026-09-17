@@ -23,6 +23,7 @@ use Zitadel\Client\HeaderSelector;
 use Zitadel\Client\ObjectSerializer;
 use Zitadel\Client\TraceContextUtil;
 use Zitadel\Client\Auth\Authenticator;
+use Zitadel\Client\Auth\NoAuth;
 use Zitadel\Client\Errors\BadRequestException;
 use Zitadel\Client\Errors\ClientException;
 use Zitadel\Client\Errors\ConflictException;
@@ -78,7 +79,11 @@ class BaseApi
      * @param string[]              $accepts      Acceptable response content types
      * @param string|null           $contentType  Request content type
      * @param string|null           $returnType   Return type for deserialization
-     * @param Authenticator|null    $auth         Optional authenticator for operation-specific auth
+     * @param Authenticator|null    $auth         Three-state auth selector: the NoAuth sentinel
+     *                                            suppresses all credentials (security:[] operation);
+     *                                            null falls back to the client authenticator (secured
+     *                                            op, no per-call override); a real Authenticator is a
+     *                                            per-call override
      *
      * @return ApiResult<mixed> Result containing deserialized data, status code, raw body, and headers
      * @throws ApiException
@@ -104,7 +109,18 @@ class BaseApi
             $url = $base . $path;
         }
 
-        $effectiveAuth = $auth ?? $this->authenticator;
+        /* Three-state auth resolution (the heart of the security:[] fix):
+         *   - $auth IS the NoAuth sentinel  -> NO auth applied; do NOT fall
+         *     back to the client authenticator. The operation was declared
+         *     `security: []` (explicitly unauthenticated), so attaching the
+         *     client credential here would leak it (e.g. to a reflecting
+         *     testEcho* endpoint).
+         *   - $auth is null                 -> fall back to the client-level
+         *     authenticator (secured op with no per-call override).
+         *   - $auth is a real Authenticator -> use it (per-call override).
+         * The sentinel is compared by identity (`===`) so it can never be
+         * confused with a real authenticator instance. */
+        $effectiveAuth = $auth === NoAuth::instance() ? null : $auth ?? $this->authenticator;
         if ($effectiveAuth instanceof Authenticator) {
             foreach ($effectiveAuth->getQueryParams() as $k => $v) {
                 $queryParams[$k] = $v;
@@ -206,7 +222,11 @@ class BaseApi
      * @param string[]              $accepts      Acceptable response content types
      * @param string|null           $contentType  Request content type
      * @param string|null           $returnType   Return type for deserialization
-     * @param Authenticator|null    $auth         Optional authenticator for operation-specific auth
+     * @param Authenticator|null    $auth         Three-state auth selector: the NoAuth sentinel
+     *                                            suppresses all credentials (security:[] operation);
+     *                                            null falls back to the client authenticator (secured
+     *                                            op, no per-call override); a real Authenticator is a
+     *                                            per-call override
      *
      * @return mixed Deserialized response or null
      * @throws ApiException
@@ -268,18 +288,18 @@ class BaseApi
                 404 => new NotFoundException($message, $headers, $body, $errorBody),
                 409 => new ConflictException($message, $headers, $body, $errorBody),
                 422 => new UnprocessableEntityException($message, $headers, $body, $errorBody),
-                default => new ClientException($message, $code, $headers, $body, $errorBody),
+                default => new ClientException($code, $message, $headers, $body, $errorBody),
             };
         }
 
         if ($code >= 500) {
             throw match ($code) {
                 500 => new InternalServerErrorException($message, $headers, $body, $errorBody),
-                default => new ServerException($message, $code, $headers, $body, $errorBody),
+                default => new ServerException($code, $message, $headers, $body, $errorBody),
             };
         }
 
-        throw new ApiException($message, $code, $headers, $body, $errorBody);
+        throw new ApiException($code, $message, $headers, $body, $errorBody);
     }
 
     /**
@@ -354,6 +374,40 @@ class BaseApi
         }
 
         if (str_starts_with($contentType ?? '', 'image/') || $contentType === 'application/octet-stream') {
+            /* A type:string format:binary body (e.g. setPetAvatar's image/jpeg
+             * upload) must go on the wire as the RAW bytes under its DECLARED
+             * Content-Type — never JSON-encoded, base64'd, or wrapped. When the
+             * caller hands us an \SplFileObject we read its contents into the
+             * byte string here so the transport sees a plain string body and
+             * streams it verbatim (the non-array, is_string branch in both the
+             * Default and PSR-18 clients). This mirrors the multipart file-part
+             * idiom, which reads the same \SplFileObject via file_get_contents.
+             * A raw stream resource is likewise drained to its bytes; an
+             * already-string body passes through untouched. */
+            if (is_array($body)) {
+                /* The operation declares this binary content-type
+                 * (application/octet-stream or image/*) ALONGSIDE
+                 * multipart/form-data, so the API layer always builds a
+                 * form-style map keyed by the declared parts. When the caller
+                 * selects the raw-binary content-type we must NOT wrap the
+                 * payload in a multipart envelope: unwrap the single binary
+                 * part and stream its raw bytes under the selected
+                 * Content-Type. Falling through to `return $body` would hand
+                 * the array to the transport, whose `is_array($body)` branch
+                 * emits multipart/form-data instead. Mirrors the
+                 * single-binary-body path (e.g. setPetAvatar) that already
+                 * sends raw bytes. */
+                $body = $this->extractBinaryPart($body);
+            }
+            if ($body instanceof \SplFileObject) {
+                $path = $body->getRealPath();
+                $contents = @file_get_contents($path !== false ? $path : $body->getPathname());
+                return $contents !== false ? $contents : '';
+            }
+            if (is_resource($body)) {
+                $contents = stream_get_contents($body);
+                return $contents !== false ? $contents : '';
+            }
             return $body;
         }
 
@@ -369,5 +423,37 @@ class BaseApi
         }
 
         return ObjectSerializer::serialize($body);
+    }
+
+    /**
+     * Extract the single binary part from a form-style body map for a
+     * raw-binary content-type selection.
+     *
+     * When an operation declares a raw-binary request content-type
+     * (application/octet-stream or image/*) alongside multipart/form-data,
+     * the API layer builds the body as an associative map keyed by the
+     * declared parts. Selecting the raw-binary type means the wire body is
+     * just that one binary value, so we pull out the first \SplFileObject /
+     * resource / string part and discard the multipart framing. If no binary
+     * part is present the original map is returned unchanged so the caller's
+     * existing handling (and any error surfaced downstream) is preserved.
+     *
+     * @param array<mixed, mixed> $body Form-style body map
+     *
+     * @return mixed The single binary part, or the original map if none found
+     */
+    private function extractBinaryPart(array $body): mixed
+    {
+        foreach ($body as $value) {
+            if (
+                $value instanceof \SplFileObject
+                || is_resource($value)
+                || is_string($value)
+            ) {
+                return $value;
+            }
+        }
+
+        return $body;
     }
 }

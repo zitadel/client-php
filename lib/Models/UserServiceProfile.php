@@ -21,40 +21,34 @@ class UserServiceProfile
 {
     /**
      * The given name is the first name of the user.  For example, it can be used to personalize notifications and login UIs.
-     * @example null
      */
     #[SerializedName('givenName')]
     public ?string $givenName = null;
 
     /**
      * The family name is the last name of the user.  For example, it can be used to personalize user interfaces and notifications.
-     * @example null
      */
     #[SerializedName('familyName')]
     public ?string $familyName = null;
 
     /**
      * The nick name is the users short name.  For example, it can be used to personalize user interfaces and notifications.
-     * @example null
      */
     #[SerializedName('nickName')]
     public ?string $nickName = null;
 
     /**
      * The display name is how a user should primarily be displayed in lists.  It can also for example be used to personalize user interfaces and notifications.
-     * @example null
      */
     #[SerializedName('displayName')]
     public ?string $displayName = null;
 
     /**
      * The users preferred language is the language that systems should use to interact with the user.  It has the format of a [BCP-47 language tag](https://datatracker.ietf.org/doc/html/rfc3066).  It is used by Zitadel where no higher prioritized preferred language can be used.  For example, browser settings can overwrite a users preferred_language.  Notification messages and standard login UIs use the users preferred language if it is supported and allowed on the instance.  Else, the default language of the instance is used.
-     * @example null
      */
     #[SerializedName('preferredLanguage')]
     public ?string $preferredLanguage = null;
 
-    /** @example null */
     #[SerializedName('gender')]
     public ?\Zitadel\Client\Models\UserServiceGender $gender = null;
 

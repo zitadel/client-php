@@ -19,23 +19,18 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAppServiceApplicationSearchFilter
 {
-    /** @example null */
     #[SerializedName('apiAppOnly')]
     public ?bool $apiAppOnly = null;
 
-    /** @example null */
     #[SerializedName('nameFilter')]
     public ?\Zitadel\Client\Models\BetaAppServiceApplicationNameQuery $nameFilter = null;
 
-    /** @example null */
     #[SerializedName('oidcAppOnly')]
     public ?bool $oidcAppOnly = null;
 
-    /** @example null */
     #[SerializedName('samlAppOnly')]
     public ?bool $samlAppOnly = null;
 
-    /** @example null */
     #[SerializedName('stateFilter')]
     public ?\Zitadel\Client\Models\BetaAppServiceAppState $stateFilter = null;
 

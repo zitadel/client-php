@@ -17,13 +17,11 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class SettingsServiceSecuritySettings
 {
-    /** @example null */
     #[SerializedName('embeddedIframe')]
     public ?\Zitadel\Client\Models\SettingsServiceEmbeddedIframeSettings $embeddedIframe = null;
 
     /**
-     * If enabled, users are allowed to impersonate other users.  The impersonator needs the appropriate `*_IMPERSONATOR` roles assigned as well\".
-     * @example null
+     * If enabled, users are allowed to impersonate other users.  The impersonator needs the appropriate `*_IMPERSONATOR` roles assigned as well".
      */
     #[SerializedName('enableImpersonation')]
     public ?bool $enableImpersonation = null;

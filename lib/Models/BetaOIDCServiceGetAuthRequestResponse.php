@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaOIDCServiceGetAuthRequestResponse
 {
-    /** @example null */
     #[SerializedName('authRequest')]
     public ?\Zitadel\Client\Models\BetaOIDCServiceAuthRequest $authRequest = null;
 

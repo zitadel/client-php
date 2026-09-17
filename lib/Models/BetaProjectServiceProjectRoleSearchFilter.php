@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaProjectServiceProjectRoleSearchFilter
 {
-    /** @example null */
     #[SerializedName('displayNameFilter')]
     public ?\Zitadel\Client\Models\BetaProjectServiceProjectRoleDisplayNameFilter $displayNameFilter = null;
 
-    /** @example null */
     #[SerializedName('roleKeyFilter')]
     public ?\Zitadel\Client\Models\BetaProjectServiceProjectRoleKeyFilter $roleKeyFilter = null;
 

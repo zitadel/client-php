@@ -19,7 +19,6 @@ class ActionServiceDeleteTargetRequest
 {
     /**
      * The unique identifier of the target to delete.
-     * @example null
      */
     #[SerializedName('id')]
     public ?string $id = null;

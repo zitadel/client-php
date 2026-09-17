@@ -19,14 +19,12 @@ class InstanceServiceUpdateInstanceRequest
 {
     /**
      * InstanceID is the unique ID of the instance to be updated.  If not set, the instance in the current context (e.g. identified by the host header) will be changed.  If an ID is set, the caller must have additional permissions.
-     * @example null
      */
     #[SerializedName('instanceId')]
     public ?string $instanceId = null;
 
     /**
      * InstanceName is the new name of the instance to be set.
-     * @example null
      */
     #[SerializedName('instanceName')]
     public ?string $instanceName = null;

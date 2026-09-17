@@ -21,23 +21,19 @@ class ProjectServiceListProjectRolesRequest
 {
     /**
      * ProjectID is the unique identifier of the project.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\ProjectServicePaginationRequest $pagination = null;
 
-    /** @example null */
     #[SerializedName('sortingColumn')]
     public ?\Zitadel\Client\Models\ProjectServiceProjectRoleFieldName $sortingColumn = null;
 
     /**
      * Filters define the criteria to query for.
      * @var \Ds\Vector<\Zitadel\Client\Models\ProjectServiceProjectRoleSearchFilter>|null
-     * @example null
      */
     #[SerializedName('filters')]
     public ?\Ds\Vector $filters = null;

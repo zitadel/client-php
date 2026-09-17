@@ -17,19 +17,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaOrganizationServiceOrganizationSearchFilter
 {
-    /** @example null */
     #[SerializedName('domainFilter')]
     public ?\Zitadel\Client\Models\BetaOrganizationServiceOrgDomainFilter $domainFilter = null;
 
-    /** @example null */
     #[SerializedName('idFilter')]
     public ?\Zitadel\Client\Models\BetaOrganizationServiceOrgIDFilter $idFilter = null;
 
-    /** @example null */
     #[SerializedName('nameFilter')]
     public ?\Zitadel\Client\Models\BetaOrganizationServiceOrgNameFilter $nameFilter = null;
 
-    /** @example null */
     #[SerializedName('stateFilter')]
     public ?\Zitadel\Client\Models\BetaOrganizationServiceOrgStateFilter $stateFilter = null;
 

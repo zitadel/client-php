@@ -19,7 +19,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaAuthorizationServiceStateQuery
 {
-    /** @example null */
     #[SerializedName('state')]
     public ?\Zitadel\Client\Models\BetaAuthorizationServiceState $state = null;
 

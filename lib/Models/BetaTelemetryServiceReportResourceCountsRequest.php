@@ -19,14 +19,12 @@ class BetaTelemetryServiceReportResourceCountsRequest
 {
     /**
      * The system ID is a unique identifier for the ZITADEL system.
-     * @example null
      */
     #[SerializedName('systemId')]
     public ?string $systemId = null;
 
     /**
      * The previously returned report ID from the server to continue reporting.  Note that the report ID is only valid for the same system ID.
-     * @example null
      */
     #[SerializedName('reportId')]
     public ?string $reportId = null;
@@ -34,7 +32,6 @@ class BetaTelemetryServiceReportResourceCountsRequest
     /**
      * A list of resource counts to report.
      * @var \Ds\Vector<\Zitadel\Client\Models\BetaTelemetryServiceResourceCount>|null
-     * @example null
      */
     #[SerializedName('resourceCounts')]
     public ?\Ds\Vector $resourceCounts = null;

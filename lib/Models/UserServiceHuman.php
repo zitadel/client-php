@@ -17,19 +17,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class UserServiceHuman
 {
-    /** @example null */
     #[SerializedName('profile')]
     public ?\Zitadel\Client\Models\UserServiceProfile $profile = null;
 
-    /** @example null */
     #[SerializedName('email')]
     public ?\Zitadel\Client\Models\UserServiceSetHumanEmail $email = null;
 
-    /** @example null */
     #[SerializedName('phone')]
     public ?\Zitadel\Client\Models\UserServiceSetHumanPhone $phone = null;
 
-    /** @example null */
     #[SerializedName('password')]
     public ?\Zitadel\Client\Models\UserServiceSetPassword $password = null;
 

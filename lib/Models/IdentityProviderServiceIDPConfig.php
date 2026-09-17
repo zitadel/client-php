@@ -17,55 +17,42 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class IdentityProviderServiceIDPConfig
 {
-    /** @example null */
     #[SerializedName('options')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceOptions $options = null;
 
-    /** @example null */
     #[SerializedName('apple')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceAppleConfig $apple = null;
 
-    /** @example null */
     #[SerializedName('azureAd')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceAzureADConfig $azureAd = null;
 
-    /** @example null */
     #[SerializedName('github')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceGitHubConfig $github = null;
 
-    /** @example null */
     #[SerializedName('githubEs')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceGitHubEnterpriseServerConfig $githubEs = null;
 
-    /** @example null */
     #[SerializedName('gitlab')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceGitLabConfig $gitlab = null;
 
-    /** @example null */
     #[SerializedName('gitlabSelfHosted')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceGitLabSelfHostedConfig $gitlabSelfHosted = null;
 
-    /** @example null */
     #[SerializedName('google')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceGoogleConfig $google = null;
 
-    /** @example null */
     #[SerializedName('jwt')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceJWTConfig $jwt = null;
 
-    /** @example null */
     #[SerializedName('ldap')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceLDAPConfig $ldap = null;
 
-    /** @example null */
     #[SerializedName('oauth')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceOAuthConfig $oauth = null;
 
-    /** @example null */
     #[SerializedName('oidc')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceGenericOIDCConfig $oidc = null;
 
-    /** @example null */
     #[SerializedName('saml')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceSAMLConfig $saml = null;
 

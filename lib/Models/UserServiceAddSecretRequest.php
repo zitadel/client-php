@@ -19,7 +19,6 @@ class UserServiceAddSecretRequest
 {
     /**
      * The users resource ID.
-     * @example null
      */
     #[SerializedName('userId')]
     public ?string $userId = null;

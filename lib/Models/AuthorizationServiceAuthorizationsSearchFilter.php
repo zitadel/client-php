@@ -17,47 +17,36 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class AuthorizationServiceAuthorizationsSearchFilter
 {
-    /** @example null */
     #[SerializedName('authorizationIds')]
     public ?\Zitadel\Client\Models\AuthorizationServiceInIDsFilter $authorizationIds = null;
 
-    /** @example null */
     #[SerializedName('inUserIds')]
     public ?\Zitadel\Client\Models\AuthorizationServiceInIDsFilter $inUserIds = null;
 
-    /** @example null */
     #[SerializedName('organizationId')]
     public ?\Zitadel\Client\Models\AuthorizationServiceIDFilter $organizationId = null;
 
-    /** @example null */
     #[SerializedName('projectGrantId')]
     public ?\Zitadel\Client\Models\AuthorizationServiceIDFilter $projectGrantId = null;
 
-    /** @example null */
     #[SerializedName('projectId')]
     public ?\Zitadel\Client\Models\AuthorizationServiceIDFilter $projectId = null;
 
-    /** @example null */
     #[SerializedName('projectName')]
     public ?\Zitadel\Client\Models\AuthorizationServiceProjectNameQuery $projectName = null;
 
-    /** @example null */
     #[SerializedName('roleKey')]
     public ?\Zitadel\Client\Models\AuthorizationServiceRoleKeyQuery $roleKey = null;
 
-    /** @example null */
     #[SerializedName('state')]
     public ?\Zitadel\Client\Models\AuthorizationServiceStateQuery $state = null;
 
-    /** @example null */
     #[SerializedName('userDisplayName')]
     public ?\Zitadel\Client\Models\AuthorizationServiceUserDisplayNameQuery $userDisplayName = null;
 
-    /** @example null */
     #[SerializedName('userOrganizationId')]
     public ?\Zitadel\Client\Models\AuthorizationServiceIDFilter $userOrganizationId = null;
 
-    /** @example null */
     #[SerializedName('userPreferredLoginName')]
     public ?\Zitadel\Client\Models\AuthorizationServiceUserPreferredLoginNameQuery $userPreferredLoginName = null;
 

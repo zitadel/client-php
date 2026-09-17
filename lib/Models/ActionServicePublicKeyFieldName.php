@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * ActionServicePublicKeyFieldName is an enumeration of allowed values.
+ */
 enum ActionServicePublicKeyFieldName: string
 {
     case PUBLIC_KEY_FIELD_NAME_UNSPECIFIED = 'PUBLIC_KEY_FIELD_NAME_UNSPECIFIED';

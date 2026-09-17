@@ -19,14 +19,12 @@ class InternalPermissionServiceProjectGrant
 {
     /**
      * ProjectID is the unique identifier of the project the project grant belongs to.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
 
     /**
      * OrganizationID is the unique identifier of the organization the project was granted to  and on which the administrator role should be granted.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;

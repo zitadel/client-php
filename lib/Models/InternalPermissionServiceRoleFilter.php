@@ -19,7 +19,6 @@ class InternalPermissionServiceRoleFilter
 {
     /**
      * Search for administrators by the granted role.
-     * @example null
      */
     #[SerializedName('roleKey')]
     public ?string $roleKey = null;

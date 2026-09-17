@@ -17,14 +17,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaActionServiceSetExecutionRequest
 {
-    /** @example null */
     #[SerializedName('condition')]
     public ?\Zitadel\Client\Models\BetaActionServiceCondition $condition = null;
 
     /**
      * Ordered list of targets called during the execution.
      * @var \Ds\Vector<string>|null
-     * @example null
      */
     #[SerializedName('targets')]
     public ?\Ds\Vector $targets = null;

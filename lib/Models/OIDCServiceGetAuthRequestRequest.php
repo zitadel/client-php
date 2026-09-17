@@ -19,7 +19,6 @@ class OIDCServiceGetAuthRequestRequest
 {
     /**
      * The ID of the Auth Request, as obtained from the redirect URL.
-     * @example null
      */
     #[SerializedName('authRequestId')]
     public ?string $authRequestId = null;

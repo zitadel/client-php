@@ -17,11 +17,9 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaSettingsServiceGetLegalAndSupportSettingsResponse
 {
-    /** @example null */
     #[SerializedName('details')]
     public ?\Zitadel\Client\Models\BetaSettingsServiceDetails $details = null;
 
-    /** @example null */
     #[SerializedName('settings')]
     public ?\Zitadel\Client\Models\BetaSettingsServiceLegalAndSupportSettings $settings = null;
 

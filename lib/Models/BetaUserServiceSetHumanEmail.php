@@ -17,19 +17,15 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class BetaUserServiceSetHumanEmail
 {
-    /** @example null */
     #[SerializedName('email')]
     public ?string $email = null;
 
-    /** @example null */
     #[SerializedName('isVerified')]
     public ?bool $isVerified = null;
 
-    /** @example null */
     #[SerializedName('returnCode')]
     public ?object $returnCode = null;
 
-    /** @example null */
     #[SerializedName('sendCode')]
     public ?\Zitadel\Client\Models\BetaUserServiceSendEmailVerificationCode $sendCode = null;
 

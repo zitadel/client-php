@@ -19,7 +19,6 @@ class OrganizationServiceAddOrganizationRequest
 {
     /**
      * Name is the unique name of the organization to be created.  This must be unique across the instance.
-     * @example null
      */
     #[SerializedName('name')]
     public ?string $name = null;
@@ -27,21 +26,18 @@ class OrganizationServiceAddOrganizationRequest
     /**
      * Specify users to be assigned as organization admins.  If no users are specified here, the organization will be created without any admin users.  The organization can still be managed by any instance administrator.  If no roles are specified for a user, they will be assigned the role ORG_OWNER.
      * @var \Ds\Vector<\Zitadel\Client\Models\OrganizationServiceAdmin>|null
-     * @example null
      */
     #[SerializedName('admins')]
     public ?\Ds\Vector $admins = null;
 
     /**
      * OrganizationID is the unique identifier of the organization. This field is optional.  If omitted, the system will generate one,  which is the recommended way. The generated ID will be returned in the response.
-     * @example null
      */
     #[SerializedName('organizationId')]
     public ?string $organizationId = null;
 
     /**
      * Optionally, set a unique id for the organization. If omitted, the system will generate one,  which is the recommended way. The generated ID will be returned in the response.   Deprecated: use 'organization_id' field instead.  If both org_id and organization_id are set, organization_id will take precedence.
-     * @example null
      * @deprecated This property is deprecated.
      */
     #[SerializedName('orgId')]

@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Models;
 
+/**
+ * WebKeyServiceRSABits is an enumeration of allowed values.
+ */
 enum WebKeyServiceRSABits: string
 {
     case RSA_BITS_UNSPECIFIED = 'RSA_BITS_UNSPECIFIED';

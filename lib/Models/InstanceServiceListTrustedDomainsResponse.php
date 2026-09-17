@@ -20,12 +20,10 @@ class InstanceServiceListTrustedDomainsResponse
     /**
      * The list of trusted domains matching the query.
      * @var \Ds\Vector<\Zitadel\Client\Models\InstanceServiceTrustedDomain>|null
-     * @example null
      */
     #[SerializedName('trustedDomain')]
     public ?\Ds\Vector $trustedDomain = null;
 
-    /** @example null */
     #[SerializedName('pagination')]
     public ?\Zitadel\Client\Models\InstanceServicePaginationResponse $pagination = null;
 

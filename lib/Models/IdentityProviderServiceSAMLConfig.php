@@ -21,41 +21,34 @@ class IdentityProviderServiceSAMLConfig
 {
     /**
      * Metadata of the SAML identity provider.
-     * @example null
      */
     #[SerializedName('metadataXml')]
     public ?string $metadataXml = null;
 
-    /** @example null */
     #[SerializedName('binding')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceSAMLBinding $binding = null;
 
     /**
      * Boolean which defines if the authentication requests are signed.
-     * @example null
      */
     #[SerializedName('withSignedRequest')]
     public ?bool $withSignedRequest = null;
 
-    /** @example null */
     #[SerializedName('nameIdFormat')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceSAMLNameIDFormat $nameIdFormat = null;
 
     /**
      * Optional name of the attribute, which will be used to map the user  in case the nameid-format returned is  `urn:oasis:names:tc:SAML:2.0:nameid-format:transient`.
-     * @example null
      */
     #[SerializedName('transientMappingAttributeName')]
     public ?string $transientMappingAttributeName = null;
 
     /**
      * Boolean weather federated logout is enabled. If enabled, ZITADEL will send a logout request to the identity provider,  if the user terminates the session in ZITADEL. Be sure to provide a SLO endpoint as part of the metadata.
-     * @example null
      */
     #[SerializedName('federatedLogoutEnabled')]
     public ?bool $federatedLogoutEnabled = null;
 
-    /** @example null */
     #[SerializedName('signatureAlgorithm')]
     public ?\Zitadel\Client\Models\IdentityProviderServiceSAMLSignatureAlgorithm $signatureAlgorithm = null;
 

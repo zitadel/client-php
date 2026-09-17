@@ -19,7 +19,6 @@ class ProjectServiceGetProjectRequest
 {
     /**
      * ProjectID is the unique identifier of the project to be retrieved.
-     * @example null
      */
     #[SerializedName('projectId')]
     public ?string $projectId = null;
