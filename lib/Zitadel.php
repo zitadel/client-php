@@ -136,7 +136,7 @@ class Zitadel
     public readonly InternalPermissionServiceApi $internalPermissionService;
 
     /** @var OIDCServiceApi API operations for the OIDCServiceApi group. */
-    public readonly OIDCServiceApi $oIDCService;
+    public readonly OIDCServiceApi $oidcService;
 
     /** @var OrganizationServiceApi API operations for the OrganizationServiceApi group. */
     public readonly OrganizationServiceApi $organizationService;
@@ -145,7 +145,7 @@ class Zitadel
     public readonly ProjectServiceApi $projectService;
 
     /** @var SAMLServiceApi API operations for the SAMLServiceApi group. */
-    public readonly SAMLServiceApi $sAMLService;
+    public readonly SAMLServiceApi $samlService;
 
     /** @var SessionServiceApi API operations for the SessionServiceApi group. */
     public readonly SessionServiceApi $sessionService;
@@ -211,10 +211,10 @@ class Zitadel
         $this->identityProviderService = new IdentityProviderServiceApi($apiClient, $config, $authenticator);
         $this->instanceService = new InstanceServiceApi($apiClient, $config, $authenticator);
         $this->internalPermissionService = new InternalPermissionServiceApi($apiClient, $config, $authenticator);
-        $this->oIDCService = new OIDCServiceApi($apiClient, $config, $authenticator);
+        $this->oidcService = new OIDCServiceApi($apiClient, $config, $authenticator);
         $this->organizationService = new OrganizationServiceApi($apiClient, $config, $authenticator);
         $this->projectService = new ProjectServiceApi($apiClient, $config, $authenticator);
-        $this->sAMLService = new SAMLServiceApi($apiClient, $config, $authenticator);
+        $this->samlService = new SAMLServiceApi($apiClient, $config, $authenticator);
         $this->sessionService = new SessionServiceApi($apiClient, $config, $authenticator);
         $this->settingsService = new SettingsServiceApi($apiClient, $config, $authenticator);
         $this->userService = new UserServiceApi($apiClient, $config, $authenticator);

@@ -33,9 +33,9 @@ class OIDCServiceApi extends BaseApi
      * @return object
      * @throws \Zitadel\Client\ApiException
      */
-    public function authorizeOrDenyDeviceAuthorization(\Zitadel\Client\Models\OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest)
+    public function authorizeOrDenyDeviceAuthorization(\Zitadel\Client\Models\OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest $oidcServiceAuthorizeOrDenyDeviceAuthorizationRequest)
     {
-        $apiResult = $this->authorizeOrDenyDeviceAuthorizationWithHttpInfo($oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest);
+        $apiResult = $this->authorizeOrDenyDeviceAuthorizationWithHttpInfo($oidcServiceAuthorizeOrDenyDeviceAuthorizationRequest);
         if ($apiResult->data === null) {
             /* This operation declares a non-void return type, so an empty /
              * undecodable response body is a contract violation. Surface it
@@ -59,12 +59,12 @@ class OIDCServiceApi extends BaseApi
      * @return ApiResult<object>
      * @throws \Zitadel\Client\ApiException
      */
-    public function authorizeOrDenyDeviceAuthorizationWithHttpInfo(\Zitadel\Client\Models\OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest): ApiResult
+    public function authorizeOrDenyDeviceAuthorizationWithHttpInfo(\Zitadel\Client\Models\OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest $oidcServiceAuthorizeOrDenyDeviceAuthorizationRequest): ApiResult
     {
         $path = '/zitadel.oidc.v2.OIDCService/AuthorizeOrDenyDeviceAuthorization';
         $queryParams = [];
         $headerParams = [];
-        $requestBody = $oIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest;
+        $requestBody = $oidcServiceAuthorizeOrDenyDeviceAuthorizationRequest;
 
         /** @var ApiResult<object> $result */
         $result = $this->invokeApiForResult(
@@ -87,9 +87,9 @@ class OIDCServiceApi extends BaseApi
      * @return \Zitadel\Client\Models\OIDCServiceCreateCallbackResponse
      * @throws \Zitadel\Client\ApiException
      */
-    public function createCallback(\Zitadel\Client\Models\OIDCServiceCreateCallbackRequest $oIDCServiceCreateCallbackRequest)
+    public function createCallback(\Zitadel\Client\Models\OIDCServiceCreateCallbackRequest $oidcServiceCreateCallbackRequest)
     {
-        $apiResult = $this->createCallbackWithHttpInfo($oIDCServiceCreateCallbackRequest);
+        $apiResult = $this->createCallbackWithHttpInfo($oidcServiceCreateCallbackRequest);
         if ($apiResult->data === null) {
             /* This operation declares a non-void return type, so an empty /
              * undecodable response body is a contract violation. Surface it
@@ -113,12 +113,12 @@ class OIDCServiceApi extends BaseApi
      * @return ApiResult<\Zitadel\Client\Models\OIDCServiceCreateCallbackResponse>
      * @throws \Zitadel\Client\ApiException
      */
-    public function createCallbackWithHttpInfo(\Zitadel\Client\Models\OIDCServiceCreateCallbackRequest $oIDCServiceCreateCallbackRequest): ApiResult
+    public function createCallbackWithHttpInfo(\Zitadel\Client\Models\OIDCServiceCreateCallbackRequest $oidcServiceCreateCallbackRequest): ApiResult
     {
         $path = '/zitadel.oidc.v2.OIDCService/CreateCallback';
         $queryParams = [];
         $headerParams = [];
-        $requestBody = $oIDCServiceCreateCallbackRequest;
+        $requestBody = $oidcServiceCreateCallbackRequest;
 
         /** @var ApiResult<\Zitadel\Client\Models\OIDCServiceCreateCallbackResponse> $result */
         $result = $this->invokeApiForResult(
@@ -141,9 +141,9 @@ class OIDCServiceApi extends BaseApi
      * @return \Zitadel\Client\Models\OIDCServiceGetAuthRequestResponse
      * @throws \Zitadel\Client\ApiException
      */
-    public function getAuthRequest(\Zitadel\Client\Models\OIDCServiceGetAuthRequestRequest $oIDCServiceGetAuthRequestRequest)
+    public function getAuthRequest(\Zitadel\Client\Models\OIDCServiceGetAuthRequestRequest $oidcServiceGetAuthRequestRequest)
     {
-        $apiResult = $this->getAuthRequestWithHttpInfo($oIDCServiceGetAuthRequestRequest);
+        $apiResult = $this->getAuthRequestWithHttpInfo($oidcServiceGetAuthRequestRequest);
         if ($apiResult->data === null) {
             /* This operation declares a non-void return type, so an empty /
              * undecodable response body is a contract violation. Surface it
@@ -167,12 +167,12 @@ class OIDCServiceApi extends BaseApi
      * @return ApiResult<\Zitadel\Client\Models\OIDCServiceGetAuthRequestResponse>
      * @throws \Zitadel\Client\ApiException
      */
-    public function getAuthRequestWithHttpInfo(\Zitadel\Client\Models\OIDCServiceGetAuthRequestRequest $oIDCServiceGetAuthRequestRequest): ApiResult
+    public function getAuthRequestWithHttpInfo(\Zitadel\Client\Models\OIDCServiceGetAuthRequestRequest $oidcServiceGetAuthRequestRequest): ApiResult
     {
         $path = '/zitadel.oidc.v2.OIDCService/GetAuthRequest';
         $queryParams = [];
         $headerParams = [];
-        $requestBody = $oIDCServiceGetAuthRequestRequest;
+        $requestBody = $oidcServiceGetAuthRequestRequest;
 
         /** @var ApiResult<\Zitadel\Client\Models\OIDCServiceGetAuthRequestResponse> $result */
         $result = $this->invokeApiForResult(
@@ -195,9 +195,9 @@ class OIDCServiceApi extends BaseApi
      * @return \Zitadel\Client\Models\OIDCServiceGetDeviceAuthorizationRequestResponse
      * @throws \Zitadel\Client\ApiException
      */
-    public function getDeviceAuthorizationRequest(\Zitadel\Client\Models\OIDCServiceGetDeviceAuthorizationRequestRequest $oIDCServiceGetDeviceAuthorizationRequestRequest)
+    public function getDeviceAuthorizationRequest(\Zitadel\Client\Models\OIDCServiceGetDeviceAuthorizationRequestRequest $oidcServiceGetDeviceAuthorizationRequestRequest)
     {
-        $apiResult = $this->getDeviceAuthorizationRequestWithHttpInfo($oIDCServiceGetDeviceAuthorizationRequestRequest);
+        $apiResult = $this->getDeviceAuthorizationRequestWithHttpInfo($oidcServiceGetDeviceAuthorizationRequestRequest);
         if ($apiResult->data === null) {
             /* This operation declares a non-void return type, so an empty /
              * undecodable response body is a contract violation. Surface it
@@ -221,12 +221,12 @@ class OIDCServiceApi extends BaseApi
      * @return ApiResult<\Zitadel\Client\Models\OIDCServiceGetDeviceAuthorizationRequestResponse>
      * @throws \Zitadel\Client\ApiException
      */
-    public function getDeviceAuthorizationRequestWithHttpInfo(\Zitadel\Client\Models\OIDCServiceGetDeviceAuthorizationRequestRequest $oIDCServiceGetDeviceAuthorizationRequestRequest): ApiResult
+    public function getDeviceAuthorizationRequestWithHttpInfo(\Zitadel\Client\Models\OIDCServiceGetDeviceAuthorizationRequestRequest $oidcServiceGetDeviceAuthorizationRequestRequest): ApiResult
     {
         $path = '/zitadel.oidc.v2.OIDCService/GetDeviceAuthorizationRequest';
         $queryParams = [];
         $headerParams = [];
-        $requestBody = $oIDCServiceGetDeviceAuthorizationRequestRequest;
+        $requestBody = $oidcServiceGetDeviceAuthorizationRequestRequest;
 
         /** @var ApiResult<\Zitadel\Client\Models\OIDCServiceGetDeviceAuthorizationRequestResponse> $result */
         $result = $this->invokeApiForResult(

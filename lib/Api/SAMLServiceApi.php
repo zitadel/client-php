@@ -33,9 +33,9 @@ class SAMLServiceApi extends BaseApi
      * @return \Zitadel\Client\Models\SAMLServiceCreateResponseResponse
      * @throws \Zitadel\Client\ApiException
      */
-    public function createResponse(\Zitadel\Client\Models\SAMLServiceCreateResponseRequest $sAMLServiceCreateResponseRequest)
+    public function createResponse(\Zitadel\Client\Models\SAMLServiceCreateResponseRequest $samlServiceCreateResponseRequest)
     {
-        $apiResult = $this->createResponseWithHttpInfo($sAMLServiceCreateResponseRequest);
+        $apiResult = $this->createResponseWithHttpInfo($samlServiceCreateResponseRequest);
         if ($apiResult->data === null) {
             /* This operation declares a non-void return type, so an empty /
              * undecodable response body is a contract violation. Surface it
@@ -59,12 +59,12 @@ class SAMLServiceApi extends BaseApi
      * @return ApiResult<\Zitadel\Client\Models\SAMLServiceCreateResponseResponse>
      * @throws \Zitadel\Client\ApiException
      */
-    public function createResponseWithHttpInfo(\Zitadel\Client\Models\SAMLServiceCreateResponseRequest $sAMLServiceCreateResponseRequest): ApiResult
+    public function createResponseWithHttpInfo(\Zitadel\Client\Models\SAMLServiceCreateResponseRequest $samlServiceCreateResponseRequest): ApiResult
     {
         $path = '/zitadel.saml.v2.SAMLService/CreateResponse';
         $queryParams = [];
         $headerParams = [];
-        $requestBody = $sAMLServiceCreateResponseRequest;
+        $requestBody = $samlServiceCreateResponseRequest;
 
         /** @var ApiResult<\Zitadel\Client\Models\SAMLServiceCreateResponseResponse> $result */
         $result = $this->invokeApiForResult(
@@ -87,9 +87,9 @@ class SAMLServiceApi extends BaseApi
      * @return \Zitadel\Client\Models\SAMLServiceGetSAMLRequestResponse
      * @throws \Zitadel\Client\ApiException
      */
-    public function getSAMLRequest(\Zitadel\Client\Models\SAMLServiceGetSAMLRequestRequest $sAMLServiceGetSAMLRequestRequest)
+    public function getSAMLRequest(\Zitadel\Client\Models\SAMLServiceGetSAMLRequestRequest $samlServiceGetSAMLRequestRequest)
     {
-        $apiResult = $this->getSAMLRequestWithHttpInfo($sAMLServiceGetSAMLRequestRequest);
+        $apiResult = $this->getSAMLRequestWithHttpInfo($samlServiceGetSAMLRequestRequest);
         if ($apiResult->data === null) {
             /* This operation declares a non-void return type, so an empty /
              * undecodable response body is a contract violation. Surface it
@@ -113,12 +113,12 @@ class SAMLServiceApi extends BaseApi
      * @return ApiResult<\Zitadel\Client\Models\SAMLServiceGetSAMLRequestResponse>
      * @throws \Zitadel\Client\ApiException
      */
-    public function getSAMLRequestWithHttpInfo(\Zitadel\Client\Models\SAMLServiceGetSAMLRequestRequest $sAMLServiceGetSAMLRequestRequest): ApiResult
+    public function getSAMLRequestWithHttpInfo(\Zitadel\Client\Models\SAMLServiceGetSAMLRequestRequest $samlServiceGetSAMLRequestRequest): ApiResult
     {
         $path = '/zitadel.saml.v2.SAMLService/GetSAMLRequest';
         $queryParams = [];
         $headerParams = [];
-        $requestBody = $sAMLServiceGetSAMLRequestRequest;
+        $requestBody = $samlServiceGetSAMLRequestRequest;
 
         /** @var ApiResult<\Zitadel\Client\Models\SAMLServiceGetSAMLRequestResponse> $result */
         $result = $this->invokeApiForResult(
