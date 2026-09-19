@@ -1,35 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zitadel\Client\Auth;
 
-use League\OAuth2\Client\Grant\AbstractGrant;
-
 /**
- * Represents a JWT Bearer grant.
+ * Constants for the RFC 7523 JWT Bearer grant.
+ *
+ * Previously this extended league/oauth2-client's AbstractGrant to register
+ * the grant with that library's grant factory. The token exchange now goes
+ * directly through the SDK transport in {@see OAuthAuthenticator}, so the
+ * league dependency has been dropped and this class is retained only to
+ * expose the grant identifiers used by {@see WebTokenAuthenticator}.
  *
  * @link https://tools.ietf.org/html/rfc7523
  */
-class JwtBearer extends AbstractGrant
+final class JwtBearer
 {
-    /**
-     * Get the grant's name.
-     *
-     * @return string
-     * @noinspection PhpUnused
-     */
-    protected function getName(): string
-    {
-        return 'urn:ietf:params:oauth:grant-type:jwt-bearer';
-    }
+    /** The OAuth2 grant_type value sent on the wire. */
+    public const string GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:jwt-bearer';
 
-    /**
-     * Get required parameters for this grant type.
-     *
-     * @return string[] An array of required request parameter names.
-     * @noinspection PhpUnused
-     */
-    protected function getRequiredRequestParameters(): array
-    {
-        return ['assertion'];
-    }
+    /** Request parameters required by this grant. */
+    public const array REQUIRED_PARAMETERS = ['assertion'];
 }

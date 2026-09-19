@@ -75,11 +75,18 @@ JSON file. This process creates a secure token.
 
 ```php
 use Zitadel\Client\Zitadel;
+use Zitadel\Client\ApiException;
+use Zitadel\Client\Auth\WebTokenAuthenticator;
+use Zitadel\Client\Models\UserServiceAddHumanUserRequest;
+use Zitadel\Client\Models\UserServiceSetHumanProfile;
+use Zitadel\Client\Models\UserServiceSetHumanEmail;
 
-$zitadel = Zitadel::withPrivateKey("https://example.us1.zitadel.cloud", "path/to/jwt-key.json");
+$zitadel = Zitadel::withAuthenticator(
+    WebTokenAuthenticator::fromJson("https://example.us1.zitadel.cloud", "path/to/jwt-key.json")
+);
 
 try {
-    $response = $zitadel->users->addHumanUser((new UserServiceAddHumanUserRequest())
+    $response = $zitadel->userService->addHumanUser((new UserServiceAddHumanUserRequest())
         ->setUsername('john.doe')
         ->setProfile(
             (new UserServiceSetHumanProfile())
@@ -116,14 +123,18 @@ which is then used to authenticate.
 
 ```php
 use Zitadel\Client\Zitadel;
-use Zitadel\Client\Model\UserServiceAddHumanUserRequest;
-use Zitadel\Client\Model\UserServiceSetHumanProfile;
-use Zitadel\Client\Model\UserServiceSetHumanEmail;
+use Zitadel\Client\ApiException;
+use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
+use Zitadel\Client\Models\UserServiceAddHumanUserRequest;
+use Zitadel\Client\Models\UserServiceSetHumanProfile;
+use Zitadel\Client\Models\UserServiceSetHumanEmail;
 
-$zitadel = Zitadel::withClientCredentials("https://example.us1.zitadel.cloud", "id", "secret");
+$zitadel = Zitadel::withAuthenticator(
+    ClientCredentialsAuthenticator::builder("https://example.us1.zitadel.cloud", "id", "secret")->build()
+);
 
 try {
-    $response = $zitadel->users->addHumanUser((new UserServiceAddHumanUserRequest())
+    $response = $zitadel->userService->addHumanUser((new UserServiceAddHumanUserRequest())
         ->setUsername('john.doe')
         ->setProfile(
             (new UserServiceSetHumanProfile())
@@ -154,20 +165,24 @@ authenticate without exchanging credentials every time.
 **How do you use it?**
 
 1. Obtain a valid personal access token from your account.
-2. Create the authenticator with: `PersonalAccessTokenAuthenticator`
+2. Create the authenticator with: `PersonalAccessAuthenticator`
 
 **Example:**
 
 ```php
 use Zitadel\Client\Zitadel;
-use Zitadel\Client\Model\UserServiceAddHumanUserRequest;
-use Zitadel\Client\Model\UserServiceSetHumanProfile;
-use Zitadel\Client\Model\UserServiceSetHumanEmail;
+use Zitadel\Client\ApiException;
+use Zitadel\Client\Auth\PersonalAccessAuthenticator;
+use Zitadel\Client\Models\UserServiceAddHumanUserRequest;
+use Zitadel\Client\Models\UserServiceSetHumanProfile;
+use Zitadel\Client\Models\UserServiceSetHumanEmail;
 
-$zitadel = Zitadel::withAccessToken("https://example.us1.zitadel.cloud", "token");
+$zitadel = Zitadel::withAuthenticator(
+    new PersonalAccessAuthenticator("https://example.us1.zitadel.cloud", "token")
+);
 
 try {
-    $response = $zitadel->users->addHumanUser(
+    $response = $zitadel->userService->addHumanUser(
         (new UserServiceAddHumanUserRequest())
             ->setUsername('john.doe')
             ->setProfile(
@@ -205,13 +220,17 @@ disable TLS verification entirely:
 ```php
 use Zitadel\Client\Zitadel;
 use Zitadel\Client\TransportOptions;
+use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
 
 $options = new TransportOptions(insecure: true);
 
-$zitadel = Zitadel::withClientCredentials(
-    'https://your-instance.zitadel.cloud',
-    'client-id',
-    'client-secret',
+$zitadel = Zitadel::withAuthenticator(
+    ClientCredentialsAuthenticator::builder(
+        'https://your-instance.zitadel.cloud',
+        'client-id',
+        'client-secret',
+        $options,
+    )->build(),
     $options,
 );
 ```
@@ -224,13 +243,17 @@ provide the path to the CA certificate in PEM format:
 ```php
 use Zitadel\Client\Zitadel;
 use Zitadel\Client\TransportOptions;
+use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
 
 $options = new TransportOptions(caCertPath: '/path/to/ca.pem');
 
-$zitadel = Zitadel::withClientCredentials(
-    'https://your-instance.zitadel.cloud',
-    'client-id',
-    'client-secret',
+$zitadel = Zitadel::withAuthenticator(
+    ClientCredentialsAuthenticator::builder(
+        'https://your-instance.zitadel.cloud',
+        'client-id',
+        'client-secret',
+        $options,
+    )->build(),
     $options,
 );
 ```
@@ -243,15 +266,19 @@ custom routing or tracing headers:
 ```php
 use Zitadel\Client\Zitadel;
 use Zitadel\Client\TransportOptions;
+use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
 
 $options = new TransportOptions(
     defaultHeaders: ['X-Custom-Header' => 'my-value'],
 );
 
-$zitadel = Zitadel::withClientCredentials(
-    'https://your-instance.zitadel.cloud',
-    'client-id',
-    'client-secret',
+$zitadel = Zitadel::withAuthenticator(
+    ClientCredentialsAuthenticator::builder(
+        'https://your-instance.zitadel.cloud',
+        'client-id',
+        'client-secret',
+        $options,
+    )->build(),
     $options,
 );
 ```
@@ -265,13 +292,17 @@ directly in the URL:
 ```php
 use Zitadel\Client\Zitadel;
 use Zitadel\Client\TransportOptions;
+use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
 
 $options = new TransportOptions(proxyUrl: 'http://user:pass@proxy:8080');
 
-$zitadel = Zitadel::withClientCredentials(
-    'https://your-instance.zitadel.cloud',
-    'client-id',
-    'client-secret',
+$zitadel = Zitadel::withAuthenticator(
+    ClientCredentialsAuthenticator::builder(
+        'https://your-instance.zitadel.cloud',
+        'client-id',
+        'client-secret',
+        $options,
+    )->build(),
     $options,
 );
 ```

@@ -1,0 +1,69 @@
+# Keep-list: files the generator must NOT overwrite, and the Makefile's
+# `prune` step must NOT delete. Everything else is generator-owned.
+# Sections are shared across all six SDK repos for harmony; sort each
+# section alphabetically (case-insensitive) and keep `!` negations
+# immediately after the broad pattern they refine.
+
+# --- bespoke authenticators (ported onto the generated auth interfaces) ---
+lib/Auth/ClientCredentialsAuthenticator.php
+lib/Auth/ClientCredentialsAuthenticatorBuilder.php
+lib/Auth/JwtBearer.php
+lib/Auth/NoAuthAuthenticator.php
+lib/Auth/OAuthAuthenticator.php
+lib/Auth/OAuthAuthenticatorBuilder.php
+lib/Auth/OpenId.php
+lib/Auth/PersonalAccessAuthenticator.php
+lib/Auth/WebTokenAuthenticator.php
+lib/Auth/WebTokenAuthenticatorBuilder.php
+
+# --- bespoke tests + fixtures the generator does not emit ---
+etc/
+spec/
+tests/Auth/ClientCredentialsAuthenticatorTest.php
+tests/Auth/NoAuthAuthenticatorTest.php
+tests/Auth/OAuthAuthenticatorTestCase.php
+tests/Auth/PersonalAccessAuthenticatorTest.php
+tests/Auth/WebTokenAuthenticatorTest.php
+tests/fixtures/
+tests/ZitadelTest.php
+
+# --- repo identity + docs (team-owned) ---
+LICENSE
+phpdoc.xml
+phpstan.neon
+phpunit.xml
+README.md
+SECURITY.md
+VERSIONING.md
+
+# --- house tooling (team-owned) ---
+.claude/
+.commitlintrc.json
+.dockerignore
+.editorconfig
+.github/
+.gitignore
+.idea/
+.pre-commit-config.yaml
+.releaserc.json
+composer-unused.php
+devbox.json
+devbox.lock
+Dockerfile
+lefthook.yml
+qodana.yaml
+
+# --- build / package config (team-owned) ---
+composer.json
+composer.lock
+composer.phar
+
+# --- generation tooling we added ---
+.openapi-generator-ignore
+Makefile
+proc.yml
+
+# --- generator bookkeeping (FILES manifest + VERSION; rewritten by the
+#     generator but keep-listed so prune does not orphan them — the FILES
+#     manifest does not list itself, so it would otherwise be deleted) ---
+.openapi-generator/

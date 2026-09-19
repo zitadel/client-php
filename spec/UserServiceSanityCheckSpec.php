@@ -3,15 +3,16 @@
 namespace Zitadel\Client\Spec;
 
 use Zitadel\Client\ApiException;
-use Zitadel\Client\Model\UserServiceAddHumanUserRequest;
-use Zitadel\Client\Model\UserServiceAddHumanUserResponse;
-use Zitadel\Client\Model\UserServiceDeleteUserRequest;
-use Zitadel\Client\Model\UserServiceGetUserByIDRequest;
-use Zitadel\Client\Model\UserServiceListUsersRequest;
-use Zitadel\Client\Model\UserServiceSetHumanEmail;
-use Zitadel\Client\Model\UserServiceSetHumanProfile;
-use Zitadel\Client\Model\UserServiceUpdateHumanUserRequest;
-use Zitadel\Client\Model\UserServiceUser;
+use Zitadel\Client\Models\UserServiceAddHumanUserRequest;
+use Zitadel\Client\Models\UserServiceAddHumanUserResponse;
+use Zitadel\Client\Models\UserServiceDeleteUserRequest;
+use Zitadel\Client\Models\UserServiceGetUserByIDRequest;
+use Zitadel\Client\Models\UserServiceListUsersRequest;
+use Zitadel\Client\Models\UserServiceSetHumanEmail;
+use Zitadel\Client\Models\UserServiceSetHumanProfile;
+use Zitadel\Client\Models\UserServiceUpdateHumanUserRequest;
+use Zitadel\Client\Models\UserServiceUser;
+use Zitadel\Client\Auth\PersonalAccessAuthenticator;
 use Zitadel\Client\Zitadel;
 
 /**
@@ -34,10 +35,13 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
     protected static Zitadel $client;
     protected UserServiceAddHumanUserResponse $user;
 
+    #[\Override]
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::$client = Zitadel::withAccessToken(self::getBaseUrl(), self::getAuthToken());
+        self::$client = Zitadel::withAuthenticator(
+            new PersonalAccessAuthenticator(self::getBaseUrl(), self::getAuthToken()),
+        );
     }
 
     /**
@@ -47,13 +51,14 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
      */
     public function testRetrievesTheUserDetailsById(): void
     {
-        $response = self::$client->users->getUserByID(
-            (new UserServiceGetUserByIDRequest())
-            ->setUserId($this->user->getUserId())
-        );
+        $request = new UserServiceGetUserByIDRequest();
+        $request->userId = $this->user->userId;
+
+        $response = self::$client->userService->getUserByID($request);
+        $this->assertNotNull($response->user);
         $this->assertSame(
-            $this->user->getUserId(),
-            $response->getUser()->getUserId()
+            $this->user->userId,
+            $response->user->userId
         );
     }
 
@@ -64,16 +69,21 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
      */
     public function testIncludesTheCreatedUserWhenListingAllUsers(): void
     {
-        $request = (new UserServiceListUsersRequest())
-            ->setQueries([]);
+        $request = new UserServiceListUsersRequest();
+        $request->queries = new \Ds\Vector();
 
-        $response = self::$client->users->listUsers($request);
+        $response = self::$client->userService->listUsers($request);
+        $this->assertNotNull($response->result);
+
+        $ids = [];
+        foreach ($response->result as $userItem) {
+            /** @var UserServiceUser $userItem */
+            $ids[] = $userItem->userId;
+        }
+
         $this->assertContains(
-            $this->user->getUserId(),
-            array_map(
-                fn (UserServiceUser $userItem): string => $userItem->getUserId(),
-                $response->getResult()
-            )
+            $this->user->userId,
+            $ids
         );
     }
 
@@ -84,21 +94,26 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
      */
     public function testUpdatesTheUserEmailAndReflectsInGet(): void
     {
-        self::$client->users->updateHumanUser(
-            (new UserServiceUpdateHumanUserRequest())
-                ->setUserId($this->user->getUserId())
-                ->setEmail(
-                    (new UserServiceSetHumanEmail())
-                        ->setEmail('updated' . uniqid() . '@example.com')
-                )
-        );
+        $email = new UserServiceSetHumanEmail();
+        $email->email = 'updated' . uniqid() . '@example.com';
 
-        $response = self::$client->users->getUserByID(
-            (new UserServiceGetUserByIDRequest())->setUserId($this->user->getUserId())
-        );
+        $update = new UserServiceUpdateHumanUserRequest();
+        $update->userId = $this->user->userId;
+        $update->email = $email;
+
+        self::$client->userService->updateHumanUser($update);
+
+        $request = new UserServiceGetUserByIDRequest();
+        $request->userId = $this->user->userId;
+
+        $response = self::$client->userService->getUserByID($request);
+        $this->assertNotNull($response->user);
+        $this->assertNotNull($response->user->human);
+        $this->assertNotNull($response->user->human->email);
+        $this->assertNotNull($response->user->human->email->email);
         $this->assertStringContainsString(
             'updated',
-            $response->getUser()->getHuman()->getEmail()
+            $response->user->human->email->email
         );
     }
 
@@ -108,7 +123,10 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
     public function testRaisesAnApiExceptionWhenRetrievingNonExistentUser(): void
     {
         $this->expectException(ApiException::class);
-        self::$client->users->getUserByID((new UserServiceGetUserByIDRequest())->setUserId(uniqid()));
+
+        $request = new UserServiceGetUserByIDRequest();
+        $request->userId = uniqid();
+        self::$client->userService->getUserByID($request);
     }
 
     /**
@@ -118,19 +136,19 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
      */
     protected function setUp(): void
     {
-        $request = (new UserServiceAddHumanUserRequest())
-            ->setUsername(uniqid('user_'))
-            ->setProfile(
-                (new UserServiceSetHumanProfile())
-                    ->setGivenName('John')
-                    ->setFamilyName('Doe')
-            )
-            ->setEmail(
-                (new UserServiceSetHumanEmail())
-                    ->setEmail('johndoe' . uniqid() . '@example.com')
-            );
+        $profile = new UserServiceSetHumanProfile();
+        $profile->givenName = 'John';
+        $profile->familyName = 'Doe';
 
-        $this->user = self::$client->users->addHumanUser($request);
+        $email = new UserServiceSetHumanEmail();
+        $email->email = 'johndoe' . uniqid() . '@example.com';
+
+        $request = new UserServiceAddHumanUserRequest();
+        $request->username = uniqid('user_');
+        $request->profile = $profile;
+        $request->email = $email;
+
+        $this->user = self::$client->userService->addHumanUser($request);
     }
 
     /**
@@ -139,9 +157,9 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
     protected function tearDown(): void
     {
         try {
-            self::$client->users->deleteUser(
-                (new UserServiceDeleteUserRequest())->setUserId($this->user->getUserId())
-            );
+            $request = new UserServiceDeleteUserRequest();
+            $request->userId = $this->user->userId;
+            self::$client->userService->deleteUser($request);
         } catch (ApiException) {
             // cleanup errors ignored
         }

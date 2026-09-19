@@ -82,10 +82,43 @@ abstract class AbstractIntegrationTest extends TestCase
         echo "Loaded JWT_KEY path: " . self::$jwtKey . "\n";
 
 
-        self::$baseUrl = 'http://localhost:8099';
+        self::$baseUrl = self::discoverBaseUrl();
         echo "Exposed BASE_URL as: " . self::$baseUrl . "\n";
 
         sleep(20);
+    }
+
+    /**
+     * Discovers the base URL of the Zitadel service by asking Docker Compose
+     * for the host port that was ephemerally mapped to the container's
+     * port 8080. This avoids relying on a hardcoded host port.
+     *
+     * @return string The base URL (e.g. http://127.0.0.1:54321).
+     * @throws RuntimeException If the mapped port cannot be determined.
+     */
+    private static function discoverBaseUrl(): string
+    {
+        $command = "docker compose -f " . escapeshellarg(self::$composeFilePath)
+            . " port zitadel 8080";
+        exec($command, $output, $returnCode);
+
+        $mapping = trim(implode("\n", $output));
+        if ($returnCode !== 0 || $mapping === '') {
+            throw new RuntimeException(
+                "Failed to discover mapped port for zitadel service. Exit code: "
+                . $returnCode . "\n" . $mapping
+            );
+        }
+
+        // Output is of the form "host:port", e.g. "0.0.0.0:54321".
+        $port = substr($mapping, strrpos($mapping, ':') + 1);
+        if (!ctype_digit($port)) {
+            throw new RuntimeException(
+                "Could not parse mapped port from Docker Compose output: $mapping"
+            );
+        }
+
+        return 'http://localhost:' . $port;
     }
 
     /**
@@ -158,31 +191,45 @@ abstract class AbstractIntegrationTest extends TestCase
     /**
      * Retrieves the authentication token.
      *
-     * @return string|null The authentication token, or null if not set.
+     * @return string The authentication token.
+     * @throws RuntimeException If the token has not been initialised.
      */
-    protected static function getAuthToken(): ?string
+    protected static function getAuthToken(): string
     {
+        if (self::$authToken === null) {
+            throw new RuntimeException('Authentication token has not been initialised.');
+        }
+
         return self::$authToken;
     }
 
     /**
      * Retrieves the absolute path to the JWT key file.
      *
-     * @return string|null The absolute path to the JWT key file, or null
-     * if not set.
+     * @return string The absolute path to the JWT key file.
+     * @throws RuntimeException If the JWT key path has not been initialised.
      */
-    protected static function getJwtKey(): ?string
+    protected static function getJwtKey(): string
     {
+        if (self::$jwtKey === null) {
+            throw new RuntimeException('JWT key path has not been initialised.');
+        }
+
         return self::$jwtKey;
     }
 
     /**
      * Retrieves the base URL.
      *
-     * @return string|null The base URL, or null if not set.
+     * @return string The base URL.
+     * @throws RuntimeException If the base URL has not been initialised.
      */
-    protected static function getBaseUrl(): ?string
+    protected static function getBaseUrl(): string
     {
+        if (self::$baseUrl === null) {
+            throw new RuntimeException('Base URL has not been initialised.');
+        }
+
         return self::$baseUrl;
     }
 }

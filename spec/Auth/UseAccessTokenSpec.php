@@ -4,6 +4,7 @@ namespace Zitadel\Client\Spec\Auth;
 
 use Exception;
 use Zitadel\Client\ApiException;
+use Zitadel\Client\Auth\PersonalAccessAuthenticator;
 use Zitadel\Client\Spec\AbstractIntegrationTest;
 use Zitadel\Client\Zitadel;
 use Zitadel\Client\ZitadelException;
@@ -28,8 +29,10 @@ class UseAccessTokenSpec extends AbstractIntegrationTest
     public function testRetrievesGeneralSettingsWithValidAuth(): void
     {
         $this->expectNotToPerformAssertions();
-        $client = Zitadel::withAccessToken(self::getBaseUrl(), self::getAuthToken());
-        $client->settings->getGeneralSettings();
+        $client = Zitadel::withAuthenticator(
+            new PersonalAccessAuthenticator(self::getBaseUrl(), self::getAuthToken()),
+        );
+        $client->settingsService->getGeneralSettings(new \stdClass());
     }
 
     /**
@@ -38,9 +41,11 @@ class UseAccessTokenSpec extends AbstractIntegrationTest
      */
     public function testRaisesApiExceptionWithInvalidAuth(): void
     {
-        $invalid = Zitadel::withAccessToken(self::getBaseUrl(), 'invalid');
+        $invalid = Zitadel::withAuthenticator(
+            new PersonalAccessAuthenticator(self::getBaseUrl(), 'invalid'),
+        );
 
         $this->expectException(ZitadelException::class);
-        $invalid->settings->getGeneralSettings();
+        $invalid->settingsService->getGeneralSettings(new \stdClass());
     }
 }

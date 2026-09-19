@@ -1,31 +1,52 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zitadel\Client\Auth;
 
 /**
- * Dummy Authenticator for testing purposes.
+ * No-op Authenticator for testing and unauthenticated endpoints.
  *
- * This authenticator does not apply any authentication to API requests.
+ * Applies no authentication to API requests. Implements {@see Authenticator}
+ * directly: it has no host-dependent state and never mints a token.
  */
-class NoAuthAuthenticator extends Authenticator
+class NoAuthAuthenticator extends BaseAuthenticator
 {
+    private readonly string $host;
+
     /**
      * NoAuthAuthenticator constructor.
      *
-     * @param string $host The base URL for all authentication endpoints.
+     * @param string $host The base URL for the API endpoints.
      */
     public function __construct(string $host = 'localhost')
     {
-        parent::__construct($host);
+        $this->host = $host;
+    }
+
+    public function getHost(): string
+    {
+        return $this->host;
     }
 
     /**
-     * Retrieve the authentication token needed for API requests.
+     * Retrieve the authentication token.
      *
-     * @return string The authentication token
+     * Retained for backward compatibility; always empty since this
+     * authenticator never authenticates.
+     *
+     * @return string Always an empty string.
      */
     public function getAuthToken(): string
     {
         return "";
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getAuthHeaders(): array
+    {
+        return [];
     }
 }
