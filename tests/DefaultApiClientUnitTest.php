@@ -391,11 +391,11 @@ test('decodes iso 8859 1 body to utf 8 when charset declared', function (): void
 });
 
 test('decodes bom-less utf-16 body as big endian', function (): void {
-    // "Pet" encoded as UTF-16 big-endian with no byte-order mark. Per
+    // "Tag" encoded as UTF-16 big-endian with no byte-order mark. Per
     // RFC 2781, a UTF-16 stream without a BOM defaults to big-endian, so
-    // these bytes must decode to "Pet" — not to the garbage that a
+    // these bytes must decode to "Tag" — not to the garbage that a
     // little-endian reading would produce.
-    $body = "\x00P\x00e\x00t";
+    $body = "\x00T\x00a\x00g";
     $mockResponse = new MockResponse($body, [
         'http_code' => 200,
         'response_headers' => ['Content-Type' => 'text/plain; charset=utf-16'],
@@ -405,10 +405,10 @@ test('decodes bom-less utf-16 body as big endian', function (): void {
     $response = $client->sendRequest('GET', 'http://example.com/utf16', [], null);
 
     expect($response->statusCode)->toBe(200);
-    expect($response->body)->toBe('Pet');
+    expect($response->body)->toBe('Tag');
     // Sanity check the byte-order decision: read little-endian, the same
-    // bytes would decode to something other than "Pet".
-    expect(mb_convert_encoding($body, 'UTF-8', 'UTF-16LE'))->not->toBe('Pet');
+    // bytes would decode to something other than "Tag".
+    expect(mb_convert_encoding($body, 'UTF-8', 'UTF-16LE'))->not->toBe('Tag');
 });
 
 test('treats absent charset as utf 8', function (): void {
@@ -628,8 +628,8 @@ test('multipart filename non ascii emits rfc 5987', function (): void {
 });
 
 test('multipart filename ascii only omits filename star', function (): void {
-    $directive = DefaultApiClient::buildFilenameDirective('pet.png');
-    expect($directive)->toBe('filename="pet.png"');
+    $directive = DefaultApiClient::buildFilenameDirective('file.png');
+    expect($directive)->toBe('filename="file.png"');
     expect($directive)->not->toContain('filename*=');
 });
 
@@ -645,7 +645,7 @@ test('multipart filename crlf rejected', function (): void {
     /* ASCII filename should not throw; record one assertion so PHPUnit
      * doesn't flag the test as risky. Avoids PHPStan's
      * method.alreadyNarrowedType complaint on assertTrue(true). */
-    DefaultApiClient::validateMultipartFilename('pet.png');
+    DefaultApiClient::validateMultipartFilename('file.png');
     expect(true)->toBeTrue();
 });
 
@@ -663,7 +663,7 @@ test('sensitive header allowlist includes static set', function (): void {
 test('sensitive header allowlist includes api key header names lowercased', function (): void {
     /* The codegen harvests every `apiKey, in=header` security scheme
      * from the spec and folds its header name (lowercased) into the
-     * SENSITIVE_HEADER_NAMES constant. The petstore spec defines
+     * SENSITIVE_HEADER_NAMES constant. The fixture spec defines
      * X-API-Key and X-Internal-Key so both must appear. */
     $reflection = new \ReflectionClass(DefaultApiClient::class);
     /** @var list<string> $names */

@@ -11,7 +11,7 @@ test('exposes status code', function (): void {
 });
 
 test('exposes deserialized data', function (): void {
-    $data = ['id' => 1, 'name' => 'fido'];
+    $data = ['id' => 1, 'name' => 'example'];
     $result = new ApiResult(statusCode: 200, data: $data, rawBody: '', headers: []);
 
     expect($result->data)->toBe($data);
@@ -41,11 +41,11 @@ test('carries all fields together', function (): void {
         statusCode: 201,
         data: ['ok' => true],
         rawBody: '{"ok":true}',
-        headers: ['Location' => '/pets/1'],
+        headers: ['Location' => '/resources/1'],
     );
 
     expect($result->statusCode)->toBe(201);
     expect($result->data)->toBe(['ok' => true]);
     expect($result->rawBody)->toBe('{"ok":true}');
-    expect($result->headers)->toBe(['Location' => '/pets/1']);
+    expect($result->headers)->toBe(['Location' => '/resources/1']);
 });

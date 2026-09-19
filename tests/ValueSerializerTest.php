@@ -415,7 +415,7 @@ test('path encoding parity query location not path encoded', function (): void {
 
 test('empty string path param throws', function (): void {
     // Gap W — empty-string path values silently produce malformed
-    // URLs like `/pet//details`; reject at serialization time so
+    // URLs like `/resource//details`; reject at serialization time so
     // callers see the real error rather than a downstream 404.
     expect(fn (): string|array|null => ValueSerializer::serializeStyled('id', '', 'path', 'string', null, 'simple', false))
         ->toThrow(\InvalidArgumentException::class);

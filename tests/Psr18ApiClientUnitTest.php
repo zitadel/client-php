@@ -442,7 +442,7 @@ test('psr18 multipart model part uses configured serializer wire names', functio
     $client = newPsr18Client($stub);
     $client->sendRequest(
         'POST',
-        'http://example.com/pets/1/photos',
+        'http://example.com/resources/1/uploads',
         [],
         ['metadata' => $metadata]
     );

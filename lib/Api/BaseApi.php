@@ -374,7 +374,7 @@ class BaseApi
         }
 
         if (str_starts_with($contentType ?? '', 'image/') || $contentType === 'application/octet-stream') {
-            /* A type:string format:binary body (e.g. setPetAvatar's image/jpeg
+            /* A type:string format:binary body (e.g. a single-binary-body upload's image/jpeg
              * upload) must go on the wire as the RAW bytes under its DECLARED
              * Content-Type — never JSON-encoded, base64'd, or wrapped. When the
              * caller hands us an \SplFileObject we read its contents into the
@@ -395,7 +395,7 @@ class BaseApi
                  * Content-Type. Falling through to `return $body` would hand
                  * the array to the transport, whose `is_array($body)` branch
                  * emits multipart/form-data instead. Mirrors the
-                 * single-binary-body path (e.g. setPetAvatar) that already
+                 * single-binary-body path (e.g. a single-binary-body upload) that already
                  * sends raw bytes. */
                 $body = $this->extractBinaryPart($body);
             }

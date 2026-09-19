@@ -76,7 +76,7 @@ use Zitadel\Client\Errors\ClientException;
 use Zitadel\Client\Errors\ServerException;
 
 try {
-    $result = $client->petApi->getPetById($petId);
+    $result = $client->actionService->activatePublicKey($request);
 } catch (NotFoundException $e) {
     echo "Not found: " . $e->getMessage();
 } catch (ClientException $e) {
@@ -105,16 +105,16 @@ $client = new Zitadel($authenticator, $transport);
 
 ## API Methods
 
-Each API group is exposed as a typed property on the client (e.g., `$client->petApi`). API classes have methods that correspond to OpenAPI operations, accepting typed request parameters and returning typed response models.
+Each API group is exposed as a typed property on the client (e.g., `$client->actionService`). API classes have methods that correspond to OpenAPI operations, accepting typed request parameters and returning typed response models.
 
 ## Models
 
 Models are generated as PHP classes under the `Zitadel\Client\Models` namespace.
 
 ```php
-use Zitadel\Client\Models\Pet;
+use Zitadel\Client\Models\ActionServiceActivatePublicKeyRequest;
 
-$pet = new Pet(name: 'Fido', status: 'available');
+$model = new ActionServiceActivatePublicKeyRequest();
 ```
 
 ## Binary / File Uploads

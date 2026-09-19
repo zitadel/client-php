@@ -353,15 +353,15 @@ class ObjectSerializer
         $class = ltrim($class, '\\');
 
         /* Phase-2 PHP type-surface: when the api template hands us a
-         * typed container hint like `Ds\Vector<Pet>` /
-         * `Ds\Set<Pet>` / `Ds\Map<integer>` (compiled by the
+         * typed container hint like `Ds\Vector<Item>` /
+         * `Ds\Set<Item>` / `Ds\Map<integer>` (compiled by the
          * deserialize_arg partial from the operation's returnProperty
          * item tree), decode the JSON body, recursively deserialize
          * each element against the inner type so model instances /
          * DateTime / URI / enum fields route through their dedicated
          * normalizers, then wrap the result in the matching Ds
          * container. The inner type string is run through
-         * qualifySchemaName so short model names (e.g. "Pet") resolve
+         * qualifySchemaName so short model names (e.g. "Item") resolve
          * to their FQN while primitives ("integer", "string") pass
          * through unchanged.
          *
