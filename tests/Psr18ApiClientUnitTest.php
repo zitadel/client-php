@@ -27,16 +27,16 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
  */
 final class MultipartModelPart
 {
-    #[SerializedName('isPrimary')]
-    public ?bool $isPrimary = null;
+    #[SerializedName('isEnabled')]
+    public ?bool $isEnabled = null;
 
-    #[SerializedName('takenAt')]
-    public ?\DateTime $takenAt = null;
+    #[SerializedName('recordedAt')]
+    public ?\DateTime $recordedAt = null;
 
-    public function __construct(?bool $isPrimary = null, ?\DateTime $takenAt = null)
+    public function __construct(?bool $isEnabled = null, ?\DateTime $recordedAt = null)
     {
-        $this->isPrimary = $isPrimary;
-        $this->takenAt = $takenAt;
+        $this->isEnabled = $isEnabled;
+        $this->recordedAt = $recordedAt;
     }
 }
 
@@ -424,8 +424,8 @@ test('psr18 multipart non ascii field name preserved as utf 8', function (): voi
 /*
  * Cross-language multipart parity: a multipart/form-data body that carries a
  * MODEL part must serialize that part through the SDK's configured
- * ObjectSerializer, so the JSON uses the WIRE property names ("isPrimary",
- * "takenAt" — never the snake_case "is_primary"/"taken_at") and the SDK's
+ * ObjectSerializer, so the JSON uses the WIRE property names ("isEnabled",
+ * "recordedAt" — never the snake_case "is_enabled"/"recorded_at") and the SDK's
  * RFC 3339 date-time format. The Psr18ApiClient's in-memory encodeMultipart()
  * routes object parts through ObjectSerializer::serialize(); this exercises
  * that exact path and asserts the emitted part JSON honours the SerializedName
@@ -434,8 +434,8 @@ test('psr18 multipart non ascii field name preserved as utf 8', function (): voi
  */
 test('psr18 multipart model part uses configured serializer wire names', function (): void {
     $metadata = new MultipartModelPart(
-        isPrimary: true,
-        takenAt: new \DateTime('2020-01-02T03:04:05.123Z'),
+        isEnabled: true,
+        recordedAt: new \DateTime('2020-01-02T03:04:05.123Z'),
     );
 
     $stub = new StubPsr18Client(psr18Response(200, '[]'));
@@ -455,12 +455,12 @@ test('psr18 multipart model part uses configured serializer wire names', functio
 
     /* Wire (camelCase) property names from the model's SerializedName mapping,
      * NOT the snake_case form. */
-    expect($sent)->toContain('"isPrimary":true');
-    expect($sent)->toContain('"takenAt":');
-    expect($sent)->not->toContain('is_primary');
-    expect($sent)->not->toContain('taken_at');
+    expect($sent)->toContain('"isEnabled":true');
+    expect($sent)->toContain('"recordedAt":');
+    expect($sent)->not->toContain('is_enabled');
+    expect($sent)->not->toContain('recorded_at');
 
     /* The date-time carries the SDK's RFC 3339 wire format with sub-second
      * precision (DateTime::RFC3339_EXTENDED). */
-    expect($sent)->toContain('"takenAt":"2020-01-02T03:04:05.123+00:00"');
+    expect($sent)->toContain('"recordedAt":"2020-01-02T03:04:05.123+00:00"');
 });

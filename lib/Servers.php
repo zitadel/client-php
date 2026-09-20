@@ -21,12 +21,12 @@ namespace Zitadel\Client;
  * to select a server:
  *
  *     $config = Configuration::builder()
- *         ->baseUrl(Servers::SERVER_0->getUrl())
+ *         ->baseUrl(Servers::server0()->getUrl())
  *         ->build();
  *
  * For servers with variables, pass overrides:
  *
- *     $url = Servers::SERVER_1->getUrl(['environment' => 'staging']);
+ *     $url = Servers::server1()->getUrl(['environment' => 'staging']);
  *
  * @category Class
  * @package  Zitadel\Client

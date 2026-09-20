@@ -1,11 +1,11 @@
-# Zitadel SDK SDK - AI Agent Reference
+# Zitadel SDK - AI Agent Reference
 
 ## Installation
 
 Add the SDK to your project via Composer:
 
 ```bash
-composer require <vendor>/<package-name>
+composer require zitadel/client
 ```
 
 ## Quick Start
@@ -31,12 +31,12 @@ $client = new Zitadel($authenticator);
 
 ## Servers
 
-If the OpenAPI spec defines multiple servers, the generated `Zitadel\Client\Servers` class exposes each as a `ServerConfiguration` constant (e.g., `Servers::SERVER_0`, `Servers::SERVER_1`, ...) plus an `Servers::ALL` array. Pass the desired server's URL to the client:
+If the OpenAPI spec defines multiple servers, the generated `Zitadel\Client\Servers` class exposes each as a `ServerConfiguration` static method (e.g., `Servers::server0()`, `Servers::server1()`, ...) plus a `Servers::all()` array. Pass the desired server's URL to the client:
 
 ```php
 use Zitadel\Client\Servers;
 
-$client = Zitadel::withToken(Servers::SERVER_0->url(), 'your-token');
+$client = Zitadel::withToken(Servers::server0()->getUrl(), 'your-token');
 ```
 
 ## Testing
@@ -45,10 +45,12 @@ The `Authenticator` interface is the seam for tests: substitute a fake authentic
 
 ```php
 $fake = new class implements Zitadel\Client\Auth\Authenticator {
-    public function getAuthHeaders(RequestContext $request): array {
+    public function getHost(): string { return 'https://api.example.com'; }
+    public function getAuthHeaders(): array {
         return ['Authorization' => 'Bearer test-token'];
     }
-    public function getHost(): string { return 'https://api.example.com'; }
+    public function getQueryParams(): array { return []; }
+    public function getCookieParams(): array { return []; }
 };
 
 $client = new Zitadel($fake);
