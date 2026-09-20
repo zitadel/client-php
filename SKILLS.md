@@ -58,7 +58,7 @@ $client = new Zitadel($fake);
 
 ## Error Handling
 
-All API errors extend `ApiException`. The exception hierarchy is:
+All API errors derive from `ApiException`. The error hierarchy is:
 
 - `ApiException` (base)
   - `ClientException` (4xx)
@@ -121,11 +121,11 @@ $model = new ActionServiceActivatePublicKeyRequest();
 
 ## Binary / File Uploads
 
-File upload parameters accept `SplFileInfo` or file path strings. Binary response bodies are returned as `string`.
+File upload parameters are typed as `SplFileInfo`. Binary response bodies are returned as `string`.
 
 ## Comment Style
 
-Never use inline comments (`//`). Always use block comments (`/* ... */`). PHPDoc `/** ... */` is fine.
+Never place a comment on the same line as code. Use block comments (`/* ... */`); PHPDoc (`/** ... */`) is fine.
 
 ```good
 /* This explains the logic */
