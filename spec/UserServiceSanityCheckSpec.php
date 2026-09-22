@@ -12,7 +12,7 @@ use Zitadel\Client\Models\UserServiceSetHumanEmail;
 use Zitadel\Client\Models\UserServiceSetHumanProfile;
 use Zitadel\Client\Models\UserServiceUpdateHumanUserRequest;
 use Zitadel\Client\Models\UserServiceUser;
-use Zitadel\Client\Auth\PersonalAccessAuthenticator;
+use Zitadel\Client\Auth\PersonalAccessTokenAuthenticator;
 use Zitadel\Client\Zitadel;
 
 /**
@@ -40,7 +40,7 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
     {
         parent::setUpBeforeClass();
         self::$client = Zitadel::withAuthenticator(
-            new PersonalAccessAuthenticator(self::getBaseUrl(), self::getAuthToken()),
+            new PersonalAccessTokenAuthenticator(self::getBaseUrl(), self::getAuthToken()),
         );
     }
 

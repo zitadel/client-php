@@ -66,12 +66,11 @@ abstract class OAuthAuthenticatorTestCase extends TestCase
     /**
      * Inject the SDK transport into an authenticator.
      *
-     * Mirrors the real {@see \Zitadel\Client\Client} constructor: it builds a shared
+     * Mirrors the real {@see \Zitadel\Client\Zitadel} constructor: it builds a shared
      * {@see DefaultApiClient} from the default {@see TransportOptions} and injects it into
      * authenticators implementing {@see HttpAwareAuthenticator} before any token exchange.
-     * Without this, the {@see \Zitadel\Client\Auth\OAuth2TokenManager} throws
-     * "ApiClient has not been injected". The mock OAuth2 server is plain HTTP, so the
-     * default transport options are sufficient.
+     * Without this, the token request throws a {@see \LogicException}. The mock OAuth2
+     * server is plain HTTP, so the default transport options are sufficient.
      *
      * @template T
      * @param T $authenticator The authenticator to configure.

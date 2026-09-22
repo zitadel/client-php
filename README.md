@@ -165,20 +165,20 @@ authenticate without exchanging credentials every time.
 **How do you use it?**
 
 1. Obtain a valid personal access token from your account.
-2. Create the authenticator with: `PersonalAccessAuthenticator`
+2. Create the authenticator with: `PersonalAccessTokenAuthenticator`
 
 **Example:**
 
 ```php
 use Zitadel\Client\Zitadel;
 use Zitadel\Client\ApiException;
-use Zitadel\Client\Auth\PersonalAccessAuthenticator;
+use Zitadel\Client\Auth\PersonalAccessTokenAuthenticator;
 use Zitadel\Client\Models\UserServiceAddHumanUserRequest;
 use Zitadel\Client\Models\UserServiceSetHumanProfile;
 use Zitadel\Client\Models\UserServiceSetHumanEmail;
 
 $zitadel = Zitadel::withAuthenticator(
-    new PersonalAccessAuthenticator("https://example.us1.zitadel.cloud", "token")
+    new PersonalAccessTokenAuthenticator("https://example.us1.zitadel.cloud", "token")
 );
 
 try {

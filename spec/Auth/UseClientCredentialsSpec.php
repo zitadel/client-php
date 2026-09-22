@@ -2,12 +2,12 @@
 
 namespace Zitadel\Client\Spec\Auth;
 
+use Zitadel\Client\Errors\OAuth2ServerException;
 use Exception;
 use Zitadel\Client\ApiException;
 use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
 use Zitadel\Client\Spec\AbstractIntegrationTest;
 use Zitadel\Client\Zitadel;
-use Zitadel\Client\ZitadelException;
 
 /**
  * SettingsService Integration Tests (Client Credentials)
@@ -107,7 +107,7 @@ class UseClientCredentialsSpec extends AbstractIntegrationTest
     }
 
     /**
-     * Expect an ApiException when using invalid client credentials.
+     * Expect an OAuth2ServerException when using invalid client credentials.
      * @throws Exception
      */
     public function testRaisesApiExceptionWithInvalidAuth(): void
@@ -116,7 +116,11 @@ class UseClientCredentialsSpec extends AbstractIntegrationTest
             ClientCredentialsAuthenticator::builder(self::getBaseUrl(), 'invalid', 'invalid')->build(),
         );
 
-        $this->expectException(ZitadelException::class);
-        $invalid->settingsService->getGeneralSettings(new \stdClass());
+        try {
+            $invalid->settingsService->getGeneralSettings(new \stdClass());
+            $this->fail('Expected OAuth2ServerException');
+        } catch (OAuth2ServerException $e) {
+            $this->assertSame(OAuth2ServerException::class, $e::class);
+        }
     }
 }

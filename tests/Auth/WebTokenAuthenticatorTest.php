@@ -4,13 +4,17 @@ namespace Zitadel\Client\Test\Auth;
 
 use DateInterval;
 use Exception;
-use League\Uri\Uri;
-use ReflectionClass;
+use InvalidArgumentException;
 use Zitadel\Client\Auth\OpenId;
 use Zitadel\Client\Auth\WebTokenAuthenticator;
 
 class WebTokenAuthenticatorTest extends OAuthAuthenticatorTestCase
 {
+    /**
+     * @var list<string>
+     */
+    private array $keyFiles = [];
+
     /**
      * @throws Exception
      */
@@ -37,39 +41,112 @@ class WebTokenAuthenticatorTest extends OAuthAuthenticatorTestCase
     public function testRedactsSecret(): void
     {
         $privateKey = WebTokenAuthenticatorTest::getPrivateKey();
-
+        $key = openssl_pkey_get_private($privateKey);
+        self::assertNotFalse($key);
         $authenticator = new WebTokenAuthenticator(
-            $this->fakeOpenId(),
-            'visible-client-id',
+            new OpenId('https://api.example.com'),
             'openid',
             'issuer',
             'subject',
             'audience',
-            $privateKey,
+            $key,
             new DateInterval('PT1H')
         );
 
         $rendered = print_r($authenticator, true);
 
         $this->assertStringNotContainsString($privateKey, $rendered);
-        $this->assertStringContainsString('***', $rendered);
+        $this->assertStringContainsString('host', $rendered);
     }
 
     /**
-     * Build an OpenId instance without performing the network discovery call its
-     * constructor would otherwise make. The endpoints are not exercised by the
-     * redaction assertions, so placeholder URIs are sufficient.
+     * A Zitadel key file builds an authenticator for the host.
      */
-    private function fakeOpenId(): OpenId
+    public function testLoadsKeyFile(): void
     {
-        $openId = new ReflectionClass(OpenId::class)->newInstanceWithoutConstructor();
+        $path = $this->keyFile((string) json_encode([
+            'type' => 'serviceaccount',
+            'keyId' => 'key-1',
+            'userId' => 'user-1',
+            'key' => WebTokenAuthenticatorTest::getPrivateKey(),
+        ]));
 
-        foreach (['hostEndpoint', 'tokenEndpoint', 'authorizationEndpoint', 'userinfoEndpoint'] as $field) {
-            $property = new ReflectionClass(OpenId::class)->getProperty($field);
-            $property->setValue($openId, Uri::new('https://api.example.com'));
+        $authenticator = WebTokenAuthenticator::fromJson('https://example.zitadel.cloud', $path);
+
+        $this->assertSame('https://example.zitadel.cloud', $authenticator->getHost());
+    }
+
+    /**
+     * A missing or malformed key file is an InvalidArgumentException.
+     */
+    public function testRejectsBadKeyFile(): void
+    {
+        $host = 'https://example.zitadel.cloud';
+        $paths = [sys_get_temp_dir() . '/absent-zitadel-key.json'];
+        foreach (
+            [
+                'not json',
+                '[]',
+                '{"userId":"user-1","keyId":"key-1"}',
+                '{"userId":"user-1","keyId":"key-1","key":"not a pem"}',
+            ] as $content
+        ) {
+            $paths[] = $this->keyFile($content);
         }
 
-        return $openId;
+        foreach ($paths as $path) {
+            try {
+                WebTokenAuthenticator::fromJson($host, $path);
+                $this->fail("Expected InvalidArgumentException for $path");
+            } catch (InvalidArgumentException $e) {
+                $this->assertSame(InvalidArgumentException::class, $e::class);
+            }
+        }
+    }
+
+    /**
+     * Invalid builder arguments are an InvalidArgumentException.
+     */
+    public function testRejectsBadBuilderArguments(): void
+    {
+        $host = 'https://example.zitadel.cloud';
+        $pem = WebTokenAuthenticatorTest::getPrivateKey();
+        $builder = WebTokenAuthenticator::builder($host, 'user-1', $pem);
+
+        foreach (
+            [
+                fn (): \Zitadel\Client\Auth\WebTokenAuthenticatorBuilder => WebTokenAuthenticator::builder($host, '', $pem),
+                fn (): \Zitadel\Client\Auth\WebTokenAuthenticatorBuilder => WebTokenAuthenticator::builder($host, 'user-1', 'not a pem'),
+                fn (): \Zitadel\Client\Auth\WebTokenAuthenticatorBuilder => $builder->jwtAlgorithm('HS256'),
+                fn (): \Zitadel\Client\Auth\WebTokenAuthenticatorBuilder => $builder->tokenLifetimeSeconds(0),
+                fn (): \Zitadel\Client\Auth\WebTokenAuthenticatorBuilder => $builder->keyId(''),
+            ] as $action
+        ) {
+            try {
+                $action();
+                $this->fail('Expected InvalidArgumentException');
+            } catch (InvalidArgumentException $e) {
+                $this->assertSame(InvalidArgumentException::class, $e::class);
+            }
+        }
+    }
+
+    private function keyFile(string $content): string
+    {
+        $path = tempnam(sys_get_temp_dir(), 'zitadel-key');
+        self::assertNotFalse($path);
+        file_put_contents($path, $content);
+        $this->keyFiles[] = $path;
+        return $path;
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        foreach ($this->keyFiles as $path) {
+            @unlink($path);
+        }
+        parent::tearDown();
     }
 
     private static function getPrivateKey(): string

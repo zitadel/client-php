@@ -5,7 +5,6 @@ namespace Zitadel\Client\Test;
 use Docker\Docker;
 use Docker\API\Model\NetworksCreatePostBody;
 use Docker\API\Model\NetworksCreatePostResponse201;
-use Exception;
 use HaydenPierce\ClassFinder\ClassFinder;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -16,7 +15,8 @@ use Testcontainers\Wait\WaitForHttp;
 use Testcontainers\Wait\WaitForHostPort;
 use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
 use Zitadel\Client\Auth\NoAuthAuthenticator;
-use Zitadel\Client\Auth\PersonalAccessAuthenticator;
+use Zitadel\Client\Auth\PersonalAccessTokenAuthenticator;
+use Zitadel\Client\Errors\NetworkException;
 use Zitadel\Client\TransportOptions;
 use Zitadel\Client\Zitadel;
 
@@ -122,7 +122,6 @@ class ZitadelTest extends TestCase
                 "https://" . self::$host . ":" . self::$httpsPort,
                 "dummy-client",
                 "dummy-secret",
-                $transport,
             )->build(),
             $transport,
         );
@@ -139,7 +138,6 @@ class ZitadelTest extends TestCase
                 "https://" . self::$host . ":" . self::$httpsPort,
                 "dummy-client",
                 "dummy-secret",
-                $transport,
             )->build(),
             $transport,
         );
@@ -156,7 +154,6 @@ class ZitadelTest extends TestCase
                 "http://" . self::$host . ":" . self::$httpPort,
                 "dummy-client",
                 "dummy-secret",
-                $transport,
             )->build(),
             $transport,
         );
@@ -169,7 +166,7 @@ class ZitadelTest extends TestCase
     public function testProxyUrl(): void
     {
         $zitadel = Zitadel::withAuthenticator(
-            new PersonalAccessAuthenticator(
+            new PersonalAccessTokenAuthenticator(
                 "http://wiremock:8080",
                 "test-token",
             ),
@@ -182,13 +179,18 @@ class ZitadelTest extends TestCase
 
     public function testNoCaCertFails(): void
     {
-        $this->expectException(Exception::class);
-        Zitadel::withAuthenticator(
+        $zitadel = Zitadel::withAuthenticator(
             ClientCredentialsAuthenticator::builder(
                 "https://" . self::$host . ":" . self::$httpsPort,
                 "dummy-client",
                 "dummy-secret",
             )->build(),
         );
+        try {
+            $zitadel->settingsService->getGeneralSettings(new \stdClass());
+            $this->fail('Expected NetworkException');
+        } catch (NetworkException $e) {
+            $this->assertSame(NetworkException::class, $e::class);
+        }
     }
 }

@@ -4,88 +4,84 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Auth;
 
-use Exception;
-use Zitadel\Client\TransportOptions;
+use InvalidArgumentException;
 
 /**
- * OAuth2 Client Credentials Authenticator.
+ * OAuth authenticator implementing the client-credentials flow (RFC 6749 §4.4).
  *
- * Mints a bearer token via the OAuth2 client-credentials grant (RFC 6749 §4.4)
- * by POSTing the client_id / client_secret to the provider's token endpoint
- * through the SDK's shared transport. See {@see OAuthAuthenticator} for the
- * caching and HTTP-injection contract.
+ * Mints a bearer token by POSTing client_id / client_secret to the provider's
+ * token endpoint through the SDK's shared transport. See
+ * {@see OAuthAuthenticator} for the caching and HTTP-injection contract.
  */
 class ClientCredentialsAuthenticator extends OAuthAuthenticator
 {
     private const string GRANT_TYPE = 'client_credentials';
 
     /**
-     * @param OpenId $hostName     Resolved OpenID configuration for the provider.
+     * @param OpenId $openId       The OpenID discovery helper for the target host.
      * @param string $clientId     The OAuth2 client identifier.
      * @param string $clientSecret The OAuth2 client secret.
      * @param string $scope        Space-delimited scope string for the token request.
      */
     public function __construct(
-        OpenId $hostName,
-        string $clientId,
+        OpenId $openId,
+        private readonly string $clientId,
         private readonly string $clientSecret,
-        string $scope = 'openid urn:zitadel:iam:org:project:id:zitadel:aud'
+        string $scope = OAuthAuthenticatorBuilder::DEFAULT_SCOPE
     ) {
-        parent::__construct($hostName, $clientId, $scope);
+        parent::__construct($openId, $scope);
     }
 
     /**
-     * Returns a new builder instance for ClientCredentialsAuthenticator.
+     * Returns a builder for a ClientCredentialsAuthenticator.
      *
-     * @param string $host         The base URL for API endpoints.
+     * @param string $host         The base URL for the OAuth provider.
      * @param string $clientId     The OAuth2 client identifier.
      * @param string $clientSecret The OAuth2 client secret.
-     * @param TransportOptions|null $transportOptions Optional transport options
-     *        for TLS, proxy, and headers (used while resolving OpenID discovery).
-     * @return ClientCredentialsAuthenticatorBuilder A new builder instance.
-     * @throws Exception
+     * @throws InvalidArgumentException If the host is not a valid http or https
+     *                                  URL, or the client identifier or secret is empty.
      */
     public static function builder(
         string $host,
         string $clientId,
         string $clientSecret,
-        ?TransportOptions $transportOptions = null,
     ): ClientCredentialsAuthenticatorBuilder {
-        return new ClientCredentialsAuthenticatorBuilder($host, $clientId, $clientSecret, $transportOptions);
+        return new ClientCredentialsAuthenticatorBuilder($host, $clientId, $clientSecret);
     }
 
+    #[\Override]
     protected function getGrantType(): string
     {
         return self::GRANT_TYPE;
     }
 
     /**
-     * Masks the client secret so it never leaks through var_dump() / print_r()
-     * / stack traces / error logs. The client id stays visible because it is
-     * not a credential; only the secret is redacted. Mirrors the masking idiom
-     * in {@see BearerAuthenticator} and folds in the cached-token redaction
-     * from {@see OAuthAuthenticator}.
+     * @return array<string, string>
+     */
+    #[\Override]
+    protected function getTokenRequestParams(): array
+    {
+        return [
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
+        ];
+    }
+
+    /**
+     * Redacts the client secret and cached access token from var_dump() /
+     * print_r() output while keeping the client id visible.
      *
      * @return array<string, mixed>
      */
     #[\Override]
     public function __debugInfo(): array
     {
-        return array_merge(
-            parent::__debugInfo(),
-            ['clientSecret' => '***']
-        );
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    protected function getAccessTokenOptions(): array
-    {
         return [
-            'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret,
+            'host' => $this->getHost(),
+            'clientId' => $this->clientId,
+            'clientSecret' => '***',
             'scope' => $this->scope,
+            'accessToken' => $this->maskedToken(),
         ];
     }
 }

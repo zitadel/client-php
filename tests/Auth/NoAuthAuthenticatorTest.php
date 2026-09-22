@@ -9,10 +9,11 @@ use Zitadel\Client\Auth\NoAuthAuthenticator;
 
 class NoAuthAuthenticatorTest extends TestCase
 {
-    public function testReturnsEmptyToken(): void
+    public function testReturnsEmptyHeadersAndDefaultHost(): void
     {
         $authenticator = new NoAuthAuthenticator();
 
-        $this->assertSame('', $authenticator->getAuthToken());
+        $this->assertSame([], $authenticator->getAuthHeaders());
+        $this->assertSame('http://localhost', $authenticator->getHost());
     }
 }

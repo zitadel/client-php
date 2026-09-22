@@ -7,14 +7,17 @@
 # --- bespoke authenticators (ported onto the generated auth interfaces) ---
 lib/Auth/ClientCredentialsAuthenticator.php
 lib/Auth/ClientCredentialsAuthenticatorBuilder.php
-lib/Auth/JwtBearer.php
 lib/Auth/NoAuthAuthenticator.php
 lib/Auth/OAuthAuthenticator.php
 lib/Auth/OAuthAuthenticatorBuilder.php
 lib/Auth/OpenId.php
-lib/Auth/PersonalAccessAuthenticator.php
+lib/Auth/PersonalAccessTokenAuthenticator.php
 lib/Auth/WebTokenAuthenticator.php
 lib/Auth/WebTokenAuthenticatorBuilder.php
+# The OAuth2 error types the authenticators raise. The generator only emits
+# them inside its own OAuth2 token manager, which this spec does not use.
+lib/Errors/OAuth2ServerException.php
+lib/Errors/OAuth2TokenException.php
 
 # --- bespoke tests + fixtures the generator does not emit ---
 etc/

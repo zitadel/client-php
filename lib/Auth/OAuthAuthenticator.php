@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Auth;
 
+use InvalidArgumentException;
+use LogicException;
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\OAuth2ServerException;
+use Zitadel\Client\Errors\OAuth2TokenException;
 
 /**
  * Abstract base class for OAuth-based, token-minting authenticators.
@@ -17,157 +20,171 @@ use Zitadel\Client\ApiException;
  * skew of expiring.
  *
  * Token-minting requires an outbound HTTP call, so this class implements
- * {@see HttpAwareAuthenticator}: the {@see ApiClient} is injected by the
- * {@see \Zitadel\Client\Client} constructor and the token POST is sent through
- * it. Sharing the SDK transport means token exchange honours the same proxy,
- * TLS, timeout and redirect configuration as regular API calls.
+ * {@see HttpAwareAuthenticator}: the shared {@see ApiClient} is injected by the
+ * {@see \Zitadel\Client\Zitadel} constructor and both OpenID discovery and the
+ * token POST are sent through it. A token request fails with:
  *
- * (Previously this exchange went through league/oauth2-client's GenericProvider;
- * that dependency has been dropped in favour of the injected SDK transport.
- * firebase/php-jwt is retained for signing the JWT-bearer assertion.)
+ * - {@see LogicException} when no {@see ApiClient} has been injected;
+ * - {@see \Zitadel\Client\Errors\NetworkException} or
+ *   {@see \Zitadel\Client\Errors\NetworkTimeoutException} when no HTTP
+ *   response arrived;
+ * - {@see OAuth2ServerException} when the token endpoint answered with a
+ *   non-2xx status;
+ * - {@see OAuth2TokenException} when it answered 2xx without a usable access
+ *   token.
  */
 abstract class OAuthAuthenticator extends BaseAuthenticator implements HttpAwareAuthenticator
 {
     /**
-     * Seconds before expiry at which a cached token is treated as stale and
-     * re-minted. Mirrors the previous 5-minute skew.
+     * Seconds before expiry at which a cached token is treated as stale.
      */
     private const int REFRESH_SKEW_SECONDS = 300;
 
-    /** Resolved OpenID configuration (host + token endpoint). */
-    protected OpenId $openId;
+    private ?ApiClient $apiClient = null;
 
-    /** The injected shared API client used for the token exchange. */
-    protected ?ApiClient $apiClient = null;
-
-    /** The currently cached access token, or null if none has been minted. */
     private ?string $accessToken = null;
 
-    /** Unix timestamp at which the cached token expires (0 if unknown). */
-    private int $expiresAt = 0;
+    private ?int $expiresAt = null;
 
     /**
-     * @param OpenId $openId   Resolved OpenID configuration for the provider.
-     * @param string $clientId The OAuth2 client identifier.
-     * @param string $scope    Space-delimited scope string for the token request.
+     * @param OpenId $openId The OpenID discovery helper for the target host.
+     * @param string $scope  Space-delimited scope string for the token request.
      */
     public function __construct(
-        OpenId $openId,
-        protected string $clientId,
-        protected string $scope
+        private readonly OpenId $openId,
+        protected readonly string $scope
     ) {
-        $this->openId = $openId;
     }
 
+    #[\Override]
     public function setApiClient(ApiClient $apiClient): void
     {
         $this->apiClient = $apiClient;
     }
 
+    #[\Override]
     public function getHost(): string
     {
-        return $this->openId->getHostEndpoint()->toString();
+        return $this->openId->getHostEndpoint();
     }
 
     /**
      * @return array<string, string>
      */
+    #[\Override]
     public function getAuthHeaders(): array
     {
         return ['Authorization' => 'Bearer ' . $this->getAuthToken()];
     }
 
     /**
-     * Return a valid access token, minting (or re-minting) one if the cache is
-     * empty or within the refresh skew of expiring.
-     *
-     * @throws ApiException if the token cannot be obtained.
+     * Returns a valid access token, minting (or re-minting) one if the cache
+     * is empty or within the refresh skew of expiring.
      */
     public function getAuthToken(): string
     {
-        if (
-            $this->accessToken === null
-            || ($this->expiresAt !== 0 && time() >= ($this->expiresAt - self::REFRESH_SKEW_SECONDS))
-        ) {
-            $this->refreshToken();
+        if ($this->accessToken === null || $this->isStale()) {
+            return $this->refreshToken();
         }
+        return $this->accessToken;
+    }
 
-        /** @var string $token guaranteed non-null after refreshToken() */
-        $token = $this->accessToken;
-        return $token;
+    private function isStale(): bool
+    {
+        return $this->expiresAt !== null && time() >= $this->expiresAt - self::REFRESH_SKEW_SECONDS;
     }
 
     /**
-     * Exchange the configured grant for a fresh access token and cache it.
+     * Exchanges the configured grant for a fresh access token and caches it.
      *
-     * POSTs an `application/x-www-form-urlencoded` body to the token endpoint
-     * through the injected {@see ApiClient}. Subclasses contribute the
-     * grant_type and the grant-specific parameters (scope, assertion, ...).
-     *
-     * @return string the freshly minted access token.
-     * @throws ApiException if the client is not yet injected or the exchange fails.
+     * @return string The freshly minted access token.
      */
     public function refreshToken(): string
     {
-        if (!$this->apiClient instanceof ApiClient) {
-            throw new ApiException(
-                0,
-                'OAuthAuthenticator has no ApiClient; it must be used via the '
-                . 'Zitadel\\Client\\Client, which injects the shared transport '
-                . 'before any token exchange.'
+        $apiClient = $this->apiClient;
+        if (!$apiClient instanceof ApiClient) {
+            throw new LogicException(
+                'OAuthAuthenticator has no ApiClient; use it through the Zitadel client, '
+                . 'which injects one before the first token request.'
             );
         }
 
         $params = array_merge(
-            ['grant_type' => $this->getGrantType()],
-            $this->getAccessTokenOptions()
+            ['grant_type' => $this->getGrantType(), 'scope' => $this->scope],
+            $this->getTokenRequestParams()
         );
 
-        $response = $this->apiClient->sendRequest(
+        $response = $apiClient->sendRequest(
             'POST',
-            $this->openId->getTokenEndpoint()->toString(),
+            $this->openId->getTokenEndpoint($apiClient),
             [
                 'Content-Type' => 'application/x-www-form-urlencoded',
                 'Accept' => 'application/json',
             ],
             http_build_query($params, '', '&', PHP_QUERY_RFC1738),
-            /* noRedirect: never replay a token POST across a redirect — a
-             * malicious 307/308 could otherwise leak the assertion/secret. */
+            /* never replay a token POST across a redirect: a malicious 307/308
+             * could otherwise leak the assertion or secret. */
             true
         );
 
-        if ($response->statusCode < 200 || $response->statusCode >= 300) {
-            throw new ApiException(
-                $response->statusCode,
-                'Token refresh failed: token endpoint returned HTTP ' . $response->statusCode,
-                $response->headers,
-                $response->body
-            );
+        $status = $response->statusCode;
+        if ($status < 200 || $status >= 300) {
+            throw $this->serverError($status, $response->body);
         }
 
-        /** @var array<string, mixed>|null $payload */
-        $payload = json_decode($response->body, true);
-        if (!is_array($payload) || !isset($payload['access_token']) || !is_string($payload['access_token'])) {
-            throw new ApiException(
-                $response->statusCode,
-                'Token refresh failed: token endpoint response did not contain an access_token.',
-                $response->headers,
-                $response->body
-            );
+        $payload = $this->parseObject($response->body);
+        if ($payload === null) {
+            throw new OAuth2TokenException('Token response is not a JSON object');
         }
-
-        $this->accessToken = $payload['access_token'];
-        $expiresIn = isset($payload['expires_in']) && is_numeric($payload['expires_in'])
-            ? (int) $payload['expires_in']
-            : 0;
-        $this->expiresAt = $expiresIn > 0 ? time() + $expiresIn : 0;
-
-        return $this->accessToken;
+        $accessToken = $payload['access_token'] ?? null;
+        if (!is_string($accessToken) || $accessToken === '') {
+            throw new OAuth2TokenException('Token response missing or empty access_token field');
+        }
+        $expiresIn = $payload['expires_in'] ?? null;
+        $this->expiresAt = (is_int($expiresIn) || is_float($expiresIn)) && $expiresIn > 0
+            ? time() + (int) $expiresIn
+            : null;
+        $this->accessToken = $accessToken;
+        return $accessToken;
     }
 
     /**
-     * Masks any cached token so it never leaks through var_dump() / print_r()
-     * / stack traces / error logs.
+     * @return array<string, mixed>|null
+     */
+    private function parseObject(string $body): ?array
+    {
+        $payload = json_decode($body, true);
+        return is_array($payload) && ($payload === [] || !array_is_list($payload)) ? $payload : null;
+    }
+
+    private function serverError(int $status, string $body): OAuth2ServerException
+    {
+        $payload = $this->parseObject($body);
+        $code = $payload['error'] ?? null;
+        if (!is_string($code) || $code === '') {
+            return new OAuth2ServerException($status, null, null, null, $body);
+        }
+        $description = $payload['error_description'] ?? null;
+        $uri = $payload['error_uri'] ?? null;
+        return new OAuth2ServerException(
+            $status,
+            $code,
+            is_string($description) ? $description : null,
+            is_string($uri) ? $uri : null,
+            $body
+        );
+    }
+
+    /**
+     * Returns `***` when a token is cached and null otherwise.
+     */
+    protected function maskedToken(): ?string
+    {
+        return $this->accessToken === null ? null : '***';
+    }
+
+    /**
+     * Redacts the cached access token from var_dump() / print_r() output.
      *
      * @return array<string, mixed>
      */
@@ -175,11 +192,23 @@ abstract class OAuthAuthenticator extends BaseAuthenticator implements HttpAware
     {
         return [
             'host' => $this->getHost(),
-            'clientId' => $this->clientId,
             'scope' => $this->scope,
-            'accessToken' => $this->accessToken === null ? null : '***',
-            'expiresAt' => $this->expiresAt,
+            'accessToken' => $this->maskedToken(),
         ];
+    }
+
+    /**
+     * Throws {@see InvalidArgumentException} when the value is blank.
+     *
+     * @param string $value The value to check.
+     * @param string $label The name used in the error message.
+     */
+    public static function requireText(string $value, string $label): string
+    {
+        if (trim($value) === '') {
+            throw new InvalidArgumentException("$label cannot be empty.");
+        }
+        return $value;
     }
 
     /**
@@ -188,9 +217,9 @@ abstract class OAuthAuthenticator extends BaseAuthenticator implements HttpAware
     abstract protected function getGrantType(): string;
 
     /**
-     * Grant-specific token-request parameters (e.g. scope, assertion).
+     * Grant-specific token-request parameters (e.g. assertion).
      *
      * @return array<string, string>
      */
-    abstract protected function getAccessTokenOptions(): array;
+    abstract protected function getTokenRequestParams(): array;
 }

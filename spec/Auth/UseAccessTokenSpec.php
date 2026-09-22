@@ -2,12 +2,12 @@
 
 namespace Zitadel\Client\Spec\Auth;
 
+use Zitadel\Client\Errors\UnauthorizedException;
 use Exception;
 use Zitadel\Client\ApiException;
-use Zitadel\Client\Auth\PersonalAccessAuthenticator;
+use Zitadel\Client\Auth\PersonalAccessTokenAuthenticator;
 use Zitadel\Client\Spec\AbstractIntegrationTest;
 use Zitadel\Client\Zitadel;
-use Zitadel\Client\ZitadelException;
 
 /**
  * SettingsService Integration Tests (Personal Access Token)
@@ -30,22 +30,26 @@ class UseAccessTokenSpec extends AbstractIntegrationTest
     {
         $this->expectNotToPerformAssertions();
         $client = Zitadel::withAuthenticator(
-            new PersonalAccessAuthenticator(self::getBaseUrl(), self::getAuthToken()),
+            new PersonalAccessTokenAuthenticator(self::getBaseUrl(), self::getAuthToken()),
         );
         $client->settingsService->getGeneralSettings(new \stdClass());
     }
 
     /**
-     * Expect an ApiException when using an invalid PAT.
+     * Expect an UnauthorizedException when using an invalid PAT.
      * @throws Exception
      */
     public function testRaisesApiExceptionWithInvalidAuth(): void
     {
         $invalid = Zitadel::withAuthenticator(
-            new PersonalAccessAuthenticator(self::getBaseUrl(), 'invalid'),
+            new PersonalAccessTokenAuthenticator(self::getBaseUrl(), 'invalid'),
         );
 
-        $this->expectException(ZitadelException::class);
-        $invalid->settingsService->getGeneralSettings(new \stdClass());
+        try {
+            $invalid->settingsService->getGeneralSettings(new \stdClass());
+            $this->fail('Expected UnauthorizedException');
+        } catch (UnauthorizedException $e) {
+            $this->assertSame(UnauthorizedException::class, $e::class);
+        }
     }
 }

@@ -4,206 +4,144 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Auth;
 
-use Exception;
 use InvalidArgumentException;
+use JsonException;
 use League\Uri\Uri;
-use Zitadel\Client\TransportOptions;
+use Zitadel\Client\ApiClient;
+use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\BadRequestException;
+use Zitadel\Client\Errors\ClientException;
+use Zitadel\Client\Errors\ConflictException;
+use Zitadel\Client\Errors\ForbiddenException;
+use Zitadel\Client\Errors\InternalServerErrorException;
+use Zitadel\Client\Errors\NotFoundException;
+use Zitadel\Client\Errors\ServerException;
+use Zitadel\Client\Errors\UnauthorizedException;
+use Zitadel\Client\Errors\UnprocessableEntityException;
+use Zitadel\Client\SerializationException;
 
 /**
- * OpenId class is responsible for fetching and storing important OpenID configuration endpoints.
- * It interacts with the OpenID provider's well-known configuration endpoint and retrieves
- * the token, authorization, and userinfo endpoints.
+ * Resolves the OpenID Connect discovery document for a Zitadel host.
+ *
+ * The constructor only validates and normalises the host; it performs no I/O.
+ * The `token_endpoint` is fetched through the shared {@see ApiClient} the
+ * first time {@see OpenId::getTokenEndpoint()} is called, so discovery
+ * honours the SDK's proxy, TLS and timeout settings and fails with the same
+ * error types as any other request:
+ *
+ * - no HTTP response: {@see \Zitadel\Client\Errors\NetworkException} or
+ *   {@see \Zitadel\Client\Errors\NetworkTimeoutException};
+ * - a non-2xx status: the {@see ApiException} subclass for that status;
+ * - a body that is not a JSON object with a `token_endpoint`:
+ *   {@see SerializationException}.
  */
 class OpenId
 {
-    /** @var Uri The base URL of the OpenID host. */
-    private Uri $hostEndpoint;
+    private const string WELL_KNOWN_PATH = '/.well-known/openid-configuration';
 
-    /** @var Uri The URL to obtain tokens. */
-    private Uri $tokenEndpoint;
+    private readonly string $hostEndpoint;
 
-    /** @var Uri The URL for the authorization endpoint. */
-    private Uri $authorizationEndpoint;
+    private readonly string $wellKnownUrl;
 
-    /** @var Uri The URL to retrieve user information. */
-    private Uri $userinfoEndpoint;
+    private ?string $tokenEndpoint = null;
 
     /**
-     * Constructor to initialize the OpenId instance and fetch OpenID configuration.
+     * Validates and normalises the host. A host without a scheme gets `https://`.
      *
-     * This constructor accepts a hostname, fetches the OpenID configuration,
-     * and stores the `token_endpoint`, `authorization_endpoint`, and `userinfo_endpoint`
-     * for future use.
-     *
-     * @param string $hostname The hostname of the OpenID provider.
-     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
-     * @throws InvalidArgumentException If the provided hostname is empty.
-     * @throws Exception If there's an error during the HTTP request or JSON parsing.
+     * @param string $host The Zitadel instance host name or URL.
+     * @throws InvalidArgumentException If the host is empty, uses a scheme
+     *                                  other than http or https, or is not a valid URL.
      */
-    public function __construct(
-        string $hostname,
-        ?TransportOptions $transportOptions = null,
-    ) {
-        if ($hostname === '' || $hostname === '0') {
-            throw new InvalidArgumentException("Hostname cannot be empty.");
-        }
-
-        $transportOptions ??= TransportOptions::builder()->build();
-
-        $this->hostEndpoint = $this->buildHostname($hostname);
-        $config = $this->fetchOpenIdConfiguration($hostname, $transportOptions);
-
-        $this->tokenEndpoint = Uri::new($this->requireStringField($config, 'token_endpoint'));
-        $this->authorizationEndpoint = Uri::new($this->requireStringField($config, 'authorization_endpoint'));
-        $this->userinfoEndpoint = Uri::new($this->requireStringField($config, 'userinfo_endpoint'));
-    }
-
-    /**
-     * Extracts a required string field from the decoded OpenID configuration,
-     * failing loudly if it is missing or not a string.
-     *
-     * @param mixed  $config The decoded configuration document.
-     * @param string $field  The field name to extract.
-     * @return string The field value.
-     * @throws Exception If the field is absent or not a string.
-     */
-    private function requireStringField(mixed $config, string $field): string
+    public function __construct(string $host)
     {
-        if (!is_array($config) || !isset($config[$field]) || !is_string($config[$field])) {
-            throw new Exception("OpenID configuration is missing a valid '$field'.");
-        }
-        return $config[$field];
+        $this->hostEndpoint = $this->normaliseHost($host);
+        $this->wellKnownUrl = Uri::new($this->hostEndpoint)
+            ->withPath(self::WELL_KNOWN_PATH)
+            ->withQuery(null)
+            ->withFragment(null)
+            ->toString();
     }
 
-    /**
-     * Builds and returns a Uri object from the provided hostname.
-     * If the hostname does not include a scheme (http or https), it defaults to "https".
-     *
-     * @param string $hostname The hostname of the OpenID provider.
-     * @return Uri A Uri object representing the full URL with the hostname.
-     */
-    private function buildHostname(string $hostname): Uri
+    private function normaliseHost(string $host): string
     {
-        if (!preg_match("/^https?:\/\//", $hostname)) {
-            $hostname = "https://" . $hostname;
+        $trimmed = trim($host);
+        if ($trimmed === '') {
+            throw new InvalidArgumentException('Host cannot be empty.');
         }
-        return Uri::new($hostname);
-    }
-
-    /**
-     * Fetches the OpenID configuration from the well-known OpenID configuration endpoint.
-     *
-     * This method constructs the URL for the well-known endpoint, retrieves the configuration
-     * in JSON format, and parses it to extract the necessary OpenID configuration fields.
-     *
-     * @param string $hostname The hostname of the OpenID provider.
-     * @param TransportOptions $transportOptions Transport options for TLS, proxy, and headers.
-     * @return mixed An associative array containing the OpenID configuration.
-     * @throws Exception If the HTTP request fails, or if the JSON response is malformed.
-     */
-    private function fetchOpenIdConfiguration(
-        string $hostname,
-        TransportOptions $transportOptions,
-    ): mixed {
-        $wellKnownUrl = $this->buildWellKnownUrl($hostname);
-
-        $opts = [];
-        if ($transportOptions->defaultHeaders !== []) {
-            $headerStr = '';
-            foreach ($transportOptions->defaultHeaders as $name => $value) {
-                $headerStr .= "$name: $value\r\n";
+        $lower = strtolower($trimmed);
+        if (!str_starts_with($lower, 'http://') && !str_starts_with($lower, 'https://')) {
+            if (str_contains($trimmed, '://')) {
+                throw new InvalidArgumentException("Host must use the http or https scheme: $trimmed");
             }
-            $opts['http'] = ['header' => $headerStr];
+            $trimmed = 'https://' . $trimmed;
         }
-        if ($transportOptions->proxy !== null) {
-            $opts['http']['proxy'] = $transportOptions->proxy;
-            $opts['http']['request_fulluri'] = true;
+        $parts = parse_url($trimmed);
+        if ($parts === false || !isset($parts['host']) || $parts['host'] === '') {
+            throw new InvalidArgumentException("Host is not a valid URL: $trimmed");
         }
-        if (!$transportOptions->verifySsl) {
-            $opts['ssl'] = ['verify_peer' => false, 'verify_peer_name' => false];
-        } elseif ($transportOptions->caCertPath !== null) {
-            $sslOpts = ['cafile' => $transportOptions->caCertPath, 'verify_peer_name' => true];
-            $defaults = openssl_get_cert_locations();
-            if (isset($defaults['default_cert_dir']) && is_dir($defaults['default_cert_dir'])) {
-                $sslOpts['capath'] = $defaults['default_cert_dir'];
-            }
-            $opts['ssl'] = $sslOpts;
-        }
-        $context = $opts === [] ? null : stream_context_create($opts);
-        $response = file_get_contents($wellKnownUrl, false, $context);
-
-        if ($response === false) {
-            throw new Exception("Failed to fetch OpenID configuration.");
-        }
-
-        $config = json_decode($response, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception("Failed to parse OpenID configuration JSON.");
-        }
-
-        return $config;
+        return $trimmed;
     }
 
     /**
-     * Builds the URL to the well-known OpenID configuration endpoint.
-     *
-     * This method takes the provided hostname and appends "/.well-known/openid-configuration"
-     * to form the URL where OpenID configuration can be fetched.
-     *
-     * @param string $hostname The hostname of the OpenID provider.
-     * @return string The well-known URL to fetch the OpenID configuration.
+     * Returns the normalised host endpoint.
      */
-    private function buildWellKnownUrl(string $hostname): string
-    {
-        $uri = Uri::new($hostname);
-        return $uri->withPath('/.well-known/openid-configuration')->toString();
-    }
-
-    /**
-     * Returns the base host endpoint URL.
-     *
-     * This method returns the full URL for the OpenID host endpoint.
-     *
-     * @return Uri The host endpoint URL.
-     */
-    public function getHostEndpoint(): Uri
+    public function getHostEndpoint(): string
     {
         return $this->hostEndpoint;
     }
 
     /**
-     * Returns the token endpoint URL.
+     * Returns the OAuth2 token endpoint, fetching the discovery document
+     * through the given API client on first access and caching the result.
      *
-     * This method returns the URL for obtaining OpenID tokens.
-     *
-     * @return Uri The token endpoint URL.
+     * @param ApiClient $apiClient The shared API client used for the discovery request.
+     * @throws ApiException If discovery fails at the transport or HTTP level.
+     * @throws SerializationException If the discovery document is unusable.
      */
-    public function getTokenEndpoint(): Uri
+    public function getTokenEndpoint(ApiClient $apiClient): string
     {
-        return $this->tokenEndpoint;
+        return $this->tokenEndpoint ??= $this->discover($apiClient);
+    }
+
+    private function discover(ApiClient $apiClient): string
+    {
+        $url = $this->wellKnownUrl;
+        $response = $apiClient->sendRequest('GET', $url, ['Accept' => 'application/json'], null);
+        $status = $response->statusCode;
+        if ($status < 200 || $status >= 300) {
+            throw $this->statusException($status, "OpenID discovery at $url failed with status $status", $response->headers, $response->body);
+        }
+        try {
+            $document = json_decode($response->body, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            throw new SerializationException("OpenID configuration at $url is not a JSON object", 0, $e);
+        }
+        if (!is_array($document) || array_is_list($document)) {
+            throw new SerializationException("OpenID configuration at $url is not a JSON object");
+        }
+        $endpoint = $document['token_endpoint'] ?? null;
+        if (!is_string($endpoint) || $endpoint === '') {
+            throw new SerializationException("OpenID configuration at $url has no valid token_endpoint");
+        }
+        return $endpoint;
     }
 
     /**
-     * Returns the authorization endpoint URL.
-     *
-     * This method returns the URL used for authorization requests.
-     *
-     * @return Uri The authorization endpoint URL.
+     * @param array<string, string> $headers
      */
-    public function getAuthorizationEndpoint(): Uri
+    private function statusException(int $status, string $message, array $headers, string $body): ApiException
     {
-        return $this->authorizationEndpoint;
-    }
-
-    /**
-     * Returns the userinfo endpoint URL.
-     *
-     * This method returns the URL for fetching user information from the OpenID provider.
-     *
-     * @return Uri The userinfo endpoint URL.
-     */
-    public function getUserinfoEndpoint(): Uri
-    {
-        return $this->userinfoEndpoint;
+        return match (true) {
+            $status === 400 => new BadRequestException($message, $headers, $body),
+            $status === 401 => new UnauthorizedException($message, $headers, $body),
+            $status === 403 => new ForbiddenException($message, $headers, $body),
+            $status === 404 => new NotFoundException($message, $headers, $body),
+            $status === 409 => new ConflictException($message, $headers, $body),
+            $status === 422 => new UnprocessableEntityException($message, $headers, $body),
+            $status === 500 => new InternalServerErrorException($message, $headers, $body),
+            $status >= 400 && $status < 500 => new ClientException($status, $message, $headers, $body),
+            $status >= 500 => new ServerException($status, $message, $headers, $body),
+            default => new ApiException($status, $message, $headers, $body),
+        };
     }
 }
