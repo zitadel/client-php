@@ -1,7 +1,7 @@
 {
     "name": "zitadel/client",
     "description": "The Zitadel SDK is a convenience wrapper around the Zitadel APIs to assist you in integrating with your Zitadel environment. This SDK enables you to handle resources, settings, and configurations within the Zitadel platform.",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "version": "4.1.1",
     "require": {
         "php": "^8.5",

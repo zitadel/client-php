@@ -5,3 +5,4 @@ disallowAdditionalPropertiesIfNotPresent: false
 generateUnitTests: true
 packageName: zitadel/client
 invokerPackage: Zitadel\Client
+licenseId: Apache-2.0
