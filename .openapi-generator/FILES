@@ -41,8 +41,6 @@ lib/Auth/BearerAuthenticator.php
 lib/Auth/HttpAwareAuthenticator.php
 lib/Auth/NoAuth.php
 lib/Auth/ZitadelAccessTokenAuthenticator.php
-lib/CancellationException.php
-lib/CancellationToken.php
 lib/Configuration.php
 lib/ConfigurationBuilder.php
 lib/DefaultApiClient.php
@@ -51,6 +49,8 @@ lib/Errors/ClientException.php
 lib/Errors/ConflictException.php
 lib/Errors/ForbiddenException.php
 lib/Errors/InternalServerErrorException.php
+lib/Errors/NetworkException.php
+lib/Errors/NetworkTimeoutException.php
 lib/Errors/NotFoundException.php
 lib/Errors/ServerException.php
 lib/Errors/UnauthorizedException.php

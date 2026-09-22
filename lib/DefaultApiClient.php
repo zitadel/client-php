@@ -13,9 +13,12 @@ declare(strict_types=1);
 
 namespace Zitadel\Client;
 
+use Zitadel\Client\Errors\NetworkException;
+use Zitadel\Client\Errors\NetworkTimeoutException;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\Multipart\FormDataPart;
+use Symfony\Contracts\HttpClient\Exception\TimeoutExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -78,18 +81,17 @@ class DefaultApiClient extends AbstractApiClient
              * read or parsed rather than silently falling back to the
              * system trust store. If the caller explicitly asked for SSL
              * pinning we must not pretend it succeeded -- validate the PEM
-             * eagerly at construction. */
+             * eagerly at construction. A bad CA file is a configuration
+             * mistake, so it raises \InvalidArgumentException. */
             $caCertPath = $this->transportOptions->caCertPath;
             $pem = @file_get_contents($caCertPath);
             if ($pem === false) {
-                throw new ApiException(
-                    0,
+                throw new \InvalidArgumentException(
                     sprintf('failed to read CA certificate from "%s"', $caCertPath)
                 );
             }
             if (openssl_x509_read($pem) === false) {
-                throw new ApiException(
-                    0,
+                throw new \InvalidArgumentException(
                     sprintf(
                         'failed to parse CA certificate from "%s": no PEM blocks found or unparseable',
                         $caCertPath
@@ -257,15 +259,11 @@ class DefaultApiClient extends AbstractApiClient
             $rawHeaders = $response->getHeaders(false);
 
             return new RawHttpResponse($statusCode, $responseBody, $rawHeaders);
+        } catch (TimeoutExceptionInterface $e) {
+            throw new NetworkTimeoutException("API Request timed out: {$e->getMessage()}", $e);
         } catch (TransportExceptionInterface $e) {
-            throw new ApiException(
-                0,
-                "API Request failed: {$e->getMessage()}",
-                null,
-                null,
-                null,
-                $e
-            );
+            /* Connection refused, DNS, TLS handshake, reset: no HTTP response. */
+            throw new NetworkException("API Request failed: {$e->getMessage()}", $e);
         }
     }
 

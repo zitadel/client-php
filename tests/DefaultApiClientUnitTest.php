@@ -924,15 +924,41 @@ test('close is idempotent', function (): void {
         ->toThrow(ApiException::class);
 });
 
-test('non-existent caCertPath throws api exception at construction', function (): void {
+test('non-existent caCertPath throws invalid argument exception at construction', function (): void {
     /* ca-cert-fail-fast: an explicitly configured CA certificate path that
-     * cannot be read or parsed must fail fast at construction with the SDK's
-     * ApiException rather than silently falling back to the system trust
-     * store (security theater). */
+     * cannot be read or parsed must fail fast at construction rather than
+     * silently falling back to the system trust store (security theater). It
+     * is a configuration mistake, so the type is \InvalidArgumentException. */
     $transport = TransportOptions::builder()->caCertPath('/nonexistent/ca.pem')->build();
 
     expect(fn (): mixed => new DefaultApiClient($transport))
-        ->toThrow(ApiException::class);
+        ->toThrow(\InvalidArgumentException::class);
+});
+
+test('transport failure raises NetworkException with status 0 and the cause kept', function (): void {
+    $cause = new \Symfony\Component\HttpClient\Exception\TransportException('Connection refused');
+    $client = new StubbedDefaultApiClient(new MockHttpClient(function () use ($cause): never {
+        throw $cause;
+    }));
+
+    try {
+        $client->sendRequest('GET', 'http://example.com/refused', [], null);
+        expect(false)->toBeTrue('Expected NetworkException');
+    } catch (\Zitadel\Client\Errors\NetworkException $e) {
+        expect($e)->not->toBeInstanceOf(\Zitadel\Client\Errors\NetworkTimeoutException::class);
+        expect($e)->toBeInstanceOf(ApiException::class);
+        expect($e->getStatusCode())->toBe(0);
+        expect($e->getPrevious())->toBe($cause);
+    }
+});
+
+test('transport timeout raises NetworkTimeoutException', function (): void {
+    $client = new StubbedDefaultApiClient(new MockHttpClient(function (): never {
+        throw new \Symfony\Component\HttpClient\Exception\TimeoutException('Idle timeout reached');
+    }));
+
+    expect(fn (): mixed => $client->sendRequest('GET', 'http://example.com/slow', [], null))
+        ->toThrow(\Zitadel\Client\Errors\NetworkTimeoutException::class);
 });
 
 test('decompresses a valid gzip-encoded response body', function (): void {

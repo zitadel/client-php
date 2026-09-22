@@ -22,7 +22,7 @@ use Exception;
  * caller can write one `catch (Zitadel\Client\ZitadelException $e)` and
  * be certain it covers all SDK-originated failures — API/HTTP errors
  * ({@see ApiException} and its typed subclasses), serialization failures, and
- * cancellation. This gives PHP the same one-root design the other language
+ * OAuth2 token/server errors raised during authentication. This gives PHP the same one-root design the other language
  * clients expose. The chain for a typed HTTP error is, for example:
  * UnauthorizedException → ClientException → ApiException → ZitadelException
  * → \Exception.

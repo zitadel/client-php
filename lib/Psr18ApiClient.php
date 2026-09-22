@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Zitadel\Client;
 
+use Zitadel\Client\Errors\NetworkException;
+use Zitadel\Client\Errors\NetworkTimeoutException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -108,14 +110,15 @@ class Psr18ApiClient extends AbstractApiClient
         try {
             $response = $this->httpClient->sendRequest($request);
         } catch (ClientExceptionInterface $e) {
-            throw new ApiException(
-                0,
-                "API Request failed: {$e->getMessage()}",
-                null,
-                null,
-                null,
-                $e
-            );
+            /* PSR-18 has no timeout exception type, so look for Symfony's
+             * TimeoutExceptionInterface in the chain (Symfony's Psr18Client
+             * wraps it); anything else is a failure with no HTTP response. */
+            for ($cause = $e; $cause instanceof \Throwable; $cause = $cause->getPrevious()) {
+                if ($cause instanceof \Symfony\Contracts\HttpClient\Exception\TimeoutExceptionInterface) {
+                    throw new NetworkTimeoutException("API Request timed out: {$e->getMessage()}", $e);
+                }
+            }
+            throw new NetworkException("API Request failed: {$e->getMessage()}", $e);
         }
 
         $rawHeaders = [];

@@ -11,14 +11,13 @@
 
 declare(strict_types=1);
 
-namespace Zitadel\Client;
+namespace Zitadel\Client\Errors;
 
 /**
- * Thrown when an API operation is aborted via a {@see CancellationToken}.
- *
- * @category Class
- * @package  Zitadel\Client
+ * Exception for a request that timed out before an HTTP response arrived. The
+ * status code is always 0 and the underlying transport exception is kept as
+ * the previous exception.
  */
-final class CancellationException extends ZitadelException
+class NetworkTimeoutException extends NetworkException
 {
 }

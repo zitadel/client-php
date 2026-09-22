@@ -330,6 +330,39 @@ test('psr18 send after close throws api exception', function (): void {
         ->toThrow(ApiException::class);
 });
 
+test('psr18 transport failure raises NetworkException', function (): void {
+    // The stub throws a PSR-18 ClientExceptionInterface once it runs out of
+    // canned responses: no HTTP response arrived.
+    $client = newPsr18Client(new StubPsr18Client());
+
+    try {
+        $client->sendRequest('GET', 'http://example.com/refused', [], null);
+        expect(false)->toBeTrue('Expected NetworkException');
+    } catch (\Zitadel\Client\Errors\NetworkException $e) {
+        expect($e)->not->toBeInstanceOf(\Zitadel\Client\Errors\NetworkTimeoutException::class);
+        expect($e->getStatusCode())->toBe(0);
+        expect($e->getPrevious())->toBeInstanceOf(ClientExceptionInterface::class);
+    }
+});
+
+test('psr18 timeout wrapped by the client raises NetworkTimeoutException', function (): void {
+    // Symfony's Psr18Client wraps its TimeoutException in a PSR-18
+    // NetworkExceptionInterface; the SDK finds it in the chain.
+    $stub = new class () implements ClientInterface {
+        public function sendRequest(RequestInterface $request): ResponseInterface
+        {
+            $timeout = new \Symfony\Component\HttpClient\Exception\TimeoutException('Idle timeout reached');
+            throw new class ('Idle timeout reached', 0, $timeout) extends \RuntimeException implements ClientExceptionInterface {
+            };
+        }
+    };
+    $factory = new Psr17Factory();
+    $client = new Psr18ApiClient($stub, $factory, $factory);
+
+    expect(fn (): mixed => $client->sendRequest('GET', 'http://example.com/slow', [], null))
+        ->toThrow(\Zitadel\Client\Errors\NetworkTimeoutException::class);
+});
+
 test('psr18 decompresses a valid gzip-encoded response body', function (): void {
     $payload = '{"ok":true}';
     $gzipped = gzencode($payload);
