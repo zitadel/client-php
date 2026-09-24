@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// phpcs:ignoreFile
-
 use Zitadel\Client\TraceContextUtil;
 use OpenTelemetry\API\Instrumentation\Configurator;
 use OpenTelemetry\API\Trace\Propagation\TraceContextPropagator;

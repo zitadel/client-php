@@ -1,3 +1,4 @@
+.openapi-generator/DEV-DEPENDENCIES
 .php-cs-fixer.dist.php
 SKILLS.md
 lib/AbstractApiClient.php

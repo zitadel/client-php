@@ -11,8 +11,6 @@
 
 declare(strict_types=1);
 
-/* phpcs:ignoreFile */
-
 namespace Zitadel\Client\Serializer;
 
 use Zitadel\Client\ObjectSerializer;

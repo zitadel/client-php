@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// phpcs:ignoreFile
-
 namespace Zitadel\Client\Test;
 
 use Zitadel\Client\Errors\ApiException;
