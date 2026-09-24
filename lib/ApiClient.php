@@ -40,4 +40,12 @@ interface ApiClient
         mixed $body,
         bool $noRedirect = false,
     ): ApiHttpResponse;
+
+    /**
+     * Release any resources held by this client (connection pool, sockets).
+     *
+     * Implementations that own a pooled HTTP client dispose of it here; an
+     * implementation that owns nothing may no-op. Calling it twice is safe.
+     */
+    public function close(): void;
 }

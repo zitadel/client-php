@@ -7,11 +7,6 @@ use Zitadel\Client\ConfigurationBuilder;
 use Zitadel\Client\ServerConfiguration;
 use Zitadel\Client\ServerVariable;
 
-afterEach(function (): void {
-    // Reset the default instance between tests to avoid leaking state
-    Configuration::setDefault(new Configuration());
-});
-
 test('default constructor uses spec base url', function (): void {
     $config = new Configuration();
 
@@ -173,29 +168,22 @@ test('builder base url overrides server', function (): void {
     expect($config->baseUrl)->toBe('https://override.example.com');
 });
 
-test('get default returns instance', function (): void {
-    $config = Configuration::getDefault();
+test('default configuration uses spec base url', function (): void {
+    $config = Configuration::defaultConfiguration();
 
     expect($config)->toBeInstanceOf(Configuration::class);
     expect($config->baseUrl)->toBe('https://zitadel.com');
+    expect($config->defaultHeaders)->toBe([]);
 });
 
-test('get default returns same instance', function (): void {
-    $first = Configuration::getDefault();
-    $second = Configuration::getDefault();
+test('default configuration is stateless', function (): void {
+    // There is no settable process-wide default: every call hands back a
+    // fresh instance, so one caller cannot change what another gets.
+    $first = Configuration::defaultConfiguration();
+    $second = Configuration::defaultConfiguration();
 
-    expect($second)->toBe($first);
-});
-
-test('set default changes default', function (): void {
-    $custom = Configuration::builder()
-        ->baseUrl('https://custom.example.com')
-        ->build();
-
-    Configuration::setDefault($custom);
-
-    expect(Configuration::getDefault())->toBe($custom);
-    expect(Configuration::getDefault()->baseUrl)->toBe('https://custom.example.com');
+    expect($second)->not->toBe($first);
+    expect($second->baseUrl)->toBe($first->baseUrl);
 });
 
 test('configuration is immutable', function (): void {

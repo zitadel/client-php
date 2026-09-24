@@ -32,8 +32,6 @@ namespace Zitadel\Client;
  */
 final class Configuration
 {
-    private static ?Configuration $defaultInstance = null;
-
     /**
      * @param string               $baseUrl        Base URL for all API requests
      * @param array<string, string> $defaultHeaders Headers to include in every API request
@@ -53,22 +51,13 @@ final class Configuration
     }
 
     /**
-     * Return the default configuration instance, creating it lazily if needed.
+     * Return a Configuration with default values.
+     *
+     * A fresh instance every call: the SDK keeps no process-wide default a
+     * caller could swap out from under another caller.
      */
-    public static function getDefault(): Configuration
+    public static function defaultConfiguration(): Configuration
     {
-        if (!self::$defaultInstance instanceof Configuration) {
-            self::$defaultInstance = new Configuration();
-        }
-
-        return self::$defaultInstance;
-    }
-
-    /**
-     * Set the default configuration instance.
-     */
-    public static function setDefault(Configuration $configuration): void
-    {
-        self::$defaultInstance = $configuration;
+        return self::builder()->build();
     }
 }

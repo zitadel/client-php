@@ -42,6 +42,14 @@ use Symfony\Component\Serializer\Serializer;
  */
 class ObjectSerializer
 {
+    /**
+     * Maximum allowed JSON nesting depth. A malicious 100k-deep
+     * `{"a":{"a":...}}` payload must be refused rather than recurse through
+     * the interpreter's stack, so the cap is pinned here rather than left to
+     * the parser's default. All twelve SDKs use the same cap.
+     */
+    public const int MAX_JSON_DEPTH = 1000;
+
     /* H4: emit sub-second precision on the wire. \DateTime::ATOM
      * ("Y-m-d\TH:i:sP") has no fractional-second component, so a date-time
      * carrying milliseconds (2020-01-02T03:04:05.123Z) serialized to whole

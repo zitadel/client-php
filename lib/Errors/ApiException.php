@@ -97,9 +97,16 @@ class ApiException extends ZitadelException
         $errorBody = null;
         if ($responseBody !== null && trim($responseBody) !== '') {
             try {
-                $errorBody = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR);
+                /* Cap the nesting depth so a deeply-nested error payload is
+                 * refused before it can recurse through the stack. */
+                $errorBody = json_decode(
+                    $responseBody,
+                    true,
+                    ObjectSerializer::MAX_JSON_DEPTH,
+                    JSON_THROW_ON_ERROR
+                );
             } catch (\JsonException) {
-                /* non-JSON body, errorBody stays null */
+                /* non-JSON or over-deep body, errorBody stays null */
             }
         }
 
@@ -188,5 +195,30 @@ class ApiException extends ZitadelException
         /** @var object|null $result */
         $result = ObjectSerializer::deserialize($this->responseBody, $class);
         return $result;
+    }
+
+    /**
+     * Render the error as the message followed by whatever response context
+     * was captured, one labelled field per line.
+     *
+     * getMessage() is deliberately left alone: it keeps returning the detail
+     * message the exception was constructed with.
+     */
+    public function __toString(): string
+    {
+        $message = $this->getMessage();
+        $rendered = $message === '' ? 'Error message: the server returns an error' : $message;
+        if ($this->statusCode !== 0) {
+            $rendered .= "\nHTTP status code: " . $this->statusCode;
+        }
+        if ($this->responseHeaders !== null && $this->responseHeaders !== []) {
+            $rendered .= "\nResponse headers: "
+                . json_encode($this->responseHeaders, JSON_THROW_ON_ERROR);
+        }
+        if ($this->responseBody !== null && $this->responseBody !== '') {
+            $rendered .= "\nResponse body: " . $this->responseBody;
+        }
+
+        return $rendered;
     }
 }

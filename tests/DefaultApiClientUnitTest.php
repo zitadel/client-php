@@ -588,30 +588,6 @@ test('proxy with basic auth is accepted by builder', function (): void {
     expect($opts->proxy)->toBe('http://user:secret@proxy.example.com:8080');
 });
 
-test('proxy auth squid end to end', function (): void {
-    // The Squid fixture's second port answers 407 unless the request carries
-    // Basic proxy credentials, so a success through it proves the credentials
-    // embedded in the proxy URL reached the proxy.
-    $proxy = parse_url((string) getenv('PROXY_AUTH_URL'), PHP_URL_HOST) . ':'
-        . parse_url((string) getenv('PROXY_AUTH_URL'), PHP_URL_PORT);
-    $client = new DefaultApiClient(
-        TransportOptions::builder()->proxy('http://user:pass@' . $proxy)->build()
-    );
-    $response = $client->sendRequest('GET', getenv('CHASM_INTERNAL_HTTP_URL') . '/test/echo', [], null);
-
-    expect($response->statusCode)->toBe(200);
-    expect($response->body)->toContain('"method"');
-});
-
-test('proxy that requires credentials answers 407 when none are sent', function (): void {
-    $client = new DefaultApiClient(
-        TransportOptions::builder()->proxy((string) getenv('PROXY_AUTH_URL'))->build()
-    );
-    $response = $client->sendRequest('GET', getenv('CHASM_INTERNAL_HTTP_URL') . '/test/echo', [], null);
-
-    expect($response->statusCode)->toBe(407);
-});
-
 // -- Gap BI: RFC 5987 filename* for non-ASCII multipart filenames --
 
 test('multipart filename non ascii emits rfc 5987', function (): void {

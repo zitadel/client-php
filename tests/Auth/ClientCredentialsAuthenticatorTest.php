@@ -267,6 +267,11 @@ class ClientCredentialsAuthenticatorTest extends OAuthAuthenticatorTestCase
                 $this->bodies->append(is_string($body) ? $body : '');
                 return $this->token;
             }
+
+            #[\Override]
+            public function close(): void
+            {
+            }
         };
     }
 

@@ -53,7 +53,7 @@ class BaseApi
         ?Configuration $config = null,
         ?Authenticator $authenticator = null
     ) {
-        $this->config = $config ?: Configuration::getDefault();
+        $this->config = $config ?: Configuration::defaultConfiguration();
         $this->apiClient = $apiClient ?: new DefaultApiClient();
         $this->headerSelector = new HeaderSelector();
         $this->authenticator = $authenticator;
