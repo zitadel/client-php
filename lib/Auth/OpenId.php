@@ -8,17 +8,8 @@ use InvalidArgumentException;
 use JsonException;
 use League\Uri\Uri;
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
-use Zitadel\Client\Errors\BadRequestException;
-use Zitadel\Client\Errors\ClientException;
-use Zitadel\Client\Errors\ConflictException;
-use Zitadel\Client\Errors\ForbiddenException;
-use Zitadel\Client\Errors\InternalServerErrorException;
-use Zitadel\Client\Errors\NotFoundException;
-use Zitadel\Client\Errors\ServerException;
-use Zitadel\Client\Errors\UnauthorizedException;
-use Zitadel\Client\Errors\UnprocessableEntityException;
-use Zitadel\Client\SerializationException;
+use Zitadel\Client\Errors\ApiException;
+use Zitadel\Client\Errors\SerializationException;
 
 /**
  * Resolves the OpenID Connect discovery document for a Zitadel host.
@@ -109,7 +100,10 @@ class OpenId
         $response = $apiClient->sendRequest('GET', $url, ['Accept' => 'application/json'], null);
         $status = $response->statusCode;
         if ($status < 200 || $status >= 300) {
-            throw $this->statusException($status, "OpenID discovery at $url failed with status $status", $response->headers, $response->body);
+            /* ApiException::fromResponse() owns the status-to-subclass table,
+             * so a failed discovery raises exactly the typed error a regular
+             * API call would for the same status. */
+            throw ApiException::fromResponse($status, $response->headers, $response->body);
         }
         try {
             $document = json_decode($response->body, true, 512, JSON_THROW_ON_ERROR);
@@ -124,24 +118,5 @@ class OpenId
             throw new SerializationException("OpenID configuration at $url has no valid token_endpoint");
         }
         return $endpoint;
-    }
-
-    /**
-     * @param array<string, string> $headers
-     */
-    private function statusException(int $status, string $message, array $headers, string $body): ApiException
-    {
-        return match (true) {
-            $status === 400 => new BadRequestException($message, $headers, $body),
-            $status === 401 => new UnauthorizedException($message, $headers, $body),
-            $status === 403 => new ForbiddenException($message, $headers, $body),
-            $status === 404 => new NotFoundException($message, $headers, $body),
-            $status === 409 => new ConflictException($message, $headers, $body),
-            $status === 422 => new UnprocessableEntityException($message, $headers, $body),
-            $status === 500 => new InternalServerErrorException($message, $headers, $body),
-            $status >= 400 && $status < 500 => new ClientException($status, $message, $headers, $body),
-            $status >= 500 => new ServerException($status, $message, $headers, $body),
-            default => new ApiException($status, $message, $headers, $body),
-        };
     }
 }

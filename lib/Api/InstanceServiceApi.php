@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * InstanceServiceApi provides methods for the InstanceService API group.
  */
-
 class InstanceServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class InstanceServiceApi extends BaseApi
      * Adds a custom domain to the instance.  The custom domain must be unique across all instances.  Once the domain is added, it will be used to route requests to this instance.  This method requires system level permissions and cannot be called from an instance context.   Required permissions:    - `system.domain.write`
 
      * @return \Zitadel\Client\Models\InstanceServiceAddCustomDomainResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addCustomDomain(\Zitadel\Client\Models\InstanceServiceAddCustomDomainRequest $instanceServiceAddCustomDomainRequest)
     {
@@ -42,7 +41,7 @@ class InstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for addCustomDomain but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class InstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\InstanceServiceAddCustomDomainResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addCustomDomainWithHttpInfo(\Zitadel\Client\Models\InstanceServiceAddCustomDomainRequest $instanceServiceAddCustomDomainRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class InstanceServiceApi extends BaseApi
      * Adds a trusted domain to the instance.  By default the instance will be determined by the context of the request,  e.g. the host header.  You can optionally pass an InstanceID to list the domains of a specific instance.  This requires additional permissions.   It must be a valid domain name.  Once the domain is added, it can be used in API responses like OIDC discovery,  email templates, and more.  This can be used in cases where the API is accessed through a different domain  than the instance domain, e.g. proxy setups and custom login UIs.  Unlike custom domain, trusted domains are not used to route requests to this instance  and therefore do not need to be uniquely assigned to an instance.   Required permissions:   - `iam.write`   - `system.instance.write` (if InstanceID is set)
 
      * @return \Zitadel\Client\Models\InstanceServiceAddTrustedDomainResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addTrustedDomain(\Zitadel\Client\Models\InstanceServiceAddTrustedDomainRequest $instanceServiceAddTrustedDomainRequest)
     {
@@ -96,7 +95,7 @@ class InstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for addTrustedDomain but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class InstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\InstanceServiceAddTrustedDomainResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addTrustedDomainWithHttpInfo(\Zitadel\Client\Models\InstanceServiceAddTrustedDomainRequest $instanceServiceAddTrustedDomainRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class InstanceServiceApi extends BaseApi
      * Deletes an instance with the given ID.  This method requires system level permissions and cannot be called from an instance context.   Required permissions:    - `system.instance.delete`
 
      * @return \Zitadel\Client\Models\InstanceServiceDeleteInstanceResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteInstance(\Zitadel\Client\Models\InstanceServiceDeleteInstanceRequest $instanceServiceDeleteInstanceRequest)
     {
@@ -150,7 +149,7 @@ class InstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteInstance but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class InstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\InstanceServiceDeleteInstanceResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteInstanceWithHttpInfo(\Zitadel\Client\Models\InstanceServiceDeleteInstanceRequest $instanceServiceDeleteInstanceRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class InstanceServiceApi extends BaseApi
      * Returns the instance in the current context or by its ID.  By default the instance will be determined by the context of the request,  e.g. the host header.  You can optionally pass an InstanceID to retrieve a specific instance.  This requires additional permissions.   Required permissions:    - `iam.read`    - `system.instance.read` (if InstanceID is set)
 
      * @return \Zitadel\Client\Models\InstanceServiceGetInstanceResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getInstance(\Zitadel\Client\Models\InstanceServiceGetInstanceRequest $instanceServiceGetInstanceRequest)
     {
@@ -204,7 +203,7 @@ class InstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getInstance but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class InstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\InstanceServiceGetInstanceResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getInstanceWithHttpInfo(\Zitadel\Client\Models\InstanceServiceGetInstanceRequest $instanceServiceGetInstanceRequest): ApiResult
     {
@@ -247,7 +246,7 @@ class InstanceServiceApi extends BaseApi
      * Lists custom domains of the instance.   By default the instance will be determined by the context of the request,  e.g. the host header.  You can optionally pass an InstanceID to list the domains of a specific instance.  This requires additional permissions.   Required permissions:   - `iam.read`   - `system.instance.read` (if InstanceID is set)
 
      * @return \Zitadel\Client\Models\InstanceServiceListCustomDomainsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listCustomDomains(\Zitadel\Client\Models\InstanceServiceListCustomDomainsRequest $instanceServiceListCustomDomainsRequest)
     {
@@ -258,7 +257,7 @@ class InstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listCustomDomains but received none',
                 $apiResult->headers,
@@ -273,7 +272,7 @@ class InstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\InstanceServiceListCustomDomainsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listCustomDomainsWithHttpInfo(\Zitadel\Client\Models\InstanceServiceListCustomDomainsRequest $instanceServiceListCustomDomainsRequest): ApiResult
     {
@@ -301,7 +300,7 @@ class InstanceServiceApi extends BaseApi
      * Lists instances matching the given query.  The query can be used to filter either by instance ID or domain.  The request is paginated and returns 100 results by default.  This method requires system level permissions and cannot be called from an instance context.   Required permissions:   - `system.instance.read`
 
      * @return \Zitadel\Client\Models\InstanceServiceListInstancesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listInstances(\Zitadel\Client\Models\InstanceServiceListInstancesRequest $instanceServiceListInstancesRequest)
     {
@@ -312,7 +311,7 @@ class InstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listInstances but received none',
                 $apiResult->headers,
@@ -327,7 +326,7 @@ class InstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\InstanceServiceListInstancesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listInstancesWithHttpInfo(\Zitadel\Client\Models\InstanceServiceListInstancesRequest $instanceServiceListInstancesRequest): ApiResult
     {
@@ -355,7 +354,7 @@ class InstanceServiceApi extends BaseApi
      * Lists trusted domains of the instance.  By default the instance will be determined by the context of the request,  e.g. the host header.  You can optionally pass an InstanceID to list the domains of a specific instance.  This requires additional permissions.   Required permissions:    - `iam.read`    - `system.instance.read` (if InstanceID is set)
 
      * @return \Zitadel\Client\Models\InstanceServiceListTrustedDomainsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listTrustedDomains(\Zitadel\Client\Models\InstanceServiceListTrustedDomainsRequest $instanceServiceListTrustedDomainsRequest)
     {
@@ -366,7 +365,7 @@ class InstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listTrustedDomains but received none',
                 $apiResult->headers,
@@ -381,7 +380,7 @@ class InstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\InstanceServiceListTrustedDomainsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listTrustedDomainsWithHttpInfo(\Zitadel\Client\Models\InstanceServiceListTrustedDomainsRequest $instanceServiceListTrustedDomainsRequest): ApiResult
     {
@@ -409,7 +408,7 @@ class InstanceServiceApi extends BaseApi
      * Removes a custom domain from the instance.  Be aware that this will stop routing requests from this domain to the instance and  might break existing setups or integrations.  This method requires system level permissions and cannot be called from an instance context.   Required permissions:   - `system.domain.write`
 
      * @return \Zitadel\Client\Models\InstanceServiceRemoveCustomDomainResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeCustomDomain(\Zitadel\Client\Models\InstanceServiceRemoveCustomDomainRequest $instanceServiceRemoveCustomDomainRequest)
     {
@@ -420,7 +419,7 @@ class InstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removeCustomDomain but received none',
                 $apiResult->headers,
@@ -435,7 +434,7 @@ class InstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\InstanceServiceRemoveCustomDomainResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeCustomDomainWithHttpInfo(\Zitadel\Client\Models\InstanceServiceRemoveCustomDomainRequest $instanceServiceRemoveCustomDomainRequest): ApiResult
     {
@@ -463,7 +462,7 @@ class InstanceServiceApi extends BaseApi
      * Removes a trusted domain from the instance.  By default the instance will be determined by the context of the request,  e.g. the host header.  You can optionally pass an InstanceID to list the domains of a specific instance.  This requires additional permissions.   Required permissions:   - `iam.write`   - `system.instance.write` (if InstanceID is set)
 
      * @return \Zitadel\Client\Models\InstanceServiceRemoveTrustedDomainResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeTrustedDomain(\Zitadel\Client\Models\InstanceServiceRemoveTrustedDomainRequest $instanceServiceRemoveTrustedDomainRequest)
     {
@@ -474,7 +473,7 @@ class InstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removeTrustedDomain but received none',
                 $apiResult->headers,
@@ -489,7 +488,7 @@ class InstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\InstanceServiceRemoveTrustedDomainResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeTrustedDomainWithHttpInfo(\Zitadel\Client\Models\InstanceServiceRemoveTrustedDomainRequest $instanceServiceRemoveTrustedDomainRequest): ApiResult
     {
@@ -517,7 +516,7 @@ class InstanceServiceApi extends BaseApi
      * Updates instance's name in the current context or by its ID.  By default the instance will be determined by the context of the request,  e.g. the host header.  You can optionally pass an InstanceID to update a specific instance.  This requires additional permissions.   Required permissions:    - `iam.write`    - `system.instance.write` (if InstanceID is set)
 
      * @return \Zitadel\Client\Models\InstanceServiceUpdateInstanceResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateInstance(\Zitadel\Client\Models\InstanceServiceUpdateInstanceRequest $instanceServiceUpdateInstanceRequest)
     {
@@ -528,7 +527,7 @@ class InstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for updateInstance but received none',
                 $apiResult->headers,
@@ -543,7 +542,7 @@ class InstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\InstanceServiceUpdateInstanceResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateInstanceWithHttpInfo(\Zitadel\Client\Models\InstanceServiceUpdateInstanceRequest $instanceServiceUpdateInstanceRequest): ApiResult
     {

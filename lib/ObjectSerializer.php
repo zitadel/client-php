@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Zitadel\Client;
 
+use Zitadel\Client\Errors\SerializationException;
 use Zitadel\Client\Serializer\DsMapNormalizer;
 use Zitadel\Client\Serializer\DsSetNormalizer;
 use Zitadel\Client\Serializer\DsAwareObjectNormalizer;

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * SAMLServiceApi provides methods for the SAMLService API group.
  */
-
 class SAMLServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class SAMLServiceApi extends BaseApi
      * Finalize a SAML Request and get the response definition for success or failure.  The response must be handled as per the SAML definition to inform the application about the success or failure.  On success, the response contains details for the application to obtain the SAMLResponse.  This method can only be called once for an SAML request.   Required permissions:    - `session.link`
 
      * @return \Zitadel\Client\Models\SAMLServiceCreateResponseResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createResponse(\Zitadel\Client\Models\SAMLServiceCreateResponseRequest $samlServiceCreateResponseRequest)
     {
@@ -42,7 +41,7 @@ class SAMLServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createResponse but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class SAMLServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SAMLServiceCreateResponseResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createResponseWithHttpInfo(\Zitadel\Client\Models\SAMLServiceCreateResponseRequest $samlServiceCreateResponseRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class SAMLServiceApi extends BaseApi
      * Get SAML Request details by ID. Returns details that are parsed from the application's SAML Request.   Required permissions:    - `session.read`
 
      * @return \Zitadel\Client\Models\SAMLServiceGetSAMLRequestResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getSAMLRequest(\Zitadel\Client\Models\SAMLServiceGetSAMLRequestRequest $samlServiceGetSAMLRequestRequest)
     {
@@ -96,7 +95,7 @@ class SAMLServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getSAMLRequest but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class SAMLServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SAMLServiceGetSAMLRequestResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getSAMLRequestWithHttpInfo(\Zitadel\Client\Models\SAMLServiceGetSAMLRequestRequest $samlServiceGetSAMLRequestRequest): ApiResult
     {

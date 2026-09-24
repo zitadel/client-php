@@ -4,7 +4,7 @@ namespace Zitadel\Client\Spec\Auth;
 
 use Zitadel\Client\Errors\UnauthorizedException;
 use Exception;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\Auth\PersonalAccessTokenAuthenticator;
 use Zitadel\Client\Spec\AbstractIntegrationTest;
 use Zitadel\Client\Zitadel;

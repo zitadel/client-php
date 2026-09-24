@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * ActionServiceApi provides methods for the ActionService API group.
  */
-
 class ActionServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class ActionServiceApi extends BaseApi
      * Activates the public key for payload encryption.  The public key is used to encrypt the payload sent to the target when the payload type is set to `PAYLOAD_TYPE_JWE`.  Activating a new key will deactivate the current active key. Only one key can be active at a time.  The active key is indicated in the `kid` header in the JWE token sent to the target.  Activating a key that is already active is a no-op.   Required permission:    - `action.target.write`
 
      * @return \Zitadel\Client\Models\ActionServiceActivatePublicKeyResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function activatePublicKey(\Zitadel\Client\Models\ActionServiceActivatePublicKeyRequest $actionServiceActivatePublicKeyRequest)
     {
@@ -42,7 +41,7 @@ class ActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for activatePublicKey but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class ActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\ActionServiceActivatePublicKeyResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function activatePublicKeyWithHttpInfo(\Zitadel\Client\Models\ActionServiceActivatePublicKeyRequest $actionServiceActivatePublicKeyRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class ActionServiceApi extends BaseApi
      * Adds a public key to the target for payload encryption.  The public key is used to encrypt the payload sent to the target when the payload type is set to `PAYLOAD_TYPE_JWE`.  The public key must be in PEM format and be either an RSA or an EC key.  On a successful addition, a key ID is returned which can not only be used to manage the key (activate, remove),  but also will be used as the `kid` header in the JWE token sent to the target to indicate which key was used for encryption.  Note that newly added keys are inactive by default. You must activate the key to use it for payload encryption.  Providing an optional expiration date allows you to set a validity period for the key.  After the expiration date, the key will be automatically deactivated and no longer used for payload encryption.  Be sure to activate a new key before the current active key expires to avoid interruptions in your target executions.  You can have multiple inactive keys for rotation purposes, but only one active key at a time.   Required permission:    - `action.target.write`
 
      * @return \Zitadel\Client\Models\ActionServiceAddPublicKeyResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addPublicKey(\Zitadel\Client\Models\ActionServiceAddPublicKeyRequest $actionServiceAddPublicKeyRequest)
     {
@@ -96,7 +95,7 @@ class ActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for addPublicKey but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class ActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\ActionServiceAddPublicKeyResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addPublicKeyWithHttpInfo(\Zitadel\Client\Models\ActionServiceAddPublicKeyRequest $actionServiceAddPublicKeyRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class ActionServiceApi extends BaseApi
      * Create a new target to your endpoint, which can be used in executions.   Required permission:    - `action.target.write`
 
      * @return \Zitadel\Client\Models\ActionServiceCreateTargetResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createTarget(\Zitadel\Client\Models\ActionServiceCreateTargetRequest $actionServiceCreateTargetRequest)
     {
@@ -150,7 +149,7 @@ class ActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createTarget but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class ActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\ActionServiceCreateTargetResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createTargetWithHttpInfo(\Zitadel\Client\Models\ActionServiceCreateTargetRequest $actionServiceCreateTargetRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class ActionServiceApi extends BaseApi
      * Deactivates the public key for payload encryption.  The public key will no longer be used to encrypt payloads sent to the target.  Be aware that deactivating the active key will leave the target without an active key.  Subsequent calls to the target with payload type `PAYLOAD_TYPE_JWE` will fail until a new key is activated.  This endpoint can be used in break glass scenarios to quickly disable a compromised key.  Deactivating a key that is already inactive is a no-op.   Required permission:    - `action.target.write`
 
      * @return \Zitadel\Client\Models\ActionServiceDeactivatePublicKeyResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deactivatePublicKey(\Zitadel\Client\Models\ActionServiceDeactivatePublicKeyRequest $actionServiceDeactivatePublicKeyRequest)
     {
@@ -204,7 +203,7 @@ class ActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deactivatePublicKey but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class ActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\ActionServiceDeactivatePublicKeyResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deactivatePublicKeyWithHttpInfo(\Zitadel\Client\Models\ActionServiceDeactivatePublicKeyRequest $actionServiceDeactivatePublicKeyRequest): ApiResult
     {
@@ -247,7 +246,7 @@ class ActionServiceApi extends BaseApi
      * Delete an existing target. This will remove it from any configured execution as well.  In case the target is not found, the request will return a successful response as  the desired state is already achieved.   Required permission:    - `action.target.delete`
 
      * @return \Zitadel\Client\Models\ActionServiceDeleteTargetResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteTarget(\Zitadel\Client\Models\ActionServiceDeleteTargetRequest $actionServiceDeleteTargetRequest)
     {
@@ -258,7 +257,7 @@ class ActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteTarget but received none',
                 $apiResult->headers,
@@ -273,7 +272,7 @@ class ActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\ActionServiceDeleteTargetResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteTargetWithHttpInfo(\Zitadel\Client\Models\ActionServiceDeleteTargetRequest $actionServiceDeleteTargetRequest): ApiResult
     {
@@ -301,7 +300,7 @@ class ActionServiceApi extends BaseApi
      * Returns the target identified by the requested ID.   Required permission:    - `action.target.read`
 
      * @return \Zitadel\Client\Models\ActionServiceGetTargetResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getTarget(\Zitadel\Client\Models\ActionServiceGetTargetRequest $actionServiceGetTargetRequest)
     {
@@ -312,7 +311,7 @@ class ActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getTarget but received none',
                 $apiResult->headers,
@@ -327,7 +326,7 @@ class ActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\ActionServiceGetTargetResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getTargetWithHttpInfo(\Zitadel\Client\Models\ActionServiceGetTargetRequest $actionServiceGetTargetRequest): ApiResult
     {
@@ -355,7 +354,7 @@ class ActionServiceApi extends BaseApi
      * List all available functions which can be used as condition for executions.
 
      * @return \Zitadel\Client\Models\ActionServiceListExecutionFunctionsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutionFunctions(object $body)
     {
@@ -366,7 +365,7 @@ class ActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listExecutionFunctions but received none',
                 $apiResult->headers,
@@ -381,7 +380,7 @@ class ActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\ActionServiceListExecutionFunctionsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutionFunctionsWithHttpInfo(object $body): ApiResult
     {
@@ -409,7 +408,7 @@ class ActionServiceApi extends BaseApi
      * List all available methods which can be used as condition for executions.
 
      * @return \Zitadel\Client\Models\ActionServiceListExecutionMethodsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutionMethods(object $body)
     {
@@ -420,7 +419,7 @@ class ActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listExecutionMethods but received none',
                 $apiResult->headers,
@@ -435,7 +434,7 @@ class ActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\ActionServiceListExecutionMethodsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutionMethodsWithHttpInfo(object $body): ApiResult
     {
@@ -463,7 +462,7 @@ class ActionServiceApi extends BaseApi
      * List all available services which can be used as condition for executions.
 
      * @return \Zitadel\Client\Models\ActionServiceListExecutionServicesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutionServices(object $body)
     {
@@ -474,7 +473,7 @@ class ActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listExecutionServices but received none',
                 $apiResult->headers,
@@ -489,7 +488,7 @@ class ActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\ActionServiceListExecutionServicesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutionServicesWithHttpInfo(object $body): ApiResult
     {
@@ -517,7 +516,7 @@ class ActionServiceApi extends BaseApi
      * List all matching executions. By default all executions of the instance are returned that have at least one execution target.  Make sure to include a limit and sorting for pagination.   Required permission:    - `action.execution.read`
 
      * @return \Zitadel\Client\Models\ActionServiceListExecutionsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutions(\Zitadel\Client\Models\ActionServiceListExecutionsRequest $actionServiceListExecutionsRequest)
     {
@@ -528,7 +527,7 @@ class ActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listExecutions but received none',
                 $apiResult->headers,
@@ -543,7 +542,7 @@ class ActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\ActionServiceListExecutionsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutionsWithHttpInfo(\Zitadel\Client\Models\ActionServiceListExecutionsRequest $actionServiceListExecutionsRequest): ApiResult
     {
@@ -571,7 +570,7 @@ class ActionServiceApi extends BaseApi
      * Lists all public keys of a target.  The response includes which key is active and the key's expiration dates.  This allows you to manage key rotations and ensure that your target always has an active key for payload encryption.   Required permission:    - `action.target.read`
 
      * @return \Zitadel\Client\Models\ActionServiceListPublicKeysResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listPublicKeys(\Zitadel\Client\Models\ActionServiceListPublicKeysRequest $actionServiceListPublicKeysRequest)
     {
@@ -582,7 +581,7 @@ class ActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listPublicKeys but received none',
                 $apiResult->headers,
@@ -597,7 +596,7 @@ class ActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\ActionServiceListPublicKeysResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listPublicKeysWithHttpInfo(\Zitadel\Client\Models\ActionServiceListPublicKeysRequest $actionServiceListPublicKeysRequest): ApiResult
     {
@@ -625,7 +624,7 @@ class ActionServiceApi extends BaseApi
      * List all matching targets. By default all targets of the instance are returned.  Make sure to include a limit and sorting for pagination.   Required permission:    - `action.target.read`
 
      * @return \Zitadel\Client\Models\ActionServiceListTargetsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listTargets(\Zitadel\Client\Models\ActionServiceListTargetsRequest $actionServiceListTargetsRequest)
     {
@@ -636,7 +635,7 @@ class ActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listTargets but received none',
                 $apiResult->headers,
@@ -651,7 +650,7 @@ class ActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\ActionServiceListTargetsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listTargetsWithHttpInfo(\Zitadel\Client\Models\ActionServiceListTargetsRequest $actionServiceListTargetsRequest): ApiResult
     {
@@ -679,7 +678,7 @@ class ActionServiceApi extends BaseApi
      * Removes the public key from the target. This is a permanent action and can not be undone.  Note that you can only remove inactive keys. Attempting to remove an active key will result in an error.  For break glass scenarios, deactivate the key first and then remove it.  Removing a non-existing key is a no-op.   Required permission:    - `action.target.write`
 
      * @return \Zitadel\Client\Models\ActionServiceRemovePublicKeyResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removePublicKey(\Zitadel\Client\Models\ActionServiceRemovePublicKeyRequest $actionServiceRemovePublicKeyRequest)
     {
@@ -690,7 +689,7 @@ class ActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removePublicKey but received none',
                 $apiResult->headers,
@@ -705,7 +704,7 @@ class ActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\ActionServiceRemovePublicKeyResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removePublicKeyWithHttpInfo(\Zitadel\Client\Models\ActionServiceRemovePublicKeyRequest $actionServiceRemovePublicKeyRequest): ApiResult
     {
@@ -733,7 +732,7 @@ class ActionServiceApi extends BaseApi
      * Sets an execution to call a target or include the targets of another execution.  Setting an empty list of targets will remove all targets from the execution, making it a noop.   Required permission:    - `action.execution.write`
 
      * @return \Zitadel\Client\Models\ActionServiceSetExecutionResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setExecution(\Zitadel\Client\Models\ActionServiceSetExecutionRequest $actionServiceSetExecutionRequest)
     {
@@ -744,7 +743,7 @@ class ActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setExecution but received none',
                 $apiResult->headers,
@@ -759,7 +758,7 @@ class ActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\ActionServiceSetExecutionResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setExecutionWithHttpInfo(\Zitadel\Client\Models\ActionServiceSetExecutionRequest $actionServiceSetExecutionRequest): ApiResult
     {
@@ -787,7 +786,7 @@ class ActionServiceApi extends BaseApi
      * Update an existing target.  To generate a new signing key set the optional expirationSigningKey.   Required permission:    - `action.target.write`
 
      * @return \Zitadel\Client\Models\ActionServiceUpdateTargetResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateTarget(\Zitadel\Client\Models\ActionServiceUpdateTargetRequest $actionServiceUpdateTargetRequest)
     {
@@ -798,7 +797,7 @@ class ActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for updateTarget but received none',
                 $apiResult->headers,
@@ -813,7 +812,7 @@ class ActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\ActionServiceUpdateTargetResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateTargetWithHttpInfo(\Zitadel\Client\Models\ActionServiceUpdateTargetRequest $actionServiceUpdateTargetRequest): ApiResult
     {

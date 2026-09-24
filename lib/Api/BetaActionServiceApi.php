@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * BetaActionServiceApi provides methods for the BetaActionService API group.
  */
-
 class BetaActionServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class BetaActionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under action service v2. This endpoint will be removed with the next major version of ZITADEL.   Create a new target to your endpoint, which can be used in executions.   Required permission:    - `action.target.write`
 
      * @return \Zitadel\Client\Models\BetaActionServiceCreateTargetResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createTarget(\Zitadel\Client\Models\BetaActionServiceCreateTargetRequest $betaActionServiceCreateTargetRequest)
     {
@@ -42,7 +41,7 @@ class BetaActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createTarget but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class BetaActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaActionServiceCreateTargetResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createTargetWithHttpInfo(\Zitadel\Client\Models\BetaActionServiceCreateTargetRequest $betaActionServiceCreateTargetRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class BetaActionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under action service v2. This endpoint will be removed with the next major version of ZITADEL.   Delete an existing target. This will remove it from any configured execution as well.  In case the target is not found, the request will return a successful response as  the desired state is already achieved.   Required permission:    - `action.target.delete`
 
      * @return \Zitadel\Client\Models\BetaActionServiceDeleteTargetResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteTarget(\Zitadel\Client\Models\BetaActionServiceDeleteTargetRequest $betaActionServiceDeleteTargetRequest)
     {
@@ -96,7 +95,7 @@ class BetaActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteTarget but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class BetaActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaActionServiceDeleteTargetResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteTargetWithHttpInfo(\Zitadel\Client\Models\BetaActionServiceDeleteTargetRequest $betaActionServiceDeleteTargetRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class BetaActionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under action service v2. This endpoint will be removed with the next major version of ZITADEL.   Returns the target identified by the requested ID.   Required permission:    - `action.target.read`
 
      * @return \Zitadel\Client\Models\BetaActionServiceGetTargetResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getTarget(\Zitadel\Client\Models\BetaActionServiceGetTargetRequest $betaActionServiceGetTargetRequest)
     {
@@ -150,7 +149,7 @@ class BetaActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getTarget but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class BetaActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaActionServiceGetTargetResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getTargetWithHttpInfo(\Zitadel\Client\Models\BetaActionServiceGetTargetRequest $betaActionServiceGetTargetRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class BetaActionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under action service v2. This endpoint will be removed with the next major version of ZITADEL.   List all available functions which can be used as condition for executions.
 
      * @return \Zitadel\Client\Models\BetaActionServiceListExecutionFunctionsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutionFunctions(object $body)
     {
@@ -204,7 +203,7 @@ class BetaActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listExecutionFunctions but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class BetaActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaActionServiceListExecutionFunctionsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutionFunctionsWithHttpInfo(object $body): ApiResult
     {
@@ -247,7 +246,7 @@ class BetaActionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under action service v2. This endpoint will be removed with the next major version of ZITADEL.   List all available methods which can be used as condition for executions.
 
      * @return \Zitadel\Client\Models\BetaActionServiceListExecutionMethodsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutionMethods(object $body)
     {
@@ -258,7 +257,7 @@ class BetaActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listExecutionMethods but received none',
                 $apiResult->headers,
@@ -273,7 +272,7 @@ class BetaActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaActionServiceListExecutionMethodsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutionMethodsWithHttpInfo(object $body): ApiResult
     {
@@ -301,7 +300,7 @@ class BetaActionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under action service v2. This endpoint will be removed with the next major version of ZITADEL.   List all available services which can be used as condition for executions.
 
      * @return \Zitadel\Client\Models\BetaActionServiceListExecutionServicesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutionServices(object $body)
     {
@@ -312,7 +311,7 @@ class BetaActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listExecutionServices but received none',
                 $apiResult->headers,
@@ -327,7 +326,7 @@ class BetaActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaActionServiceListExecutionServicesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutionServicesWithHttpInfo(object $body): ApiResult
     {
@@ -355,7 +354,7 @@ class BetaActionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under action service v2. This endpoint will be removed with the next major version of ZITADEL.   List all matching executions. By default all executions of the instance are returned that have at least one execution target.  Make sure to include a limit and sorting for pagination.   Required permission:    - `action.execution.read`
 
      * @return \Zitadel\Client\Models\BetaActionServiceListExecutionsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutions(\Zitadel\Client\Models\BetaActionServiceListExecutionsRequest $betaActionServiceListExecutionsRequest)
     {
@@ -366,7 +365,7 @@ class BetaActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listExecutions but received none',
                 $apiResult->headers,
@@ -381,7 +380,7 @@ class BetaActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaActionServiceListExecutionsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listExecutionsWithHttpInfo(\Zitadel\Client\Models\BetaActionServiceListExecutionsRequest $betaActionServiceListExecutionsRequest): ApiResult
     {
@@ -409,7 +408,7 @@ class BetaActionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under action service v2. This endpoint will be removed with the next major version of ZITADEL.   List all matching targets. By default all targets of the instance are returned.  Make sure to include a limit and sorting for pagination.   Required permission:    - `action.target.read`
 
      * @return \Zitadel\Client\Models\BetaActionServiceListTargetsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listTargets(\Zitadel\Client\Models\BetaActionServiceListTargetsRequest $betaActionServiceListTargetsRequest)
     {
@@ -420,7 +419,7 @@ class BetaActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listTargets but received none',
                 $apiResult->headers,
@@ -435,7 +434,7 @@ class BetaActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaActionServiceListTargetsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listTargetsWithHttpInfo(\Zitadel\Client\Models\BetaActionServiceListTargetsRequest $betaActionServiceListTargetsRequest): ApiResult
     {
@@ -463,7 +462,7 @@ class BetaActionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under action service v2. This endpoint will be removed with the next major version of ZITADEL.   Sets an execution to call a target or include the targets of another execution.  Setting an empty list of targets will remove all targets from the execution, making it a noop.   Required permission:    - `action.execution.write`
 
      * @return \Zitadel\Client\Models\BetaActionServiceSetExecutionResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setExecution(\Zitadel\Client\Models\BetaActionServiceSetExecutionRequest $betaActionServiceSetExecutionRequest)
     {
@@ -474,7 +473,7 @@ class BetaActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setExecution but received none',
                 $apiResult->headers,
@@ -489,7 +488,7 @@ class BetaActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaActionServiceSetExecutionResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setExecutionWithHttpInfo(\Zitadel\Client\Models\BetaActionServiceSetExecutionRequest $betaActionServiceSetExecutionRequest): ApiResult
     {
@@ -517,7 +516,7 @@ class BetaActionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under action service v2. This endpoint will be removed with the next major version of ZITADEL.   Update an existing target.  To generate a new signing key set the optional expirationSigningKey.   Required permission:    - `action.target.write`
 
      * @return \Zitadel\Client\Models\BetaActionServiceUpdateTargetResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateTarget(\Zitadel\Client\Models\BetaActionServiceUpdateTargetRequest $betaActionServiceUpdateTargetRequest)
     {
@@ -528,7 +527,7 @@ class BetaActionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for updateTarget but received none',
                 $apiResult->headers,
@@ -543,7 +542,7 @@ class BetaActionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaActionServiceUpdateTargetResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateTargetWithHttpInfo(\Zitadel\Client\Models\BetaActionServiceUpdateTargetRequest $betaActionServiceUpdateTargetRequest): ApiResult
     {

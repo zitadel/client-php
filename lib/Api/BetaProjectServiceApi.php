@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * BetaProjectServiceApi provides methods for the BetaProjectService API group.
  */
-
 class BetaProjectServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Set the state of a project to active. Request returns no error if the project is already activated.   Required permission:    - `project.write`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceActivateProjectResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function activateProject(\Zitadel\Client\Models\BetaProjectServiceActivateProjectRequest $betaProjectServiceActivateProjectRequest)
     {
@@ -42,7 +41,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for activateProject but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceActivateProjectResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function activateProjectWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceActivateProjectRequest $betaProjectServiceActivateProjectRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Set the state of the project grant to activated.   Required permission:    - `project.grant.write`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceActivateProjectGrantResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function activateProjectGrant(\Zitadel\Client\Models\BetaProjectServiceActivateProjectGrantRequest $betaProjectServiceActivateProjectGrantRequest)
     {
@@ -96,7 +95,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for activateProjectGrant but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceActivateProjectGrantResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function activateProjectGrantWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceActivateProjectGrantRequest $betaProjectServiceActivateProjectGrantRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Add a new project role to a project. The key must be unique within the project.   Required permission:    - `project.role.write`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceAddProjectRoleResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addProjectRole(\Zitadel\Client\Models\BetaProjectServiceAddProjectRoleRequest $betaProjectServiceAddProjectRoleRequest)
     {
@@ -150,7 +149,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for addProjectRole but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceAddProjectRoleResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addProjectRoleWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceAddProjectRoleRequest $betaProjectServiceAddProjectRoleRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Create a new Project.   Required permission:    - `project.create`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceCreateProjectResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createProject(\Zitadel\Client\Models\BetaProjectServiceCreateProjectRequest $betaProjectServiceCreateProjectRequest)
     {
@@ -204,7 +203,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createProject but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceCreateProjectResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createProjectWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceCreateProjectRequest $betaProjectServiceCreateProjectRequest): ApiResult
     {
@@ -247,7 +246,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Grant a project to another organization.  The project grant will allow the granted organization to access the project and manage the authorizations for its users.   Required permission:    - `project.grant.create`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceCreateProjectGrantResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createProjectGrant(\Zitadel\Client\Models\BetaProjectServiceCreateProjectGrantRequest $betaProjectServiceCreateProjectGrantRequest)
     {
@@ -258,7 +257,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createProjectGrant but received none',
                 $apiResult->headers,
@@ -273,7 +272,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceCreateProjectGrantResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createProjectGrantWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceCreateProjectGrantRequest $betaProjectServiceCreateProjectGrantRequest): ApiResult
     {
@@ -301,7 +300,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Set the state of a project to deactivated. Request returns no error if the project is already deactivated.  Applications under deactivated projects are not able to login anymore.   Required permission:    - `project.write`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceDeactivateProjectResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deactivateProject(\Zitadel\Client\Models\BetaProjectServiceDeactivateProjectRequest $betaProjectServiceDeactivateProjectRequest)
     {
@@ -312,7 +311,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deactivateProject but received none',
                 $apiResult->headers,
@@ -327,7 +326,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceDeactivateProjectResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deactivateProjectWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceDeactivateProjectRequest $betaProjectServiceDeactivateProjectRequest): ApiResult
     {
@@ -355,7 +354,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Set the state of the project grant to deactivated.  Applications under deactivated projects grants are not able to login anymore.   Required permission:    - `project.grant.write`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceDeactivateProjectGrantResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deactivateProjectGrant(\Zitadel\Client\Models\BetaProjectServiceDeactivateProjectGrantRequest $betaProjectServiceDeactivateProjectGrantRequest)
     {
@@ -366,7 +365,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deactivateProjectGrant but received none',
                 $apiResult->headers,
@@ -381,7 +380,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceDeactivateProjectGrantResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deactivateProjectGrantWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceDeactivateProjectGrantRequest $betaProjectServiceDeactivateProjectGrantRequest): ApiResult
     {
@@ -409,7 +408,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Delete an existing project.  In case the project is not found, the request will return a successful response as  the desired state is already achieved.   Required permission:    - `project.delete`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceDeleteProjectResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteProject(\Zitadel\Client\Models\BetaProjectServiceDeleteProjectRequest $betaProjectServiceDeleteProjectRequest)
     {
@@ -420,7 +419,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteProject but received none',
                 $apiResult->headers,
@@ -435,7 +434,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceDeleteProjectResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteProjectWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceDeleteProjectRequest $betaProjectServiceDeleteProjectRequest): ApiResult
     {
@@ -463,7 +462,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Delete a project grant. All user grants for this project grant will also be removed.  A user will not have access to the project afterward (if permissions are checked).  In case the project grant is not found, the request will return a successful response as  the desired state is already achieved.   Required permission:    - `project.grant.delete`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceDeleteProjectGrantResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteProjectGrant(\Zitadel\Client\Models\BetaProjectServiceDeleteProjectGrantRequest $betaProjectServiceDeleteProjectGrantRequest)
     {
@@ -474,7 +473,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteProjectGrant but received none',
                 $apiResult->headers,
@@ -489,7 +488,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceDeleteProjectGrantResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteProjectGrantWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceDeleteProjectGrantRequest $betaProjectServiceDeleteProjectGrantRequest): ApiResult
     {
@@ -517,7 +516,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Returns the project identified by the requested ID.   Required permission:    - `project.read`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceGetProjectResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getProject(\Zitadel\Client\Models\BetaProjectServiceGetProjectRequest $betaProjectServiceGetProjectRequest)
     {
@@ -528,7 +527,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getProject but received none',
                 $apiResult->headers,
@@ -543,7 +542,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceGetProjectResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getProjectWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceGetProjectRequest $betaProjectServiceGetProjectRequest): ApiResult
     {
@@ -571,7 +570,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Returns a list of project grants. A project grant is when the organization grants its project to another organization.   Required permission:    - `project.grant.write`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceListProjectGrantsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listProjectGrants(\Zitadel\Client\Models\BetaProjectServiceListProjectGrantsRequest $betaProjectServiceListProjectGrantsRequest)
     {
@@ -582,7 +581,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listProjectGrants but received none',
                 $apiResult->headers,
@@ -597,7 +596,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceListProjectGrantsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listProjectGrantsWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceListProjectGrantsRequest $betaProjectServiceListProjectGrantsRequest): ApiResult
     {
@@ -625,7 +624,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Returns all roles of a project matching the search query.   Required permission:    - `project.role.read`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceListProjectRolesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listProjectRoles(\Zitadel\Client\Models\BetaProjectServiceListProjectRolesRequest $betaProjectServiceListProjectRolesRequest)
     {
@@ -636,7 +635,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listProjectRoles but received none',
                 $apiResult->headers,
@@ -651,7 +650,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceListProjectRolesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listProjectRolesWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceListProjectRolesRequest $betaProjectServiceListProjectRolesRequest): ApiResult
     {
@@ -679,7 +678,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   List all matching projects. By default all projects of the instance that the caller has permission to read are returned.  Make sure to include a limit and sorting for pagination.   Required permission:    - `project.read`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceListProjectsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listProjects(\Zitadel\Client\Models\BetaProjectServiceListProjectsRequest $betaProjectServiceListProjectsRequest)
     {
@@ -690,7 +689,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listProjects but received none',
                 $apiResult->headers,
@@ -705,7 +704,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceListProjectsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listProjectsWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceListProjectsRequest $betaProjectServiceListProjectsRequest): ApiResult
     {
@@ -733,7 +732,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Removes the role from the project and on every resource it has a dependency. This includes project grants and user grants.   Required permission:    - `project.role.write`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceRemoveProjectRoleResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeProjectRole(\Zitadel\Client\Models\BetaProjectServiceRemoveProjectRoleRequest $betaProjectServiceRemoveProjectRoleRequest)
     {
@@ -744,7 +743,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removeProjectRole but received none',
                 $apiResult->headers,
@@ -759,7 +758,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceRemoveProjectRoleResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeProjectRoleWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceRemoveProjectRoleRequest $betaProjectServiceRemoveProjectRoleRequest): ApiResult
     {
@@ -787,7 +786,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Update an existing project.   Required permission:    - `project.write`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceUpdateProjectResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateProject(\Zitadel\Client\Models\BetaProjectServiceUpdateProjectRequest $betaProjectServiceUpdateProjectRequest)
     {
@@ -798,7 +797,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for updateProject but received none',
                 $apiResult->headers,
@@ -813,7 +812,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceUpdateProjectResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateProjectWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceUpdateProjectRequest $betaProjectServiceUpdateProjectRequest): ApiResult
     {
@@ -841,7 +840,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Change the roles of the project that is granted to another organization.  The project grant will allow the granted organization to access the project and manage the authorizations for its users.   Required permission:    - `project.grant.write`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceUpdateProjectGrantResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateProjectGrant(\Zitadel\Client\Models\BetaProjectServiceUpdateProjectGrantRequest $betaProjectServiceUpdateProjectGrantRequest)
     {
@@ -852,7 +851,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for updateProjectGrant but received none',
                 $apiResult->headers,
@@ -867,7 +866,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceUpdateProjectGrantResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateProjectGrantWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceUpdateProjectGrantRequest $betaProjectServiceUpdateProjectGrantRequest): ApiResult
     {
@@ -895,7 +894,7 @@ class BetaProjectServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under project service v2. This endpoint will be removed with the next major version of ZITADEL.   Change a project role. The key is not editable. If a key should change, remove the role and create a new one.   Required permission:    - `project.role.write`
 
      * @return \Zitadel\Client\Models\BetaProjectServiceUpdateProjectRoleResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateProjectRole(\Zitadel\Client\Models\BetaProjectServiceUpdateProjectRoleRequest $betaProjectServiceUpdateProjectRoleRequest)
     {
@@ -906,7 +905,7 @@ class BetaProjectServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for updateProjectRole but received none',
                 $apiResult->headers,
@@ -921,7 +920,7 @@ class BetaProjectServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaProjectServiceUpdateProjectRoleResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateProjectRoleWithHttpInfo(\Zitadel\Client\Models\BetaProjectServiceUpdateProjectRoleRequest $betaProjectServiceUpdateProjectRoleRequest): ApiResult
     {

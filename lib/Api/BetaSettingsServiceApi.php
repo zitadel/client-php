@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * BetaSettingsServiceApi provides methods for the BetaSettingsService API group.
  */
-
 class BetaSettingsServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class BetaSettingsServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under settings service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSettingsServiceGetActiveIdentityProvidersResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getActiveIdentityProviders(\Zitadel\Client\Models\BetaSettingsServiceGetActiveIdentityProvidersRequest $betaSettingsServiceGetActiveIdentityProvidersRequest)
     {
@@ -42,7 +41,7 @@ class BetaSettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getActiveIdentityProviders but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class BetaSettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSettingsServiceGetActiveIdentityProvidersResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getActiveIdentityProvidersWithHttpInfo(\Zitadel\Client\Models\BetaSettingsServiceGetActiveIdentityProvidersRequest $betaSettingsServiceGetActiveIdentityProvidersRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class BetaSettingsServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under settings service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSettingsServiceGetBrandingSettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getBrandingSettings(\Zitadel\Client\Models\BetaSettingsServiceGetBrandingSettingsRequest $betaSettingsServiceGetBrandingSettingsRequest)
     {
@@ -96,7 +95,7 @@ class BetaSettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getBrandingSettings but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class BetaSettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSettingsServiceGetBrandingSettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getBrandingSettingsWithHttpInfo(\Zitadel\Client\Models\BetaSettingsServiceGetBrandingSettingsRequest $betaSettingsServiceGetBrandingSettingsRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class BetaSettingsServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under settings service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSettingsServiceGetDomainSettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getDomainSettings(\Zitadel\Client\Models\BetaSettingsServiceGetDomainSettingsRequest $betaSettingsServiceGetDomainSettingsRequest)
     {
@@ -150,7 +149,7 @@ class BetaSettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getDomainSettings but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class BetaSettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSettingsServiceGetDomainSettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getDomainSettingsWithHttpInfo(\Zitadel\Client\Models\BetaSettingsServiceGetDomainSettingsRequest $betaSettingsServiceGetDomainSettingsRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class BetaSettingsServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under settings service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSettingsServiceGetGeneralSettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getGeneralSettings(object $body)
     {
@@ -204,7 +203,7 @@ class BetaSettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getGeneralSettings but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class BetaSettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSettingsServiceGetGeneralSettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getGeneralSettingsWithHttpInfo(object $body): ApiResult
     {
@@ -247,7 +246,7 @@ class BetaSettingsServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under settings service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSettingsServiceGetLegalAndSupportSettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getLegalAndSupportSettings(\Zitadel\Client\Models\BetaSettingsServiceGetLegalAndSupportSettingsRequest $betaSettingsServiceGetLegalAndSupportSettingsRequest)
     {
@@ -258,7 +257,7 @@ class BetaSettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getLegalAndSupportSettings but received none',
                 $apiResult->headers,
@@ -273,7 +272,7 @@ class BetaSettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSettingsServiceGetLegalAndSupportSettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getLegalAndSupportSettingsWithHttpInfo(\Zitadel\Client\Models\BetaSettingsServiceGetLegalAndSupportSettingsRequest $betaSettingsServiceGetLegalAndSupportSettingsRequest): ApiResult
     {
@@ -301,7 +300,7 @@ class BetaSettingsServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under settings service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSettingsServiceGetLockoutSettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getLockoutSettings(\Zitadel\Client\Models\BetaSettingsServiceGetLockoutSettingsRequest $betaSettingsServiceGetLockoutSettingsRequest)
     {
@@ -312,7 +311,7 @@ class BetaSettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getLockoutSettings but received none',
                 $apiResult->headers,
@@ -327,7 +326,7 @@ class BetaSettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSettingsServiceGetLockoutSettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getLockoutSettingsWithHttpInfo(\Zitadel\Client\Models\BetaSettingsServiceGetLockoutSettingsRequest $betaSettingsServiceGetLockoutSettingsRequest): ApiResult
     {
@@ -355,7 +354,7 @@ class BetaSettingsServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under settings service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSettingsServiceGetLoginSettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getLoginSettings(\Zitadel\Client\Models\BetaSettingsServiceGetLoginSettingsRequest $betaSettingsServiceGetLoginSettingsRequest)
     {
@@ -366,7 +365,7 @@ class BetaSettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getLoginSettings but received none',
                 $apiResult->headers,
@@ -381,7 +380,7 @@ class BetaSettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSettingsServiceGetLoginSettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getLoginSettingsWithHttpInfo(\Zitadel\Client\Models\BetaSettingsServiceGetLoginSettingsRequest $betaSettingsServiceGetLoginSettingsRequest): ApiResult
     {
@@ -409,7 +408,7 @@ class BetaSettingsServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under settings service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSettingsServiceGetPasswordComplexitySettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getPasswordComplexitySettings(\Zitadel\Client\Models\BetaSettingsServiceGetPasswordComplexitySettingsRequest $betaSettingsServiceGetPasswordComplexitySettingsRequest)
     {
@@ -420,7 +419,7 @@ class BetaSettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getPasswordComplexitySettings but received none',
                 $apiResult->headers,
@@ -435,7 +434,7 @@ class BetaSettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSettingsServiceGetPasswordComplexitySettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getPasswordComplexitySettingsWithHttpInfo(\Zitadel\Client\Models\BetaSettingsServiceGetPasswordComplexitySettingsRequest $betaSettingsServiceGetPasswordComplexitySettingsRequest): ApiResult
     {
@@ -463,7 +462,7 @@ class BetaSettingsServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under settings service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSettingsServiceGetPasswordExpirySettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getPasswordExpirySettings(\Zitadel\Client\Models\BetaSettingsServiceGetPasswordExpirySettingsRequest $betaSettingsServiceGetPasswordExpirySettingsRequest)
     {
@@ -474,7 +473,7 @@ class BetaSettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getPasswordExpirySettings but received none',
                 $apiResult->headers,
@@ -489,7 +488,7 @@ class BetaSettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSettingsServiceGetPasswordExpirySettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getPasswordExpirySettingsWithHttpInfo(\Zitadel\Client\Models\BetaSettingsServiceGetPasswordExpirySettingsRequest $betaSettingsServiceGetPasswordExpirySettingsRequest): ApiResult
     {
@@ -517,7 +516,7 @@ class BetaSettingsServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under settings service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSettingsServiceGetSecuritySettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getSecuritySettings(object $body)
     {
@@ -528,7 +527,7 @@ class BetaSettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getSecuritySettings but received none',
                 $apiResult->headers,
@@ -543,7 +542,7 @@ class BetaSettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSettingsServiceGetSecuritySettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getSecuritySettingsWithHttpInfo(object $body): ApiResult
     {
@@ -571,7 +570,7 @@ class BetaSettingsServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under settings service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSettingsServiceSetSecuritySettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setSecuritySettings(\Zitadel\Client\Models\BetaSettingsServiceSetSecuritySettingsRequest $betaSettingsServiceSetSecuritySettingsRequest)
     {
@@ -582,7 +581,7 @@ class BetaSettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setSecuritySettings but received none',
                 $apiResult->headers,
@@ -597,7 +596,7 @@ class BetaSettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSettingsServiceSetSecuritySettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setSecuritySettingsWithHttpInfo(\Zitadel\Client\Models\BetaSettingsServiceSetSecuritySettingsRequest $betaSettingsServiceSetSecuritySettingsRequest): ApiResult
     {

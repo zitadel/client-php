@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * BetaInternalPermissionServiceApi provides methods for the BetaInternalPermissionService API group.
  */
-
 class BetaInternalPermissionServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class BetaInternalPermissionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under internal permission service v2. This endpoint will be removed with the next major version of ZITADEL.   Note that the roles are specific to the resource type.  This means that if you want to grant a user the administrator role for an organization and a project,  you need to create two administrator roles.   Required permissions depend on the resource type:    - \"iam.member.write\" for instance administrators    - \"org.member.write\" for organization administrators    - \"project.member.write\" for project administrators    - \"project.grant.member.write\" for project grant administrators
 
      * @return \Zitadel\Client\Models\BetaInternalPermissionServiceCreateAdministratorResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createAdministrator(\Zitadel\Client\Models\BetaInternalPermissionServiceCreateAdministratorRequest $betaInternalPermissionServiceCreateAdministratorRequest)
     {
@@ -42,7 +41,7 @@ class BetaInternalPermissionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createAdministrator but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class BetaInternalPermissionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaInternalPermissionServiceCreateAdministratorResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createAdministratorWithHttpInfo(\Zitadel\Client\Models\BetaInternalPermissionServiceCreateAdministratorRequest $betaInternalPermissionServiceCreateAdministratorRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class BetaInternalPermissionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under internal permission service v2. This endpoint will be removed with the next major version of ZITADEL.   In case the administrator role is not found, the request will return a successful response as  the desired state is already achieved.  You can check the deletion date in the response to verify if the administrator role was deleted during the request.   Required permissions depend on the resource type:    - \"iam.member.delete\" for instance administrators    - \"org.member.delete\" for organization administrators    - \"project.member.delete\" for project administrators    - \"project.grant.member.delete\" for project grant administrators
 
      * @return \Zitadel\Client\Models\BetaInternalPermissionServiceDeleteAdministratorResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteAdministrator(\Zitadel\Client\Models\BetaInternalPermissionServiceDeleteAdministratorRequest $betaInternalPermissionServiceDeleteAdministratorRequest)
     {
@@ -96,7 +95,7 @@ class BetaInternalPermissionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteAdministrator but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class BetaInternalPermissionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaInternalPermissionServiceDeleteAdministratorResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteAdministratorWithHttpInfo(\Zitadel\Client\Models\BetaInternalPermissionServiceDeleteAdministratorRequest $betaInternalPermissionServiceDeleteAdministratorRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class BetaInternalPermissionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under internal permission service v2. This endpoint will be removed with the next major version of ZITADEL.   Required permissions depend on the resource type:    - \"iam.member.read\" for instance administrators    - \"org.member.read\" for organization administrators    - \"project.member.read\" for project administrators    - \"project.grant.member.read\" for project grant administrators    - no permissions required for listing own administrator roles
 
      * @return \Zitadel\Client\Models\BetaInternalPermissionServiceListAdministratorsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listAdministrators(\Zitadel\Client\Models\BetaInternalPermissionServiceListAdministratorsRequest $betaInternalPermissionServiceListAdministratorsRequest)
     {
@@ -150,7 +149,7 @@ class BetaInternalPermissionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listAdministrators but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class BetaInternalPermissionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaInternalPermissionServiceListAdministratorsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listAdministratorsWithHttpInfo(\Zitadel\Client\Models\BetaInternalPermissionServiceListAdministratorsRequest $betaInternalPermissionServiceListAdministratorsRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class BetaInternalPermissionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under internal permission service v2. This endpoint will be removed with the next major version of ZITADEL.   Note that any role previously granted to the user and not present in the request will be revoked.   Required permissions depend on the resource type:    - \"iam.member.write\" for instance administrators    - \"org.member.write\" for organization administrators    - \"project.member.write\" for project administrators    - \"project.grant.member.write\" for project grant administrators
 
      * @return \Zitadel\Client\Models\BetaInternalPermissionServiceUpdateAdministratorResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateAdministrator(\Zitadel\Client\Models\BetaInternalPermissionServiceUpdateAdministratorRequest $betaInternalPermissionServiceUpdateAdministratorRequest)
     {
@@ -204,7 +203,7 @@ class BetaInternalPermissionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for updateAdministrator but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class BetaInternalPermissionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaInternalPermissionServiceUpdateAdministratorResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateAdministratorWithHttpInfo(\Zitadel\Client\Models\BetaInternalPermissionServiceUpdateAdministratorRequest $betaInternalPermissionServiceUpdateAdministratorRequest): ApiResult
     {

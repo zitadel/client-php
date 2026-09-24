@@ -417,7 +417,7 @@ test('empty string path param throws', function (): void {
     // Gap W — empty-string path values silently produce malformed
     // URLs like `/resource//details`; reject at serialization time so
     // callers see the real error rather than a downstream 404.
-    expect(fn (): string|array|null => ValueSerializer::serializeStyled('id', '', 'path', 'string', null, 'simple', false))
+    expect(fn () => ValueSerializer::serializeStyled('id', '', 'path', 'string', null, 'simple', false))
         ->toThrow(\InvalidArgumentException::class);
 });
 

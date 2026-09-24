@@ -30,6 +30,7 @@
         "slevomat/coding-standard": "^8.16",
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
         "rector/rector": "^2.4",
+        "open-telemetry/sdk": "^1.0",
         "ext-dom": "*",
         "haydenpierce/class-finder": "^0.5.3",
         "testcontainers/testcontainers": "^1.0",
@@ -48,7 +49,9 @@
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": false,
+            "tbachert/spi": false
         }
     },
     "suggest": {

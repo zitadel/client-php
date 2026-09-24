@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * BetaTelemetryServiceApi provides methods for the BetaTelemetryService API group.
  */
-
 class BetaTelemetryServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class BetaTelemetryServiceApi extends BaseApi
      * ReportBaseInformation is used to report the base information of the ZITADEL system,  including the version, instances, their creation date and domains.  The response contains a report ID to link it to the resource counts or other reports.  The report ID is only valid for the same system ID.
 
      * @return \Zitadel\Client\Models\BetaTelemetryServiceReportBaseInformationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function reportBaseInformation(\Zitadel\Client\Models\BetaTelemetryServiceReportBaseInformationRequest $betaTelemetryServiceReportBaseInformationRequest)
     {
@@ -42,7 +41,7 @@ class BetaTelemetryServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for reportBaseInformation but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class BetaTelemetryServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaTelemetryServiceReportBaseInformationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function reportBaseInformationWithHttpInfo(\Zitadel\Client\Models\BetaTelemetryServiceReportBaseInformationRequest $betaTelemetryServiceReportBaseInformationRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class BetaTelemetryServiceApi extends BaseApi
      * ReportResourceCounts is used to report the resource counts such as amount of organizations  or users per organization and much more.  Since the resource counts can be reported in multiple batches,  the response contains a report ID to continue reporting.  The report ID is only valid for the same system ID.
 
      * @return \Zitadel\Client\Models\BetaTelemetryServiceReportResourceCountsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function reportResourceCounts(\Zitadel\Client\Models\BetaTelemetryServiceReportResourceCountsRequest $betaTelemetryServiceReportResourceCountsRequest)
     {
@@ -96,7 +95,7 @@ class BetaTelemetryServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for reportResourceCounts but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class BetaTelemetryServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaTelemetryServiceReportResourceCountsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function reportResourceCountsWithHttpInfo(\Zitadel\Client\Models\BetaTelemetryServiceReportResourceCountsRequest $betaTelemetryServiceReportResourceCountsRequest): ApiResult
     {

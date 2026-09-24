@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * BetaOIDCServiceApi provides methods for the BetaOIDCService API group.
  */
-
 class BetaOIDCServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class BetaOIDCServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under oidc service v2. This endpoint will be removed with the next major version of ZITADEL.   Finalize an Auth Request and get the callback URL for success or failure.  The user must be redirected to the URL in order to inform the application about the success or failure.  On success, the URL contains details for the application to obtain the tokens.  This method can only be called once for an Auth request.
 
      * @return \Zitadel\Client\Models\BetaOIDCServiceCreateCallbackResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createCallback(\Zitadel\Client\Models\BetaOIDCServiceCreateCallbackRequest $betaOIDCServiceCreateCallbackRequest)
     {
@@ -42,7 +41,7 @@ class BetaOIDCServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createCallback but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class BetaOIDCServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaOIDCServiceCreateCallbackResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createCallbackWithHttpInfo(\Zitadel\Client\Models\BetaOIDCServiceCreateCallbackRequest $betaOIDCServiceCreateCallbackRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class BetaOIDCServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under oidc service v2. This endpoint will be removed with the next major version of ZITADEL.   Get OIDC Auth Request details by ID, obtained from the redirect URL. Returns details that are parsed from the application's Auth Request.
 
      * @return \Zitadel\Client\Models\BetaOIDCServiceGetAuthRequestResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getAuthRequest(\Zitadel\Client\Models\BetaOIDCServiceGetAuthRequestRequest $betaOIDCServiceGetAuthRequestRequest)
     {
@@ -96,7 +95,7 @@ class BetaOIDCServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getAuthRequest but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class BetaOIDCServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaOIDCServiceGetAuthRequestResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getAuthRequestWithHttpInfo(\Zitadel\Client\Models\BetaOIDCServiceGetAuthRequestRequest $betaOIDCServiceGetAuthRequestRequest): ApiResult
     {

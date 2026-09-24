@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * BetaAppServiceApi provides methods for the BetaAppService API group.
  */
-
 class BetaAppServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class BetaAppServiceApi extends BaseApi
      * Deprecated: use [application service v2 CreateApplication](apis/resources/application_service_v2/application-service-create-application.api.mdx) instead.   Create an application. The application can be OIDC, API or SAML type, based on the input.   Required permissions:    - project.app.write
 
      * @return \Zitadel\Client\Models\BetaAppServiceCreateApplicationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createApplication(\Zitadel\Client\Models\BetaAppServiceCreateApplicationRequest $betaAppServiceCreateApplicationRequest)
     {
@@ -42,7 +41,7 @@ class BetaAppServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createApplication but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class BetaAppServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaAppServiceCreateApplicationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createApplicationWithHttpInfo(\Zitadel\Client\Models\BetaAppServiceCreateApplicationRequest $betaAppServiceCreateApplicationRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class BetaAppServiceApi extends BaseApi
      * Deprecated: use [application service v2 CreateApplicationKey](apis/resources/application_service_v2/application-service-create-application-key.api.mdx) instead.   Create a new application key, which is used to authorize an API application.   Key details are returned in the response. They must be stored safely, as it will not  be possible to retrieve them again.   Required permissions:    - `project.app.write`
 
      * @return \Zitadel\Client\Models\BetaAppServiceCreateApplicationKeyResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createApplicationKey(\Zitadel\Client\Models\BetaAppServiceCreateApplicationKeyRequest $betaAppServiceCreateApplicationKeyRequest)
     {
@@ -96,7 +95,7 @@ class BetaAppServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createApplicationKey but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class BetaAppServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaAppServiceCreateApplicationKeyResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createApplicationKeyWithHttpInfo(\Zitadel\Client\Models\BetaAppServiceCreateApplicationKeyRequest $betaAppServiceCreateApplicationKeyRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class BetaAppServiceApi extends BaseApi
      * Deprecated: use [application service v2 DeactivateApplication](apis/resources/application_service_v2/application-service-deactivate-application.api.mdx) instead.   Deactivates the application belonging to the input project and matching the provided  application ID.   Required permissions:    - project.app.write
 
      * @return \Zitadel\Client\Models\BetaAppServiceDeactivateApplicationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deactivateApplication(\Zitadel\Client\Models\BetaAppServiceDeactivateApplicationRequest $betaAppServiceDeactivateApplicationRequest)
     {
@@ -150,7 +149,7 @@ class BetaAppServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deactivateApplication but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class BetaAppServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaAppServiceDeactivateApplicationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deactivateApplicationWithHttpInfo(\Zitadel\Client\Models\BetaAppServiceDeactivateApplicationRequest $betaAppServiceDeactivateApplicationRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class BetaAppServiceApi extends BaseApi
      * Deprecated: use [application service v2 DeleteApplication](apis/resources/application_service_v2/application-service-delete-application.api.mdx) instead.   Deletes the application belonging to the input project and matching the provided  application ID.   Required permissions:    - project.app.delete
 
      * @return \Zitadel\Client\Models\BetaAppServiceDeleteApplicationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteApplication(\Zitadel\Client\Models\BetaAppServiceDeleteApplicationRequest $betaAppServiceDeleteApplicationRequest)
     {
@@ -204,7 +203,7 @@ class BetaAppServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteApplication but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class BetaAppServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaAppServiceDeleteApplicationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteApplicationWithHttpInfo(\Zitadel\Client\Models\BetaAppServiceDeleteApplicationRequest $betaAppServiceDeleteApplicationRequest): ApiResult
     {
@@ -247,7 +246,7 @@ class BetaAppServiceApi extends BaseApi
      * Deprecated: use [application service v2 DeleteApplicationKey](apis/resources/application_service_v2/application-service-delete-application-key.api.mdx) instead.   Deletes an application key matching the provided ID.   Organization ID is not mandatory, but helps with filtering/performance.   The deletion time is returned in response message.   Required permissions:    - `project.app.write`
 
      * @return \Zitadel\Client\Models\BetaAppServiceDeleteApplicationKeyResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteApplicationKey(\Zitadel\Client\Models\BetaAppServiceDeleteApplicationKeyRequest $betaAppServiceDeleteApplicationKeyRequest)
     {
@@ -258,7 +257,7 @@ class BetaAppServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteApplicationKey but received none',
                 $apiResult->headers,
@@ -273,7 +272,7 @@ class BetaAppServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaAppServiceDeleteApplicationKeyResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteApplicationKeyWithHttpInfo(\Zitadel\Client\Models\BetaAppServiceDeleteApplicationKeyRequest $betaAppServiceDeleteApplicationKeyRequest): ApiResult
     {
@@ -301,7 +300,7 @@ class BetaAppServiceApi extends BaseApi
      * Deprecated: use [application service v2 GetApplication](apis/resources/application_service_v2/application-service-get-application.api.mdx) instead.   Retrieves the application matching the provided ID.   Required permissions:    - project.app.read
 
      * @return \Zitadel\Client\Models\BetaAppServiceGetApplicationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getApplication(\Zitadel\Client\Models\BetaAppServiceGetApplicationRequest $betaAppServiceGetApplicationRequest)
     {
@@ -312,7 +311,7 @@ class BetaAppServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getApplication but received none',
                 $apiResult->headers,
@@ -327,7 +326,7 @@ class BetaAppServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaAppServiceGetApplicationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getApplicationWithHttpInfo(\Zitadel\Client\Models\BetaAppServiceGetApplicationRequest $betaAppServiceGetApplicationRequest): ApiResult
     {
@@ -355,7 +354,7 @@ class BetaAppServiceApi extends BaseApi
      * Deprecated: use [application service v2 GetApplicationKey](apis/resources/application_service_v2/application-service-get-application-key.api.mdx) instead.   Retrieves the application key matching the provided ID.   Specifying a project, organization and app ID is optional but help with filtering/performance.   Required permissions:    - project.app.read
 
      * @return \Zitadel\Client\Models\BetaAppServiceGetApplicationKeyResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getApplicationKey(\Zitadel\Client\Models\BetaAppServiceGetApplicationKeyRequest $betaAppServiceGetApplicationKeyRequest)
     {
@@ -366,7 +365,7 @@ class BetaAppServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getApplicationKey but received none',
                 $apiResult->headers,
@@ -381,7 +380,7 @@ class BetaAppServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaAppServiceGetApplicationKeyResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getApplicationKeyWithHttpInfo(\Zitadel\Client\Models\BetaAppServiceGetApplicationKeyRequest $betaAppServiceGetApplicationKeyRequest): ApiResult
     {
@@ -409,7 +408,7 @@ class BetaAppServiceApi extends BaseApi
      * Deprecated: use [application service v2 ListApplicationKeys](apis/resources/application_service_v2/application-service-list-application-keys.api.mdx) instead.   Returns a list of application keys matching the input parameters.   The result can be sorted by id, aggregate, creation date, expiration date, resource owner or type.  It can also be filtered by app, project or organization ID.   Required permissions:    - project.app.read
 
      * @return \Zitadel\Client\Models\BetaAppServiceListApplicationKeysResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listApplicationKeys(\Zitadel\Client\Models\BetaAppServiceListApplicationKeysRequest $betaAppServiceListApplicationKeysRequest)
     {
@@ -420,7 +419,7 @@ class BetaAppServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listApplicationKeys but received none',
                 $apiResult->headers,
@@ -435,7 +434,7 @@ class BetaAppServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaAppServiceListApplicationKeysResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listApplicationKeysWithHttpInfo(\Zitadel\Client\Models\BetaAppServiceListApplicationKeysRequest $betaAppServiceListApplicationKeysRequest): ApiResult
     {
@@ -463,7 +462,7 @@ class BetaAppServiceApi extends BaseApi
      * Deprecated: use [application service v2 ListApplications](apis/resources/application_service_v2/application-service-list-applications.api.mdx) instead.   Returns a list of applications matching the input parameters that belong to the provided  project.   The result can be sorted by app id, name, creation date, change date or state. It can also  be filtered by app state, app type and app name.   Required permissions:    - project.app.read
 
      * @return \Zitadel\Client\Models\BetaAppServiceListApplicationsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listApplications(\Zitadel\Client\Models\BetaAppServiceListApplicationsRequest $betaAppServiceListApplicationsRequest)
     {
@@ -474,7 +473,7 @@ class BetaAppServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listApplications but received none',
                 $apiResult->headers,
@@ -489,7 +488,7 @@ class BetaAppServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaAppServiceListApplicationsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listApplicationsWithHttpInfo(\Zitadel\Client\Models\BetaAppServiceListApplicationsRequest $betaAppServiceListApplicationsRequest): ApiResult
     {
@@ -517,7 +516,7 @@ class BetaAppServiceApi extends BaseApi
      * Deprecated: use [application service v2 ReactivateApplication](apis/resources/application_service_v2/application-service-reactivate-application.api.mdx) instead.   Reactivates the application belonging to the input project and matching the provided  application ID.   Required permissions:    - project.app.write
 
      * @return \Zitadel\Client\Models\BetaAppServiceReactivateApplicationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function reactivateApplication(\Zitadel\Client\Models\BetaAppServiceReactivateApplicationRequest $betaAppServiceReactivateApplicationRequest)
     {
@@ -528,7 +527,7 @@ class BetaAppServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for reactivateApplication but received none',
                 $apiResult->headers,
@@ -543,7 +542,7 @@ class BetaAppServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaAppServiceReactivateApplicationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function reactivateApplicationWithHttpInfo(\Zitadel\Client\Models\BetaAppServiceReactivateApplicationRequest $betaAppServiceReactivateApplicationRequest): ApiResult
     {
@@ -571,7 +570,7 @@ class BetaAppServiceApi extends BaseApi
      * Deprecated: use [application service v2 GenerateClientSecret](apis/resources/application_service_v2/application-service-generate-client-secret.api.mdx) instead.   Regenerates the client secret of an API or OIDC application that belongs to the input project.    Required permissions:    - project.app.write
 
      * @return \Zitadel\Client\Models\BetaAppServiceRegenerateClientSecretResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function regenerateClientSecret(\Zitadel\Client\Models\BetaAppServiceRegenerateClientSecretRequest $betaAppServiceRegenerateClientSecretRequest)
     {
@@ -582,7 +581,7 @@ class BetaAppServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for regenerateClientSecret but received none',
                 $apiResult->headers,
@@ -597,7 +596,7 @@ class BetaAppServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaAppServiceRegenerateClientSecretResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function regenerateClientSecretWithHttpInfo(\Zitadel\Client\Models\BetaAppServiceRegenerateClientSecretRequest $betaAppServiceRegenerateClientSecretRequest): ApiResult
     {
@@ -625,7 +624,7 @@ class BetaAppServiceApi extends BaseApi
      * Deprecated: use [application service v2 UpdateApplication](apis/resources/application_service_v2/zitadel-app-v-2-application-service-update-application.api.mdx) instead.   Changes the configuration of an OIDC, API or SAML type application, as well as  the application name, based on the input provided.   Required permissions:    - project.app.write
 
      * @return \Zitadel\Client\Models\BetaAppServiceUpdateApplicationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateApplication(\Zitadel\Client\Models\BetaAppServiceUpdateApplicationRequest $betaAppServiceUpdateApplicationRequest)
     {
@@ -636,7 +635,7 @@ class BetaAppServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for updateApplication but received none',
                 $apiResult->headers,
@@ -651,7 +650,7 @@ class BetaAppServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaAppServiceUpdateApplicationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateApplicationWithHttpInfo(\Zitadel\Client\Models\BetaAppServiceUpdateApplicationRequest $betaAppServiceUpdateApplicationRequest): ApiResult
     {

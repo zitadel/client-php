@@ -65,7 +65,7 @@ final class UriNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         \assert(is_string($data));
         $parsed = \Uri\Rfc3986\Uri::parse($data);
-        if (!$parsed instanceof \Uri\Rfc3986\Uri) {
+        if ($parsed === null) {
             throw new \Symfony\Component\Serializer\Exception\NotNormalizableValueException(
                 sprintf('Cannot denormalize %s as %s: not a valid RFC 3986 URI', \json_encode($data), \Uri\Rfc3986\Uri::class)
             );

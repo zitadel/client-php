@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * WebKeyServiceApi provides methods for the WebKeyService API group.
  */
-
 class WebKeyServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class WebKeyServiceApi extends BaseApi
      * Switch the active signing web key. The previously active key will be deactivated.  Note that the JWKs OIDC endpoint returns a cacheable response.  Therefore it is not advised to activate a key that has been created within the cache duration (default is 5min),  as the public key may not have been propagated to caches and clients yet.   Required permission:    - `iam.web_key.write`
 
      * @return \Zitadel\Client\Models\WebKeyServiceActivateWebKeyResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function activateWebKey(\Zitadel\Client\Models\WebKeyServiceActivateWebKeyRequest $webKeyServiceActivateWebKeyRequest)
     {
@@ -42,7 +41,7 @@ class WebKeyServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for activateWebKey but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class WebKeyServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\WebKeyServiceActivateWebKeyResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function activateWebKeyWithHttpInfo(\Zitadel\Client\Models\WebKeyServiceActivateWebKeyRequest $webKeyServiceActivateWebKeyRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class WebKeyServiceApi extends BaseApi
      * Generate a private and public key pair. The private key can be used to sign OIDC tokens after activation.  The public key can be used to validate OIDC tokens.  The newly created key will have the state `STATE_INITIAL` and is published to the public key endpoint.  Note that the JWKs OIDC endpoint returns a cacheable response.   If no key type is provided, a RSA key pair with 2048 bits and SHA256 hashing will be created.   Required permission:    - `iam.web_key.write`
 
      * @return \Zitadel\Client\Models\WebKeyServiceCreateWebKeyResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createWebKey(\Zitadel\Client\Models\WebKeyServiceCreateWebKeyRequest $webKeyServiceCreateWebKeyRequest)
     {
@@ -96,7 +95,7 @@ class WebKeyServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createWebKey but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class WebKeyServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\WebKeyServiceCreateWebKeyResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createWebKeyWithHttpInfo(\Zitadel\Client\Models\WebKeyServiceCreateWebKeyRequest $webKeyServiceCreateWebKeyRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class WebKeyServiceApi extends BaseApi
      * Delete a web key pair. Only inactive keys can be deleted. Once a key is deleted,  any tokens signed by this key will be invalid.  Note that the JWKs OIDC endpoint returns a cacheable response.  In case the web key is not found, the request will return a successful response as  the desired state is already achieved.  You can check the change date in the response to verify if the web key was deleted during the request.   Required permission:    - `iam.web_key.delete`
 
      * @return \Zitadel\Client\Models\WebKeyServiceDeleteWebKeyResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteWebKey(\Zitadel\Client\Models\WebKeyServiceDeleteWebKeyRequest $webKeyServiceDeleteWebKeyRequest)
     {
@@ -150,7 +149,7 @@ class WebKeyServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteWebKey but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class WebKeyServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\WebKeyServiceDeleteWebKeyResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteWebKeyWithHttpInfo(\Zitadel\Client\Models\WebKeyServiceDeleteWebKeyRequest $webKeyServiceDeleteWebKeyRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class WebKeyServiceApi extends BaseApi
      * List all web keys and their states.   Required permission:    - `iam.web_key.read`
 
      * @return \Zitadel\Client\Models\WebKeyServiceListWebKeysResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listWebKeys(object $body)
     {
@@ -204,7 +203,7 @@ class WebKeyServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listWebKeys but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class WebKeyServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\WebKeyServiceListWebKeysResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listWebKeysWithHttpInfo(object $body): ApiResult
     {

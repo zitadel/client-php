@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * AuthorizationServiceApi provides methods for the AuthorizationService API group.
  */
-
 class AuthorizationServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class AuthorizationServiceApi extends BaseApi
      * ActivateAuthorization activates an existing but inactive authorization.   In case the authorization is already active, the request will return a successful response as  the desired state is already achieved.  You can check the change date in the response to verify if the authorization was activated by the request.   Required permissions:    - \"user.grant.write\"
 
      * @return \Zitadel\Client\Models\AuthorizationServiceActivateAuthorizationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function activateAuthorization(\Zitadel\Client\Models\AuthorizationServiceActivateAuthorizationRequest $authorizationServiceActivateAuthorizationRequest)
     {
@@ -42,7 +41,7 @@ class AuthorizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for activateAuthorization but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class AuthorizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\AuthorizationServiceActivateAuthorizationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function activateAuthorizationWithHttpInfo(\Zitadel\Client\Models\AuthorizationServiceActivateAuthorizationRequest $authorizationServiceActivateAuthorizationRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class AuthorizationServiceApi extends BaseApi
      * CreateAuthorization creates a new authorization for a user in an owned or granted project.   Required permissions:    - \"user.grant.write\"
 
      * @return \Zitadel\Client\Models\AuthorizationServiceCreateAuthorizationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createAuthorization(\Zitadel\Client\Models\AuthorizationServiceCreateAuthorizationRequest $authorizationServiceCreateAuthorizationRequest)
     {
@@ -96,7 +95,7 @@ class AuthorizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createAuthorization but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class AuthorizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\AuthorizationServiceCreateAuthorizationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createAuthorizationWithHttpInfo(\Zitadel\Client\Models\AuthorizationServiceCreateAuthorizationRequest $authorizationServiceCreateAuthorizationRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class AuthorizationServiceApi extends BaseApi
      * DeactivateAuthorization deactivates an existing and active authorization.   In case the authorization is already inactive, the request will return a successful response as  the desired state is already achieved.  You can check the change date in the response to verify if the authorization was deactivated by the request.   Required permissions:    - \"user.grant.write\"
 
      * @return \Zitadel\Client\Models\AuthorizationServiceDeactivateAuthorizationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deactivateAuthorization(\Zitadel\Client\Models\AuthorizationServiceDeactivateAuthorizationRequest $authorizationServiceDeactivateAuthorizationRequest)
     {
@@ -150,7 +149,7 @@ class AuthorizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deactivateAuthorization but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class AuthorizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\AuthorizationServiceDeactivateAuthorizationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deactivateAuthorizationWithHttpInfo(\Zitadel\Client\Models\AuthorizationServiceDeactivateAuthorizationRequest $authorizationServiceDeactivateAuthorizationRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class AuthorizationServiceApi extends BaseApi
      * DeleteAuthorization deletes the authorization.   In case the authorization is not found, the request will return a successful response as  the desired state is already achieved.  You can check the deletion date in the response to verify if the authorization was deleted by the request.   Required permissions:    - \"user.grant.delete\"
 
      * @return \Zitadel\Client\Models\AuthorizationServiceDeleteAuthorizationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteAuthorization(\Zitadel\Client\Models\AuthorizationServiceDeleteAuthorizationRequest $authorizationServiceDeleteAuthorizationRequest)
     {
@@ -204,7 +203,7 @@ class AuthorizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteAuthorization but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class AuthorizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\AuthorizationServiceDeleteAuthorizationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteAuthorizationWithHttpInfo(\Zitadel\Client\Models\AuthorizationServiceDeleteAuthorizationRequest $authorizationServiceDeleteAuthorizationRequest): ApiResult
     {
@@ -247,7 +246,7 @@ class AuthorizationServiceApi extends BaseApi
      * ListAuthorizations returns all authorizations matching the request and necessary permissions.   Required permissions:    - \"user.grant.read\"    - no permissions required for listing own authorizations
 
      * @return \Zitadel\Client\Models\AuthorizationServiceListAuthorizationsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listAuthorizations(\Zitadel\Client\Models\AuthorizationServiceListAuthorizationsRequest $authorizationServiceListAuthorizationsRequest)
     {
@@ -258,7 +257,7 @@ class AuthorizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listAuthorizations but received none',
                 $apiResult->headers,
@@ -273,7 +272,7 @@ class AuthorizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\AuthorizationServiceListAuthorizationsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listAuthorizationsWithHttpInfo(\Zitadel\Client\Models\AuthorizationServiceListAuthorizationsRequest $authorizationServiceListAuthorizationsRequest): ApiResult
     {
@@ -301,7 +300,7 @@ class AuthorizationServiceApi extends BaseApi
      * UpdateAuthorization updates the authorization.   Note that any role keys previously granted to the user and not present in the request will be revoked.   Required permissions:    - \"user.grant.write\"
 
      * @return \Zitadel\Client\Models\AuthorizationServiceUpdateAuthorizationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateAuthorization(\Zitadel\Client\Models\AuthorizationServiceUpdateAuthorizationRequest $authorizationServiceUpdateAuthorizationRequest)
     {
@@ -312,7 +311,7 @@ class AuthorizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for updateAuthorization but received none',
                 $apiResult->headers,
@@ -327,7 +326,7 @@ class AuthorizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\AuthorizationServiceUpdateAuthorizationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateAuthorizationWithHttpInfo(\Zitadel\Client\Models\AuthorizationServiceUpdateAuthorizationRequest $authorizationServiceUpdateAuthorizationRequest): ApiResult
     {

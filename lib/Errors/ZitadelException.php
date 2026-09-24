@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Zitadel\Client;
+namespace Zitadel\Client\Errors;
 
 use Exception;
 
@@ -19,7 +19,7 @@ use Exception;
  * Root of the SDK exception hierarchy.
  *
  * Every error the SDK raises ultimately extends this single base, so a
- * caller can write one `catch (Zitadel\Client\ZitadelException $e)` and
+ * caller can write one `catch (Zitadel\Client\Errors\ZitadelException $e)` and
  * be certain it covers all SDK-originated failures — API/HTTP errors
  * ({@see ApiException} and its typed subclasses), serialization failures, and
  * OAuth2 token/server errors raised during authentication. This gives PHP the same one-root design the other language

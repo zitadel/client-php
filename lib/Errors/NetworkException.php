@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Errors;
 
-use Zitadel\Client\ApiException;
 use Throwable;
 
 /**

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * BetaInstanceServiceApi provides methods for the BetaInstanceService API group.
  */
-
 class BetaInstanceServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class BetaInstanceServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under instance service v2. This endpoint will be removed with the next major version of ZITADEL.   Adds a custom domain to the instance in context.   The instance_id in the input message will be used in the future   Required permissions:    - `system.domain.write`
 
      * @return \Zitadel\Client\Models\BetaInstanceServiceAddCustomDomainResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addCustomDomain(\Zitadel\Client\Models\BetaInstanceServiceAddCustomDomainRequest $betaInstanceServiceAddCustomDomainRequest)
     {
@@ -42,7 +41,7 @@ class BetaInstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for addCustomDomain but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class BetaInstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaInstanceServiceAddCustomDomainResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addCustomDomainWithHttpInfo(\Zitadel\Client\Models\BetaInstanceServiceAddCustomDomainRequest $betaInstanceServiceAddCustomDomainRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class BetaInstanceServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under instance service v2. This endpoint will be removed with the next major version of ZITADEL.   Adds a trusted domain to the instance.   The instance_id in the input message will be used in the future.   Required permissions:   - `iam.write`
 
      * @return \Zitadel\Client\Models\BetaInstanceServiceAddTrustedDomainResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addTrustedDomain(\Zitadel\Client\Models\BetaInstanceServiceAddTrustedDomainRequest $betaInstanceServiceAddTrustedDomainRequest)
     {
@@ -96,7 +95,7 @@ class BetaInstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for addTrustedDomain but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class BetaInstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaInstanceServiceAddTrustedDomainResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addTrustedDomainWithHttpInfo(\Zitadel\Client\Models\BetaInstanceServiceAddTrustedDomainRequest $betaInstanceServiceAddTrustedDomainRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class BetaInstanceServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under instance service v2. This endpoint will be removed with the next major version of ZITADEL.   Deletes an instance with the given ID.   Required permissions:    - `system.instance.delete`
 
      * @return \Zitadel\Client\Models\BetaInstanceServiceDeleteInstanceResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteInstance(\Zitadel\Client\Models\BetaInstanceServiceDeleteInstanceRequest $betaInstanceServiceDeleteInstanceRequest)
     {
@@ -150,7 +149,7 @@ class BetaInstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteInstance but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class BetaInstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaInstanceServiceDeleteInstanceResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteInstanceWithHttpInfo(\Zitadel\Client\Models\BetaInstanceServiceDeleteInstanceRequest $betaInstanceServiceDeleteInstanceRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class BetaInstanceServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under instance service v2. This endpoint will be removed with the next major version of ZITADEL.   Returns the instance in the current context.   The instance_id in the input message will be used in the future.   Required permissions:    - `iam.read`
 
      * @return \Zitadel\Client\Models\BetaInstanceServiceGetInstanceResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getInstance(\Zitadel\Client\Models\BetaInstanceServiceGetInstanceRequest $betaInstanceServiceGetInstanceRequest)
     {
@@ -204,7 +203,7 @@ class BetaInstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getInstance but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class BetaInstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaInstanceServiceGetInstanceResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getInstanceWithHttpInfo(\Zitadel\Client\Models\BetaInstanceServiceGetInstanceRequest $betaInstanceServiceGetInstanceRequest): ApiResult
     {
@@ -247,7 +246,7 @@ class BetaInstanceServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under instance service v2. This endpoint will be removed with the next major version of ZITADEL.   Lists custom domains of the instance.   The instance_id in the input message will be used in the future.   Required permissions:   - `iam.read`
 
      * @return \Zitadel\Client\Models\BetaInstanceServiceListCustomDomainsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listCustomDomains(\Zitadel\Client\Models\BetaInstanceServiceListCustomDomainsRequest $betaInstanceServiceListCustomDomainsRequest)
     {
@@ -258,7 +257,7 @@ class BetaInstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listCustomDomains but received none',
                 $apiResult->headers,
@@ -273,7 +272,7 @@ class BetaInstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaInstanceServiceListCustomDomainsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listCustomDomainsWithHttpInfo(\Zitadel\Client\Models\BetaInstanceServiceListCustomDomainsRequest $betaInstanceServiceListCustomDomainsRequest): ApiResult
     {
@@ -301,7 +300,7 @@ class BetaInstanceServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under instance service v2. This endpoint will be removed with the next major version of ZITADEL.   Lists instances matching the given query.  The query can be used to filter either by instance ID or domain.  The request is paginated and returns 100 results by default.   Required permissions:   - `system.instance.read`
 
      * @return \Zitadel\Client\Models\BetaInstanceServiceListInstancesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listInstances(\Zitadel\Client\Models\BetaInstanceServiceListInstancesRequest $betaInstanceServiceListInstancesRequest)
     {
@@ -312,7 +311,7 @@ class BetaInstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listInstances but received none',
                 $apiResult->headers,
@@ -327,7 +326,7 @@ class BetaInstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaInstanceServiceListInstancesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listInstancesWithHttpInfo(\Zitadel\Client\Models\BetaInstanceServiceListInstancesRequest $betaInstanceServiceListInstancesRequest): ApiResult
     {
@@ -355,7 +354,7 @@ class BetaInstanceServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under instance service v2. This endpoint will be removed with the next major version of ZITADEL.   Lists trusted domains of the instance.   The instance_id in the input message will be used in the future.   Required permissions:    - `iam.read`
 
      * @return \Zitadel\Client\Models\BetaInstanceServiceListTrustedDomainsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listTrustedDomains(\Zitadel\Client\Models\BetaInstanceServiceListTrustedDomainsRequest $betaInstanceServiceListTrustedDomainsRequest)
     {
@@ -366,7 +365,7 @@ class BetaInstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listTrustedDomains but received none',
                 $apiResult->headers,
@@ -381,7 +380,7 @@ class BetaInstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaInstanceServiceListTrustedDomainsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listTrustedDomainsWithHttpInfo(\Zitadel\Client\Models\BetaInstanceServiceListTrustedDomainsRequest $betaInstanceServiceListTrustedDomainsRequest): ApiResult
     {
@@ -409,7 +408,7 @@ class BetaInstanceServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under instance service v2. This endpoint will be removed with the next major version of ZITADEL.   Removes a custom domain from the instance.   The instance_id in the input message will be used in the future.   Required permissions:   - `system.domain.write`
 
      * @return \Zitadel\Client\Models\BetaInstanceServiceRemoveCustomDomainResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeCustomDomain(\Zitadel\Client\Models\BetaInstanceServiceRemoveCustomDomainRequest $betaInstanceServiceRemoveCustomDomainRequest)
     {
@@ -420,7 +419,7 @@ class BetaInstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removeCustomDomain but received none',
                 $apiResult->headers,
@@ -435,7 +434,7 @@ class BetaInstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaInstanceServiceRemoveCustomDomainResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeCustomDomainWithHttpInfo(\Zitadel\Client\Models\BetaInstanceServiceRemoveCustomDomainRequest $betaInstanceServiceRemoveCustomDomainRequest): ApiResult
     {
@@ -463,7 +462,7 @@ class BetaInstanceServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under instance service v2. This endpoint will be removed with the next major version of ZITADEL.   Removes a trusted domain from the instance.   The instance_id in the input message will be used in the future.   Required permissions:   - `iam.write`
 
      * @return \Zitadel\Client\Models\BetaInstanceServiceRemoveTrustedDomainResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeTrustedDomain(\Zitadel\Client\Models\BetaInstanceServiceRemoveTrustedDomainRequest $betaInstanceServiceRemoveTrustedDomainRequest)
     {
@@ -474,7 +473,7 @@ class BetaInstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removeTrustedDomain but received none',
                 $apiResult->headers,
@@ -489,7 +488,7 @@ class BetaInstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaInstanceServiceRemoveTrustedDomainResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeTrustedDomainWithHttpInfo(\Zitadel\Client\Models\BetaInstanceServiceRemoveTrustedDomainRequest $betaInstanceServiceRemoveTrustedDomainRequest): ApiResult
     {
@@ -517,7 +516,7 @@ class BetaInstanceServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under instance service v2. This endpoint will be removed with the next major version of ZITADEL.   Updates instance in context with the given name.   The instance_id in the input message will be used in the future.   Required permissions:    - `iam.write`
 
      * @return \Zitadel\Client\Models\BetaInstanceServiceUpdateInstanceResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateInstance(\Zitadel\Client\Models\BetaInstanceServiceUpdateInstanceRequest $betaInstanceServiceUpdateInstanceRequest)
     {
@@ -528,7 +527,7 @@ class BetaInstanceServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for updateInstance but received none',
                 $apiResult->headers,
@@ -543,7 +542,7 @@ class BetaInstanceServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaInstanceServiceUpdateInstanceResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateInstanceWithHttpInfo(\Zitadel\Client\Models\BetaInstanceServiceUpdateInstanceRequest $betaInstanceServiceUpdateInstanceRequest): ApiResult
     {

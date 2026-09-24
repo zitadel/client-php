@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * OrganizationServiceApi provides methods for the OrganizationService API group.
  */
-
 class OrganizationServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class OrganizationServiceApi extends BaseApi
      * Set the state of my organization to active. The state of the organization has to be deactivated to perform the request. Users of this organization will be able to log in again.   Required permission:   - `org.write`
 
      * @return \Zitadel\Client\Models\OrganizationServiceActivateOrganizationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function activateOrganization(\Zitadel\Client\Models\OrganizationServiceActivateOrganizationRequest $organizationServiceActivateOrganizationRequest)
     {
@@ -42,7 +41,7 @@ class OrganizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for activateOrganization but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class OrganizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OrganizationServiceActivateOrganizationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function activateOrganizationWithHttpInfo(\Zitadel\Client\Models\OrganizationServiceActivateOrganizationRequest $organizationServiceActivateOrganizationRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class OrganizationServiceApi extends BaseApi
      * Create a new organization with an administrative user. If no specific roles are sent for the users, they will be granted the role ORG_OWNER.   Required permission:   - `org.create`
 
      * @return \Zitadel\Client\Models\OrganizationServiceAddOrganizationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addOrganization(\Zitadel\Client\Models\OrganizationServiceAddOrganizationRequest $organizationServiceAddOrganizationRequest)
     {
@@ -96,7 +95,7 @@ class OrganizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for addOrganization but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class OrganizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OrganizationServiceAddOrganizationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addOrganizationWithHttpInfo(\Zitadel\Client\Models\OrganizationServiceAddOrganizationRequest $organizationServiceAddOrganizationRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class OrganizationServiceApi extends BaseApi
      * Add a new domain to an organization. The domains are used to identify to which organization a user belongs.   Required permission:   - `org.write`
 
      * @return \Zitadel\Client\Models\OrganizationServiceAddOrganizationDomainResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addOrganizationDomain(\Zitadel\Client\Models\OrganizationServiceAddOrganizationDomainRequest $organizationServiceAddOrganizationDomainRequest)
     {
@@ -150,7 +149,7 @@ class OrganizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for addOrganizationDomain but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class OrganizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OrganizationServiceAddOrganizationDomainResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addOrganizationDomainWithHttpInfo(\Zitadel\Client\Models\OrganizationServiceAddOrganizationDomainRequest $organizationServiceAddOrganizationDomainRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class OrganizationServiceApi extends BaseApi
      * Sets the state of my organization to deactivated. Users of this organization will not be able to log in.   Required permission:   - `org.write`
 
      * @return \Zitadel\Client\Models\OrganizationServiceDeactivateOrganizationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deactivateOrganization(\Zitadel\Client\Models\OrganizationServiceDeactivateOrganizationRequest $organizationServiceDeactivateOrganizationRequest)
     {
@@ -204,7 +203,7 @@ class OrganizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deactivateOrganization but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class OrganizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OrganizationServiceDeactivateOrganizationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deactivateOrganizationWithHttpInfo(\Zitadel\Client\Models\OrganizationServiceDeactivateOrganizationRequest $organizationServiceDeactivateOrganizationRequest): ApiResult
     {
@@ -247,7 +246,7 @@ class OrganizationServiceApi extends BaseApi
      * Deletes the organization and all its resources (Users, Projects, Grants to and from the org). Users of this organization will not be able to log in.   Required permission:   - `org.delete`
 
      * @return \Zitadel\Client\Models\OrganizationServiceDeleteOrganizationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteOrganization(\Zitadel\Client\Models\OrganizationServiceDeleteOrganizationRequest $organizationServiceDeleteOrganizationRequest)
     {
@@ -258,7 +257,7 @@ class OrganizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteOrganization but received none',
                 $apiResult->headers,
@@ -273,7 +272,7 @@ class OrganizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OrganizationServiceDeleteOrganizationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteOrganizationWithHttpInfo(\Zitadel\Client\Models\OrganizationServiceDeleteOrganizationRequest $organizationServiceDeleteOrganizationRequest): ApiResult
     {
@@ -301,7 +300,7 @@ class OrganizationServiceApi extends BaseApi
      * Delete a new domain from an organization. The domains are used to identify to which organization a user belongs. If the uses use the domain for login, this will not be possible afterwards. They have to use another domain instead.   Required permission:   - `org.write`
 
      * @return \Zitadel\Client\Models\OrganizationServiceDeleteOrganizationDomainResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteOrganizationDomain(\Zitadel\Client\Models\OrganizationServiceDeleteOrganizationDomainRequest $organizationServiceDeleteOrganizationDomainRequest)
     {
@@ -312,7 +311,7 @@ class OrganizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteOrganizationDomain but received none',
                 $apiResult->headers,
@@ -327,7 +326,7 @@ class OrganizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OrganizationServiceDeleteOrganizationDomainResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteOrganizationDomainWithHttpInfo(\Zitadel\Client\Models\OrganizationServiceDeleteOrganizationDomainRequest $organizationServiceDeleteOrganizationDomainRequest): ApiResult
     {
@@ -355,7 +354,7 @@ class OrganizationServiceApi extends BaseApi
      * Delete metadata objects from an organization with a specific key.   Required permission:   - `org.write`
 
      * @return \Zitadel\Client\Models\OrganizationServiceDeleteOrganizationMetadataResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteOrganizationMetadata(\Zitadel\Client\Models\OrganizationServiceDeleteOrganizationMetadataRequest $organizationServiceDeleteOrganizationMetadataRequest)
     {
@@ -366,7 +365,7 @@ class OrganizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteOrganizationMetadata but received none',
                 $apiResult->headers,
@@ -381,7 +380,7 @@ class OrganizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OrganizationServiceDeleteOrganizationMetadataResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteOrganizationMetadataWithHttpInfo(\Zitadel\Client\Models\OrganizationServiceDeleteOrganizationMetadataRequest $organizationServiceDeleteOrganizationMetadataRequest): ApiResult
     {
@@ -409,7 +408,7 @@ class OrganizationServiceApi extends BaseApi
      * Generate a new file to be able to verify your domain with DNS or HTTP challenge.   Required permission:   - `org.write`
 
      * @return \Zitadel\Client\Models\OrganizationServiceGenerateOrganizationDomainValidationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function generateOrganizationDomainValidation(\Zitadel\Client\Models\OrganizationServiceGenerateOrganizationDomainValidationRequest $organizationServiceGenerateOrganizationDomainValidationRequest)
     {
@@ -420,7 +419,7 @@ class OrganizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for generateOrganizationDomainValidation but received none',
                 $apiResult->headers,
@@ -435,7 +434,7 @@ class OrganizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OrganizationServiceGenerateOrganizationDomainValidationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function generateOrganizationDomainValidationWithHttpInfo(\Zitadel\Client\Models\OrganizationServiceGenerateOrganizationDomainValidationRequest $organizationServiceGenerateOrganizationDomainValidationRequest): ApiResult
     {
@@ -463,7 +462,7 @@ class OrganizationServiceApi extends BaseApi
      * Returns the list of registered domains of an organization. The domains are used to identify to which organization a user belongs.   Required permission:   - `org.read`
 
      * @return \Zitadel\Client\Models\OrganizationServiceListOrganizationDomainsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listOrganizationDomains(\Zitadel\Client\Models\OrganizationServiceListOrganizationDomainsRequest $organizationServiceListOrganizationDomainsRequest)
     {
@@ -474,7 +473,7 @@ class OrganizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listOrganizationDomains but received none',
                 $apiResult->headers,
@@ -489,7 +488,7 @@ class OrganizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OrganizationServiceListOrganizationDomainsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listOrganizationDomainsWithHttpInfo(\Zitadel\Client\Models\OrganizationServiceListOrganizationDomainsRequest $organizationServiceListOrganizationDomainsRequest): ApiResult
     {
@@ -517,7 +516,7 @@ class OrganizationServiceApi extends BaseApi
      * List metadata of an organization filtered by query.   Required permission:   - `org.read`
 
      * @return \Zitadel\Client\Models\OrganizationServiceListOrganizationMetadataResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listOrganizationMetadata(\Zitadel\Client\Models\OrganizationServiceListOrganizationMetadataRequest $organizationServiceListOrganizationMetadataRequest)
     {
@@ -528,7 +527,7 @@ class OrganizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listOrganizationMetadata but received none',
                 $apiResult->headers,
@@ -543,7 +542,7 @@ class OrganizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OrganizationServiceListOrganizationMetadataResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listOrganizationMetadataWithHttpInfo(\Zitadel\Client\Models\OrganizationServiceListOrganizationMetadataRequest $organizationServiceListOrganizationMetadataRequest): ApiResult
     {
@@ -571,7 +570,7 @@ class OrganizationServiceApi extends BaseApi
      * Search for Organizations. By default, we will return all organization of the instance that you have permission to read.  Make sure to include a limit and sorting for pagination.   Required permission:   - `org.read`
 
      * @return \Zitadel\Client\Models\OrganizationServiceListOrganizationsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listOrganizations(\Zitadel\Client\Models\OrganizationServiceListOrganizationsRequest $organizationServiceListOrganizationsRequest)
     {
@@ -582,7 +581,7 @@ class OrganizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listOrganizations but received none',
                 $apiResult->headers,
@@ -597,7 +596,7 @@ class OrganizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OrganizationServiceListOrganizationsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listOrganizationsWithHttpInfo(\Zitadel\Client\Models\OrganizationServiceListOrganizationsRequest $organizationServiceListOrganizationsRequest): ApiResult
     {
@@ -625,7 +624,7 @@ class OrganizationServiceApi extends BaseApi
      * Adds or updates a metadata value for the requested key. Make sure the value is base64 encoded.   Required permission:   - `org.write`
 
      * @return \Zitadel\Client\Models\OrganizationServiceSetOrganizationMetadataResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setOrganizationMetadata(\Zitadel\Client\Models\OrganizationServiceSetOrganizationMetadataRequest $organizationServiceSetOrganizationMetadataRequest)
     {
@@ -636,7 +635,7 @@ class OrganizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setOrganizationMetadata but received none',
                 $apiResult->headers,
@@ -651,7 +650,7 @@ class OrganizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OrganizationServiceSetOrganizationMetadataResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setOrganizationMetadataWithHttpInfo(\Zitadel\Client\Models\OrganizationServiceSetOrganizationMetadataRequest $organizationServiceSetOrganizationMetadataRequest): ApiResult
     {
@@ -679,7 +678,7 @@ class OrganizationServiceApi extends BaseApi
      * Change the name of the organization.   Required permission:   - `org.write`
 
      * @return \Zitadel\Client\Models\OrganizationServiceUpdateOrganizationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateOrganization(\Zitadel\Client\Models\OrganizationServiceUpdateOrganizationRequest $organizationServiceUpdateOrganizationRequest)
     {
@@ -690,7 +689,7 @@ class OrganizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for updateOrganization but received none',
                 $apiResult->headers,
@@ -705,7 +704,7 @@ class OrganizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OrganizationServiceUpdateOrganizationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateOrganizationWithHttpInfo(\Zitadel\Client\Models\OrganizationServiceUpdateOrganizationRequest $organizationServiceUpdateOrganizationRequest): ApiResult
     {
@@ -733,7 +732,7 @@ class OrganizationServiceApi extends BaseApi
      * Make sure you have added the required verification to your domain, depending on the method you have chosen (HTTP or DNS challenge). ZITADEL will check it and set the domain as verified if it was successful. A verify domain has to be unique.   Required permission:   - `org.write`
 
      * @return \Zitadel\Client\Models\OrganizationServiceVerifyOrganizationDomainResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function verifyOrganizationDomain(\Zitadel\Client\Models\OrganizationServiceVerifyOrganizationDomainRequest $organizationServiceVerifyOrganizationDomainRequest)
     {
@@ -744,7 +743,7 @@ class OrganizationServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for verifyOrganizationDomain but received none',
                 $apiResult->headers,
@@ -759,7 +758,7 @@ class OrganizationServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OrganizationServiceVerifyOrganizationDomainResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function verifyOrganizationDomainWithHttpInfo(\Zitadel\Client\Models\OrganizationServiceVerifyOrganizationDomainRequest $organizationServiceVerifyOrganizationDomainRequest): ApiResult
     {

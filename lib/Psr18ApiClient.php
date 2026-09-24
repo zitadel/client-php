@@ -77,7 +77,7 @@ class Psr18ApiClient extends AbstractApiClient
      * boundary-bearing `Content-Type` header in that case.
      *
      * @param array<string, string> $headers
-     * @throws ApiException if the request fails at the transport level
+     * @throws NetworkException if the request fails at the transport level
      */
     protected function execute(
         string $method,
@@ -113,7 +113,7 @@ class Psr18ApiClient extends AbstractApiClient
             /* PSR-18 has no timeout exception type, so look for Symfony's
              * TimeoutExceptionInterface in the chain (Symfony's Psr18Client
              * wraps it); anything else is a failure with no HTTP response. */
-            for ($cause = $e; $cause instanceof \Throwable; $cause = $cause->getPrevious()) {
+            for ($cause = $e; $cause !== null; $cause = $cause->getPrevious()) {
                 if ($cause instanceof \Symfony\Contracts\HttpClient\Exception\TimeoutExceptionInterface) {
                     throw new NetworkTimeoutException("API Request timed out: {$e->getMessage()}", $e);
                 }
@@ -135,7 +135,7 @@ class Psr18ApiClient extends AbstractApiClient
 
     /**
      * Marks the client closed so a subsequent {@see sendRequest()} raises an
-     * SDK-typed {@see ApiException}, matching the use-after-close contract of
+     * SDK-typed {@see \Zitadel\Client\Errors\ApiException}, matching the use-after-close contract of
      * the other transports. The injected PSR-18 client is owned by the caller
      * and is not torn down here. Idempotent.
      */

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * BetaSessionServiceApi provides methods for the BetaSessionService API group.
  */
-
 class BetaSessionServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class BetaSessionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under session service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSessionServiceCreateSessionResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createSession(\Zitadel\Client\Models\BetaSessionServiceCreateSessionRequest $betaSessionServiceCreateSessionRequest)
     {
@@ -42,7 +41,7 @@ class BetaSessionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createSession but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class BetaSessionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSessionServiceCreateSessionResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createSessionWithHttpInfo(\Zitadel\Client\Models\BetaSessionServiceCreateSessionRequest $betaSessionServiceCreateSessionRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class BetaSessionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under session service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSessionServiceDeleteSessionResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteSession(\Zitadel\Client\Models\BetaSessionServiceDeleteSessionRequest $betaSessionServiceDeleteSessionRequest)
     {
@@ -96,7 +95,7 @@ class BetaSessionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteSession but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class BetaSessionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSessionServiceDeleteSessionResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteSessionWithHttpInfo(\Zitadel\Client\Models\BetaSessionServiceDeleteSessionRequest $betaSessionServiceDeleteSessionRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class BetaSessionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under session service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSessionServiceGetSessionResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getSession(\Zitadel\Client\Models\BetaSessionServiceGetSessionRequest $betaSessionServiceGetSessionRequest)
     {
@@ -150,7 +149,7 @@ class BetaSessionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getSession but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class BetaSessionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSessionServiceGetSessionResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getSessionWithHttpInfo(\Zitadel\Client\Models\BetaSessionServiceGetSessionRequest $betaSessionServiceGetSessionRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class BetaSessionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under session service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSessionServiceListSessionsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listSessions(\Zitadel\Client\Models\BetaSessionServiceListSessionsRequest $betaSessionServiceListSessionsRequest)
     {
@@ -204,7 +203,7 @@ class BetaSessionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listSessions but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class BetaSessionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSessionServiceListSessionsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listSessionsWithHttpInfo(\Zitadel\Client\Models\BetaSessionServiceListSessionsRequest $betaSessionServiceListSessionsRequest): ApiResult
     {
@@ -247,7 +246,7 @@ class BetaSessionServiceApi extends BaseApi
      * Deprecated: please move to the corresponding endpoint under session service v2. This endpoint will be removed with the next major version of ZITADEL.
 
      * @return \Zitadel\Client\Models\BetaSessionServiceSetSessionResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setSession(\Zitadel\Client\Models\BetaSessionServiceSetSessionRequest $betaSessionServiceSetSessionRequest)
     {
@@ -258,7 +257,7 @@ class BetaSessionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setSession but received none',
                 $apiResult->headers,
@@ -273,7 +272,7 @@ class BetaSessionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaSessionServiceSetSessionResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setSessionWithHttpInfo(\Zitadel\Client\Models\BetaSessionServiceSetSessionRequest $betaSessionServiceSetSessionRequest): ApiResult
     {

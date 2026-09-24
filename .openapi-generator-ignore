@@ -14,10 +14,6 @@ lib/Auth/OpenId.php
 lib/Auth/PersonalAccessTokenAuthenticator.php
 lib/Auth/WebTokenAuthenticator.php
 lib/Auth/WebTokenAuthenticatorBuilder.php
-# The OAuth2 error types the authenticators raise. The generator only emits
-# them inside its own OAuth2 token manager, which this spec does not use.
-lib/Errors/OAuth2ServerException.php
-lib/Errors/OAuth2TokenException.php
 
 # --- bespoke tests + fixtures the generator does not emit ---
 etc/

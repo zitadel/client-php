@@ -44,7 +44,9 @@ $client = Zitadel::withToken(Servers::server0()->getUrl(), 'your-token');
 The `Authenticator` interface is the seam for tests: substitute a fake authenticator that returns a known header map, and assert your code calls the API the way you expect.
 
 ```php
-$fake = new class implements Zitadel\Client\Auth\Authenticator {
+use Zitadel\Client\Auth\Authenticator;
+
+$fake = new class implements Authenticator {
     public function getHost(): string { return 'https://api.example.com'; }
     public function getAuthHeaders(): array {
         return ['Authorization' => 'Bearer test-token'];
@@ -74,21 +76,25 @@ All API errors derive from `ApiException`. The error hierarchy is:
     - `NetworkTimeoutException` (the request timed out, status 0)
 
 ```php
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Zitadel;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\Errors\NotFoundException;
 use Zitadel\Client\Errors\ClientException;
 use Zitadel\Client\Errors\ServerException;
 
-try {
-    $result = $client->actionService->activatePublicKey($request);
-} catch (NotFoundException $e) {
-    echo "Not found: " . $e->getMessage();
-} catch (ClientException $e) {
-    echo "Client error " . $e->getStatusCode() . ": " . $e->getMessage();
-} catch (ServerException $e) {
-    echo "Server error: " . $e->getMessage();
-} catch (ApiException $e) {
-    echo "API error: " . $e->getMessage();
+function activatePublicKeyOrReport(Zitadel $client, \Zitadel\Client\Models\ActionServiceActivatePublicKeyRequest $actionServiceActivatePublicKeyRequest): void
+{
+    try {
+        $client->actionService->activatePublicKey($actionServiceActivatePublicKeyRequest);
+    } catch (NotFoundException $e) {
+        echo "Not found: " . $e->getMessage();
+    } catch (ClientException $e) {
+        echo "Client error " . $e->getStatusCode() . ": " . $e->getMessage();
+    } catch (ServerException $e) {
+        echo "Server error: " . $e->getMessage();
+    } catch (ApiException $e) {
+        echo "API error: " . $e->getMessage();
+    }
 }
 ```
 

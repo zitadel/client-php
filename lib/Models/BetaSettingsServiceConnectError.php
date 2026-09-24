@@ -11,8 +11,6 @@
 
 declare(strict_types=1);
 
-/* phpcs:ignoreFile */
-
 namespace Zitadel\Client\Models;
 
 use Symfony\Component\Serializer\Attribute\SerializedName;
@@ -20,26 +18,6 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 /**
  * Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation
  */
-enum BetaSettingsServiceConnectErrorCodeEnum: string
-{
-    case CANCELED = 'canceled';
-    case UNKNOWN = 'unknown';
-    case INVALID_ARGUMENT = 'invalid_argument';
-    case DEADLINE_EXCEEDED = 'deadline_exceeded';
-    case NOT_FOUND = 'not_found';
-    case ALREADY_EXISTS = 'already_exists';
-    case PERMISSION_DENIED = 'permission_denied';
-    case RESOURCE_EXHAUSTED = 'resource_exhausted';
-    case FAILED_PRECONDITION = 'failed_precondition';
-    case ABORTED = 'aborted';
-    case OUT_OF_RANGE = 'out_of_range';
-    case UNIMPLEMENTED = 'unimplemented';
-    case INTERNAL = 'internal';
-    case UNAVAILABLE = 'unavailable';
-    case DATA_LOSS = 'data_loss';
-    case UNAUTHENTICATED = 'unauthenticated';
-}
-
 class BetaSettingsServiceConnectError
 {
     /**

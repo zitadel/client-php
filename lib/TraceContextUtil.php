@@ -37,7 +37,18 @@ class TraceContextUtil
     {
         try {
             if (class_exists(\OpenTelemetry\API\Globals::class)) {
-                \OpenTelemetry\API\Globals::propagator()->inject($headers);
+                /* The propagator writes into an untyped carrier; copying
+                 * only string entries back keeps $headers typed as
+                 * array<string, string>. */
+                $carrier = [];
+                \OpenTelemetry\API\Globals::propagator()->inject($carrier);
+                if (is_array($carrier)) {
+                    foreach ($carrier as $name => $value) {
+                        if (is_string($name) && is_string($value)) {
+                            $headers[$name] = $value;
+                        }
+                    }
+                }
             }
         } catch (\Throwable) {
         }

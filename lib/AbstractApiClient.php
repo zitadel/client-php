@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Zitadel\Client;
 
+use Zitadel\Client\Errors\ApiException;
+
 /**
  * Transport-agnostic base for {@see ApiClient} implementations.
  *
@@ -129,11 +131,11 @@ abstract class AbstractApiClient implements ApiClient
         mixed $body,
         bool $noRedirect = false,
     ): ApiHttpResponse {
-        /* Gap T-D4: refuse to send on a closed client. The other SDKs raise
-         * an SDK-typed error here; PHP matches by throwing ApiException
-         * rather than silently re-using a reset transport. */
+        /* Gap T-D4: refuse to send on a closed client. Using a client after
+         * close() is a wrong call order, so it raises \LogicException rather
+         * than silently re-using a reset transport. */
         if ($this->closed) {
-            throw new ApiException(0, 'ApiClient has been closed and can no longer send requests');
+            throw new \LogicException('ApiClient has been closed and can no longer send requests');
         }
 
         $mergedHeaders = array_merge($this->transportOptions->defaultHeaders, $headers);
@@ -166,172 +168,165 @@ abstract class AbstractApiClient implements ApiClient
                 $mergedHeaders['Content-Length'] = '0';
             }
         }
-
-        try {
-            $response = $this->execute($method, $url, $mergedHeaders, $body);
-
-            /* Gap BH: manual redirect loop with cross-origin sensitive-
-             * header strip. Transports never follow redirects themselves
-             * (execute() sends exactly one request), so we follow
-             * Location: headers ourselves here, removing Authorization /
-             * Cookie / Proxy-Authorization whenever the next URL's origin
-             * differs from the original. */
-            if ($this->transportOptions->followRedirects && !$noRedirect) {
-                $maxRedirects = $this->transportOptions->maxRedirects ?? 20;
-                $originalUrl = $url;
-                $hops = 0;
-                $currentMethod = $method;
-                $currentBody = $body;
-                $currentHeaders = $mergedHeaders;
-                while ($hops < $maxRedirects && self::isRedirectStatus($response->statusCode)) {
-                    $location = ($response->headers['location'] ?? [null])[0];
-                    if ($location === null) {
-                        break;
-                    }
-                    $nextUrl = self::resolveUrl($url, $location);
-                    if ($nextUrl === null) {
-                        break;
-                    }
-                    $scheme = parse_url($nextUrl, PHP_URL_SCHEME);
-                    if (!in_array(strtolower((string) $scheme), ['http', 'https'], true)) {
-                        /* Gap T-D3: a Location pointing at a non-http(s)
-                         * scheme (file:, javascript:, data:, ...) is an
-                         * attack vector. Refuse loudly instead of silently
-                         * returning the 3xx, matching the throwing SDKs. */
-                        throw new ApiException(
-                            0,
-                            "Redirect to unsupported scheme '$scheme' in Location: $nextUrl"
-                        );
-                    }
-                    $crossOrigin = !self::sameOrigin($originalUrl, $nextUrl);
-
-                    /* Gap T3: pick follow-up method+body per RFC 7231 §6.4.4 / RFC 7538.
-                     *   307 + 308: preserve original method and body.
-                     *   303:       force GET, drop the body (and Content-Type/Length).
-                     *   301 + 302: historical browser behaviour — switch to GET for
-                     *              non-GET/HEAD requests, drop the body. */
-                    $statusCode = $response->statusCode;
-                    $methodUpper = strtoupper($currentMethod);
-
-                    /* Gap 3.3: refuse to replay a request body across an
-                     * HTTPS -> HTTP downgrade. A malicious 307/308 from an
-                     * upstream proxy can otherwise leak request bodies
-                     * (containing credentials, PII, etc.) onto the wire in
-                     * plaintext. The connection is closed and the original
-                     * 3xx response surfaces to the caller. */
-                    $prevScheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
-                    $nextScheme = strtolower((string) $scheme);
-                    $isDowngrade = $prevScheme === 'https' && $nextScheme === 'http';
-                    $hasBody = $currentBody !== null;
-                    if ($isDowngrade && $hasBody && ($statusCode === 307 || $statusCode === 308)) {
-                        /* Gap 3.3 / T-D2: raise instead of silently returning
-                         * the 3xx so the caller sees the refused downgrade,
-                         * matching the SDKs that throw on a refused replay. */
-                        throw new ApiException(
-                            0,
-                            "Refusing to replay request body across HTTPS->HTTP downgrade redirect to $nextUrl"
-                        );
-                    }
-
-                    if ($statusCode === 307 || $statusCode === 308) {
-                        $nextMethod = $currentMethod;
-                        $dropBody = false;
-                    } elseif ($statusCode === 303) {
-                        $nextMethod = 'GET';
-                        $dropBody = true;
-                    } elseif ($methodUpper === 'GET' || $methodUpper === 'HEAD') {
-                        $nextMethod = $currentMethod;
-                        $dropBody = false;
-                    } else {
-                        $nextMethod = 'GET';
-                        $dropBody = true;
-                    }
-
-                    $redirectHeaders = $currentHeaders;
-                    if ($crossOrigin) {
-                        foreach (array_keys($redirectHeaders) as $hname) {
-                            $lower = strtolower((string) $hname);
-                            if (in_array($lower, static::SENSITIVE_HEADER_NAMES, true)) {
-                                unset($redirectHeaders[$hname]);
-                            }
-                        }
-                    }
-                    if ($dropBody) {
-                        foreach (array_keys($redirectHeaders) as $hname) {
-                            $lower = strtolower((string) $hname);
-                            if ($lower === 'content-type' || $lower === 'content-length') {
-                                unset($redirectHeaders[$hname]);
-                            }
-                        }
-                    }
-
-                    $redirectBody = $dropBody ? null : $currentBody;
-                    $url = $nextUrl;
-                    $currentMethod = $nextMethod;
-                    $currentBody = $redirectBody;
-                    $currentHeaders = $redirectHeaders;
-                    $response = $this->execute($nextMethod, $nextUrl, $redirectHeaders, $redirectBody);
-                    $hops++;
+        $response = $this->execute($method, $url, $mergedHeaders, $body);
+        /* Gap BH: manual redirect loop with cross-origin sensitive-
+         * header strip. Transports never follow redirects themselves
+         * (execute() sends exactly one request), so we follow
+         * Location: headers ourselves here, removing Authorization /
+         * Cookie / Proxy-Authorization whenever the next URL's origin
+         * differs from the original. */
+        if ($this->transportOptions->followRedirects && !$noRedirect) {
+            $maxRedirects = $this->transportOptions->maxRedirects ?? 20;
+            $originalUrl = $url;
+            $hops = 0;
+            $currentMethod = $method;
+            $currentBody = $body;
+            $currentHeaders = $mergedHeaders;
+            while ($hops < $maxRedirects && self::isRedirectStatus($response->statusCode)) {
+                $location = ($response->headers['location'] ?? [null])[0];
+                if ($location === null) {
+                    break;
                 }
-
-                /* Gap T-D1: if we ran out of redirect budget while the
-                 * response is still a redirect, raise "too many redirects"
-                 * instead of silently returning the last 3xx as a normal
-                 * response — matching the throwing SDKs. */
-                if ($hops >= $maxRedirects && self::isRedirectStatus($response->statusCode)) {
+                $nextUrl = self::resolveUrl($url, $location);
+                if ($nextUrl === null) {
+                    break;
+                }
+                $scheme = parse_url($nextUrl, PHP_URL_SCHEME);
+                if (!in_array(strtolower((string) $scheme), ['http', 'https'], true)) {
+                    /* Gap T-D3: a Location pointing at a non-http(s)
+                     * scheme (file:, javascript:, data:, ...) is an
+                     * attack vector. Refuse loudly instead of silently
+                     * returning the 3xx, matching the throwing SDKs. */
                     throw new ApiException(
-                        0,
-                        "Too many redirects (exceeded maxRedirects=$maxRedirects)"
+                        $response->statusCode,
+                        "Redirect to unsupported scheme '$scheme' in Location: $nextUrl"
                     );
                 }
+                $crossOrigin = !self::sameOrigin($originalUrl, $nextUrl);
+
+                /* Gap T3: pick follow-up method+body per RFC 7231 §6.4.4 / RFC 7538.
+                 *   307 + 308: preserve original method and body.
+                 *   303:       force GET, drop the body (and Content-Type/Length).
+                 *   301 + 302: historical browser behaviour — switch to GET for
+                 *              non-GET/HEAD requests, drop the body. */
+                $statusCode = $response->statusCode;
+                $methodUpper = strtoupper($currentMethod);
+
+                /* Gap 3.3: refuse to replay a request body across an
+                 * HTTPS -> HTTP downgrade. A malicious 307/308 from an
+                 * upstream proxy can otherwise leak request bodies
+                 * (containing credentials, PII, etc.) onto the wire in
+                 * plaintext. The connection is closed and the original
+                 * 3xx response surfaces to the caller. */
+                $prevScheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+                $nextScheme = strtolower((string) $scheme);
+                $isDowngrade = $prevScheme === 'https' && $nextScheme === 'http';
+                $hasBody = $currentBody !== null;
+                if ($isDowngrade && $hasBody && ($statusCode === 307 || $statusCode === 308)) {
+                    /* Gap 3.3 / T-D2: raise instead of silently returning
+                     * the 3xx so the caller sees the refused downgrade,
+                     * matching the SDKs that throw on a refused replay. */
+                    throw new ApiException(
+                        $statusCode,
+                        "Refusing to replay request body across HTTPS->HTTP downgrade redirect to $nextUrl"
+                    );
+                }
+
+                if ($statusCode === 307 || $statusCode === 308) {
+                    $nextMethod = $currentMethod;
+                    $dropBody = false;
+                } elseif ($statusCode === 303) {
+                    $nextMethod = 'GET';
+                    $dropBody = true;
+                } elseif ($methodUpper === 'GET' || $methodUpper === 'HEAD') {
+                    $nextMethod = $currentMethod;
+                    $dropBody = false;
+                } else {
+                    $nextMethod = 'GET';
+                    $dropBody = true;
+                }
+
+                $redirectHeaders = $currentHeaders;
+                if ($crossOrigin) {
+                    foreach (array_keys($redirectHeaders) as $hname) {
+                        $lower = strtolower((string) $hname);
+                        if (in_array($lower, static::SENSITIVE_HEADER_NAMES, true)) {
+                            unset($redirectHeaders[$hname]);
+                        }
+                    }
+                }
+                if ($dropBody) {
+                    foreach (array_keys($redirectHeaders) as $hname) {
+                        $lower = strtolower((string) $hname);
+                        if ($lower === 'content-type' || $lower === 'content-length') {
+                            unset($redirectHeaders[$hname]);
+                        }
+                    }
+                }
+
+                $redirectBody = $dropBody ? null : $currentBody;
+                $url = $nextUrl;
+                $currentMethod = $nextMethod;
+                $currentBody = $redirectBody;
+                $currentHeaders = $redirectHeaders;
+                $response = $this->execute($nextMethod, $nextUrl, $redirectHeaders, $redirectBody);
+                $hops++;
             }
 
-            $responseBody = $response->body;
-            /* Gap BE+BF: response header keys are normalised to lowercase so
-               callers can look them up consistently regardless of the casing
-               the server used (HTTP header names are case-insensitive per
-               RFC 7230 section 3.2, and HTTP/2 mandates lowercase on the
-               wire). Repeated header lines (for example multiple Link or
-               Set-Cookie headers) are joined with ', ' to preserve order
-               per RFC 7230 section 3.2.2. Each transport's execute() already
-               lowercases keys and exposes multi-value lists; we join them
-               for the public surface. The joined form is not directly
-               parseable for Set-Cookie; callers needing structured cookie
-               access should use a transport that exposes the raw response. */
-            $responseHeaders = [];
-            foreach ($response->headers as $name => $values) {
-                $responseHeaders[strtolower((string) $name)] = implode(', ', $values);
+            /* Gap T-D1: if we ran out of redirect budget while the
+             * response is still a redirect, raise "too many redirects"
+             * instead of silently returning the last 3xx as a normal
+             * response — matching the throwing SDKs. */
+            if ($hops >= $maxRedirects && self::isRedirectStatus($response->statusCode)) {
+                throw new ApiException(
+                    $response->statusCode,
+                    "Too many redirects (exceeded maxRedirects=$maxRedirects)"
+                );
             }
-            $contentEncoding = $response->headers['content-encoding'][0] ?? '';
+        }
+        $responseBody = $response->body;
+        /* Gap BE+BF: response header keys are normalised to lowercase so
+           callers can look them up consistently regardless of the casing
+           the server used (HTTP header names are case-insensitive per
+           RFC 7230 section 3.2, and HTTP/2 mandates lowercase on the
+           wire). Repeated header lines (for example multiple Link or
+           Set-Cookie headers) are joined with ', ' to preserve order
+           per RFC 7230 section 3.2.2. Each transport's execute() already
+           lowercases keys and exposes multi-value lists; we join them
+           for the public surface. The joined form is not directly
+           parseable for Set-Cookie; callers needing structured cookie
+           access should use a transport that exposes the raw response. */
+        $responseHeaders = [];
+        foreach ($response->headers as $name => $values) {
+            $responseHeaders[strtolower((string) $name)] = implode(', ', $values);
+        }
+        $contentEncoding = $response->headers['content-encoding'][0] ?? '';
+        try {
             $responseBody = $this->decompressBody($responseBody, $contentEncoding);
-            $contentType = $response->headers['content-type'][0] ?? '';
-            if (!$this->isTextContentType($contentType)) {
-                $responseBody = base64_encode($responseBody);
-            } else {
-                $responseBody = $this->decodeTextBody($responseBody, $contentType);
-            }
-
-            return new ApiHttpResponse(
-                statusCode: $response->statusCode,
-                body: $responseBody,
-                headers: $responseHeaders
-            );
         } catch (\RuntimeException $e) {
-            /* Response post-processing (notably decompressBody's gzip /
-             * deflate / brotli / zstd failures) throws a plain
-             * \RuntimeException. Without this branch a corrupt or truncated
-             * compressed body would leak that raw runtime error past the SDK
-             * surface; wrap it as the SDK's ApiException so callers catch a
-             * single, documented exception type. */
+            /* A corrupt or truncated compressed body is not a transport
+             * failure: a response did arrive, so it is an ApiException
+             * carrying the real status, never a NetworkException. */
             throw new ApiException(
-                0,
-                "API Request failed: {$e->getMessage()}",
-                null,
+                $response->statusCode,
+                "Failed to decode $contentEncoding response body: {$e->getMessage()}",
+                $responseHeaders,
                 null,
                 null,
                 $e
             );
         }
+        $contentType = $response->headers['content-type'][0] ?? '';
+        if (!$this->isTextContentType($contentType)) {
+            $responseBody = base64_encode($responseBody);
+        } else {
+            $responseBody = $this->decodeTextBody($responseBody, $contentType);
+        }
+        return new ApiHttpResponse(
+            statusCode: $response->statusCode,
+            body: $responseBody,
+            headers: $responseHeaders
+        );
     }
 
     /**
@@ -623,16 +618,19 @@ abstract class AbstractApiClient implements ApiClient
         }
 
         return match (strtolower($encoding)) {
-            'gzip', 'x-gzip' => gzdecode($body)
+            /* The @ keeps zlib's E_WARNING for a corrupt body from escaping
+             * (an error handler could turn it into an \ErrorException); the
+             * false return is what signals the failure. */
+            'gzip', 'x-gzip' => @gzdecode($body)
                 ?: throw new \RuntimeException('Failed to gzip-decompress response body'),
-            'deflate' => gzuncompress($body)
+            'deflate' => @gzuncompress($body)
                 ?: throw new \RuntimeException('Failed to deflate-decompress response body'),
             'br' => function_exists('brotli_uncompress')
-                ? (brotli_uncompress($body)
+                ? (@brotli_uncompress($body)
                     ?: throw new \RuntimeException('Failed to brotli-decompress response body'))
                 : $body,
             'zstd' => function_exists('zstd_uncompress')
-                ? (zstd_uncompress($body)
+                ? (@zstd_uncompress($body)
                     ?: throw new \RuntimeException('Failed to zstd-decompress response body'))
                 : $body,
             default => $body,

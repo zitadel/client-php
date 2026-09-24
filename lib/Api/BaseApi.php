@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiHttpResponse;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
@@ -24,15 +24,6 @@ use Zitadel\Client\ObjectSerializer;
 use Zitadel\Client\TraceContextUtil;
 use Zitadel\Client\Auth\Authenticator;
 use Zitadel\Client\Auth\NoAuth;
-use Zitadel\Client\Errors\BadRequestException;
-use Zitadel\Client\Errors\ClientException;
-use Zitadel\Client\Errors\ConflictException;
-use Zitadel\Client\Errors\ForbiddenException;
-use Zitadel\Client\Errors\InternalServerErrorException;
-use Zitadel\Client\Errors\NotFoundException;
-use Zitadel\Client\Errors\ServerException;
-use Zitadel\Client\Errors\UnauthorizedException;
-use Zitadel\Client\Errors\UnprocessableEntityException;
 
 /**
  * Base class for all API classes. Provides the invokeApi method that
@@ -166,11 +157,19 @@ class BaseApi
         TraceContextUtil::injectTraceContext($headers);
 
         $serializedBody = $this->serializeBody($body, $contentType, $isMultipart);
+        if ($serializedBody === null) {
+            /* No body means no entity: never announce a Content-Type for it. */
+            foreach (array_keys($headers) as $name) {
+                if (strtolower((string) $name) === 'content-type') {
+                    unset($headers[$name]);
+                }
+            }
+        }
 
         $response = $this->apiClient->sendRequest($method, $url, $headers, $serializedBody);
 
         if ($response->statusCode < 200 || $response->statusCode >= 300) {
-            $this->throwApiException($response);
+            throw ApiException::fromResponse($response->statusCode, $response->headers, $response->body);
         }
 
         $data = null;
@@ -184,10 +183,16 @@ class BaseApi
                 }
             }
 
-            $isBinary = $respContentType !== null
+            $isNonJson = $respContentType !== null
                 && !$this->headerSelector->isJsonMime($respContentType);
 
-            if ($isBinary) {
+            if ($isNonJson && $this->isTextMediaType((string) $respContentType)) {
+                /* A text response (text/plain, XML, ...) crosses the
+                 * transport as its decoded string, never base64: hand it
+                 * back unchanged. Base64-decoding it would corrupt any text
+                 * that happens to be valid base64 ("hello world"). */
+                $data = $response->body;
+            } elseif ($isNonJson) {
                 /* The transport (DefaultApiClient) base64-encodes every
                  * non-text response body so it survives transit as a UTF-8
                  * string. A binary operation's return type is the raw byte
@@ -197,10 +202,8 @@ class BaseApi
                  * when return_type == 'bytes'). Strict decoding rejects any
                  * non-base64 input; if a test server wrote raw bytes instead
                  * of base64 (so strict decode returns false), fall back to
-                 * the untouched body. No non-binary text response reaches
-                 * this branch — every non-JSON producible content type in the
-                 * surface is image/* or application/octet-stream — so the
-                 * decode can never corrupt a legitimate text/plain payload. */
+                 * the untouched body. Text responses are handled above, so
+                 * the decode never touches a text/plain payload. */
                 $decoded = base64_decode($response->body, true);
                 $data = $decoded === false ? $response->body : $decoded;
             } elseif ($returnType !== null) {
@@ -256,50 +259,17 @@ class BaseApi
     }
 
     /**
-     * Throw the appropriate exception subclass for the given error response.
-     *
-     * Attempts to deserialize the response body as JSON so that structured
-     * error data (e.g. from a default response schema) is available
-     * via ApiException::getErrorBody().
-     *
-     * @throws ApiException always
+     * Whether a response media type is text the transport hands over as a
+     * decoded string (the same rule the transport uses), as opposed to a
+     * binary body it base64-encodes.
      */
-    private function throwApiException(ApiHttpResponse $response): never
+    private function isTextMediaType(string $mediaType): bool
     {
-        $code = $response->statusCode;
-        $message = "API returned status code $code";
-        $headers = $response->headers;
-        $body = $response->body;
-
-        $errorBody = null;
-        if (trim($body) !== '') {
-            try {
-                $errorBody = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
-            } catch (\JsonException) {
-                /* non-JSON body, errorBody stays null */
-            }
-        }
-
-        if ($code >= 400 && $code < 500) {
-            throw match ($code) {
-                400 => new BadRequestException($message, $headers, $body, $errorBody),
-                401 => new UnauthorizedException($message, $headers, $body, $errorBody),
-                403 => new ForbiddenException($message, $headers, $body, $errorBody),
-                404 => new NotFoundException($message, $headers, $body, $errorBody),
-                409 => new ConflictException($message, $headers, $body, $errorBody),
-                422 => new UnprocessableEntityException($message, $headers, $body, $errorBody),
-                default => new ClientException($code, $message, $headers, $body, $errorBody),
-            };
-        }
-
-        if ($code >= 500) {
-            throw match ($code) {
-                500 => new InternalServerErrorException($message, $headers, $body, $errorBody),
-                default => new ServerException($code, $message, $headers, $body, $errorBody),
-            };
-        }
-
-        throw new ApiException($code, $message, $headers, $body, $errorBody);
+        $mediaType = strtolower($mediaType);
+        return str_starts_with($mediaType, 'text/')
+            || in_array($mediaType, ['application/json', 'application/xml', 'application/javascript'], true)
+            || str_ends_with($mediaType, '+json')
+            || str_ends_with($mediaType, '+xml');
     }
 
     /**

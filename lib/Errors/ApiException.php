@@ -11,8 +11,9 @@
 
 declare(strict_types=1);
 
-namespace Zitadel\Client;
+namespace Zitadel\Client\Errors;
 
+use Zitadel\Client\ObjectSerializer;
 use Throwable;
 
 /**
@@ -73,6 +74,69 @@ class ApiException extends ZitadelException
         $this->responseHeaders = $responseHeaders;
         $this->responseBody = $responseBody;
         $this->errorBody = $errorBody;
+    }
+
+    /**
+     * Map an HTTP response that was not a success to the exception for its
+     * status: 400, 401, 403, 404, 409 and 422 map to their named
+     * {@see ClientException} subclasses and any other 4xx to
+     * {@see ClientException}; 500 maps to {@see InternalServerErrorException}
+     * and any other 5xx to {@see ServerException}; any other status maps to
+     * ApiException itself. A JSON body is decoded into the error body; a body
+     * that is not JSON leaves the error body null. The caller throws the
+     * returned exception.
+     *
+     * @param array<string, string>|null $responseHeaders HTTP response headers
+     */
+    public static function fromResponse(
+        int $statusCode,
+        ?array $responseHeaders,
+        ?string $responseBody
+    ): self {
+        $message = "API returned status code $statusCode";
+        $errorBody = null;
+        if ($responseBody !== null && trim($responseBody) !== '') {
+            try {
+                $errorBody = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException) {
+                /* non-JSON body, errorBody stays null */
+            }
+        }
+
+        return match (true) {
+            $statusCode === 400 => new BadRequestException($message, $responseHeaders, $responseBody, $errorBody),
+            $statusCode === 401 => new UnauthorizedException($message, $responseHeaders, $responseBody, $errorBody),
+            $statusCode === 403 => new ForbiddenException($message, $responseHeaders, $responseBody, $errorBody),
+            $statusCode === 404 => new NotFoundException($message, $responseHeaders, $responseBody, $errorBody),
+            $statusCode === 409 => new ConflictException($message, $responseHeaders, $responseBody, $errorBody),
+            $statusCode === 422 => new UnprocessableEntityException(
+                $message,
+                $responseHeaders,
+                $responseBody,
+                $errorBody
+            ),
+            $statusCode >= 400 && $statusCode < 500 => new ClientException(
+                $statusCode,
+                $message,
+                $responseHeaders,
+                $responseBody,
+                $errorBody
+            ),
+            $statusCode === 500 => new InternalServerErrorException(
+                $message,
+                $responseHeaders,
+                $responseBody,
+                $errorBody
+            ),
+            $statusCode >= 500 && $statusCode < 600 => new ServerException(
+                $statusCode,
+                $message,
+                $responseHeaders,
+                $responseBody,
+                $errorBody
+            ),
+            default => new self($statusCode, $message, $responseHeaders, $responseBody, $errorBody),
+        };
     }
 
     /**

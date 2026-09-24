@@ -75,7 +75,7 @@ JSON file. This process creates a secure token.
 
 ```php
 use Zitadel\Client\Zitadel;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\Auth\WebTokenAuthenticator;
 use Zitadel\Client\Models\UserServiceAddHumanUserRequest;
 use Zitadel\Client\Models\UserServiceSetHumanProfile;
@@ -123,7 +123,7 @@ which is then used to authenticate.
 
 ```php
 use Zitadel\Client\Zitadel;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
 use Zitadel\Client\Models\UserServiceAddHumanUserRequest;
 use Zitadel\Client\Models\UserServiceSetHumanProfile;
@@ -171,7 +171,7 @@ authenticate without exchanging credentials every time.
 
 ```php
 use Zitadel\Client\Zitadel;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\Auth\PersonalAccessTokenAuthenticator;
 use Zitadel\Client\Models\UserServiceAddHumanUserRequest;
 use Zitadel\Client\Models\UserServiceSetHumanProfile;

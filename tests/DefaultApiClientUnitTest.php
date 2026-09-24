@@ -6,38 +6,13 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Test;
 
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\DefaultApiClient;
 use Zitadel\Client\TransportOptions;
 use Zitadel\Client\TransportOptionsBuilder;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-
-/**
- * Test-only subclass that overrides the protected {@see
- * DefaultApiClient::createHttpClient()} transport seam to return a caller-
- * supplied stub client. The production constructor no longer accepts an HTTP
- * client argument (it would leak the Symfony transport type onto the public
- * API), so unit tests inject their MockHttpClient by overriding the factory
- * via this subclass — mirroring how the Ruby SDK stubs its private
- * build_connection.
- */
-final class StubbedDefaultApiClient extends DefaultApiClient
-{
-    public function __construct(
-        private readonly HttpClientInterface $stubClient,
-        ?TransportOptions $transportOptions = null,
-    ) {
-        parent::__construct($transportOptions);
-    }
-
-    #[\Override]
-    protected function createHttpClient(): HttpClientInterface
-    {
-        return $this->stubClient;
-    }
-}
 
 /**
  * Collect a Symfony HttpClient request body into a single string.
@@ -614,8 +589,27 @@ test('proxy with basic auth is accepted by builder', function (): void {
 });
 
 test('proxy auth squid end to end', function (): void {
-    // Container-backed Squid+auth proxy is not provisioned in this suite.
-    test()->markTestSkipped('Skipped: requires a containerized Squid proxy with basic-auth credentials.');
+    // The Squid fixture's second port answers 407 unless the request carries
+    // Basic proxy credentials, so a success through it proves the credentials
+    // embedded in the proxy URL reached the proxy.
+    $proxy = parse_url((string) getenv('PROXY_AUTH_URL'), PHP_URL_HOST) . ':'
+        . parse_url((string) getenv('PROXY_AUTH_URL'), PHP_URL_PORT);
+    $client = new DefaultApiClient(
+        TransportOptions::builder()->proxy('http://user:pass@' . $proxy)->build()
+    );
+    $response = $client->sendRequest('GET', getenv('CHASM_INTERNAL_HTTP_URL') . '/test/echo', [], null);
+
+    expect($response->statusCode)->toBe(200);
+    expect($response->body)->toContain('"method"');
+});
+
+test('proxy that requires credentials answers 407 when none are sent', function (): void {
+    $client = new DefaultApiClient(
+        TransportOptions::builder()->proxy((string) getenv('PROXY_AUTH_URL'))->build()
+    );
+    $response = $client->sendRequest('GET', getenv('CHASM_INTERNAL_HTTP_URL') . '/test/echo', [], null);
+
+    expect($response->statusCode)->toBe(407);
 });
 
 // -- Gap BI: RFC 5987 filename* for non-ASCII multipart filenames --
@@ -762,7 +756,12 @@ test('https to http downgrade refuses body replay on 307', function (): void {
     $client = new StubbedDefaultApiClient(new MockHttpClient([$downgrade]), $transport);
 
     expect(fn (): mixed => $client->sendRequest('POST', 'https://api.example.com/secret', [], 'sensitive=payload'))
-        ->toThrow(ApiException::class);
+        ->toThrow(function (\Exception $e): void {
+            /* A refused redirect is a response that arrived but could not
+             * be used: exactly ApiException, carrying the real status. */
+            expect($e::class)->toBe(ApiException::class);
+            expect($e->getCode())->toBe(307);
+        });
 });
 
 test('https to http downgrade refuses body replay on 308', function (): void {
@@ -774,7 +773,12 @@ test('https to http downgrade refuses body replay on 308', function (): void {
     $client = new StubbedDefaultApiClient(new MockHttpClient([$downgrade]), $transport);
 
     expect(fn (): mixed => $client->sendRequest('PUT', 'https://api.example.com/secret', [], 'k=v'))
-        ->toThrow(ApiException::class);
+        ->toThrow(function (\Exception $e): void {
+            /* A refused redirect is a response that arrived but could not
+             * be used: exactly ApiException, carrying the real status. */
+            expect($e::class)->toBe(ApiException::class);
+            expect($e->getCode())->toBe(308);
+        });
 });
 
 test('https to http downgrade on get without body still follows', function (): void {
@@ -882,7 +886,12 @@ test('exceeding max redirects throws too many redirects', function (): void {
     $client = new StubbedDefaultApiClient(new MockHttpClient($loop), $transport);
 
     expect(fn (): mixed => $client->sendRequest('GET', 'https://api.example.com/start', [], null))
-        ->toThrow(ApiException::class);
+        ->toThrow(function (\Exception $e): void {
+            /* A refused redirect is a response that arrived but could not
+             * be used: exactly ApiException, carrying the real status. */
+            expect($e::class)->toBe(ApiException::class);
+            expect($e->getCode())->toBe(302);
+        });
 });
 
 // -- T-D3: redirect to a non-http(s) scheme throws --
@@ -898,21 +907,29 @@ test('redirect to non http scheme throws', function (): void {
     $client = new StubbedDefaultApiClient(new MockHttpClient([$redirect]), $transport);
 
     expect(fn (): mixed => $client->sendRequest('GET', 'https://api.example.com/start', [], null))
-        ->toThrow(ApiException::class);
+        ->toThrow(function (\Exception $e): void {
+            /* A refused redirect is a response that arrived but could not
+             * be used: exactly ApiException, carrying the real status. */
+            expect($e::class)->toBe(ApiException::class);
+            expect($e->getCode())->toBe(302);
+        });
 });
 
-// -- T-D4: use-after-close raises an SDK-typed error --
+// -- T-D4: use-after-close raises the built-in state error --
 
-test('send after close throws api exception', function (): void {
-    /* Once close() is called the client must refuse further requests with
-     * an SDK-typed ApiException, giving a uniform use-after-close contract
-     * instead of silently reusing the reset client. */
+test('send after close throws logic exception', function (): void {
+    /* Once close() is called the client must refuse further requests.
+     * Using a client after close() is a wrong call order, so it raises
+     * exactly \LogicException, not an SDK error. */
     $mockResponse = new MockResponse('ok', ['http_code' => 200]);
     $client = new StubbedDefaultApiClient(new MockHttpClient($mockResponse));
     $client->close();
 
     expect(fn (): mixed => $client->sendRequest('GET', 'http://example.com/after-close', [], null))
-        ->toThrow(ApiException::class);
+        ->toThrow(function (\Exception $e): void {
+            expect($e::class)->toBe(\LogicException::class);
+            expect($e)->not->toBeInstanceOf(\Zitadel\Client\Errors\ZitadelException::class);
+        });
 });
 
 test('close is idempotent', function (): void {
@@ -921,7 +938,7 @@ test('close is idempotent', function (): void {
     $client->close();
 
     expect(fn (): mixed => $client->sendRequest('GET', 'http://example.com/x', [], null))
-        ->toThrow(ApiException::class);
+        ->toThrow(\LogicException::class);
 });
 
 test('non-existent caCertPath throws invalid argument exception at construction', function (): void {
@@ -932,7 +949,10 @@ test('non-existent caCertPath throws invalid argument exception at construction'
     $transport = TransportOptions::builder()->caCertPath('/nonexistent/ca.pem')->build();
 
     expect(fn (): mixed => new DefaultApiClient($transport))
-        ->toThrow(\InvalidArgumentException::class);
+        ->toThrow(function (\Exception $e): void {
+            expect($e::class)->toBe(\InvalidArgumentException::class);
+            expect($e)->not->toBeInstanceOf(\Zitadel\Client\Errors\ZitadelException::class);
+        });
 });
 
 test('transport failure raises NetworkException with status 0 and the cause kept', function (): void {
@@ -943,8 +963,9 @@ test('transport failure raises NetworkException with status 0 and the cause kept
 
     try {
         $client->sendRequest('GET', 'http://example.com/refused', [], null);
-        expect(false)->toBeTrue('Expected NetworkException');
+        test()->fail('Expected NetworkException');
     } catch (\Zitadel\Client\Errors\NetworkException $e) {
+        expect($e::class)->toBe(\Zitadel\Client\Errors\NetworkException::class);
         expect($e)->not->toBeInstanceOf(\Zitadel\Client\Errors\NetworkTimeoutException::class);
         expect($e)->toBeInstanceOf(ApiException::class);
         expect($e->getStatusCode())->toBe(0);
@@ -958,7 +979,31 @@ test('transport timeout raises NetworkTimeoutException', function (): void {
     }));
 
     expect(fn (): mixed => $client->sendRequest('GET', 'http://example.com/slow', [], null))
-        ->toThrow(\Zitadel\Client\Errors\NetworkTimeoutException::class);
+        ->toThrow(function (\Exception $e): void {
+            expect($e::class)->toBe(\Zitadel\Client\Errors\NetworkTimeoutException::class);
+            expect($e)->toBeInstanceOf(\Zitadel\Client\Errors\NetworkException::class);
+            expect($e->getCode())->toBe(0);
+        });
+});
+
+test('exceeding the total duration budget raises NetworkTimeoutException', function (): void {
+    /* The client sets both `timeout` (idle) and `max_duration` (total). Only
+     * the idle timer throws Symfony's TimeoutException; blowing the total
+     * budget throws a plain TransportException, so the same expired deadline
+     * used to surface as NetworkException depending on which timer fired
+     * first. It is a timeout either way. */
+    $client = new StubbedDefaultApiClient(new MockHttpClient(function (): never {
+        throw new \Symfony\Component\HttpClient\Exception\TransportException(
+            'Max duration was reached for "http://example.com/slow".'
+        );
+    }));
+
+    expect(fn (): mixed => $client->sendRequest('GET', 'http://example.com/slow', [], null))
+        ->toThrow(function (\Exception $e): void {
+            expect($e::class)->toBe(\Zitadel\Client\Errors\NetworkTimeoutException::class);
+            expect($e)->toBeInstanceOf(\Zitadel\Client\Errors\NetworkException::class);
+            expect($e->getCode())->toBe(0);
+        });
 });
 
 test('decompresses a valid gzip-encoded response body', function (): void {
@@ -1000,7 +1045,13 @@ test('wraps a gzip decompression failure as api exception', function (): void {
     $client = new StubbedDefaultApiClient(new MockHttpClient($mockResponse));
 
     expect(fn (): mixed => $client->sendRequest('GET', 'http://example.com/echo', [], null))
-        ->toThrow(ApiException::class);
+        ->toThrow(function (\Exception $e): void {
+            /* A response did arrive: exactly ApiException carrying the real
+             * status (200), never a NetworkException. */
+            expect($e::class)->toBe(ApiException::class);
+            expect($e->getCode())->toBe(200);
+            expect($e)->not->toBeInstanceOf(\Zitadel\Client\Errors\NetworkException::class);
+        });
 });
 
 // -- Gap AL: Content-Encoding lie (server claims gzip, sends plaintext) --
@@ -1022,5 +1073,11 @@ test('AL: content-encoding gzip lie with plaintext body surfaces ApiException', 
     $client = new StubbedDefaultApiClient(new MockHttpClient($mockResponse));
 
     expect(fn (): mixed => $client->sendRequest('GET', 'http://example.com/lie', [], null))
-        ->toThrow(ApiException::class);
+        ->toThrow(function (\Exception $e): void {
+            /* A response did arrive: exactly ApiException carrying the real
+             * status (200), never a NetworkException. */
+            expect($e::class)->toBe(ApiException::class);
+            expect($e->getCode())->toBe(200);
+            expect($e)->not->toBeInstanceOf(\Zitadel\Client\Errors\NetworkException::class);
+        });
 });

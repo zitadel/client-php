@@ -145,7 +145,7 @@ test('invalid server variable enum value throws', function (): void {
         ],
     );
 
-    expect(fn (): \Zitadel\Client\Configuration => Configuration::builder()
+    expect(fn () => Configuration::builder()
         ->server($server, ['env' => 'invalid'])
         ->build())
         ->toThrow(InvalidArgumentException::class);
@@ -217,4 +217,40 @@ test('builder is fluent', function (): void {
 
     $server = new ServerConfiguration(urlTemplate: 'https://example.com');
     expect($builder->server($server))->toBe($builder);
+});
+
+test('every SDK class autoloads cold from its own file', function (): void {
+    /* PSR-4 loads a class only from a file named after it. A class declared
+     * in another class's file (an inline enum next to its model, a server
+     * variant next to its API group) works only once that other file happens
+     * to have been loaded, so each class is referenced FIRST, in a fresh
+     * process, through the composer autoloader. */
+    $root = dirname(__DIR__);
+    /** @var array{autoload: array{psr-4: array<string, string>}} $composer */
+    $composer = json_decode((string) file_get_contents($root . '/composer.json'), true);
+    $autoload = var_export($root . '/vendor/autoload.php', true);
+    $checked = 0;
+    foreach ($composer['autoload']['psr-4'] as $prefix => $dir) {
+        $base = (string) realpath($root . '/' . $dir);
+        $files = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($base, \FilesystemIterator::SKIP_DOTS)
+        );
+        foreach ($files as $file) {
+            if (!$file instanceof \SplFileInfo) {
+                continue;
+            }
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+            $relative = substr($file->getPathname(), strlen($base) + 1, -4);
+            $class = var_export($prefix . str_replace('/', '\\', $relative), true);
+            $code = "require $autoload; exit(class_exists($class) || interface_exists($class)"
+                . " || enum_exists($class) || trait_exists($class) ? 0 : 1);";
+            $output = [];
+            exec(escapeshellarg(PHP_BINARY) . ' -r ' . escapeshellarg($code) . ' 2>&1', $output, $status);
+            expect($status)->toBe(0, "$class did not autoload cold: " . implode("\n", $output));
+            $checked++;
+        }
+    }
+    expect($checked)->toBeGreaterThan(0);
 });

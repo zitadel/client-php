@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * SettingsServiceApi provides methods for the SettingsService API group.
  */
-
 class SettingsServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class SettingsServiceApi extends BaseApi
      * Get the current active identity providers for the requested context.  This can be the instance or an organization. In case of an organization,  the returned identity providers will fall back to the active instance identity providers  if not explicitly set on the organization.   Optionally, filter the identity providers by their allowed actions:    - creation_allowed: only return identity providers that are allowed for user creation    - linking_allowed: only return identity providers that are allowed for linking to existing users    - auto_creation: only return identity providers that are allowed for automatic user creation    - auto_linking: only return identity providers that are allowed for automatic linking to existing users   Required permissions:    - `policy.read`
 
      * @return \Zitadel\Client\Models\SettingsServiceGetActiveIdentityProvidersResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getActiveIdentityProviders(\Zitadel\Client\Models\SettingsServiceGetActiveIdentityProvidersRequest $settingsServiceGetActiveIdentityProvidersRequest)
     {
@@ -42,7 +41,7 @@ class SettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getActiveIdentityProviders but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class SettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SettingsServiceGetActiveIdentityProvidersResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getActiveIdentityProvidersWithHttpInfo(\Zitadel\Client\Models\SettingsServiceGetActiveIdentityProvidersRequest $settingsServiceGetActiveIdentityProvidersRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class SettingsServiceApi extends BaseApi
      * Get the current active branding settings for the requested context.  This can be the instance or an organization. In case of an organization,  the returned settings will fall back to the instance settings if not explicitly set on the organization.   Required permissions:    - `policy.read`
 
      * @return \Zitadel\Client\Models\SettingsServiceGetBrandingSettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getBrandingSettings(\Zitadel\Client\Models\SettingsServiceGetBrandingSettingsRequest $settingsServiceGetBrandingSettingsRequest)
     {
@@ -96,7 +95,7 @@ class SettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getBrandingSettings but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class SettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SettingsServiceGetBrandingSettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getBrandingSettingsWithHttpInfo(\Zitadel\Client\Models\SettingsServiceGetBrandingSettingsRequest $settingsServiceGetBrandingSettingsRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class SettingsServiceApi extends BaseApi
      * Get the domain settings for the requested context.  This can be the instance or an organization. In case of an organization,  the returned settings will fall back to the instance settings if not explicitly set on the organization.   Required permissions:    - `policy.read`
 
      * @return \Zitadel\Client\Models\SettingsServiceGetDomainSettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getDomainSettings(\Zitadel\Client\Models\SettingsServiceGetDomainSettingsRequest $settingsServiceGetDomainSettingsRequest)
     {
@@ -150,7 +149,7 @@ class SettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getDomainSettings but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class SettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SettingsServiceGetDomainSettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getDomainSettingsWithHttpInfo(\Zitadel\Client\Models\SettingsServiceGetDomainSettingsRequest $settingsServiceGetDomainSettingsRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class SettingsServiceApi extends BaseApi
      * Get basic information of the instance like the default organization, default language and supported languages.   Required permissions:    - `policy.read`
 
      * @return \Zitadel\Client\Models\SettingsServiceGetGeneralSettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getGeneralSettings(object $body)
     {
@@ -204,7 +203,7 @@ class SettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getGeneralSettings but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class SettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SettingsServiceGetGeneralSettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getGeneralSettingsWithHttpInfo(object $body): ApiResult
     {
@@ -247,7 +246,7 @@ class SettingsServiceApi extends BaseApi
      * Returns the translations in the requested locale for the hosted login.  The translations returned are based on the input level specified (system, instance or organization).   If the requested level doesn't contain all translations, and ignore_inheritance is set to false,  a merging process fallbacks onto the higher levels ensuring all keys in the file have a translation,  which could be in the default language if the one of the locale is missing on all levels.   The etag returned in the response represents the hash of the translations as they are stored on DB  and its reliable only if ignore_inheritance = true.   Required permissions:    - `iam.policy.read`
 
      * @return \Zitadel\Client\Models\SettingsServiceGetHostedLoginTranslationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getHostedLoginTranslation(\Zitadel\Client\Models\SettingsServiceGetHostedLoginTranslationRequest $settingsServiceGetHostedLoginTranslationRequest)
     {
@@ -258,7 +257,7 @@ class SettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getHostedLoginTranslation but received none',
                 $apiResult->headers,
@@ -273,7 +272,7 @@ class SettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SettingsServiceGetHostedLoginTranslationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getHostedLoginTranslationWithHttpInfo(\Zitadel\Client\Models\SettingsServiceGetHostedLoginTranslationRequest $settingsServiceGetHostedLoginTranslationRequest): ApiResult
     {
@@ -301,7 +300,7 @@ class SettingsServiceApi extends BaseApi
      * Get the legal and support settings for the requested context.  This can be the instance or an organization. In case of an organization,  the returned settings will fall back to the instance settings if not explicitly set on the organization.   Required permissions:    - `policy.read`
 
      * @return \Zitadel\Client\Models\SettingsServiceGetLegalAndSupportSettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getLegalAndSupportSettings(\Zitadel\Client\Models\SettingsServiceGetLegalAndSupportSettingsRequest $settingsServiceGetLegalAndSupportSettingsRequest)
     {
@@ -312,7 +311,7 @@ class SettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getLegalAndSupportSettings but received none',
                 $apiResult->headers,
@@ -327,7 +326,7 @@ class SettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SettingsServiceGetLegalAndSupportSettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getLegalAndSupportSettingsWithHttpInfo(\Zitadel\Client\Models\SettingsServiceGetLegalAndSupportSettingsRequest $settingsServiceGetLegalAndSupportSettingsRequest): ApiResult
     {
@@ -355,7 +354,7 @@ class SettingsServiceApi extends BaseApi
      * Get the lockout settings for the requested context.  This can be the instance or an organization. In case of an organization,  the returned settings will fall back to the instance settings if not explicitly set on the organization.   Lockout settings define how many failed attempts are allowed before a user is locked out.   Required permissions:    - `policy.read`
 
      * @return \Zitadel\Client\Models\SettingsServiceGetLockoutSettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getLockoutSettings(\Zitadel\Client\Models\SettingsServiceGetLockoutSettingsRequest $settingsServiceGetLockoutSettingsRequest)
     {
@@ -366,7 +365,7 @@ class SettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getLockoutSettings but received none',
                 $apiResult->headers,
@@ -381,7 +380,7 @@ class SettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SettingsServiceGetLockoutSettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getLockoutSettingsWithHttpInfo(\Zitadel\Client\Models\SettingsServiceGetLockoutSettingsRequest $settingsServiceGetLockoutSettingsRequest): ApiResult
     {
@@ -409,7 +408,7 @@ class SettingsServiceApi extends BaseApi
      * Get the login settings for the requested context.  This can be the instance or an organization. In case of an organization,  the returned settings will fall back to the instance settings if not explicitly set on the organization.   Required permissions:    - `policy.read`
 
      * @return \Zitadel\Client\Models\SettingsServiceGetLoginSettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getLoginSettings(\Zitadel\Client\Models\SettingsServiceGetLoginSettingsRequest $settingsServiceGetLoginSettingsRequest)
     {
@@ -420,7 +419,7 @@ class SettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getLoginSettings but received none',
                 $apiResult->headers,
@@ -435,7 +434,7 @@ class SettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SettingsServiceGetLoginSettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getLoginSettingsWithHttpInfo(\Zitadel\Client\Models\SettingsServiceGetLoginSettingsRequest $settingsServiceGetLoginSettingsRequest): ApiResult
     {
@@ -463,7 +462,7 @@ class SettingsServiceApi extends BaseApi
      * Get the password complexity settings for the requested context.  This can be the instance or an organization. In case of an organization,  the returned settings will fall back to the instance settings if not explicitly set on the organization.   Required permissions:    - `policy.read`
 
      * @return \Zitadel\Client\Models\SettingsServiceGetPasswordComplexitySettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getPasswordComplexitySettings(\Zitadel\Client\Models\SettingsServiceGetPasswordComplexitySettingsRequest $settingsServiceGetPasswordComplexitySettingsRequest)
     {
@@ -474,7 +473,7 @@ class SettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getPasswordComplexitySettings but received none',
                 $apiResult->headers,
@@ -489,7 +488,7 @@ class SettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SettingsServiceGetPasswordComplexitySettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getPasswordComplexitySettingsWithHttpInfo(\Zitadel\Client\Models\SettingsServiceGetPasswordComplexitySettingsRequest $settingsServiceGetPasswordComplexitySettingsRequest): ApiResult
     {
@@ -517,7 +516,7 @@ class SettingsServiceApi extends BaseApi
      * Get the password expiry settings for the requested context.  This can be the instance or an organization. In case of an organization,  the returned settings will fall back to the instance settings if not explicitly set on the organization.   Required permissions:    - `policy.read`
 
      * @return \Zitadel\Client\Models\SettingsServiceGetPasswordExpirySettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getPasswordExpirySettings(\Zitadel\Client\Models\SettingsServiceGetPasswordExpirySettingsRequest $settingsServiceGetPasswordExpirySettingsRequest)
     {
@@ -528,7 +527,7 @@ class SettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getPasswordExpirySettings but received none',
                 $apiResult->headers,
@@ -543,7 +542,7 @@ class SettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SettingsServiceGetPasswordExpirySettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getPasswordExpirySettingsWithHttpInfo(\Zitadel\Client\Models\SettingsServiceGetPasswordExpirySettingsRequest $settingsServiceGetPasswordExpirySettingsRequest): ApiResult
     {
@@ -571,7 +570,7 @@ class SettingsServiceApi extends BaseApi
      * Get the security settings of the ZITADEL instance.  Security settings include settings like enabling impersonation and embedded iframe settings.   Required permissions:    - `iam.policy.read`
 
      * @return \Zitadel\Client\Models\SettingsServiceGetSecuritySettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getSecuritySettings(object $body)
     {
@@ -582,7 +581,7 @@ class SettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getSecuritySettings but received none',
                 $apiResult->headers,
@@ -597,7 +596,7 @@ class SettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SettingsServiceGetSecuritySettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getSecuritySettingsWithHttpInfo(object $body): ApiResult
     {
@@ -625,7 +624,7 @@ class SettingsServiceApi extends BaseApi
      * Sets the input translations at the specified level (instance or organization) for the input language.   Required permissions:    - `iam.policy.write`
 
      * @return \Zitadel\Client\Models\SettingsServiceSetHostedLoginTranslationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setHostedLoginTranslation(\Zitadel\Client\Models\SettingsServiceSetHostedLoginTranslationRequest $settingsServiceSetHostedLoginTranslationRequest)
     {
@@ -636,7 +635,7 @@ class SettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setHostedLoginTranslation but received none',
                 $apiResult->headers,
@@ -651,7 +650,7 @@ class SettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SettingsServiceSetHostedLoginTranslationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setHostedLoginTranslationWithHttpInfo(\Zitadel\Client\Models\SettingsServiceSetHostedLoginTranslationRequest $settingsServiceSetHostedLoginTranslationRequest): ApiResult
     {
@@ -679,7 +678,7 @@ class SettingsServiceApi extends BaseApi
      * Set the security settings of the instance.   Required permissions:    - `iam.policy.write`
 
      * @return \Zitadel\Client\Models\SettingsServiceSetSecuritySettingsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setSecuritySettings(\Zitadel\Client\Models\SettingsServiceSetSecuritySettingsRequest $settingsServiceSetSecuritySettingsRequest)
     {
@@ -690,7 +689,7 @@ class SettingsServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setSecuritySettings but received none',
                 $apiResult->headers,
@@ -705,7 +704,7 @@ class SettingsServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SettingsServiceSetSecuritySettingsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setSecuritySettingsWithHttpInfo(\Zitadel\Client\Models\SettingsServiceSetSecuritySettingsRequest $settingsServiceSetSecuritySettingsRequest): ApiResult
     {

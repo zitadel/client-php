@@ -2,7 +2,7 @@
 
 namespace Zitadel\Client\Spec;
 
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\Models\UserServiceAddHumanUserRequest;
 use Zitadel\Client\Models\UserServiceAddHumanUserResponse;
 use Zitadel\Client\Models\UserServiceDeleteUserRequest;

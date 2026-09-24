@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * UserServiceApi provides methods for the UserService API group.
  */
-
 class UserServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class UserServiceApi extends BaseApi
      * Deprecated: Use [CreateUser](apis/resources/user_service_v2/user-service-create-user.api.mdx) to create a new user of type human instead.   Create/import a new user with the type human. The newly created user will get a verification email if either the email address is not marked as verified and you did not request the verification to be returned.
 
      * @return \Zitadel\Client\Models\UserServiceAddHumanUserResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addHumanUser(\Zitadel\Client\Models\UserServiceAddHumanUserRequest $userServiceAddHumanUserRequest)
     {
@@ -42,7 +41,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for addHumanUser but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceAddHumanUserResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addHumanUserWithHttpInfo(\Zitadel\Client\Models\UserServiceAddHumanUserRequest $userServiceAddHumanUserRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class UserServiceApi extends BaseApi
      * Add link to an identity provider to an user..
 
      * @return \Zitadel\Client\Models\UserServiceAddIDPLinkResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addIDPLink(\Zitadel\Client\Models\UserServiceAddIDPLinkRequest $userServiceAddIDPLinkRequest)
     {
@@ -96,7 +95,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for addIDPLink but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceAddIDPLinkResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addIDPLinkWithHttpInfo(\Zitadel\Client\Models\UserServiceAddIDPLinkRequest $userServiceAddIDPLinkRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class UserServiceApi extends BaseApi
      * Add a keys that can be used to securely authenticate at the Zitadel APIs using JWT profile authentication using short-lived tokens.  Make sure you store the returned key safely, as you won't be able to read it from the Zitadel API anymore.  Only users of type machine can have keys.   Required permission:    - user.write
 
      * @return \Zitadel\Client\Models\UserServiceAddKeyResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addKey(\Zitadel\Client\Models\UserServiceAddKeyRequest $userServiceAddKeyRequest)
     {
@@ -150,7 +149,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for addKey but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceAddKeyResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addKeyWithHttpInfo(\Zitadel\Client\Models\UserServiceAddKeyRequest $userServiceAddKeyRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class UserServiceApi extends BaseApi
      * Add a new One-Time Password (OTP) Email factor to the authenticated user. OTP Email will enable the user to verify a OTP with the latest verified email. The email has to be verified to add the second factor..
 
      * @return \Zitadel\Client\Models\UserServiceAddOTPEmailResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addOTPEmail(\Zitadel\Client\Models\UserServiceAddOTPEmailRequest $userServiceAddOTPEmailRequest)
     {
@@ -204,7 +203,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for addOTPEmail but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceAddOTPEmailResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addOTPEmailWithHttpInfo(\Zitadel\Client\Models\UserServiceAddOTPEmailRequest $userServiceAddOTPEmailRequest): ApiResult
     {
@@ -247,7 +246,7 @@ class UserServiceApi extends BaseApi
      * Add a new One-Time Password (OTP) SMS factor to the authenticated user. OTP SMS will enable the user to verify a OTP with the latest verified phone number. The phone number has to be verified to add the second factor..
 
      * @return \Zitadel\Client\Models\UserServiceAddOTPSMSResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addOTPSMS(\Zitadel\Client\Models\UserServiceAddOTPSMSRequest $userServiceAddOTPSMSRequest)
     {
@@ -258,7 +257,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for addOTPSMS but received none',
                 $apiResult->headers,
@@ -273,7 +272,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceAddOTPSMSResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addOTPSMSWithHttpInfo(\Zitadel\Client\Models\UserServiceAddOTPSMSRequest $userServiceAddOTPSMSRequest): ApiResult
     {
@@ -301,7 +300,7 @@ class UserServiceApi extends BaseApi
      * Personal access tokens (PAT) are the easiest way to authenticate to the Zitadel APIs.  Make sure you store the returned PAT safely, as you won't be able to read it from the Zitadel API anymore.  Only users of type machine can have personal access tokens.   Required permission:    - user.write
 
      * @return \Zitadel\Client\Models\UserServiceAddPersonalAccessTokenResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addPersonalAccessToken(\Zitadel\Client\Models\UserServiceAddPersonalAccessTokenRequest $userServiceAddPersonalAccessTokenRequest)
     {
@@ -312,7 +311,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for addPersonalAccessToken but received none',
                 $apiResult->headers,
@@ -327,7 +326,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceAddPersonalAccessTokenResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addPersonalAccessTokenWithHttpInfo(\Zitadel\Client\Models\UserServiceAddPersonalAccessTokenRequest $userServiceAddPersonalAccessTokenRequest): ApiResult
     {
@@ -355,7 +354,7 @@ class UserServiceApi extends BaseApi
      * Generates a client secret for the user.  The client id is the users username.  If the user already has a secret, it is overwritten.  Only users of type machine can have a secret.   Required permission:    - user.write
 
      * @return \Zitadel\Client\Models\UserServiceAddSecretResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addSecret(\Zitadel\Client\Models\UserServiceAddSecretRequest $userServiceAddSecretRequest)
     {
@@ -366,7 +365,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for addSecret but received none',
                 $apiResult->headers,
@@ -381,7 +380,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceAddSecretResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function addSecretWithHttpInfo(\Zitadel\Client\Models\UserServiceAddSecretRequest $userServiceAddSecretRequest): ApiResult
     {
@@ -409,7 +408,7 @@ class UserServiceApi extends BaseApi
      * Create an invite code for a user to initialize their first authentication method (password, passkeys, IdP) depending on the organization's available methods.  If an invite code has been created previously, it's url template and application name will be used as defaults for the new code.  The new code will overwrite the previous one and make it invalid.  Note: It is possible to reissue a new code only when the previous code has expired, or when the user provides a wrong code three or more times during verification.
 
      * @return \Zitadel\Client\Models\UserServiceCreateInviteCodeResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createInviteCode(\Zitadel\Client\Models\UserServiceCreateInviteCodeRequest $userServiceCreateInviteCodeRequest)
     {
@@ -420,7 +419,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createInviteCode but received none',
                 $apiResult->headers,
@@ -435,7 +434,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceCreateInviteCodeResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createInviteCodeWithHttpInfo(\Zitadel\Client\Models\UserServiceCreateInviteCodeRequest $userServiceCreateInviteCodeRequest): ApiResult
     {
@@ -463,7 +462,7 @@ class UserServiceApi extends BaseApi
      * Create a passkey registration link which includes a code and either return it or send it to the user..
 
      * @return \Zitadel\Client\Models\UserServiceCreatePasskeyRegistrationLinkResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createPasskeyRegistrationLink(\Zitadel\Client\Models\UserServiceCreatePasskeyRegistrationLinkRequest $userServiceCreatePasskeyRegistrationLinkRequest)
     {
@@ -474,7 +473,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createPasskeyRegistrationLink but received none',
                 $apiResult->headers,
@@ -489,7 +488,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceCreatePasskeyRegistrationLinkResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createPasskeyRegistrationLinkWithHttpInfo(\Zitadel\Client\Models\UserServiceCreatePasskeyRegistrationLinkRequest $userServiceCreatePasskeyRegistrationLinkRequest): ApiResult
     {
@@ -517,7 +516,7 @@ class UserServiceApi extends BaseApi
      * Create a new human or machine user in the specified organization.   Required permission:    - user.write
 
      * @return \Zitadel\Client\Models\UserServiceCreateUserResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createUser(\Zitadel\Client\Models\UserServiceCreateUserRequest $userServiceCreateUserRequest)
     {
@@ -528,7 +527,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createUser but received none',
                 $apiResult->headers,
@@ -543,7 +542,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceCreateUserResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createUserWithHttpInfo(\Zitadel\Client\Models\UserServiceCreateUserRequest $userServiceCreateUserRequest): ApiResult
     {
@@ -571,7 +570,7 @@ class UserServiceApi extends BaseApi
      * The state of the user will be changed to 'deactivated'. The user will not be able to log in anymore. The endpoint returns an error if the user is already in the state 'deactivated'. Use deactivate user when the user should not be able to use the account anymore, but you still need access to the user data..
 
      * @return \Zitadel\Client\Models\UserServiceDeactivateUserResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deactivateUser(\Zitadel\Client\Models\UserServiceDeactivateUserRequest $userServiceDeactivateUserRequest)
     {
@@ -582,7 +581,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deactivateUser but received none',
                 $apiResult->headers,
@@ -597,7 +596,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceDeactivateUserResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deactivateUserWithHttpInfo(\Zitadel\Client\Models\UserServiceDeactivateUserRequest $userServiceDeactivateUserRequest): ApiResult
     {
@@ -625,7 +624,7 @@ class UserServiceApi extends BaseApi
      * The state of the user will be changed to 'deleted'. The user will not be able to log in anymore. Endpoints requesting this user will return an error 'User not found..
 
      * @return \Zitadel\Client\Models\UserServiceDeleteUserResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteUser(\Zitadel\Client\Models\UserServiceDeleteUserRequest $userServiceDeleteUserRequest)
     {
@@ -636,7 +635,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteUser but received none',
                 $apiResult->headers,
@@ -651,7 +650,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceDeleteUserResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteUserWithHttpInfo(\Zitadel\Client\Models\UserServiceDeleteUserRequest $userServiceDeleteUserRequest): ApiResult
     {
@@ -679,7 +678,7 @@ class UserServiceApi extends BaseApi
      * Delete metadata objects from an user with a specific key.   Required permission:   - `user.write`
 
      * @return \Zitadel\Client\Models\UserServiceDeleteUserMetadataResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteUserMetadata(\Zitadel\Client\Models\UserServiceDeleteUserMetadataRequest $userServiceDeleteUserMetadataRequest)
     {
@@ -690,7 +689,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteUserMetadata but received none',
                 $apiResult->headers,
@@ -705,7 +704,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceDeleteUserMetadataResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteUserMetadataWithHttpInfo(\Zitadel\Client\Models\UserServiceDeleteUserMetadataRequest $userServiceDeleteUserMetadataRequest): ApiResult
     {
@@ -733,7 +732,7 @@ class UserServiceApi extends BaseApi
      * Generate new single-use recovery codes for the authenticated user. Recovery codes can be used to recover access to the account if other second factors are not available.
 
      * @return \Zitadel\Client\Models\UserServiceGenerateRecoveryCodesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function generateRecoveryCodes(\Zitadel\Client\Models\UserServiceGenerateRecoveryCodesRequest $userServiceGenerateRecoveryCodesRequest)
     {
@@ -744,7 +743,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for generateRecoveryCodes but received none',
                 $apiResult->headers,
@@ -759,7 +758,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceGenerateRecoveryCodesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function generateRecoveryCodesWithHttpInfo(\Zitadel\Client\Models\UserServiceGenerateRecoveryCodesRequest $userServiceGenerateRecoveryCodesRequest): ApiResult
     {
@@ -787,7 +786,7 @@ class UserServiceApi extends BaseApi
      * Returns the full user object (human or machine) including the profile, email, etc..
 
      * @return \Zitadel\Client\Models\UserServiceGetUserByIDResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getUserByID(\Zitadel\Client\Models\UserServiceGetUserByIDRequest $userServiceGetUserByIDRequest)
     {
@@ -798,7 +797,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getUserByID but received none',
                 $apiResult->headers,
@@ -813,7 +812,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceGetUserByIDResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getUserByIDWithHttpInfo(\Zitadel\Client\Models\UserServiceGetUserByIDRequest $userServiceGetUserByIDRequest): ApiResult
     {
@@ -841,7 +840,7 @@ class UserServiceApi extends BaseApi
      * Update the last time the user has skipped MFA initialization. The server timestamp is used.
 
      * @return \Zitadel\Client\Models\UserServiceHumanMFAInitSkippedResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function humanMFAInitSkipped(\Zitadel\Client\Models\UserServiceHumanMFAInitSkippedRequest $userServiceHumanMFAInitSkippedRequest)
     {
@@ -852,7 +851,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for humanMFAInitSkipped but received none',
                 $apiResult->headers,
@@ -867,7 +866,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceHumanMFAInitSkippedResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function humanMFAInitSkippedWithHttpInfo(\Zitadel\Client\Models\UserServiceHumanMFAInitSkippedRequest $userServiceHumanMFAInitSkippedRequest): ApiResult
     {
@@ -894,7 +893,7 @@ class UserServiceApi extends BaseApi
      * ListAuthenticationFactors
 
      * @return \Zitadel\Client\Models\UserServiceListAuthenticationFactorsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listAuthenticationFactors(\Zitadel\Client\Models\UserServiceListAuthenticationFactorsRequest $userServiceListAuthenticationFactorsRequest)
     {
@@ -905,7 +904,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listAuthenticationFactors but received none',
                 $apiResult->headers,
@@ -920,7 +919,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceListAuthenticationFactorsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listAuthenticationFactorsWithHttpInfo(\Zitadel\Client\Models\UserServiceListAuthenticationFactorsRequest $userServiceListAuthenticationFactorsRequest): ApiResult
     {
@@ -948,7 +947,7 @@ class UserServiceApi extends BaseApi
      * List all possible authentication methods of a user like password, passwordless, (T)OTP and more..
 
      * @return \Zitadel\Client\Models\UserServiceListAuthenticationMethodTypesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listAuthenticationMethodTypes(\Zitadel\Client\Models\UserServiceListAuthenticationMethodTypesRequest $userServiceListAuthenticationMethodTypesRequest)
     {
@@ -959,7 +958,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listAuthenticationMethodTypes but received none',
                 $apiResult->headers,
@@ -974,7 +973,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceListAuthenticationMethodTypesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listAuthenticationMethodTypesWithHttpInfo(\Zitadel\Client\Models\UserServiceListAuthenticationMethodTypesRequest $userServiceListAuthenticationMethodTypesRequest): ApiResult
     {
@@ -1002,7 +1001,7 @@ class UserServiceApi extends BaseApi
      * List links to an identity provider of an user.
 
      * @return \Zitadel\Client\Models\UserServiceListIDPLinksResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listIDPLinks(\Zitadel\Client\Models\UserServiceListIDPLinksRequest $userServiceListIDPLinksRequest)
     {
@@ -1013,7 +1012,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listIDPLinks but received none',
                 $apiResult->headers,
@@ -1028,7 +1027,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceListIDPLinksResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listIDPLinksWithHttpInfo(\Zitadel\Client\Models\UserServiceListIDPLinksRequest $userServiceListIDPLinksRequest): ApiResult
     {
@@ -1056,7 +1055,7 @@ class UserServiceApi extends BaseApi
      * List all matching keys. By default all keys of the instance on which the caller has permission to read the owning users are returned.  Make sure to include a limit and sorting for pagination.   Required permission:    - user.read
 
      * @return \Zitadel\Client\Models\UserServiceListKeysResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listKeys(\Zitadel\Client\Models\UserServiceListKeysRequest $userServiceListKeysRequest)
     {
@@ -1067,7 +1066,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listKeys but received none',
                 $apiResult->headers,
@@ -1082,7 +1081,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceListKeysResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listKeysWithHttpInfo(\Zitadel\Client\Models\UserServiceListKeysRequest $userServiceListKeysRequest): ApiResult
     {
@@ -1110,7 +1109,7 @@ class UserServiceApi extends BaseApi
      * List passkeys of an user
 
      * @return \Zitadel\Client\Models\UserServiceListPasskeysResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listPasskeys(\Zitadel\Client\Models\UserServiceListPasskeysRequest $userServiceListPasskeysRequest)
     {
@@ -1121,7 +1120,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listPasskeys but received none',
                 $apiResult->headers,
@@ -1136,7 +1135,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceListPasskeysResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listPasskeysWithHttpInfo(\Zitadel\Client\Models\UserServiceListPasskeysRequest $userServiceListPasskeysRequest): ApiResult
     {
@@ -1164,7 +1163,7 @@ class UserServiceApi extends BaseApi
      * List all personal access tokens. By default all personal access tokens of the instance on which the caller has permission to read the owning users are returned.  Make sure to include a limit and sorting for pagination.   Required permission:    - user.read
 
      * @return \Zitadel\Client\Models\UserServiceListPersonalAccessTokensResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listPersonalAccessTokens(\Zitadel\Client\Models\UserServiceListPersonalAccessTokensRequest $userServiceListPersonalAccessTokensRequest)
     {
@@ -1175,7 +1174,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listPersonalAccessTokens but received none',
                 $apiResult->headers,
@@ -1190,7 +1189,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceListPersonalAccessTokensResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listPersonalAccessTokensWithHttpInfo(\Zitadel\Client\Models\UserServiceListPersonalAccessTokensRequest $userServiceListPersonalAccessTokensRequest): ApiResult
     {
@@ -1218,7 +1217,7 @@ class UserServiceApi extends BaseApi
      * List metadata of an user filtered by query.   Required permission:   - `user.read`
 
      * @return \Zitadel\Client\Models\UserServiceListUserMetadataResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listUserMetadata(\Zitadel\Client\Models\UserServiceListUserMetadataRequest $userServiceListUserMetadataRequest)
     {
@@ -1229,7 +1228,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listUserMetadata but received none',
                 $apiResult->headers,
@@ -1244,7 +1243,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceListUserMetadataResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listUserMetadataWithHttpInfo(\Zitadel\Client\Models\UserServiceListUserMetadataRequest $userServiceListUserMetadataRequest): ApiResult
     {
@@ -1272,7 +1271,7 @@ class UserServiceApi extends BaseApi
      * Search for users. By default, we will return all users of your instance that you have permission to read. Make sure to include a limit and sorting for pagination.
 
      * @return \Zitadel\Client\Models\UserServiceListUsersResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listUsers(\Zitadel\Client\Models\UserServiceListUsersRequest $userServiceListUsersRequest)
     {
@@ -1283,7 +1282,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listUsers but received none',
                 $apiResult->headers,
@@ -1298,7 +1297,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceListUsersResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listUsersWithHttpInfo(\Zitadel\Client\Models\UserServiceListUsersRequest $userServiceListUsersRequest): ApiResult
     {
@@ -1326,7 +1325,7 @@ class UserServiceApi extends BaseApi
      * The state of the user will be changed to 'locked'. The user will not be able to log in anymore. The endpoint returns an error if the user is already in the state 'locked'. Use this endpoint if the user should not be able to log in temporarily because of an event that happened (wrong password, etc.)..
 
      * @return \Zitadel\Client\Models\UserServiceLockUserResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function lockUser(\Zitadel\Client\Models\UserServiceLockUserRequest $userServiceLockUserRequest)
     {
@@ -1337,7 +1336,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for lockUser but received none',
                 $apiResult->headers,
@@ -1352,7 +1351,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceLockUserResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function lockUserWithHttpInfo(\Zitadel\Client\Models\UserServiceLockUserRequest $userServiceLockUserRequest): ApiResult
     {
@@ -1380,7 +1379,7 @@ class UserServiceApi extends BaseApi
      * Request a code to reset a password..
 
      * @return \Zitadel\Client\Models\UserServicePasswordResetResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function passwordReset(\Zitadel\Client\Models\UserServicePasswordResetRequest $userServicePasswordResetRequest)
     {
@@ -1391,7 +1390,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for passwordReset but received none',
                 $apiResult->headers,
@@ -1406,7 +1405,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServicePasswordResetResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function passwordResetWithHttpInfo(\Zitadel\Client\Models\UserServicePasswordResetRequest $userServicePasswordResetRequest): ApiResult
     {
@@ -1434,7 +1433,7 @@ class UserServiceApi extends BaseApi
      * Reactivate a user with the state 'deactivated'. The user will be able to log in again afterward. The endpoint returns an error if the user is not in the state 'deactivated'..
 
      * @return \Zitadel\Client\Models\UserServiceReactivateUserResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function reactivateUser(\Zitadel\Client\Models\UserServiceReactivateUserRequest $userServiceReactivateUserRequest)
     {
@@ -1445,7 +1444,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for reactivateUser but received none',
                 $apiResult->headers,
@@ -1460,7 +1459,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceReactivateUserResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function reactivateUserWithHttpInfo(\Zitadel\Client\Models\UserServiceReactivateUserRequest $userServiceReactivateUserRequest): ApiResult
     {
@@ -1488,7 +1487,7 @@ class UserServiceApi extends BaseApi
      * Start the registration of a passkey for a user, as a response the public key credential creation options are returned, which are used to verify the passkey..
 
      * @return \Zitadel\Client\Models\UserServiceRegisterPasskeyResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function registerPasskey(\Zitadel\Client\Models\UserServiceRegisterPasskeyRequest $userServiceRegisterPasskeyRequest)
     {
@@ -1499,7 +1498,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for registerPasskey but received none',
                 $apiResult->headers,
@@ -1514,7 +1513,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceRegisterPasskeyResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function registerPasskeyWithHttpInfo(\Zitadel\Client\Models\UserServiceRegisterPasskeyRequest $userServiceRegisterPasskeyRequest): ApiResult
     {
@@ -1542,7 +1541,7 @@ class UserServiceApi extends BaseApi
      * Start the registration of a TOTP generator for a user, as a response a secret returned, which is used to initialize a TOTP app or device..
 
      * @return \Zitadel\Client\Models\UserServiceRegisterTOTPResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function registerTOTP(\Zitadel\Client\Models\UserServiceRegisterTOTPRequest $userServiceRegisterTOTPRequest)
     {
@@ -1553,7 +1552,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for registerTOTP but received none',
                 $apiResult->headers,
@@ -1568,7 +1567,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceRegisterTOTPResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function registerTOTPWithHttpInfo(\Zitadel\Client\Models\UserServiceRegisterTOTPRequest $userServiceRegisterTOTPRequest): ApiResult
     {
@@ -1596,7 +1595,7 @@ class UserServiceApi extends BaseApi
      * Start the registration of a u2f token for a user, as a response the public key credential creation options are returned, which are used to verify the u2f token..
 
      * @return \Zitadel\Client\Models\UserServiceRegisterU2FResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function registerU2F(\Zitadel\Client\Models\UserServiceRegisterU2FRequest $userServiceRegisterU2FRequest)
     {
@@ -1607,7 +1606,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for registerU2F but received none',
                 $apiResult->headers,
@@ -1622,7 +1621,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceRegisterU2FResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function registerU2FWithHttpInfo(\Zitadel\Client\Models\UserServiceRegisterU2FRequest $userServiceRegisterU2FRequest): ApiResult
     {
@@ -1650,7 +1649,7 @@ class UserServiceApi extends BaseApi
      * Remove link of an identity provider to an user.
 
      * @return \Zitadel\Client\Models\UserServiceRemoveIDPLinkResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeIDPLink(\Zitadel\Client\Models\UserServiceRemoveIDPLinkRequest $userServiceRemoveIDPLinkRequest)
     {
@@ -1661,7 +1660,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removeIDPLink but received none',
                 $apiResult->headers,
@@ -1676,7 +1675,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceRemoveIDPLinkResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeIDPLinkWithHttpInfo(\Zitadel\Client\Models\UserServiceRemoveIDPLinkRequest $userServiceRemoveIDPLinkRequest): ApiResult
     {
@@ -1704,7 +1703,7 @@ class UserServiceApi extends BaseApi
      * Remove a machine users key by the given key ID and an optionally given user ID.   Required permission:    - user.write
 
      * @return \Zitadel\Client\Models\UserServiceRemoveKeyResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeKey(\Zitadel\Client\Models\UserServiceRemoveKeyRequest $userServiceRemoveKeyRequest)
     {
@@ -1715,7 +1714,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removeKey but received none',
                 $apiResult->headers,
@@ -1730,7 +1729,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceRemoveKeyResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeKeyWithHttpInfo(\Zitadel\Client\Models\UserServiceRemoveKeyRequest $userServiceRemoveKeyRequest): ApiResult
     {
@@ -1758,7 +1757,7 @@ class UserServiceApi extends BaseApi
      * Remove the configured One-Time Password (OTP) Email factor of a user. As only one OTP Email per user is allowed, the user will not have OTP Email as a second factor afterward.
 
      * @return \Zitadel\Client\Models\UserServiceRemoveOTPEmailResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeOTPEmail(\Zitadel\Client\Models\UserServiceRemoveOTPEmailRequest $userServiceRemoveOTPEmailRequest)
     {
@@ -1769,7 +1768,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removeOTPEmail but received none',
                 $apiResult->headers,
@@ -1784,7 +1783,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceRemoveOTPEmailResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeOTPEmailWithHttpInfo(\Zitadel\Client\Models\UserServiceRemoveOTPEmailRequest $userServiceRemoveOTPEmailRequest): ApiResult
     {
@@ -1812,7 +1811,7 @@ class UserServiceApi extends BaseApi
      * Remove the configured One-Time Password (OTP) SMS factor of a user. As only one OTP SMS per user is allowed, the user will not have OTP SMS as a second factor afterward.
 
      * @return \Zitadel\Client\Models\UserServiceRemoveOTPSMSResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeOTPSMS(\Zitadel\Client\Models\UserServiceRemoveOTPSMSRequest $userServiceRemoveOTPSMSRequest)
     {
@@ -1823,7 +1822,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removeOTPSMS but received none',
                 $apiResult->headers,
@@ -1838,7 +1837,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceRemoveOTPSMSResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeOTPSMSWithHttpInfo(\Zitadel\Client\Models\UserServiceRemoveOTPSMSRequest $userServiceRemoveOTPSMSRequest): ApiResult
     {
@@ -1866,7 +1865,7 @@ class UserServiceApi extends BaseApi
      * Remove passkey from a user.
 
      * @return \Zitadel\Client\Models\UserServiceRemovePasskeyResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removePasskey(\Zitadel\Client\Models\UserServiceRemovePasskeyRequest $userServiceRemovePasskeyRequest)
     {
@@ -1877,7 +1876,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removePasskey but received none',
                 $apiResult->headers,
@@ -1892,7 +1891,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceRemovePasskeyResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removePasskeyWithHttpInfo(\Zitadel\Client\Models\UserServiceRemovePasskeyRequest $userServiceRemovePasskeyRequest): ApiResult
     {
@@ -1920,7 +1919,7 @@ class UserServiceApi extends BaseApi
      * Removes a machine users personal access token by the given token ID and an optionally given user ID.   Required permission:    - user.write
 
      * @return \Zitadel\Client\Models\UserServiceRemovePersonalAccessTokenResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removePersonalAccessToken(\Zitadel\Client\Models\UserServiceRemovePersonalAccessTokenRequest $userServiceRemovePersonalAccessTokenRequest)
     {
@@ -1931,7 +1930,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removePersonalAccessToken but received none',
                 $apiResult->headers,
@@ -1946,7 +1945,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceRemovePersonalAccessTokenResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removePersonalAccessTokenWithHttpInfo(\Zitadel\Client\Models\UserServiceRemovePersonalAccessTokenRequest $userServiceRemovePersonalAccessTokenRequest): ApiResult
     {
@@ -1974,7 +1973,7 @@ class UserServiceApi extends BaseApi
      * Deprecated: [Update the users phone field](apis/resources/user_service_v2/user-service-update-user.api.mdx) to remove the phone number.   Delete the phone number of a user.
 
      * @return \Zitadel\Client\Models\UserServiceRemovePhoneResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removePhone(\Zitadel\Client\Models\UserServiceRemovePhoneRequest $userServiceRemovePhoneRequest)
     {
@@ -1985,7 +1984,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removePhone but received none',
                 $apiResult->headers,
@@ -2000,7 +1999,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceRemovePhoneResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removePhoneWithHttpInfo(\Zitadel\Client\Models\UserServiceRemovePhoneRequest $userServiceRemovePhoneRequest): ApiResult
     {
@@ -2028,7 +2027,7 @@ class UserServiceApi extends BaseApi
      * Remove all recovery codes from the authenticated user. This will disable the recovery code second factor.
 
      * @return \Zitadel\Client\Models\UserServiceRemoveRecoveryCodesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeRecoveryCodes(\Zitadel\Client\Models\UserServiceRemoveRecoveryCodesRequest $userServiceRemoveRecoveryCodesRequest)
     {
@@ -2039,7 +2038,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removeRecoveryCodes but received none',
                 $apiResult->headers,
@@ -2054,7 +2053,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceRemoveRecoveryCodesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeRecoveryCodesWithHttpInfo(\Zitadel\Client\Models\UserServiceRemoveRecoveryCodesRequest $userServiceRemoveRecoveryCodesRequest): ApiResult
     {
@@ -2082,7 +2081,7 @@ class UserServiceApi extends BaseApi
      * Remove the current client ID and client secret from a machine user.   Required permission:    - user.write
 
      * @return \Zitadel\Client\Models\UserServiceRemoveSecretResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeSecret(\Zitadel\Client\Models\UserServiceRemoveSecretRequest $userServiceRemoveSecretRequest)
     {
@@ -2093,7 +2092,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removeSecret but received none',
                 $apiResult->headers,
@@ -2108,7 +2107,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceRemoveSecretResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeSecretWithHttpInfo(\Zitadel\Client\Models\UserServiceRemoveSecretRequest $userServiceRemoveSecretRequest): ApiResult
     {
@@ -2136,7 +2135,7 @@ class UserServiceApi extends BaseApi
      * Remove the configured TOTP generator of a user. As only one TOTP generator per user is allowed, the user will not have TOTP as a second factor afterward.
 
      * @return \Zitadel\Client\Models\UserServiceRemoveTOTPResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeTOTP(\Zitadel\Client\Models\UserServiceRemoveTOTPRequest $userServiceRemoveTOTPRequest)
     {
@@ -2147,7 +2146,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removeTOTP but received none',
                 $apiResult->headers,
@@ -2162,7 +2161,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceRemoveTOTPResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeTOTPWithHttpInfo(\Zitadel\Client\Models\UserServiceRemoveTOTPRequest $userServiceRemoveTOTPRequest): ApiResult
     {
@@ -2190,7 +2189,7 @@ class UserServiceApi extends BaseApi
      * Remove u2f token from a user.
 
      * @return \Zitadel\Client\Models\UserServiceRemoveU2FResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeU2F(\Zitadel\Client\Models\UserServiceRemoveU2FRequest $userServiceRemoveU2FRequest)
     {
@@ -2201,7 +2200,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for removeU2F but received none',
                 $apiResult->headers,
@@ -2216,7 +2215,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceRemoveU2FResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function removeU2FWithHttpInfo(\Zitadel\Client\Models\UserServiceRemoveU2FRequest $userServiceRemoveU2FRequest): ApiResult
     {
@@ -2244,7 +2243,7 @@ class UserServiceApi extends BaseApi
      * Resend code to verify user email
 
      * @return \Zitadel\Client\Models\UserServiceResendEmailCodeResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resendEmailCode(\Zitadel\Client\Models\UserServiceResendEmailCodeRequest $userServiceResendEmailCodeRequest)
     {
@@ -2255,7 +2254,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for resendEmailCode but received none',
                 $apiResult->headers,
@@ -2270,7 +2269,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceResendEmailCodeResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resendEmailCodeWithHttpInfo(\Zitadel\Client\Models\UserServiceResendEmailCodeRequest $userServiceResendEmailCodeRequest): ApiResult
     {
@@ -2298,7 +2297,7 @@ class UserServiceApi extends BaseApi
      * Deprecated: Use [CreateInviteCode](apis/resources/user_service_v2/user-service-create-invite-code.api.mdx) instead.   Resend an invite code for a user to initialize their first authentication method (password, passkeys, IdP) depending on the organization's available methods.  A resend is only possible if a code has been created previously and sent to the user. If there is no code or it was directly returned, an error will be returned.
 
      * @return \Zitadel\Client\Models\UserServiceResendInviteCodeResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resendInviteCode(\Zitadel\Client\Models\UserServiceResendInviteCodeRequest $userServiceResendInviteCodeRequest)
     {
@@ -2309,7 +2308,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for resendInviteCode but received none',
                 $apiResult->headers,
@@ -2324,7 +2323,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceResendInviteCodeResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resendInviteCodeWithHttpInfo(\Zitadel\Client\Models\UserServiceResendInviteCodeRequest $userServiceResendInviteCodeRequest): ApiResult
     {
@@ -2352,7 +2351,7 @@ class UserServiceApi extends BaseApi
      * Resend code to verify user phone number.
 
      * @return \Zitadel\Client\Models\UserServiceResendPhoneCodeResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resendPhoneCode(\Zitadel\Client\Models\UserServiceResendPhoneCodeRequest $userServiceResendPhoneCodeRequest)
     {
@@ -2363,7 +2362,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for resendPhoneCode but received none',
                 $apiResult->headers,
@@ -2378,7 +2377,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceResendPhoneCodeResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resendPhoneCodeWithHttpInfo(\Zitadel\Client\Models\UserServiceResendPhoneCodeRequest $userServiceResendPhoneCodeRequest): ApiResult
     {
@@ -2406,7 +2405,7 @@ class UserServiceApi extends BaseApi
      * Retrieve the information returned by the identity provider for registration or updating an existing user with new information..
 
      * @return \Zitadel\Client\Models\UserServiceRetrieveIdentityProviderIntentResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function retrieveIdentityProviderIntent(\Zitadel\Client\Models\UserServiceRetrieveIdentityProviderIntentRequest $userServiceRetrieveIdentityProviderIntentRequest)
     {
@@ -2417,7 +2416,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for retrieveIdentityProviderIntent but received none',
                 $apiResult->headers,
@@ -2432,7 +2431,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceRetrieveIdentityProviderIntentResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function retrieveIdentityProviderIntentWithHttpInfo(\Zitadel\Client\Models\UserServiceRetrieveIdentityProviderIntentRequest $userServiceRetrieveIdentityProviderIntentRequest): ApiResult
     {
@@ -2460,7 +2459,7 @@ class UserServiceApi extends BaseApi
      * Send code to verify user email
 
      * @return \Zitadel\Client\Models\UserServiceSendEmailCodeResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function sendEmailCode(\Zitadel\Client\Models\UserServiceSendEmailCodeRequest $userServiceSendEmailCodeRequest)
     {
@@ -2471,7 +2470,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for sendEmailCode but received none',
                 $apiResult->headers,
@@ -2486,7 +2485,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceSendEmailCodeResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function sendEmailCodeWithHttpInfo(\Zitadel\Client\Models\UserServiceSendEmailCodeRequest $userServiceSendEmailCodeRequest): ApiResult
     {
@@ -2514,7 +2513,7 @@ class UserServiceApi extends BaseApi
      * Deprecated: [Update the users email field](apis/resources/user_service_v2/user-service-update-user.api.mdx).   Change the email address of a user. If the state is set to not verified, a verification code will be generated, which can be either returned or sent to the user by email..
 
      * @return \Zitadel\Client\Models\UserServiceSetEmailResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setEmail(\Zitadel\Client\Models\UserServiceSetEmailRequest $userServiceSetEmailRequest)
     {
@@ -2525,7 +2524,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setEmail but received none',
                 $apiResult->headers,
@@ -2540,7 +2539,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceSetEmailResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setEmailWithHttpInfo(\Zitadel\Client\Models\UserServiceSetEmailRequest $userServiceSetEmailRequest): ApiResult
     {
@@ -2568,7 +2567,7 @@ class UserServiceApi extends BaseApi
      * Deprecated: [Update the users password](apis/resources/user_service_v2/user-service-update-user.api.mdx) instead.   Change the password of a user with either a verification code or the current password..
 
      * @return \Zitadel\Client\Models\UserServiceSetPasswordResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setPassword(\Zitadel\Client\Models\UserServiceSetPasswordRequest $userServiceSetPasswordRequest)
     {
@@ -2579,7 +2578,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setPassword but received none',
                 $apiResult->headers,
@@ -2594,7 +2593,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceSetPasswordResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setPasswordWithHttpInfo(\Zitadel\Client\Models\UserServiceSetPasswordRequest $userServiceSetPasswordRequest): ApiResult
     {
@@ -2622,7 +2621,7 @@ class UserServiceApi extends BaseApi
      * Deprecated: [Update the users phone field](apis/resources/user_service_v2/user-service-update-user.api.mdx).   Set the phone number of a user. If the state is set to not verified, a verification code will be generated, which can be either returned or sent to the user by sms..
 
      * @return \Zitadel\Client\Models\UserServiceSetPhoneResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setPhone(\Zitadel\Client\Models\UserServiceSetPhoneRequest $userServiceSetPhoneRequest)
     {
@@ -2633,7 +2632,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setPhone but received none',
                 $apiResult->headers,
@@ -2648,7 +2647,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceSetPhoneResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setPhoneWithHttpInfo(\Zitadel\Client\Models\UserServiceSetPhoneRequest $userServiceSetPhoneRequest): ApiResult
     {
@@ -2676,7 +2675,7 @@ class UserServiceApi extends BaseApi
      * Sets a list of key value pairs. Existing metadata entries with matching keys are overwritten. Existing metadata entries without matching keys are untouched. To remove metadata entries, use [DeleteUserMetadata](apis/resources/user_service_v2/user-service-delete-user-metadata.api.mdx). For HTTP requests, make sure the bytes array value is base64 encoded.   Required permission:   - `user.write`
 
      * @return \Zitadel\Client\Models\UserServiceSetUserMetadataResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setUserMetadata(\Zitadel\Client\Models\UserServiceSetUserMetadataRequest $userServiceSetUserMetadataRequest)
     {
@@ -2687,7 +2686,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setUserMetadata but received none',
                 $apiResult->headers,
@@ -2702,7 +2701,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceSetUserMetadataResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setUserMetadataWithHttpInfo(\Zitadel\Client\Models\UserServiceSetUserMetadataRequest $userServiceSetUserMetadataRequest): ApiResult
     {
@@ -2730,7 +2729,7 @@ class UserServiceApi extends BaseApi
      * Start a flow with an identity provider, for external login, registration or linking..
 
      * @return \Zitadel\Client\Models\UserServiceStartIdentityProviderIntentResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function startIdentityProviderIntent(\Zitadel\Client\Models\UserServiceStartIdentityProviderIntentRequest $userServiceStartIdentityProviderIntentRequest)
     {
@@ -2741,7 +2740,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for startIdentityProviderIntent but received none',
                 $apiResult->headers,
@@ -2756,7 +2755,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceStartIdentityProviderIntentResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function startIdentityProviderIntentWithHttpInfo(\Zitadel\Client\Models\UserServiceStartIdentityProviderIntentRequest $userServiceStartIdentityProviderIntentRequest): ApiResult
     {
@@ -2784,7 +2783,7 @@ class UserServiceApi extends BaseApi
      * The state of the user will be changed to 'active'. The user will be able to log in again. The endpoint returns an error if the user is not in the state 'locked'.
 
      * @return \Zitadel\Client\Models\UserServiceUnlockUserResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function unlockUser(\Zitadel\Client\Models\UserServiceUnlockUserRequest $userServiceUnlockUserRequest)
     {
@@ -2795,7 +2794,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for unlockUser but received none',
                 $apiResult->headers,
@@ -2810,7 +2809,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceUnlockUserResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function unlockUserWithHttpInfo(\Zitadel\Client\Models\UserServiceUnlockUserRequest $userServiceUnlockUserRequest): ApiResult
     {
@@ -2838,7 +2837,7 @@ class UserServiceApi extends BaseApi
      * Deprecated: Use [UpdateUser](apis/resources/user_service_v2/user-service-update-user.api.mdx) to update a user of type human instead.   Update all information from a user.
 
      * @return \Zitadel\Client\Models\UserServiceUpdateHumanUserResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateHumanUser(\Zitadel\Client\Models\UserServiceUpdateHumanUserRequest $userServiceUpdateHumanUserRequest)
     {
@@ -2849,7 +2848,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for updateHumanUser but received none',
                 $apiResult->headers,
@@ -2864,7 +2863,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceUpdateHumanUserResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateHumanUserWithHttpInfo(\Zitadel\Client\Models\UserServiceUpdateHumanUserRequest $userServiceUpdateHumanUserRequest): ApiResult
     {
@@ -2892,7 +2891,7 @@ class UserServiceApi extends BaseApi
      * Partially update an existing user.  If you change the users email or phone, you can specify how the ownership should be verified.  If you change the users password, you can specify if the password should be changed again on the users next login.   Required permission:    - user.write
 
      * @return \Zitadel\Client\Models\UserServiceUpdateUserResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateUser(\Zitadel\Client\Models\UserServiceUpdateUserRequest $userServiceUpdateUserRequest)
     {
@@ -2903,7 +2902,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for updateUser but received none',
                 $apiResult->headers,
@@ -2918,7 +2917,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceUpdateUserResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function updateUserWithHttpInfo(\Zitadel\Client\Models\UserServiceUpdateUserRequest $userServiceUpdateUserRequest): ApiResult
     {
@@ -2946,7 +2945,7 @@ class UserServiceApi extends BaseApi
      * Verify the email with the generated code.
 
      * @return \Zitadel\Client\Models\UserServiceVerifyEmailResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function verifyEmail(\Zitadel\Client\Models\UserServiceVerifyEmailRequest $userServiceVerifyEmailRequest)
     {
@@ -2957,7 +2956,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for verifyEmail but received none',
                 $apiResult->headers,
@@ -2972,7 +2971,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceVerifyEmailResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function verifyEmailWithHttpInfo(\Zitadel\Client\Models\UserServiceVerifyEmailRequest $userServiceVerifyEmailRequest): ApiResult
     {
@@ -3000,7 +2999,7 @@ class UserServiceApi extends BaseApi
      * Verify the invite code of a user previously issued. This will set their email to a verified state and  allow the user to set up their first authentication method (password, passkeys, IdP) depending on the organization's available methods.
 
      * @return \Zitadel\Client\Models\UserServiceVerifyInviteCodeResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function verifyInviteCode(\Zitadel\Client\Models\UserServiceVerifyInviteCodeRequest $userServiceVerifyInviteCodeRequest)
     {
@@ -3011,7 +3010,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for verifyInviteCode but received none',
                 $apiResult->headers,
@@ -3026,7 +3025,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceVerifyInviteCodeResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function verifyInviteCodeWithHttpInfo(\Zitadel\Client\Models\UserServiceVerifyInviteCodeRequest $userServiceVerifyInviteCodeRequest): ApiResult
     {
@@ -3054,7 +3053,7 @@ class UserServiceApi extends BaseApi
      * Verify the passkey registration with the public key credential..
 
      * @return \Zitadel\Client\Models\UserServiceVerifyPasskeyRegistrationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function verifyPasskeyRegistration(\Zitadel\Client\Models\UserServiceVerifyPasskeyRegistrationRequest $userServiceVerifyPasskeyRegistrationRequest)
     {
@@ -3065,7 +3064,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for verifyPasskeyRegistration but received none',
                 $apiResult->headers,
@@ -3080,7 +3079,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceVerifyPasskeyRegistrationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function verifyPasskeyRegistrationWithHttpInfo(\Zitadel\Client\Models\UserServiceVerifyPasskeyRegistrationRequest $userServiceVerifyPasskeyRegistrationRequest): ApiResult
     {
@@ -3108,7 +3107,7 @@ class UserServiceApi extends BaseApi
      * Verify the phone number with the generated code.
 
      * @return \Zitadel\Client\Models\UserServiceVerifyPhoneResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function verifyPhone(\Zitadel\Client\Models\UserServiceVerifyPhoneRequest $userServiceVerifyPhoneRequest)
     {
@@ -3119,7 +3118,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for verifyPhone but received none',
                 $apiResult->headers,
@@ -3134,7 +3133,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceVerifyPhoneResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function verifyPhoneWithHttpInfo(\Zitadel\Client\Models\UserServiceVerifyPhoneRequest $userServiceVerifyPhoneRequest): ApiResult
     {
@@ -3162,7 +3161,7 @@ class UserServiceApi extends BaseApi
      * Verify the TOTP registration with a generated code..
 
      * @return \Zitadel\Client\Models\UserServiceVerifyTOTPRegistrationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function verifyTOTPRegistration(\Zitadel\Client\Models\UserServiceVerifyTOTPRegistrationRequest $userServiceVerifyTOTPRegistrationRequest)
     {
@@ -3173,7 +3172,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for verifyTOTPRegistration but received none',
                 $apiResult->headers,
@@ -3188,7 +3187,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceVerifyTOTPRegistrationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function verifyTOTPRegistrationWithHttpInfo(\Zitadel\Client\Models\UserServiceVerifyTOTPRegistrationRequest $userServiceVerifyTOTPRegistrationRequest): ApiResult
     {
@@ -3216,7 +3215,7 @@ class UserServiceApi extends BaseApi
      * Verify the u2f token registration with the public key credential..
 
      * @return \Zitadel\Client\Models\UserServiceVerifyU2FRegistrationResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function verifyU2FRegistration(\Zitadel\Client\Models\UserServiceVerifyU2FRegistrationRequest $userServiceVerifyU2FRegistrationRequest)
     {
@@ -3227,7 +3226,7 @@ class UserServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for verifyU2FRegistration but received none',
                 $apiResult->headers,
@@ -3242,7 +3241,7 @@ class UserServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\UserServiceVerifyU2FRegistrationResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function verifyU2FRegistrationWithHttpInfo(\Zitadel\Client\Models\UserServiceVerifyU2FRegistrationRequest $userServiceVerifyU2FRegistrationRequest): ApiResult
     {

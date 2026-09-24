@@ -32,7 +32,6 @@ lib/Api/SettingsServiceApi.php
 lib/Api/UserServiceApi.php
 lib/Api/WebKeyServiceApi.php
 lib/ApiClient.php
-lib/ApiException.php
 lib/ApiHttpResponse.php
 lib/ApiResult.php
 lib/Auth/Authenticator.php
@@ -44,6 +43,7 @@ lib/Auth/ZitadelAccessTokenAuthenticator.php
 lib/Configuration.php
 lib/ConfigurationBuilder.php
 lib/DefaultApiClient.php
+lib/Errors/ApiException.php
 lib/Errors/BadRequestException.php
 lib/Errors/ClientException.php
 lib/Errors/ConflictException.php
@@ -52,9 +52,13 @@ lib/Errors/InternalServerErrorException.php
 lib/Errors/NetworkException.php
 lib/Errors/NetworkTimeoutException.php
 lib/Errors/NotFoundException.php
+lib/Errors/OAuth2ServerException.php
+lib/Errors/OAuth2TokenException.php
+lib/Errors/SerializationException.php
 lib/Errors/ServerException.php
 lib/Errors/UnauthorizedException.php
 lib/Errors/UnprocessableEntityException.php
+lib/Errors/ZitadelException.php
 lib/HeaderSelector.php
 lib/Models/ActionServiceActivatePublicKeyRequest.php
 lib/Models/ActionServiceActivatePublicKeyResponse.php
@@ -1411,7 +1415,6 @@ lib/ObjectSerializer.php
 lib/PreciseDuration.php
 lib/Psr18ApiClient.php
 lib/RawHttpResponse.php
-lib/SerializationException.php
 lib/Serializer/DsAwareObjectNormalizer.php
 lib/Serializer/DsMapNormalizer.php
 lib/Serializer/DsSetNormalizer.php
@@ -1426,7 +1429,6 @@ lib/TransportOptions.php
 lib/TransportOptionsBuilder.php
 lib/ValueSerializer.php
 lib/Zitadel.php
-lib/ZitadelException.php
 phpcs.xml
 phpdoc.dist.xml
 rector.php
@@ -1434,9 +1436,12 @@ tests/ApiResultTest.php
 tests/ConfigurationTest.php
 tests/DefaultApiClientUnitTest.php
 tests/HeaderSelectorTest.php
+tests/MultipartModelPart.php
 tests/Psr18ApiClientUnitTest.php
 tests/ServerConfigurationTest.php
 tests/ServerVariableTest.php
+tests/StubPsr18Client.php
+tests/StubbedDefaultApiClient.php
 tests/TraceContextUtilTest.php
 tests/TransportOptionsTest.php
 tests/ValueSerializerTest.php

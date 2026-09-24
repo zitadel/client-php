@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,14 +23,13 @@ use Zitadel\Client\ValueSerializer;
 /**
  * BetaFeatureServiceApi provides methods for the BetaFeatureService API group.
  */
-
 class BetaFeatureServiceApi extends BaseApi
 {
     /**
      * GetInstanceFeatures
 
      * @return \Zitadel\Client\Models\BetaFeatureServiceGetInstanceFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getInstanceFeatures(\Zitadel\Client\Models\BetaFeatureServiceGetInstanceFeaturesRequest $betaFeatureServiceGetInstanceFeaturesRequest)
     {
@@ -41,7 +40,7 @@ class BetaFeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getInstanceFeatures but received none',
                 $apiResult->headers,
@@ -56,7 +55,7 @@ class BetaFeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaFeatureServiceGetInstanceFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getInstanceFeaturesWithHttpInfo(\Zitadel\Client\Models\BetaFeatureServiceGetInstanceFeaturesRequest $betaFeatureServiceGetInstanceFeaturesRequest): ApiResult
     {
@@ -83,7 +82,7 @@ class BetaFeatureServiceApi extends BaseApi
      * GetOrganizationFeatures
 
      * @return \Zitadel\Client\Models\BetaFeatureServiceGetOrganizationFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getOrganizationFeatures(\Zitadel\Client\Models\BetaFeatureServiceGetOrganizationFeaturesRequest $betaFeatureServiceGetOrganizationFeaturesRequest)
     {
@@ -94,7 +93,7 @@ class BetaFeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getOrganizationFeatures but received none',
                 $apiResult->headers,
@@ -109,7 +108,7 @@ class BetaFeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaFeatureServiceGetOrganizationFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getOrganizationFeaturesWithHttpInfo(\Zitadel\Client\Models\BetaFeatureServiceGetOrganizationFeaturesRequest $betaFeatureServiceGetOrganizationFeaturesRequest): ApiResult
     {
@@ -136,7 +135,7 @@ class BetaFeatureServiceApi extends BaseApi
      * GetSystemFeatures
 
      * @return \Zitadel\Client\Models\BetaFeatureServiceGetSystemFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getSystemFeatures(object $body)
     {
@@ -147,7 +146,7 @@ class BetaFeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getSystemFeatures but received none',
                 $apiResult->headers,
@@ -162,7 +161,7 @@ class BetaFeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaFeatureServiceGetSystemFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getSystemFeaturesWithHttpInfo(object $body): ApiResult
     {
@@ -189,7 +188,7 @@ class BetaFeatureServiceApi extends BaseApi
      * GetUserFeatures
 
      * @return \Zitadel\Client\Models\BetaFeatureServiceGetUserFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getUserFeatures(\Zitadel\Client\Models\BetaFeatureServiceGetUserFeaturesRequest $betaFeatureServiceGetUserFeaturesRequest)
     {
@@ -200,7 +199,7 @@ class BetaFeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getUserFeatures but received none',
                 $apiResult->headers,
@@ -215,7 +214,7 @@ class BetaFeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaFeatureServiceGetUserFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getUserFeaturesWithHttpInfo(\Zitadel\Client\Models\BetaFeatureServiceGetUserFeaturesRequest $betaFeatureServiceGetUserFeaturesRequest): ApiResult
     {
@@ -242,7 +241,7 @@ class BetaFeatureServiceApi extends BaseApi
      * ResetInstanceFeatures
 
      * @return \Zitadel\Client\Models\BetaFeatureServiceResetInstanceFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetInstanceFeatures(object $body)
     {
@@ -253,7 +252,7 @@ class BetaFeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for resetInstanceFeatures but received none',
                 $apiResult->headers,
@@ -268,7 +267,7 @@ class BetaFeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaFeatureServiceResetInstanceFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetInstanceFeaturesWithHttpInfo(object $body): ApiResult
     {
@@ -295,7 +294,7 @@ class BetaFeatureServiceApi extends BaseApi
      * ResetOrganizationFeatures
 
      * @return \Zitadel\Client\Models\BetaFeatureServiceResetOrganizationFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetOrganizationFeatures(\Zitadel\Client\Models\BetaFeatureServiceResetOrganizationFeaturesRequest $betaFeatureServiceResetOrganizationFeaturesRequest)
     {
@@ -306,7 +305,7 @@ class BetaFeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for resetOrganizationFeatures but received none',
                 $apiResult->headers,
@@ -321,7 +320,7 @@ class BetaFeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaFeatureServiceResetOrganizationFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetOrganizationFeaturesWithHttpInfo(\Zitadel\Client\Models\BetaFeatureServiceResetOrganizationFeaturesRequest $betaFeatureServiceResetOrganizationFeaturesRequest): ApiResult
     {
@@ -348,7 +347,7 @@ class BetaFeatureServiceApi extends BaseApi
      * ResetSystemFeatures
 
      * @return \Zitadel\Client\Models\BetaFeatureServiceResetSystemFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetSystemFeatures(object $body)
     {
@@ -359,7 +358,7 @@ class BetaFeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for resetSystemFeatures but received none',
                 $apiResult->headers,
@@ -374,7 +373,7 @@ class BetaFeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaFeatureServiceResetSystemFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetSystemFeaturesWithHttpInfo(object $body): ApiResult
     {
@@ -401,7 +400,7 @@ class BetaFeatureServiceApi extends BaseApi
      * ResetUserFeatures
 
      * @return \Zitadel\Client\Models\BetaFeatureServiceResetUserFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetUserFeatures(\Zitadel\Client\Models\BetaFeatureServiceResetUserFeaturesRequest $betaFeatureServiceResetUserFeaturesRequest)
     {
@@ -412,7 +411,7 @@ class BetaFeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for resetUserFeatures but received none',
                 $apiResult->headers,
@@ -427,7 +426,7 @@ class BetaFeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaFeatureServiceResetUserFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetUserFeaturesWithHttpInfo(\Zitadel\Client\Models\BetaFeatureServiceResetUserFeaturesRequest $betaFeatureServiceResetUserFeaturesRequest): ApiResult
     {
@@ -454,7 +453,7 @@ class BetaFeatureServiceApi extends BaseApi
      * SetInstanceFeatures
 
      * @return \Zitadel\Client\Models\BetaFeatureServiceSetInstanceFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setInstanceFeatures(\Zitadel\Client\Models\BetaFeatureServiceSetInstanceFeaturesRequest $betaFeatureServiceSetInstanceFeaturesRequest)
     {
@@ -465,7 +464,7 @@ class BetaFeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setInstanceFeatures but received none',
                 $apiResult->headers,
@@ -480,7 +479,7 @@ class BetaFeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaFeatureServiceSetInstanceFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setInstanceFeaturesWithHttpInfo(\Zitadel\Client\Models\BetaFeatureServiceSetInstanceFeaturesRequest $betaFeatureServiceSetInstanceFeaturesRequest): ApiResult
     {
@@ -507,7 +506,7 @@ class BetaFeatureServiceApi extends BaseApi
      * SetOrganizationFeatures
 
      * @return \Zitadel\Client\Models\BetaFeatureServiceSetOrganizationFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setOrganizationFeatures(\Zitadel\Client\Models\BetaFeatureServiceSetOrganizationFeaturesRequest $betaFeatureServiceSetOrganizationFeaturesRequest)
     {
@@ -518,7 +517,7 @@ class BetaFeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setOrganizationFeatures but received none',
                 $apiResult->headers,
@@ -533,7 +532,7 @@ class BetaFeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaFeatureServiceSetOrganizationFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setOrganizationFeaturesWithHttpInfo(\Zitadel\Client\Models\BetaFeatureServiceSetOrganizationFeaturesRequest $betaFeatureServiceSetOrganizationFeaturesRequest): ApiResult
     {
@@ -560,7 +559,7 @@ class BetaFeatureServiceApi extends BaseApi
      * SetSystemFeatures
 
      * @return \Zitadel\Client\Models\BetaFeatureServiceSetSystemFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setSystemFeatures(\Zitadel\Client\Models\BetaFeatureServiceSetSystemFeaturesRequest $betaFeatureServiceSetSystemFeaturesRequest)
     {
@@ -571,7 +570,7 @@ class BetaFeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setSystemFeatures but received none',
                 $apiResult->headers,
@@ -586,7 +585,7 @@ class BetaFeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaFeatureServiceSetSystemFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setSystemFeaturesWithHttpInfo(\Zitadel\Client\Models\BetaFeatureServiceSetSystemFeaturesRequest $betaFeatureServiceSetSystemFeaturesRequest): ApiResult
     {
@@ -613,7 +612,7 @@ class BetaFeatureServiceApi extends BaseApi
      * SetUserFeatures
 
      * @return \Zitadel\Client\Models\BetaFeatureServiceSetUserFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setUserFeatures(\Zitadel\Client\Models\BetaFeatureServiceSetUserFeatureRequest $betaFeatureServiceSetUserFeatureRequest)
     {
@@ -624,7 +623,7 @@ class BetaFeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setUserFeatures but received none',
                 $apiResult->headers,
@@ -639,7 +638,7 @@ class BetaFeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\BetaFeatureServiceSetUserFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setUserFeaturesWithHttpInfo(\Zitadel\Client\Models\BetaFeatureServiceSetUserFeatureRequest $betaFeatureServiceSetUserFeatureRequest): ApiResult
     {

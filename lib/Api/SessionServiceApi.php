@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * SessionServiceApi provides methods for the SessionService API group.
  */
-
 class SessionServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class SessionServiceApi extends BaseApi
      * Create a new session with initial checks, metadata and challenges for further verification.  A token will be returned, which is required for using the session as authentication, e.g.  when authenticating an OIDC auth request or SAML request.  Additionally, the session token can be used as OAuth2 access token to authenticate against  the ZITADEL APIs.   Required permissions:    - `session.write`
 
      * @return \Zitadel\Client\Models\SessionServiceCreateSessionResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createSession(\Zitadel\Client\Models\SessionServiceCreateSessionRequest $sessionServiceCreateSessionRequest)
     {
@@ -42,7 +41,7 @@ class SessionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createSession but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class SessionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SessionServiceCreateSessionResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createSessionWithHttpInfo(\Zitadel\Client\Models\SessionServiceCreateSessionRequest $sessionServiceCreateSessionRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class SessionServiceApi extends BaseApi
      * Terminate an existing session. This invalidates the session and its token.  The session can no longer be used for the authentication of other resources  or to authenticate against the ZITADEL APIs.   You can only terminate your own session, unless you are granted the `session.delete` permission.   Required permissions:    - `session.delete`    - no permission required for own sessions or when providing the current session token
 
      * @return \Zitadel\Client\Models\SessionServiceDeleteSessionResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteSession(\Zitadel\Client\Models\SessionServiceDeleteSessionRequest $sessionServiceDeleteSessionRequest)
     {
@@ -96,7 +95,7 @@ class SessionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for deleteSession but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class SessionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SessionServiceDeleteSessionResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function deleteSessionWithHttpInfo(\Zitadel\Client\Models\SessionServiceDeleteSessionRequest $sessionServiceDeleteSessionRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class SessionServiceApi extends BaseApi
      * Retrieve a session by its ID. Returns all information about the session, including  the factors that were verified, the metadata, user agent information and possible expiration date.  The session token is required unless either of the following conditions is met:    - the caller created the session    - the authenticated user requests their own session (checked user)    - the security token provided in the authorization header has the same user agent as the session    - the caller is granted the permission session.read permission on either the instance or on the checked user's organization   Required permissions:    - `session.read`    - no permission required to get own sessions (see above) or when providing the current session token
 
      * @return \Zitadel\Client\Models\SessionServiceGetSessionResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getSession(\Zitadel\Client\Models\SessionServiceGetSessionRequest $sessionServiceGetSessionRequest)
     {
@@ -150,7 +149,7 @@ class SessionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getSession but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class SessionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SessionServiceGetSessionResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getSessionWithHttpInfo(\Zitadel\Client\Models\SessionServiceGetSessionRequest $sessionServiceGetSessionRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class SessionServiceApi extends BaseApi
      * Searches for sessions matching the given query. You can search by session ID, user ID,  creation date, creator, user agent or expiration date.   Required permissions:    - `session.read`    - no permission required to search for own sessions
 
      * @return \Zitadel\Client\Models\SessionServiceListSessionsResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listSessions(\Zitadel\Client\Models\SessionServiceListSessionsRequest $sessionServiceListSessionsRequest)
     {
@@ -204,7 +203,7 @@ class SessionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for listSessions but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class SessionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SessionServiceListSessionsResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function listSessionsWithHttpInfo(\Zitadel\Client\Models\SessionServiceListSessionsRequest $sessionServiceListSessionsRequest): ApiResult
     {
@@ -247,7 +246,7 @@ class SessionServiceApi extends BaseApi
      * Update an existing session with new information like additional checks or metadata  or request additional challenges.  A new session token will be returned. Note that the previous token will be invalidated.   Required permissions:    - `session.write`
 
      * @return \Zitadel\Client\Models\SessionServiceSetSessionResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setSession(\Zitadel\Client\Models\SessionServiceSetSessionRequest $sessionServiceSetSessionRequest)
     {
@@ -258,7 +257,7 @@ class SessionServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setSession but received none',
                 $apiResult->headers,
@@ -273,7 +272,7 @@ class SessionServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\SessionServiceSetSessionResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setSessionWithHttpInfo(\Zitadel\Client\Models\SessionServiceSetSessionRequest $sessionServiceSetSessionRequest): ApiResult
     {

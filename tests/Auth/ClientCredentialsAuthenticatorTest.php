@@ -9,19 +9,19 @@ use Exception;
 use InvalidArgumentException;
 use LogicException;
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
 use Zitadel\Client\ApiHttpResponse;
 use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
 use Zitadel\Client\Auth\OpenId;
 use Zitadel\Client\DefaultApiClient;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\Errors\InternalServerErrorException;
 use Zitadel\Client\Errors\NetworkException;
 use Zitadel\Client\Errors\NotFoundException;
 use Zitadel\Client\Errors\OAuth2ServerException;
 use Zitadel\Client\Errors\OAuth2TokenException;
-use Zitadel\Client\SerializationException;
+use Zitadel\Client\Errors\SerializationException;
+use Zitadel\Client\Errors\ZitadelException;
 use Zitadel\Client\TransportOptions;
-use Zitadel\Client\ZitadelException;
 
 /**
  * Tests for the ClientCredentialsAuthenticator and the OAuth contract it

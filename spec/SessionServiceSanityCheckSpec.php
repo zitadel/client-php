@@ -2,7 +2,7 @@
 
 namespace Zitadel\Client\Spec;
 
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\Models\SessionServiceChecks;
 use Zitadel\Client\Models\SessionServiceCheckUser;
 use Zitadel\Client\Models\SessionServiceCreateSessionRequest;

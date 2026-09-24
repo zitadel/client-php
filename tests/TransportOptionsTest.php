@@ -90,8 +90,12 @@ test('follow redirects defaults to true with null max redirects', function (): v
 });
 
 test('invalid proxy url throws exception', function (): void {
-    expect(fn (): \Zitadel\Client\TransportOptions => TransportOptions::builder()->proxy('not-a-url')->build())
-        ->toThrow(\InvalidArgumentException::class);
+    // A bad proxy URL is a configuration mistake, not an SDK error.
+    expect(fn () => TransportOptions::builder()->proxy('not-a-url')->build())
+        ->toThrow(function (\Exception $e): void {
+            expect($e::class)->toBe(\InvalidArgumentException::class);
+            expect($e)->not->toBeInstanceOf(\Zitadel\Client\Errors\ZitadelException::class);
+        });
 });
 
 test('null proxy url is accepted', function (): void {

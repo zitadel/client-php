@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * IdentityProviderServiceApi provides methods for the IdentityProviderService API group.
  */
-
 class IdentityProviderServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class IdentityProviderServiceApi extends BaseApi
      * Returns an identity provider (social/enterprise login) by its ID, which can be of the type Google, AzureAD, etc.
 
      * @return \Zitadel\Client\Models\IdentityProviderServiceGetIDPByIDResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getIDPByID(\Zitadel\Client\Models\IdentityProviderServiceGetIDPByIDRequest $identityProviderServiceGetIDPByIDRequest)
     {
@@ -42,7 +41,7 @@ class IdentityProviderServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getIDPByID but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class IdentityProviderServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\IdentityProviderServiceGetIDPByIDResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getIDPByIDWithHttpInfo(\Zitadel\Client\Models\IdentityProviderServiceGetIDPByIDRequest $identityProviderServiceGetIDPByIDRequest): ApiResult
     {

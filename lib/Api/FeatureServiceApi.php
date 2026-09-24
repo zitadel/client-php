@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * FeatureServiceApi provides methods for the FeatureService API group.
  */
-
 class FeatureServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class FeatureServiceApi extends BaseApi
      * Returns all configured features for an instance. Unset fields mean the feature is the current system default.   Required permissions:   - none
 
      * @return \Zitadel\Client\Models\FeatureServiceGetInstanceFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getInstanceFeatures(\Zitadel\Client\Models\FeatureServiceGetInstanceFeaturesRequest $featureServiceGetInstanceFeaturesRequest)
     {
@@ -42,7 +41,7 @@ class FeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getInstanceFeatures but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class FeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\FeatureServiceGetInstanceFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getInstanceFeaturesWithHttpInfo(\Zitadel\Client\Models\FeatureServiceGetInstanceFeaturesRequest $featureServiceGetInstanceFeaturesRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class FeatureServiceApi extends BaseApi
      * Returns all configured features for an organization. Unset fields mean the feature is the current instance default.   Required permissions:   - org.feature.read   - no permission required for the organization the user belongs to
 
      * @return \Zitadel\Client\Models\FeatureServiceGetOrganizationFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getOrganizationFeatures(\Zitadel\Client\Models\FeatureServiceGetOrganizationFeaturesRequest $featureServiceGetOrganizationFeaturesRequest)
     {
@@ -96,7 +95,7 @@ class FeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getOrganizationFeatures but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class FeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\FeatureServiceGetOrganizationFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getOrganizationFeaturesWithHttpInfo(\Zitadel\Client\Models\FeatureServiceGetOrganizationFeaturesRequest $featureServiceGetOrganizationFeaturesRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class FeatureServiceApi extends BaseApi
      * Returns all configured features for the system. Unset fields mean the feature is the current system default.   Required permissions:   - none
 
      * @return \Zitadel\Client\Models\FeatureServiceGetSystemFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getSystemFeatures(object $body)
     {
@@ -150,7 +149,7 @@ class FeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getSystemFeatures but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class FeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\FeatureServiceGetSystemFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getSystemFeaturesWithHttpInfo(object $body): ApiResult
     {
@@ -193,7 +192,7 @@ class FeatureServiceApi extends BaseApi
      * Returns all configured features for a user. Unset fields mean the feature is the current organization default.   Required permissions:   - user.feature.read   - no permission required for the own user
 
      * @return \Zitadel\Client\Models\FeatureServiceGetUserFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getUserFeatures(\Zitadel\Client\Models\FeatureServiceGetUserFeaturesRequest $featureServiceGetUserFeaturesRequest)
     {
@@ -204,7 +203,7 @@ class FeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getUserFeatures but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class FeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\FeatureServiceGetUserFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getUserFeaturesWithHttpInfo(\Zitadel\Client\Models\FeatureServiceGetUserFeaturesRequest $featureServiceGetUserFeaturesRequest): ApiResult
     {
@@ -247,7 +246,7 @@ class FeatureServiceApi extends BaseApi
      * Deletes ALL configured features for an instance, reverting the behaviors to system defaults.   Required permissions:   - iam.feature.delete
 
      * @return \Zitadel\Client\Models\FeatureServiceResetInstanceFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetInstanceFeatures(object $body)
     {
@@ -258,7 +257,7 @@ class FeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for resetInstanceFeatures but received none',
                 $apiResult->headers,
@@ -273,7 +272,7 @@ class FeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\FeatureServiceResetInstanceFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetInstanceFeaturesWithHttpInfo(object $body): ApiResult
     {
@@ -301,7 +300,7 @@ class FeatureServiceApi extends BaseApi
      * Deletes ALL configured features for an organization, reverting the behaviors to instance defaults.   Required permissions:   - org.feature.delete
 
      * @return \Zitadel\Client\Models\FeatureServiceResetOrganizationFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetOrganizationFeatures(\Zitadel\Client\Models\FeatureServiceResetOrganizationFeaturesRequest $featureServiceResetOrganizationFeaturesRequest)
     {
@@ -312,7 +311,7 @@ class FeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for resetOrganizationFeatures but received none',
                 $apiResult->headers,
@@ -327,7 +326,7 @@ class FeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\FeatureServiceResetOrganizationFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetOrganizationFeaturesWithHttpInfo(\Zitadel\Client\Models\FeatureServiceResetOrganizationFeaturesRequest $featureServiceResetOrganizationFeaturesRequest): ApiResult
     {
@@ -355,7 +354,7 @@ class FeatureServiceApi extends BaseApi
      * Deletes ALL configured features for the system, reverting the behaviors to system defaults.   Required permissions:   - system.feature.delete
 
      * @return \Zitadel\Client\Models\FeatureServiceResetSystemFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetSystemFeatures(object $body)
     {
@@ -366,7 +365,7 @@ class FeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for resetSystemFeatures but received none',
                 $apiResult->headers,
@@ -381,7 +380,7 @@ class FeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\FeatureServiceResetSystemFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetSystemFeaturesWithHttpInfo(object $body): ApiResult
     {
@@ -409,7 +408,7 @@ class FeatureServiceApi extends BaseApi
      * Deletes ALL configured features for a user, reverting the behaviors to organization defaults.   Required permissions:   - user.feature.delete
 
      * @return \Zitadel\Client\Models\FeatureServiceResetUserFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetUserFeatures(\Zitadel\Client\Models\FeatureServiceResetUserFeaturesRequest $featureServiceResetUserFeaturesRequest)
     {
@@ -420,7 +419,7 @@ class FeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for resetUserFeatures but received none',
                 $apiResult->headers,
@@ -435,7 +434,7 @@ class FeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\FeatureServiceResetUserFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function resetUserFeaturesWithHttpInfo(\Zitadel\Client\Models\FeatureServiceResetUserFeaturesRequest $featureServiceResetUserFeaturesRequest): ApiResult
     {
@@ -463,7 +462,7 @@ class FeatureServiceApi extends BaseApi
      * Configure and set features that apply to a complete instance. Only fields present in the request are set or unset.   Required permissions:   - iam.feature.write
 
      * @return \Zitadel\Client\Models\FeatureServiceSetInstanceFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setInstanceFeatures(\Zitadel\Client\Models\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest)
     {
@@ -474,7 +473,7 @@ class FeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setInstanceFeatures but received none',
                 $apiResult->headers,
@@ -489,7 +488,7 @@ class FeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\FeatureServiceSetInstanceFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setInstanceFeaturesWithHttpInfo(\Zitadel\Client\Models\FeatureServiceSetInstanceFeaturesRequest $featureServiceSetInstanceFeaturesRequest): ApiResult
     {
@@ -517,7 +516,7 @@ class FeatureServiceApi extends BaseApi
      * Configure and set features that apply to a complete instance. Only fields present in the request are set or unset.   Required permissions:   - org.feature.write
 
      * @return \Zitadel\Client\Models\FeatureServiceSetOrganizationFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setOrganizationFeatures(\Zitadel\Client\Models\FeatureServiceSetOrganizationFeaturesRequest $featureServiceSetOrganizationFeaturesRequest)
     {
@@ -528,7 +527,7 @@ class FeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setOrganizationFeatures but received none',
                 $apiResult->headers,
@@ -543,7 +542,7 @@ class FeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\FeatureServiceSetOrganizationFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setOrganizationFeaturesWithHttpInfo(\Zitadel\Client\Models\FeatureServiceSetOrganizationFeaturesRequest $featureServiceSetOrganizationFeaturesRequest): ApiResult
     {
@@ -571,7 +570,7 @@ class FeatureServiceApi extends BaseApi
      * Configure and set features that apply to the complete system. Only fields present in the request are set or unset.   Required permissions:   - system.feature.write
 
      * @return \Zitadel\Client\Models\FeatureServiceSetSystemFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setSystemFeatures(\Zitadel\Client\Models\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest)
     {
@@ -582,7 +581,7 @@ class FeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setSystemFeatures but received none',
                 $apiResult->headers,
@@ -597,7 +596,7 @@ class FeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\FeatureServiceSetSystemFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setSystemFeaturesWithHttpInfo(\Zitadel\Client\Models\FeatureServiceSetSystemFeaturesRequest $featureServiceSetSystemFeaturesRequest): ApiResult
     {
@@ -625,7 +624,7 @@ class FeatureServiceApi extends BaseApi
      * Configure and set features that apply to an user. Only fields present in the request are set or unset.   Required permissions:   - user.feature.write
 
      * @return \Zitadel\Client\Models\FeatureServiceSetUserFeaturesResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setUserFeatures(\Zitadel\Client\Models\FeatureServiceSetUserFeatureRequest $featureServiceSetUserFeatureRequest)
     {
@@ -636,7 +635,7 @@ class FeatureServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for setUserFeatures but received none',
                 $apiResult->headers,
@@ -651,7 +650,7 @@ class FeatureServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\FeatureServiceSetUserFeaturesResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function setUserFeaturesWithHttpInfo(\Zitadel\Client\Models\FeatureServiceSetUserFeatureRequest $featureServiceSetUserFeatureRequest): ApiResult
     {

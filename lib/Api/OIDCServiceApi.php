@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Api;
 
 use Zitadel\Client\ApiClient;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\ApiResult;
 use Zitadel\Client\Configuration;
 use Zitadel\Client\DefaultApiClient;
@@ -23,7 +23,6 @@ use Zitadel\Client\ValueSerializer;
 /**
  * OIDCServiceApi provides methods for the OIDCService API group.
  */
-
 class OIDCServiceApi extends BaseApi
 {
     /**
@@ -31,7 +30,7 @@ class OIDCServiceApi extends BaseApi
      * Authorize or deny the device authorization request based on the provided device authorization id.   Required permissions:    - `session.link`
 
      * @return object
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function authorizeOrDenyDeviceAuthorization(\Zitadel\Client\Models\OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest $oidcServiceAuthorizeOrDenyDeviceAuthorizationRequest)
     {
@@ -42,7 +41,7 @@ class OIDCServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for authorizeOrDenyDeviceAuthorization but received none',
                 $apiResult->headers,
@@ -57,7 +56,7 @@ class OIDCServiceApi extends BaseApi
     /**
 
      * @return ApiResult<object>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function authorizeOrDenyDeviceAuthorizationWithHttpInfo(\Zitadel\Client\Models\OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest $oidcServiceAuthorizeOrDenyDeviceAuthorizationRequest): ApiResult
     {
@@ -85,7 +84,7 @@ class OIDCServiceApi extends BaseApi
      * Finalize an Auth Request and get the callback URL for success or failure.  The user must be redirected to the URL in order to inform the application about the success or failure.  On success, the URL contains details for the application to obtain the tokens.  This method can only be called once for an Auth request.   Required permissions:    - `session.link`
 
      * @return \Zitadel\Client\Models\OIDCServiceCreateCallbackResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createCallback(\Zitadel\Client\Models\OIDCServiceCreateCallbackRequest $oidcServiceCreateCallbackRequest)
     {
@@ -96,7 +95,7 @@ class OIDCServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for createCallback but received none',
                 $apiResult->headers,
@@ -111,7 +110,7 @@ class OIDCServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OIDCServiceCreateCallbackResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function createCallbackWithHttpInfo(\Zitadel\Client\Models\OIDCServiceCreateCallbackRequest $oidcServiceCreateCallbackRequest): ApiResult
     {
@@ -139,7 +138,7 @@ class OIDCServiceApi extends BaseApi
      * Get OIDC Auth Request details by ID, obtained from the redirect URL.  Returns details that are parsed from the application's Auth Request.   Required permissions:    - `session.read`
 
      * @return \Zitadel\Client\Models\OIDCServiceGetAuthRequestResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getAuthRequest(\Zitadel\Client\Models\OIDCServiceGetAuthRequestRequest $oidcServiceGetAuthRequestRequest)
     {
@@ -150,7 +149,7 @@ class OIDCServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getAuthRequest but received none',
                 $apiResult->headers,
@@ -165,7 +164,7 @@ class OIDCServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OIDCServiceGetAuthRequestResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getAuthRequestWithHttpInfo(\Zitadel\Client\Models\OIDCServiceGetAuthRequestRequest $oidcServiceGetAuthRequestRequest): ApiResult
     {
@@ -193,7 +192,7 @@ class OIDCServiceApi extends BaseApi
      * Get the device authorization based on the provided \"user code\".  This will return the device authorization request, which contains the device authorization id  that is required to authorize the request once the user signed in or to deny it.   Required permissions:    - `session.read`
 
      * @return \Zitadel\Client\Models\OIDCServiceGetDeviceAuthorizationRequestResponse
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getDeviceAuthorizationRequest(\Zitadel\Client\Models\OIDCServiceGetDeviceAuthorizationRequestRequest $oidcServiceGetDeviceAuthorizationRequestRequest)
     {
@@ -204,7 +203,7 @@ class OIDCServiceApi extends BaseApi
              * as the SDK's typed ApiException (with the status, body and
              * headers) instead of returning a silent null, matching the
              * throwing SDKs. */
-            throw new \Zitadel\Client\ApiException(
+            throw new \Zitadel\Client\Errors\ApiException(
                 $apiResult->statusCode,
                 'Expected a response body for getDeviceAuthorizationRequest but received none',
                 $apiResult->headers,
@@ -219,7 +218,7 @@ class OIDCServiceApi extends BaseApi
     /**
 
      * @return ApiResult<\Zitadel\Client\Models\OIDCServiceGetDeviceAuthorizationRequestResponse>
-     * @throws \Zitadel\Client\ApiException
+     * @throws \Zitadel\Client\Errors\ApiException
      */
     public function getDeviceAuthorizationRequestWithHttpInfo(\Zitadel\Client\Models\OIDCServiceGetDeviceAuthorizationRequestRequest $oidcServiceGetDeviceAuthorizationRequestRequest): ApiResult
     {

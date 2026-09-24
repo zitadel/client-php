@@ -141,7 +141,7 @@ class DefaultApiClient extends AbstractApiClient
      * boundary-bearing `Content-Type` header in that case.
      *
      * @param array<string, string> $headers
-     * @throws ApiException if the request fails at the transport level
+     * @throws NetworkException if the request fails at the transport level
      */
     protected function execute(
         string $method,
@@ -262,6 +262,15 @@ class DefaultApiClient extends AbstractApiClient
         } catch (TimeoutExceptionInterface $e) {
             throw new NetworkTimeoutException("API Request timed out: {$e->getMessage()}", $e);
         } catch (TransportExceptionInterface $e) {
+            /* Only the inactivity timer throws Symfony's timeout type. Blowing
+             * the `max_duration` budget set above throws a plain transport
+             * exception, so the same expired deadline arrived as
+             * NetworkException or NetworkTimeoutException depending on which
+             * timer fired first. Classify that message as the timeout it is. */
+            if (preg_match('/max duration|timed? ?out/i', $e->getMessage()) === 1) {
+                throw new NetworkTimeoutException("API Request timed out: {$e->getMessage()}", $e);
+            }
+
             /* Connection refused, DNS, TLS handshake, reset: no HTTP response. */
             throw new NetworkException("API Request failed: {$e->getMessage()}", $e);
         }

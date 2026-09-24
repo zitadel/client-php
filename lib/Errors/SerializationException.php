@@ -11,14 +11,14 @@
 
 declare(strict_types=1);
 
-namespace Zitadel\Client;
+namespace Zitadel\Client\Errors;
 
 /**
  * Thrown when serialization or deserialization fails.
  *
  * This SDK-owned type shields callers from the native serializer
  * exceptions (\InvalidArgumentException, \RuntimeException,
- * \OverflowException, \JsonException, …) that {@see ObjectSerializer}
+ * \OverflowException, \JsonException, …) that {@see \Zitadel\Client\ObjectSerializer}
  * raises internally. Keeping those framework-native types off the public
  * serialize()/deserialize() surface gives cross-SDK parity with the other
  * language clients, all of which throw an SDK-owned serialization error.
