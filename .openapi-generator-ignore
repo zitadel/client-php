@@ -28,7 +28,6 @@ tests/ZitadelTest.php
 
 # --- repo identity + docs (team-owned) ---
 LICENSE
-phpdoc.xml
 phpstan.neon
 phpunit.xml
 README.md
