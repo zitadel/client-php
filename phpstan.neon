@@ -26,11 +26,15 @@ parameters:
       identifier: method.notFound
       message: '#Call to an undefined method Pest\\PendingCalls\\TestCall::(markTestSkipped|fail)\(\)\.#'
       path: tests/*
-    # peststan's EmptyTestClosureRule flags `test(...)->skip(...)` tests whose
-    # bodies are intentionally empty (the body never runs once skipped). These
-    # are valid Pest skip stubs, not unfinished tests.
+    # Pest resolves a toThrow() closure's parameter type through
+    # class_exists(), so the hint has to name a class. An interface hint such
+    # as \Throwable makes class_exists() return false, and toThrow() then
+    # matches the type name against the exception message instead of running
+    # the closure at all. phpstan reads Pest's own `Closure(Throwable): mixed`
+    # phpdoc and calls the class hint the contract requires a variance error.
     -
-      identifier: pest.test.emptyClosure
+      identifier: argument.type
+      message: '#Parameter \#1 \$exception of method Pest\\Mixins\\Expectation<.+>::toThrow\(\) expects .+, Closure\(Exception\): void given\.#'
       path: tests/*
     # peststan's RedundantExpectationRule flags assertions whose subject type is
     # already narrowed (e.g. toBeInstanceOf() on a typed factory return). The
