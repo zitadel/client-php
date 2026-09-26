@@ -3,10 +3,12 @@
 namespace Zitadel\Client\Test;
 
 use Docker\Docker;
+use Docker\API\Model\ContainersIdJsonGetResponse200;
 use Docker\API\Model\Mount;
 use Docker\API\Model\MountTmpfsOptions;
 use Docker\API\Model\NetworksCreatePostBody;
 use Docker\API\Model\NetworksCreatePostResponse201;
+use Docker\API\Model\PortBinding;
 use HaydenPierce\ClassFinder\ClassFinder;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -151,9 +153,30 @@ class ZitadelTest extends TestCase
         } while (microtime(true) < $deadline);
 
         throw new \RuntimeException(
-            "Squid proxy ports 3128/3129 did not become available in time. Last state: {$diag}. Container logs:\n"
+            "Squid proxy ports 3128/3129 did not become available in time. Last state: {$diag}. "
+            . "Raw inspect: " . self::dumpPorts($id) . ". Container logs:\n"
             . $proxy->logs()
         );
+    }
+
+    private static function dumpPorts(string $id): string
+    {
+        $inspect = Docker::create()->containerInspect($id);
+        if (!$inspect instanceof ContainersIdJsonGetResponse200) {
+            $type = is_object($inspect) ? $inspect::class : gettype($inspect);
+            return "inspect returned {$type}";
+        }
+
+        $status = $inspect->getState()?->getStatus() ?? 'unknown';
+        $ports = $inspect->getNetworkSettings()?->getPorts() ?? [];
+        $detail = [];
+        foreach ($ports as $key => $bindings) {
+            $binding = $bindings[0] ?? null;
+            $hostPort = $binding instanceof PortBinding ? ($binding->getHostPort() ?? 'null') : 'no-binding';
+            $detail[] = "{$key}=>{$hostPort}";
+        }
+
+        return "status={$status} ports=[" . implode(' ', $detail) . "]";
     }
 
     private static function isTcpPortOpen(string $host, int $port): bool
