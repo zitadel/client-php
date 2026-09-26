@@ -14,7 +14,6 @@ use PHPUnit\Runner\Extension\ParameterCollection;
 use PHPUnit\TextUI\Configuration\Configuration;
 use Testcontainers\Container\GenericContainer;
 use Testcontainers\Container\StartedGenericContainer;
-use Testcontainers\Wait\WaitForHostPort;
 use Testcontainers\Wait\WaitForHttp;
 
 /**
@@ -91,15 +90,72 @@ final class Setup implements Extension
             ->withExpectedStatusCode(200)
             ->wait(self::$origin);
 
-        new WaitForHostPort()
-            ->withTimeout(60000)
-            ->wait(self::$proxy);
+        /* Both proxy ports must be published AND accepting connections before
+         * getMappedPort() is read. A single generic host-port wait settles as
+         * soon as the first binding it happens to see is open, so in CI the
+         * container inspect can still be missing 3129 when its mapped port is
+         * read, and getMappedPort(3129) returns '' and aborts the whole suite.
+         * Wait for both 3128 and 3129 explicitly instead. */
+        $this->waitForMappedPorts(self::$proxy, [3128, 3129]);
 
         putenv('PROXY_URL=http://' . self::$proxy->getHost() . ':' . self::$proxy->getMappedPort(3128));
         putenv('PROXY_AUTH_URL=http://' . self::$proxy->getHost() . ':' . self::$proxy->getMappedPort(3129));
         putenv('CHASM_INTERNAL_HTTP_URL=http://' . self::ORIGIN_ALIAS . ':8080');
 
         register_shutdown_function($this->stopProxyFixture(...));
+    }
+
+    /**
+     * Blocks until every given container port is both published by Docker and
+     * accepting TCP connections on the host, or a timeout elapses.
+     *
+     * The container's inspect response is polled through a fresh client so the
+     * started container's own cached inspect is not populated from a snapshot
+     * taken before the later ports were bound; once this returns, reading each
+     * `getMappedPort()` is safe.
+     *
+     * @param int[] $ports
+     */
+    private function waitForMappedPorts(StartedGenericContainer $proxy, array $ports, int $timeoutMs = 60000): void
+    {
+        $docker = Docker::create();
+        $id = $proxy->getId();
+        $host = $proxy->getHost();
+        $deadline = microtime(true) + ($timeoutMs / 1000);
+
+        do {
+            $inspect = $docker->containerInspect($id);
+            $bound = $inspect?->getNetworkSettings()?->getPorts() ?? [];
+
+            $ready = true;
+            foreach ($ports as $port) {
+                $binding = $bound["{$port}/tcp"][0] ?? null;
+                $hostPort = $binding?->getHostPort();
+                if ($hostPort === null || $hostPort === '' || !$this->isTcpPortOpen($host, (int) $hostPort)) {
+                    $ready = false;
+                    break;
+                }
+            }
+
+            if ($ready) {
+                return;
+            }
+
+            usleep(200 * 1000);
+        } while (microtime(true) < $deadline);
+
+        throw new \RuntimeException('Proxy ports ' . implode(', ', $ports) . ' did not become available in time');
+    }
+
+    private function isTcpPortOpen(string $host, int $port): bool
+    {
+        $connection = @fsockopen($host, $port, $errno, $errstr, 2);
+        if ($connection !== false) {
+            fclose($connection);
+            return true;
+        }
+
+        return false;
     }
 
     /**

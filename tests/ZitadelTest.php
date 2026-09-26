@@ -12,10 +12,10 @@ use ReflectionNamedType;
 use Testcontainers\Container\GenericContainer;
 use Testcontainers\Container\StartedGenericContainer;
 use Testcontainers\Wait\WaitForHttp;
-use Testcontainers\Wait\WaitForHostPort;
 use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
 use Zitadel\Client\Auth\NoAuthAuthenticator;
 use Zitadel\Client\Auth\PersonalAccessTokenAuthenticator;
+use Zitadel\Client\Errors\ApiException;
 use Zitadel\Client\Errors\NetworkException;
 use Zitadel\Client\TransportOptions;
 use Zitadel\Client\Zitadel;
@@ -26,6 +26,7 @@ class ZitadelTest extends TestCase
     protected static int $httpPort;
     protected static int $httpsPort;
     protected static int $proxyPort;
+    protected static int $proxyAuthPort;
     protected static string $caCertPath;
     private static ?string $networkId = null;
     private static ?string $networkName = null;
@@ -65,22 +66,73 @@ class ZitadelTest extends TestCase
         self::$proxy = new GenericContainer("ubuntu/squid:6.10-24.10_beta")
             ->withNetwork(self::$networkName)
             ->withMount($fixturesDir . '/squid.conf', '/etc/squid/squid.conf')
-            ->withExposedPorts(3128)
+            ->withExposedPorts(3128, 3129)
             ->start();
 
         self::$host = self::$wiremock->getHost();
         self::$httpPort = self::$wiremock->getMappedPort(8080);
         self::$httpsPort = self::$wiremock->getMappedPort(8443);
-        self::$proxyPort = self::$proxy->getMappedPort(3128);
 
-        new WaitForHostPort()
-            ->withTimeout(60000)
-            ->wait(self::$proxy);
+        /* 3128 is the open proxy; 3129 is the same proxy gated by Basic proxy
+         * credentials. Both must be published and listening before their mapped
+         * ports are read: a generic host-port wait can settle on the first
+         * binding it sees, leaving getMappedPort(3129) empty in CI. */
+        self::waitForMappedPorts(self::$proxy, [3128, 3129]);
+        self::$proxyPort = self::$proxy->getMappedPort(3128);
+        self::$proxyAuthPort = self::$proxy->getMappedPort(3129);
 
         new WaitForHttp(8080, 60000)
             ->withPath("/__admin/mappings")
             ->withExpectedStatusCode(200)
             ->wait(self::$wiremock);
+    }
+
+    /**
+     * Blocks until every given container port is both published by Docker and
+     * accepting TCP connections on the host, or a timeout elapses.
+     *
+     * @param int[] $ports
+     */
+    private static function waitForMappedPorts(StartedGenericContainer $proxy, array $ports, int $timeoutMs = 60000): void
+    {
+        $docker = Docker::create();
+        $id = $proxy->getId();
+        $host = $proxy->getHost();
+        $deadline = microtime(true) + ($timeoutMs / 1000);
+
+        do {
+            $inspect = $docker->containerInspect($id);
+            $bound = $inspect?->getNetworkSettings()?->getPorts() ?? [];
+
+            $ready = true;
+            foreach ($ports as $port) {
+                $binding = $bound["{$port}/tcp"][0] ?? null;
+                $hostPort = $binding?->getHostPort();
+                if ($hostPort === null || $hostPort === '' || !self::isTcpPortOpen($host, (int) $hostPort)) {
+                    $ready = false;
+                    break;
+                }
+            }
+
+            if ($ready) {
+                return;
+            }
+
+            usleep(200 * 1000);
+        } while (microtime(true) < $deadline);
+
+        throw new \RuntimeException('Proxy ports ' . implode(', ', $ports) . ' did not become available in time');
+    }
+
+    private static function isTcpPortOpen(string $host, int $port): bool
+    {
+        $connection = @fsockopen($host, $port, $errno, $errstr, 2);
+        if ($connection !== false) {
+            fclose($connection);
+            return true;
+        }
+
+        return false;
     }
 
     public static function tearDownAfterClass(): void
@@ -171,6 +223,38 @@ class ZitadelTest extends TestCase
                 "test-token",
             ),
             new TransportOptions(proxy: "http://" . self::$host . ":" . self::$proxyPort),
+        );
+
+        $response = $zitadel->settingsService->getGeneralSettings(new \stdClass());
+        $this->assertEquals('http', $response->defaultLanguage);
+    }
+
+    public function testProxyRequiresCredentials(): void
+    {
+        $zitadel = Zitadel::withAuthenticator(
+            new PersonalAccessTokenAuthenticator(
+                "http://wiremock:8080",
+                "test-token",
+            ),
+            new TransportOptions(proxy: "http://" . self::$host . ":" . self::$proxyAuthPort),
+        );
+
+        try {
+            $zitadel->settingsService->getGeneralSettings(new \stdClass());
+            $this->fail('Expected the credentialed proxy to reject the request with 407');
+        } catch (ApiException $e) {
+            $this->assertSame(407, $e->getCode());
+        }
+    }
+
+    public function testProxyWithCredentials(): void
+    {
+        $zitadel = Zitadel::withAuthenticator(
+            new PersonalAccessTokenAuthenticator(
+                "http://wiremock:8080",
+                "test-token",
+            ),
+            new TransportOptions(proxy: "http://user:pass@" . self::$host . ":" . self::$proxyAuthPort),
         );
 
         $response = $zitadel->settingsService->getGeneralSettings(new \stdClass());
