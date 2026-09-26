@@ -5,12 +5,10 @@ namespace Zitadel\Client\Test;
 use Docker\Docker;
 use Docker\API\Model\ContainerConfigExposedPortsItem;
 use Docker\API\Model\ContainersCreatePostBody;
-use Docker\API\Model\ContainersIdJsonGetResponse200;
 use Docker\API\Model\Mount;
 use Docker\API\Model\MountTmpfsOptions;
 use Docker\API\Model\NetworksCreatePostBody;
 use Docker\API\Model\NetworksCreatePostResponse201;
-use Docker\API\Model\PortBinding;
 use HaydenPierce\ClassFinder\ClassFinder;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -21,7 +19,7 @@ use Testcontainers\Wait\WaitForHttp;
 use Zitadel\Client\Auth\ClientCredentialsAuthenticator;
 use Zitadel\Client\Auth\NoAuthAuthenticator;
 use Zitadel\Client\Auth\PersonalAccessTokenAuthenticator;
-use Zitadel\Client\Errors\ApiException;
+use Zitadel\Client\Errors\ClientException;
 use Zitadel\Client\Errors\NetworkException;
 use Zitadel\Client\TransportOptions;
 use Zitadel\Client\Zitadel;
@@ -153,56 +151,24 @@ class ZitadelTest extends TestCase
     {
         $id = $proxy->getId();
         $deadline = microtime(true) + ($timeoutMs / 1000);
-        $diag = 'no attempt completed';
 
         do {
             try {
                 $fresh = new StartedGenericContainer($id);
                 $open = $fresh->getMappedPort(3128);
                 $auth = $fresh->getMappedPort(3129);
-                $openOk = self::isTcpPortOpen($host, $open);
-                $authOk = self::isTcpPortOpen($host, $auth);
-                if ($openOk && $authOk) {
+                if (self::isTcpPortOpen($host, $open) && self::isTcpPortOpen($host, $auth)) {
                     return [$open, $auth];
                 }
-                $diag = sprintf(
-                    'host=%s 3128->%d(open=%s) 3129->%d(open=%s)',
-                    $host,
-                    $open,
-                    $openOk ? 'yes' : 'no',
-                    $auth,
-                    $authOk ? 'yes' : 'no',
-                );
-            } catch (\Throwable $e) {
-                $diag = 'getMappedPort threw: ' . $e->getMessage();
+            } catch (\RuntimeException) {
+                /* a port is not published yet; retry until the deadline */
             }
             usleep(200 * 1000);
         } while (microtime(true) < $deadline);
 
         throw new \RuntimeException(
-            "Squid proxy ports 3128/3129 did not become available in time. Last state: {$diag}. "
-            . "Raw inspect: " . self::dumpPorts($id) . ". Container logs:\n"
-            . $proxy->logs()
+            "Squid proxy ports 3128/3129 did not become available in time. Container logs:\n" . $proxy->logs()
         );
-    }
-
-    private static function dumpPorts(string $id): string
-    {
-        $inspect = Docker::create()->containerInspect($id);
-        if (!$inspect instanceof ContainersIdJsonGetResponse200) {
-            return "inspect returned " . get_debug_type($inspect);
-        }
-
-        $status = $inspect->getState()?->getStatus() ?? 'unknown';
-        $ports = $inspect->getNetworkSettings()?->getPorts() ?? [];
-        $detail = [];
-        foreach ($ports as $key => $bindings) {
-            $binding = $bindings[0] ?? null;
-            $hostPort = $binding instanceof PortBinding ? ($binding->getHostPort() ?? 'null') : 'no-binding';
-            $detail[] = "{$key}=>{$hostPort}";
-        }
-
-        return "status={$status} ports=[" . implode(' ', $detail) . "]";
     }
 
     private static function isTcpPortOpen(string $host, int $port): bool
@@ -323,7 +289,7 @@ class ZitadelTest extends TestCase
         try {
             $zitadel->settingsService->getGeneralSettings(new \stdClass());
             $this->fail('Expected the credentialed proxy to reject the request with 407');
-        } catch (ApiException $e) {
+        } catch (ClientException $e) {
             $this->assertSame(407, $e->getCode());
         }
     }
