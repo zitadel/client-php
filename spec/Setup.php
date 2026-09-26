@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Spec;
 
+use Docker\API\Model\Mount;
+use Docker\API\Model\MountTmpfsOptions;
 use Docker\API\Model\NetworksCreatePostBody;
 use Docker\API\Model\NetworksCreatePostResponse201;
 use Docker\Docker;
@@ -79,83 +81,62 @@ final class Setup implements Extension
             ->withExposedPorts(8080)
             ->start();
 
-        self::$proxy = new GenericContainer('ubuntu/squid:6.10-24.10_beta')
+        /* ubuntu/squid declares VOLUME /var/log/squid and /var/spool/squid, and
+         * squid drops to the unprivileged `proxy` user before it opens its logs.
+         * The other SDKs mount both as writable tmpfs (mode 1777) so the log
+         * daemon can start; without them squid never finishes booting on CI and
+         * the auth port never opens. testcontainers-php has no tmpfs helper, so
+         * the container is extended with one to stay aligned with the siblings. */
+        $proxy = new class ('ubuntu/squid:6.10-24.10_beta') extends GenericContainer {
+            /** @param array<string, int> $mountsByTarget container path => octal mode */
+            public function withTmpfs(array $mountsByTarget): static
+            {
+                foreach ($mountsByTarget as $target => $mode) {
+                    $this->mounts[] = new Mount()
+                        ->setType('tmpfs')
+                        ->setTarget($target)
+                        ->setTmpfsOptions(new MountTmpfsOptions()->setMode($mode));
+                }
+
+                return $this;
+            }
+        };
+
+        $proxy = $proxy
             ->withNetwork(self::$networkName)
             ->withMount($fixturesDir . '/squid.conf', '/etc/squid/squid.conf')
+            ->withTmpfs(['/var/log/squid' => 0o1777, '/var/spool/squid' => 0o1777])
             ->withExposedPorts(3128, 3129)
             ->start();
+        self::$proxy = $proxy;
 
         new WaitForHttp(8080, 60000)
             ->withPath('/__admin/mappings')
             ->withExpectedStatusCode(200)
             ->wait(self::$origin);
 
-        /* Both proxy ports must be published AND accepting connections before
-         * getMappedPort() is read. A single generic host-port wait settles as
-         * soon as the first binding it happens to see is open, so in CI the
-         * container inspect can still be missing 3129 when its mapped port is
-         * read, and getMappedPort(3129) returns '' and aborts the whole suite.
-         * Wait for both 3128 and 3129 explicitly instead. */
-        $this->waitForMappedPorts(self::$proxy, [3128, 3129]);
+        /* Block until squid has opened the credentialed auth port (3129), not
+         * merely until the container is running. Reading getMappedPort() before
+         * squid finishes parsing its two-port config caches an inspect snapshot
+         * that is missing 3129, which then aborts the whole suite. Waiting on
+         * squid's own readiness line makes both mapped ports safe to read, and
+         * on timeout the container logs are surfaced so a failure is diagnosable
+         * rather than a bare "did not become available". */
+        $deadline = microtime(true) + 60.0;
+        while (!str_contains($proxy->logs(), 'listening port: authport')) {
+            if (microtime(true) > $deadline) {
+                throw new \RuntimeException(
+                    "Squid proxy did not open its auth port in time. Container logs:\n" . $proxy->logs()
+                );
+            }
+            usleep(200 * 1000);
+        }
 
-        putenv('PROXY_URL=http://' . self::$proxy->getHost() . ':' . self::$proxy->getMappedPort(3128));
-        putenv('PROXY_AUTH_URL=http://' . self::$proxy->getHost() . ':' . self::$proxy->getMappedPort(3129));
+        putenv('PROXY_URL=http://' . $proxy->getHost() . ':' . $proxy->getMappedPort(3128));
+        putenv('PROXY_AUTH_URL=http://' . $proxy->getHost() . ':' . $proxy->getMappedPort(3129));
         putenv('CHASM_INTERNAL_HTTP_URL=http://' . self::ORIGIN_ALIAS . ':8080');
 
         register_shutdown_function($this->stopProxyFixture(...));
-    }
-
-    /**
-     * Blocks until every given container port is both published by Docker and
-     * accepting TCP connections on the host, or a timeout elapses.
-     *
-     * The container's inspect response is polled through a fresh client so the
-     * started container's own cached inspect is not populated from a snapshot
-     * taken before the later ports were bound; once this returns, reading each
-     * `getMappedPort()` is safe.
-     *
-     * @param int[] $ports
-     */
-    private function waitForMappedPorts(StartedGenericContainer $proxy, array $ports, int $timeoutMs = 60000): void
-    {
-        $docker = Docker::create();
-        $id = $proxy->getId();
-        $host = $proxy->getHost();
-        $deadline = microtime(true) + ($timeoutMs / 1000);
-
-        do {
-            $inspect = $docker->containerInspect($id);
-            $bound = $inspect?->getNetworkSettings()?->getPorts() ?? [];
-
-            $ready = true;
-            foreach ($ports as $port) {
-                $binding = $bound["{$port}/tcp"][0] ?? null;
-                $hostPort = $binding?->getHostPort();
-                if ($hostPort === null || $hostPort === '' || !$this->isTcpPortOpen($host, (int) $hostPort)) {
-                    $ready = false;
-                    break;
-                }
-            }
-
-            if ($ready) {
-                return;
-            }
-
-            usleep(200 * 1000);
-        } while (microtime(true) < $deadline);
-
-        throw new \RuntimeException('Proxy ports ' . implode(', ', $ports) . ' did not become available in time');
-    }
-
-    private function isTcpPortOpen(string $host, int $port): bool
-    {
-        $connection = @fsockopen($host, $port, $errno, $errstr, 2);
-        if ($connection !== false) {
-            fclose($connection);
-            return true;
-        }
-
-        return false;
     }
 
     /**
