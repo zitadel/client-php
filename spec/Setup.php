@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Zitadel\Client\Spec;
 
+use Docker\API\Model\ContainerConfigExposedPortsItem;
+use Docker\API\Model\ContainersCreatePostBody;
 use Docker\API\Model\Mount;
 use Docker\API\Model\MountTmpfsOptions;
 use Docker\API\Model\NetworksCreatePostBody;
@@ -99,6 +101,31 @@ final class Setup implements Extension
                 }
 
                 return $this;
+            }
+
+            protected function createContainerConfig(): ContainersCreatePostBody
+            {
+                /* testcontainers-php sets host PortBindings but never
+                 * Config.ExposedPorts, so Docker only publishes ports the image
+                 * already EXPOSEs. ubuntu/squid exposes 3128 but not the 3129 auth
+                 * port, so on a strict daemon (CI) the 3129 binding is silently
+                 * dropped while a lenient one (local Docker Desktop) still maps it.
+                 * Expose every requested port so both are published everywhere. */
+                $config = parent::createContainerConfig();
+                $exposed = [];
+                foreach ($this->exposedPorts as $port) {
+                    /* An empty ContainerConfigExposedPortsItem serialises to a
+                     * JSON array ([]); the daemon rejects that and wants an object
+                     * ({}). A single entry forces object serialisation, and Docker
+                     * reads each ExposedPorts value as an empty struct, ignoring
+                     * its contents. */
+                    $item = new ContainerConfigExposedPortsItem();
+                    $item['exposed'] = true;
+                    $exposed[$port] = $item;
+                }
+                $config->setExposedPorts($exposed);
+
+                return $config;
             }
         };
 
