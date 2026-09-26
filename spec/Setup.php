@@ -115,28 +115,62 @@ final class Setup implements Extension
             ->withExpectedStatusCode(200)
             ->wait(self::$origin);
 
-        /* Block until squid has opened the credentialed auth port (3129), not
-         * merely until the container is running. Reading getMappedPort() before
-         * squid finishes parsing its two-port config caches an inspect snapshot
-         * that is missing 3129, which then aborts the whole suite. Waiting on
-         * squid's own readiness line makes both mapped ports safe to read, and
-         * on timeout the container logs are surfaced so a failure is diagnosable
-         * rather than a bare "did not become available". */
-        $deadline = microtime(true) + 60.0;
-        while (!str_contains($proxy->logs(), 'listening port: authport')) {
-            if (microtime(true) > $deadline) {
-                throw new \RuntimeException(
-                    "Squid proxy did not open its auth port in time. Container logs:\n" . $proxy->logs()
-                );
-            }
-            usleep(200 * 1000);
-        }
+        /* 3128 is the open proxy; 3129 the same proxy gated by Basic credentials. */
+        $proxyHost = $proxy->getHost();
+        [$proxyPort, $proxyAuthPort] = $this->awaitProxyPorts($proxy, $proxyHost);
 
-        putenv('PROXY_URL=http://' . $proxy->getHost() . ':' . $proxy->getMappedPort(3128));
-        putenv('PROXY_AUTH_URL=http://' . $proxy->getHost() . ':' . $proxy->getMappedPort(3129));
+        putenv('PROXY_URL=http://' . $proxyHost . ':' . $proxyPort);
+        putenv('PROXY_AUTH_URL=http://' . $proxyHost . ':' . $proxyAuthPort);
         putenv('CHASM_INTERNAL_HTTP_URL=http://' . self::ORIGIN_ALIAS . ':8080');
 
         register_shutdown_function($this->stopProxyFixture(...));
+    }
+
+    /**
+     * Polls a fresh container inspect until both squid ports are published and
+     * accepting TCP connections, returning their mapped host ports.
+     *
+     * getMappedPort() memoises the first inspect it reads. On CI that snapshot
+     * can be taken while the container is already running but before Docker has
+     * surfaced the published host ports, so the mapped port stays empty for the
+     * rest of the run. A fresh StartedGenericContainer each iteration forces a
+     * fresh inspect; squid's own logs are surfaced if the ports never appear.
+     *
+     * @return array{int, int} the open port and the credentialed port
+     */
+    private function awaitProxyPorts(StartedGenericContainer $proxy, string $host, int $timeoutMs = 60000): array
+    {
+        $id = $proxy->getId();
+        $deadline = microtime(true) + ($timeoutMs / 1000);
+
+        do {
+            try {
+                $fresh = new StartedGenericContainer($id);
+                $open = $fresh->getMappedPort(3128);
+                $auth = $fresh->getMappedPort(3129);
+                if ($this->isTcpPortOpen($host, $open) && $this->isTcpPortOpen($host, $auth)) {
+                    return [$open, $auth];
+                }
+            } catch (\RuntimeException) {
+                /* a port is not published yet; retry until the deadline */
+            }
+            usleep(200 * 1000);
+        } while (microtime(true) < $deadline);
+
+        throw new \RuntimeException(
+            "Squid proxy ports 3128/3129 did not become available in time. Container logs:\n" . $proxy->logs()
+        );
+    }
+
+    private function isTcpPortOpen(string $host, int $port): bool
+    {
+        $connection = @fsockopen($host, $port, $errno, $errstr, 2);
+        if ($connection !== false) {
+            fclose($connection);
+            return true;
+        }
+
+        return false;
     }
 
     /**
