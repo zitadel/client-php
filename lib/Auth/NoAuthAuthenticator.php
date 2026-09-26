@@ -1,31 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zitadel\Client\Auth;
 
+use InvalidArgumentException;
+
 /**
- * Dummy Authenticator for testing purposes.
+ * A no-op authenticator that performs no authentication.
  *
- * This authenticator does not apply any authentication to API requests.
+ * Useful for testing and unauthenticated endpoints: it never mints a token,
+ * so it returns an empty set of auth headers.
  */
-class NoAuthAuthenticator extends Authenticator
+class NoAuthAuthenticator extends BaseAuthenticator
 {
+    private readonly string $host;
+
     /**
-     * NoAuthAuthenticator constructor.
-     *
-     * @param string $host The base URL for all authentication endpoints.
+     * @param string $host The base URL for the API endpoints.
+     * @throws InvalidArgumentException If the host is not a valid http or https URL.
      */
-    public function __construct(string $host = 'localhost')
+    public function __construct(string $host = 'http://localhost')
     {
-        parent::__construct($host);
+        $this->host = new OpenId($host)->getHostEndpoint();
+    }
+
+    #[\Override]
+    public function getHost(): string
+    {
+        return $this->host;
     }
 
     /**
-     * Retrieve the authentication token needed for API requests.
-     *
-     * @return string The authentication token
+     * @return array<string, string>
      */
-    public function getAuthToken(): string
+    #[\Override]
+    public function getAuthHeaders(): array
     {
-        return "";
+        return [];
     }
 }

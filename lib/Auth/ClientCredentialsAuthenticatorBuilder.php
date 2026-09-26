@@ -1,49 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zitadel\Client\Auth;
 
-use Exception;
-use Zitadel\Client\TransportOptions;
+use InvalidArgumentException;
 
 /**
- * Builder for ClientCredentialsAuthenticator.
- *
- * Extends the base OAuthAuthenticatorBuilder to provide a fluent API for constructing
- * a ClientCredentialsAuthenticator instance.
+ * Builder for {@see ClientCredentialsAuthenticator}.
  */
 final class ClientCredentialsAuthenticatorBuilder extends OAuthAuthenticatorBuilder
 {
+    private readonly string $clientId;
+
+    private readonly string $clientSecret;
+
     /**
-     * Constructs the builder with the required parameters.
-     *
-     * @param string $host The base URL for API endpoints.
-     * @param string $clientId The OAuth2 client identifier.
+     * @param string $host         The base URL for the OAuth provider.
+     * @param string $clientId     The OAuth2 client identifier.
      * @param string $clientSecret The OAuth2 client secret.
-     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
-     * @throws Exception
+     * @throws InvalidArgumentException If the host is not a valid http or https
+     *                                  URL, or the client identifier or secret is empty.
      */
-    public function __construct(
-        string $host,
-        private readonly string $clientId,
-        private readonly string $clientSecret,
-        ?TransportOptions $transportOptions = null,
-    ) {
-        parent::__construct($host, $transportOptions);
+    public function __construct(string $host, string $clientId, string $clientSecret)
+    {
+        parent::__construct($host);
+        $this->clientId = OAuthAuthenticator::requireText($clientId, 'Client ID');
+        $this->clientSecret = OAuthAuthenticator::requireText($clientSecret, 'Client secret');
     }
 
     /**
-     * Builds and returns a new ClientCredentialsAuthenticator instance.
-     *
-     * @return ClientCredentialsAuthenticator
+     * Builds the ClientCredentialsAuthenticator.
      */
     public function build(): ClientCredentialsAuthenticator
     {
-        return new ClientCredentialsAuthenticator(
-            $this->hostName,
-            $this->clientId,
-            $this->clientSecret,
-            $this->authScopes,
-            $this->transportOptions
-        );
+        return new ClientCredentialsAuthenticator($this->openId, $this->clientId, $this->clientSecret, $this->scope);
     }
 }

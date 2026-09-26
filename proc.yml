@@ -1,0 +1,9 @@
+generatorName: php-plus
+clientClassName: Zitadel
+repoName: git@github.com:zitadel/client-php.git
+disallowAdditionalPropertiesIfNotPresent: false
+generateUnitTests: true
+packageName: zitadel/client
+invokerPackage: Zitadel\Client
+licenseId: Apache-2.0
+errorPrefix: Zitadel

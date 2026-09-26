@@ -13,8 +13,8 @@
     </bootstrap>
   </extensions>
   <testsuites>
-    <testsuite name="tests">
-      <directory suffix="Test.php">./test</directory>
+    <testsuite name="unit">
+      <directory suffix="Test.php">./tests</directory>
     </testsuite>
     <testsuite name="specs">
       <directory suffix="Spec.php">./spec</directory>
@@ -31,9 +31,9 @@
     </include>
     <exclude>
       <directory>lib/Api</directory>
-      <directory>lib/Model</directory>
+      <directory>lib/Models</directory>
       <directory suffix=".php">./vendor</directory>
-      <directory suffix=".php">./test</directory>
+      <directory suffix=".php">./tests</directory>
       <directory suffix=".php">./spec</directory>
     </exclude>
   </source>

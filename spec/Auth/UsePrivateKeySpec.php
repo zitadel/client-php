@@ -2,11 +2,12 @@
 
 namespace Zitadel\Client\Spec\Auth;
 
+use Zitadel\Client\Errors\OAuth2ServerException;
 use Exception;
-use Zitadel\Client\ApiException;
+use Zitadel\Client\Errors\ApiException;
+use Zitadel\Client\Auth\WebTokenAuthenticator;
 use Zitadel\Client\Spec\AbstractIntegrationTest;
 use Zitadel\Client\Zitadel;
-use Zitadel\Client\ZitadelException;
 
 /**
  * SettingsService Integration Tests (Private Key Assertion)
@@ -29,19 +30,31 @@ class UsePrivateKeySpec extends AbstractIntegrationTest
     public function testRetrievesGeneralSettingsWithValidAuth(): void
     {
         $this->expectNotToPerformAssertions();
-        $client = Zitadel::withPrivateKey(self::getBaseUrl(), self::getJwtKey());
-        $client->settings->getGeneralSettings();
+        $client = Zitadel::withAuthenticator(
+            WebTokenAuthenticator::fromJson(self::getBaseUrl(), self::getJwtKey()),
+        );
+        $client->settingsService->getGeneralSettings(new \stdClass());
     }
 
     /**
-     * Expect an ApiException when using an invalid private key assertion.
+     * Expect an OAuth2ServerException when signing with a key the instance does not know.
      * @throws Exception
      */
     public function testRaisesApiExceptionWithInvalidAuth(): void
     {
-        $invalid = Zitadel::withPrivateKey("https://zitadel.cloud", self::getJwtKey());
+        $key = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
+        self::assertNotFalse($key);
+        openssl_pkey_export($key, $pem);
+        self::assertIsString($pem);
+        $invalid = Zitadel::withAuthenticator(
+            WebTokenAuthenticator::builder(self::getBaseUrl(), 'invalid', $pem)->keyId('invalid')->build(),
+        );
 
-        $this->expectException(ZitadelException::class);
-        $invalid->settings->getGeneralSettings();
+        try {
+            $invalid->settingsService->getGeneralSettings(new \stdClass());
+            $this->fail('Expected OAuth2ServerException');
+        } catch (OAuth2ServerException $e) {
+            $this->assertSame(OAuth2ServerException::class, $e::class);
+        }
     }
 }

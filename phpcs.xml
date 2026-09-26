@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<ruleset name="Zitadel\Client">
+    <!--
+      The standard is PSR-12, unmodified except for the two sniffs below. Each
+      is named individually with the reason generated code cannot satisfy it.
+      No generated source file disables a sniff, a standard, or the tool.
+    -->
+    <rule ref="PSR12">
+        <!--
+          Every emitted test is a Pest file: it declares the helper classes and
+          closures a test needs and calls test()/beforeEach() in the same file,
+          which is what Pest's API requires. There is no way to split the two.
+        -->
+        <exclude name="PSR1.Files.SideEffects"/>
+        <!--
+          A docblock line carries the OpenAPI description verbatim, and the
+          document decides how long that sentence is; a generated call
+          expression is one fully-qualified name. php-cs-fixer, the formatter
+          of record here and the other half of the formatting spec, does not
+          wrap lines, so nothing in the toolchain can shorten either.
+        -->
+        <exclude name="Generic.Files.LineLength"/>
+    </rule>
+    <file>.</file>
+    <exclude-pattern>vendor/</exclude-pattern>
+    <exclude-pattern>.out/</exclude-pattern>
+    <exclude-pattern>.phpstan/</exclude-pattern>
+    <exclude-pattern>*.cache</exclude-pattern>
+</ruleset>

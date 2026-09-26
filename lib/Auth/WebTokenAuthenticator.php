@@ -1,154 +1,123 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zitadel\Client\Auth;
 
 use DateInterval;
 use DateTimeImmutable;
-use Exception;
 use Firebase\JWT\JWT;
-use GuzzleHttp\Client;
-use League\OAuth2\Client\Provider\GenericProvider;
-use Zitadel\Client\TransportOptions;
+use InvalidArgumentException;
+use LogicException;
+use OpenSSLAsymmetricKey;
+use Throwable;
 
 /**
- * JWT-based Authenticator using the JWT Bearer Grant (RFC7523).
+ * JWT-bearer authenticator using the JWT Bearer Grant (RFC 7523).
  *
- * This class creates a JWT assertion and exchanges it for an access token.
+ * Signs a short-lived JWT assertion with firebase/php-jwt and exchanges it at
+ * the provider's token endpoint for an access token. The exchange is sent
+ * through the SDK's shared transport; see {@see OAuthAuthenticator} for the
+ * caching and HTTP-injection contract.
  */
 class WebTokenAuthenticator extends OAuthAuthenticator
 {
-    private const GRANT_TYPE = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
+    private const string GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:jwt-bearer';
 
     /**
-     * WebTokenAuthenticator constructor.
-     *
-     * @param OpenId $hostName The base URL for the API endpoints.
-     * @param string $clientId The OAuth2 client identifier.
-     * @param string $scope
-     * @param string $jwtIssuer The issuer claim for the JWT.
-     * @param string $jwtSubject The subject claim for the JWT.
-     * @param string $jwtAudience The audience claim.
-     * @param string $privateKey The private key to sign the JWT.
-     * @param DateInterval $jwtLifetime The lifetime of the JWT in seconds. Defaults to 300.
-     * @param string $jwtAlgorithm The signing algorithm. Defaults to "RS256".
-     * @param string|null $keyId
-     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
+     * @param OpenId               $openId       The OpenID discovery helper for the target host.
+     * @param string               $scope        Space-delimited scope string for the token request.
+     * @param string               $jwtIssuer    The JWT issuer (iss) claim.
+     * @param string               $jwtSubject   The JWT subject (sub) claim.
+     * @param string               $jwtAudience  The JWT audience (aud) claim.
+     * @param OpenSSLAsymmetricKey $privateKey   The RSA private key used to sign the JWT.
+     * @param DateInterval         $jwtLifetime  Lifetime of the JWT assertion.
+     * @param string               $jwtAlgorithm The JWT signing algorithm.
+     * @param string|null          $keyId        Optional key id (kid) header.
      */
     public function __construct(
-        OpenId                  $hostName,
-        string                  $clientId,
-        string                  $scope,
-        /**
-         * The issuer claim for the JWT.
-         */
+        OpenId $openId,
+        string $scope,
         private readonly string $jwtIssuer,
-        /**
-         * The subject claim for the JWT.
-         */
         private readonly string $jwtSubject,
-        /**
-         * The audience claim for the JWT.
-         */
         private readonly string $jwtAudience,
-        /**
-         * The private key used to sign the JWT.
-         */
-        private readonly string $privateKey,
-        /**
-         * Lifetime of the JWT in seconds.
-         */
+        private readonly OpenSSLAsymmetricKey $privateKey,
         private readonly DateInterval $jwtLifetime,
-        /**
-         * The signing algorithm.
-         */
-        private readonly string       $jwtAlgorithm = 'RS256',
-        private readonly ?string      $keyId = null,
-        ?TransportOptions $transportOptions = null
+        private readonly string $jwtAlgorithm = 'RS256',
+        private readonly ?string $keyId = null,
     ) {
-        $transportOptions ??= TransportOptions::defaults();
-
-        $guzzleOpts = $transportOptions->toGuzzleOptions();
-        $collaborators = !empty($guzzleOpts) ? ['httpClient' => new Client($guzzleOpts)] : [];
-
-        parent::__construct($hostName, $clientId, $scope, new GenericProvider([
-            'clientId' => $clientId,
-            'urlAccessToken' => $hostName->getTokenEndpoint()->toString(),
-            'urlAuthorize' => $hostName->getAuthorizationEndpoint()->toString(),
-            'urlResourceOwnerDetails' => $hostName->getUserinfoEndpoint()->toString(),
-        ], $collaborators), $transportOptions);
-        $this->provider->getGrantFactory()->setGrant(WebTokenAuthenticator::GRANT_TYPE, new JwtBearer());
+        parent::__construct($openId, $scope);
     }
 
     /**
-     * Initialize a WebTokenAuthenticator instance from a JSON configuration file.
+     * Creates a WebTokenAuthenticator from a Zitadel service-account key file.
      *
-     * The JSON file should have the following structure:
-     * <code>
+     * Expected JSON format:
+     *
+     * ```json
      * {
-     *     "type": "serviceaccount",
-     *     "keyId": "100509901696068329",
-     *     "key": "-----BEGIN RSA PRIVATE KEY----- [...] -----END RSA PRIVATE KEY-----\n",
-     *     "userId": "100507859606888466"
+     *   "type": "serviceaccount",
+     *   "keyId": "<key-id>",
+     *   "key": "<private-key>",
+     *   "userId": "<user-id>"
      * }
-     * </code>
+     * ```
      *
-     * @param string $host The base URL for the API endpoints.
-     * @param string $jsonPath The file path to the JSON configuration file.
-     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
-     * @return WebTokenAuthenticator An initialized instance of WebTokenAuthenticator.
-     * @throws Exception if the file cannot be read or the JSON is invalid.
-     * @noinspection SpellCheckingInspection
+     * @param string $host     Base URL for the API endpoints.
+     * @param string $jsonPath File path to the key file.
+     * @throws InvalidArgumentException If the file cannot be read, is not a JSON
+     *                                  object, lacks the string fields userId,
+     *                                  keyId and key, or holds an invalid key.
      */
-    public static function fromJson(
-        string $host,
-        string $jsonPath,
-        ?TransportOptions $transportOptions = null,
-    ): WebTokenAuthenticator {
-        $json = file_get_contents($jsonPath);
+    public static function fromJson(string $host, string $jsonPath): WebTokenAuthenticator
+    {
+        $json = is_file($jsonPath) && is_readable($jsonPath) ? file_get_contents($jsonPath) : false;
         if ($json === false) {
-            throw new Exception("Unable to read JSON file: $jsonPath");
+            throw new InvalidArgumentException("Unable to read the key file at $jsonPath");
         }
-
         $config = json_decode($json, true);
-        if ($config === null) {
-            throw new Exception("Invalid JSON in file: $jsonPath");
+        if (!is_array($config) || ($config !== [] && array_is_list($config))) {
+            throw new InvalidArgumentException("The key file at $jsonPath is not a JSON object");
         }
-
         $userId = $config['userId'] ?? null;
-        $privateKey = $config['key'] ?? null;
         $keyId = $config['keyId'] ?? null;
-        if ($userId === null || $privateKey === null || $keyId === null) {
-            throw new Exception("Missing required configuration keys in JSON file.");
+        $privateKey = $config['key'] ?? null;
+        if (!is_string($userId) || !is_string($keyId) || !is_string($privateKey)) {
+            throw new InvalidArgumentException(
+                "The key file at $jsonPath must contain the string fields userId, keyId and key"
+            );
         }
-
-        return self::builder($host, $userId, $privateKey, $transportOptions)->keyId($keyId)->build();
+        return self::builder($host, $userId, $privateKey)->keyId($keyId)->build();
     }
 
     /**
-     * Returns a new builder instance for WebTokenAuthenticator.
+     * Returns a builder for a WebTokenAuthenticator.
      *
-     * @param string $host The base URL for API endpoints.
-     * @param string $userId
-     * @param string $privateKey
-     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
-     * @return WebTokenAuthenticatorBuilder A new builder instance.
-     * @throws Exception
+     * @param string $host       The base URL for the OAuth provider.
+     * @param string $userId     The user ID, used as both the issuer and the subject.
+     * @param string $privateKey The PEM-encoded RSA private key used to sign the JWT.
+     * @throws InvalidArgumentException If the host is not a valid http or https
+     *                                  URL, the user ID is empty, or the key is
+     *                                  not an RSA private key.
      */
-    public static function builder(
-        string $host,
-        string $userId,
-        string $privateKey,
-        ?TransportOptions $transportOptions = null,
-    ): WebTokenAuthenticatorBuilder {
-        return new WebTokenAuthenticatorBuilder($host, $userId, $userId, $host, $privateKey, $transportOptions);
+    public static function builder(string $host, string $userId, string $privateKey): WebTokenAuthenticatorBuilder
+    {
+        return new WebTokenAuthenticatorBuilder($host, $userId, $privateKey);
     }
 
+    #[\Override]
     protected function getGrantType(): string
     {
-        return WebTokenAuthenticator::GRANT_TYPE;
+        return self::GRANT_TYPE;
     }
 
-    protected function getAccessTokenOptions(): array
+    /**
+     * Builds a freshly signed JWT assertion with time-sensitive claims.
+     *
+     * @return array<string, string>
+     */
+    #[\Override]
+    protected function getTokenRequestParams(): array
     {
         $now = new DateTimeImmutable();
         $payload = [
@@ -158,10 +127,11 @@ class WebTokenAuthenticator extends OAuthAuthenticator
             'iat' => $now->getTimestamp(),
             'exp' => $now->add($this->jwtLifetime)->getTimestamp(),
         ];
-        return [
-            'scope' => $this->scope,
-            'assertion' => JWT::encode($payload, $this->privateKey, $this->jwtAlgorithm, $this->keyId),
-        ];
+        try {
+            $assertion = JWT::encode($payload, $this->privateKey, $this->jwtAlgorithm, $this->keyId);
+        } catch (Throwable $e) {
+            throw new LogicException('Unable to sign the JWT assertion', 0, $e);
+        }
+        return ['assertion' => $assertion];
     }
-
 }

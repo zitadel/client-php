@@ -1,0 +1,4 @@
+nyholm/psr7 ^1.8  # Psr18ApiClientUnitTest
+open-telemetry/sdk ^1.0  # TraceContextUtilTest
+pestphp/pest ^4.0  # every generated test
+testcontainers/testcontainers ^1.0  # the container bootstrap
