@@ -190,8 +190,7 @@ class ZitadelTest extends TestCase
     {
         $inspect = Docker::create()->containerInspect($id);
         if (!$inspect instanceof ContainersIdJsonGetResponse200) {
-            $type = is_object($inspect) ? $inspect::class : gettype($inspect);
-            return "inspect returned {$type}";
+            return "inspect returned " . get_debug_type($inspect);
         }
 
         $status = $inspect->getState()?->getStatus() ?? 'unknown';
