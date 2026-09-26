@@ -124,23 +124,35 @@ class ZitadelTest extends TestCase
     {
         $id = $proxy->getId();
         $deadline = microtime(true) + ($timeoutMs / 1000);
+        $diag = 'no attempt completed';
 
         do {
             try {
                 $fresh = new StartedGenericContainer($id);
                 $open = $fresh->getMappedPort(3128);
                 $auth = $fresh->getMappedPort(3129);
-                if (self::isTcpPortOpen($host, $open) && self::isTcpPortOpen($host, $auth)) {
+                $openOk = self::isTcpPortOpen($host, $open);
+                $authOk = self::isTcpPortOpen($host, $auth);
+                if ($openOk && $authOk) {
                     return [$open, $auth];
                 }
-            } catch (\RuntimeException) {
-                /* a port is not published yet; retry until the deadline */
+                $diag = sprintf(
+                    'host=%s 3128->%d(open=%s) 3129->%d(open=%s)',
+                    $host,
+                    $open,
+                    $openOk ? 'yes' : 'no',
+                    $auth,
+                    $authOk ? 'yes' : 'no',
+                );
+            } catch (\Throwable $e) {
+                $diag = 'getMappedPort threw: ' . $e->getMessage();
             }
             usleep(200 * 1000);
         } while (microtime(true) < $deadline);
 
         throw new \RuntimeException(
-            "Squid proxy ports 3128/3129 did not become available in time. Container logs:\n" . $proxy->logs()
+            "Squid proxy ports 3128/3129 did not become available in time. Last state: {$diag}. Container logs:\n"
+            . $proxy->logs()
         );
     }
 
