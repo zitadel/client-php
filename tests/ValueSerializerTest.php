@@ -236,6 +236,10 @@ test('space delimited array joins with space', function (): void {
     expect(ValueSerializer::serializeStyled('color', ['blue', 'black'], 'query', 'array', null, 'spaceDelimited', false))->toBe('blue black');
 });
 
+test('space delimited array with explode true returns list', function (): void {
+    expect(ValueSerializer::serializeStyled('color', ['blue', 'black'], 'query', 'array', null, 'spaceDelimited', true))->toBe(['blue', 'black']);
+});
+
 test('space delimited scalar returns stringified value', function (): void {
     expect(ValueSerializer::serializeStyled('color', 'blue', 'query', 'string', null, 'spaceDelimited', false))->toBe('blue');
 });
@@ -244,6 +248,10 @@ test('space delimited scalar returns stringified value', function (): void {
 
 test('pipe delimited array joins with pipe', function (): void {
     expect(ValueSerializer::serializeStyled('color', ['blue', 'black'], 'query', 'array', null, 'pipeDelimited', false))->toBe('blue|black');
+});
+
+test('pipe delimited array with explode true returns list', function (): void {
+    expect(ValueSerializer::serializeStyled('color', ['blue', 'black'], 'query', 'array', null, 'pipeDelimited', true))->toBe(['blue', 'black']);
 });
 
 test('pipe delimited scalar returns stringified value', function (): void {
@@ -437,4 +445,32 @@ test('path date only at year boundary emits yyyy mm dd', function (): void {
     // UTC behaviour of Go/Node/Swift/Dart.
     $dt = new \DateTime('2024-12-31T00:00:00+00:00');
     expect(ValueSerializer::serialize($dt, 'path', '\\DateTime|date'))->toBe('2024-12-31');
+});
+
+// -- allowReserved query encoding --
+// OAS allowReserved: true leaves RFC 3986 reserved characters literal on the
+// wire; everything else (space, control, non-ASCII) is still percent-encoded.
+// Mirrors Java's AllowReservedTests.
+
+test('allow reserved leaves reserved chars literal but still encodes others', function (): void {
+    expect(ValueSerializer::encodeQueryAllowingReserved('v1.0/beta:rc1'))->toBe('v1.0/beta:rc1');
+    // Space is illegal in a URL and must still be percent-encoded even when
+    // reserved characters are preserved.
+    expect(ValueSerializer::encodeQueryAllowingReserved('a b:c'))->toBe('a%20b:c');
+});
+
+test('allow reserved preserves the full rfc 3986 reserved set', function (): void {
+    // The complete reserved set : / ? # [ ] @ ! $ & ' ( ) * + , ; = must pass
+    // through literally.
+    $reserved = ":/?#[]@!$&'()*+,;=";
+    expect(ValueSerializer::encodeQueryAllowingReserved($reserved))->toBe($reserved);
+});
+
+test('allow reserved still percent encodes non ascii', function (): void {
+    // Non-ASCII is neither reserved nor unreserved, so it is still encoded.
+    expect(ValueSerializer::encodeQueryAllowingReserved('日本'))->toBe('%E6%97%A5%E6%9C%AC');
+});
+
+test('allow reserved empty string preserved', function (): void {
+    expect(ValueSerializer::encodeQueryAllowingReserved(''))->toBe('');
 });

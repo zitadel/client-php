@@ -62,6 +62,13 @@ class SessionServiceApi extends BaseApi
     {
         $path = '/zitadel.session.v2.SessionService/CreateSession';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $sessionServiceCreateSessionRequest;
 
@@ -74,7 +81,12 @@ class SessionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\SessionServiceCreateSessionResponse::class
+            \Zitadel\Client\Models\SessionServiceCreateSessionResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -116,6 +128,13 @@ class SessionServiceApi extends BaseApi
     {
         $path = '/zitadel.session.v2.SessionService/DeleteSession';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $sessionServiceDeleteSessionRequest;
 
@@ -128,7 +147,12 @@ class SessionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\SessionServiceDeleteSessionResponse::class
+            \Zitadel\Client\Models\SessionServiceDeleteSessionResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -170,6 +194,13 @@ class SessionServiceApi extends BaseApi
     {
         $path = '/zitadel.session.v2.SessionService/GetSession';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $sessionServiceGetSessionRequest;
 
@@ -182,7 +213,12 @@ class SessionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\SessionServiceGetSessionResponse::class
+            \Zitadel\Client\Models\SessionServiceGetSessionResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -224,6 +260,13 @@ class SessionServiceApi extends BaseApi
     {
         $path = '/zitadel.session.v2.SessionService/ListSessions';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $sessionServiceListSessionsRequest;
 
@@ -236,7 +279,12 @@ class SessionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\SessionServiceListSessionsResponse::class
+            \Zitadel\Client\Models\SessionServiceListSessionsResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -278,6 +326,13 @@ class SessionServiceApi extends BaseApi
     {
         $path = '/zitadel.session.v2.SessionService/SetSession';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $sessionServiceSetSessionRequest;
 
@@ -290,7 +345,12 @@ class SessionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\SessionServiceSetSessionResponse::class
+            \Zitadel\Client\Models\SessionServiceSetSessionResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }

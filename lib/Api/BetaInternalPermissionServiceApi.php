@@ -62,6 +62,13 @@ class BetaInternalPermissionServiceApi extends BaseApi
     {
         $path = '/zitadel.internal_permission.v2beta.InternalPermissionService/CreateAdministrator';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaInternalPermissionServiceCreateAdministratorRequest;
 
@@ -74,7 +81,12 @@ class BetaInternalPermissionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaInternalPermissionServiceCreateAdministratorResponse::class
+            \Zitadel\Client\Models\BetaInternalPermissionServiceCreateAdministratorResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -116,6 +128,13 @@ class BetaInternalPermissionServiceApi extends BaseApi
     {
         $path = '/zitadel.internal_permission.v2beta.InternalPermissionService/DeleteAdministrator';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaInternalPermissionServiceDeleteAdministratorRequest;
 
@@ -128,7 +147,12 @@ class BetaInternalPermissionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaInternalPermissionServiceDeleteAdministratorResponse::class
+            \Zitadel\Client\Models\BetaInternalPermissionServiceDeleteAdministratorResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -170,6 +194,13 @@ class BetaInternalPermissionServiceApi extends BaseApi
     {
         $path = '/zitadel.internal_permission.v2beta.InternalPermissionService/ListAdministrators';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaInternalPermissionServiceListAdministratorsRequest;
 
@@ -182,7 +213,12 @@ class BetaInternalPermissionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaInternalPermissionServiceListAdministratorsResponse::class
+            \Zitadel\Client\Models\BetaInternalPermissionServiceListAdministratorsResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -224,6 +260,13 @@ class BetaInternalPermissionServiceApi extends BaseApi
     {
         $path = '/zitadel.internal_permission.v2beta.InternalPermissionService/UpdateAdministrator';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaInternalPermissionServiceUpdateAdministratorRequest;
 
@@ -236,7 +279,12 @@ class BetaInternalPermissionServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaInternalPermissionServiceUpdateAdministratorResponse::class
+            \Zitadel\Client\Models\BetaInternalPermissionServiceUpdateAdministratorResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }

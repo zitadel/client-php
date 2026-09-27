@@ -62,6 +62,13 @@ class InstanceServiceApi extends BaseApi
     {
         $path = '/zitadel.instance.v2.InstanceService/AddCustomDomain';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $instanceServiceAddCustomDomainRequest;
 
@@ -74,7 +81,12 @@ class InstanceServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\InstanceServiceAddCustomDomainResponse::class
+            \Zitadel\Client\Models\InstanceServiceAddCustomDomainResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -116,6 +128,13 @@ class InstanceServiceApi extends BaseApi
     {
         $path = '/zitadel.instance.v2.InstanceService/AddTrustedDomain';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $instanceServiceAddTrustedDomainRequest;
 
@@ -128,7 +147,12 @@ class InstanceServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\InstanceServiceAddTrustedDomainResponse::class
+            \Zitadel\Client\Models\InstanceServiceAddTrustedDomainResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -170,6 +194,13 @@ class InstanceServiceApi extends BaseApi
     {
         $path = '/zitadel.instance.v2.InstanceService/DeleteInstance';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $instanceServiceDeleteInstanceRequest;
 
@@ -182,7 +213,12 @@ class InstanceServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\InstanceServiceDeleteInstanceResponse::class
+            \Zitadel\Client\Models\InstanceServiceDeleteInstanceResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -224,6 +260,13 @@ class InstanceServiceApi extends BaseApi
     {
         $path = '/zitadel.instance.v2.InstanceService/GetInstance';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $instanceServiceGetInstanceRequest;
 
@@ -236,7 +279,12 @@ class InstanceServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\InstanceServiceGetInstanceResponse::class
+            \Zitadel\Client\Models\InstanceServiceGetInstanceResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -278,6 +326,13 @@ class InstanceServiceApi extends BaseApi
     {
         $path = '/zitadel.instance.v2.InstanceService/ListCustomDomains';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $instanceServiceListCustomDomainsRequest;
 
@@ -290,7 +345,12 @@ class InstanceServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\InstanceServiceListCustomDomainsResponse::class
+            \Zitadel\Client\Models\InstanceServiceListCustomDomainsResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -332,6 +392,13 @@ class InstanceServiceApi extends BaseApi
     {
         $path = '/zitadel.instance.v2.InstanceService/ListInstances';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $instanceServiceListInstancesRequest;
 
@@ -344,7 +411,12 @@ class InstanceServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\InstanceServiceListInstancesResponse::class
+            \Zitadel\Client\Models\InstanceServiceListInstancesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -386,6 +458,13 @@ class InstanceServiceApi extends BaseApi
     {
         $path = '/zitadel.instance.v2.InstanceService/ListTrustedDomains';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $instanceServiceListTrustedDomainsRequest;
 
@@ -398,7 +477,12 @@ class InstanceServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\InstanceServiceListTrustedDomainsResponse::class
+            \Zitadel\Client\Models\InstanceServiceListTrustedDomainsResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -440,6 +524,13 @@ class InstanceServiceApi extends BaseApi
     {
         $path = '/zitadel.instance.v2.InstanceService/RemoveCustomDomain';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $instanceServiceRemoveCustomDomainRequest;
 
@@ -452,7 +543,12 @@ class InstanceServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\InstanceServiceRemoveCustomDomainResponse::class
+            \Zitadel\Client\Models\InstanceServiceRemoveCustomDomainResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -494,6 +590,13 @@ class InstanceServiceApi extends BaseApi
     {
         $path = '/zitadel.instance.v2.InstanceService/RemoveTrustedDomain';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $instanceServiceRemoveTrustedDomainRequest;
 
@@ -506,7 +609,12 @@ class InstanceServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\InstanceServiceRemoveTrustedDomainResponse::class
+            \Zitadel\Client\Models\InstanceServiceRemoveTrustedDomainResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -548,6 +656,13 @@ class InstanceServiceApi extends BaseApi
     {
         $path = '/zitadel.instance.v2.InstanceService/UpdateInstance';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $instanceServiceUpdateInstanceRequest;
 
@@ -560,7 +675,12 @@ class InstanceServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\InstanceServiceUpdateInstanceResponse::class
+            \Zitadel\Client\Models\InstanceServiceUpdateInstanceResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }

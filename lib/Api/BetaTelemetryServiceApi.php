@@ -62,6 +62,13 @@ class BetaTelemetryServiceApi extends BaseApi
     {
         $path = '/zitadel.analytics.v2beta.TelemetryService/ReportBaseInformation';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaTelemetryServiceReportBaseInformationRequest;
 
@@ -74,7 +81,12 @@ class BetaTelemetryServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaTelemetryServiceReportBaseInformationResponse::class
+            \Zitadel\Client\Models\BetaTelemetryServiceReportBaseInformationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -116,6 +128,13 @@ class BetaTelemetryServiceApi extends BaseApi
     {
         $path = '/zitadel.analytics.v2beta.TelemetryService/ReportResourceCounts';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaTelemetryServiceReportResourceCountsRequest;
 
@@ -128,7 +147,12 @@ class BetaTelemetryServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaTelemetryServiceReportResourceCountsResponse::class
+            \Zitadel\Client\Models\BetaTelemetryServiceReportResourceCountsResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }

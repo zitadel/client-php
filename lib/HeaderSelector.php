@@ -63,7 +63,7 @@ class HeaderSelector
      */
     private function selectAcceptHeader(array $accept): string
     {
-        $filteredAccept = array_filter($accept, fn (string $s): bool => $s !== '');
+        $filteredAccept = array_filter($accept, fn (string $s): bool => trim($s) !== '');
 
         if (count($filteredAccept) === 0) {
             return '';

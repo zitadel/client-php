@@ -62,6 +62,13 @@ class BetaOrganizationServiceApi extends BaseApi
     {
         $path = '/zitadel.org.v2beta.OrganizationService/ActivateOrganization';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOrganizationServiceActivateOrganizationRequest;
 
@@ -74,7 +81,12 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceActivateOrganizationResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceActivateOrganizationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -116,6 +128,13 @@ class BetaOrganizationServiceApi extends BaseApi
     {
         $path = '/zitadel.org.v2beta.OrganizationService/AddOrganizationDomain';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOrganizationServiceAddOrganizationDomainRequest;
 
@@ -128,7 +147,12 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceAddOrganizationDomainResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceAddOrganizationDomainResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -170,6 +194,13 @@ class BetaOrganizationServiceApi extends BaseApi
     {
         $path = '/zitadel.org.v2beta.OrganizationService/CreateOrganization';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOrganizationServiceCreateOrganizationRequest;
 
@@ -182,7 +213,12 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceCreateOrganizationResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceCreateOrganizationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -224,6 +260,13 @@ class BetaOrganizationServiceApi extends BaseApi
     {
         $path = '/zitadel.org.v2beta.OrganizationService/DeactivateOrganization';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOrganizationServiceDeactivateOrganizationRequest;
 
@@ -236,7 +279,12 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceDeactivateOrganizationResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceDeactivateOrganizationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -278,6 +326,13 @@ class BetaOrganizationServiceApi extends BaseApi
     {
         $path = '/zitadel.org.v2beta.OrganizationService/DeleteOrganization';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOrganizationServiceDeleteOrganizationRequest;
 
@@ -290,7 +345,12 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -332,6 +392,13 @@ class BetaOrganizationServiceApi extends BaseApi
     {
         $path = '/zitadel.org.v2beta.OrganizationService/DeleteOrganizationDomain';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOrganizationServiceDeleteOrganizationDomainRequest;
 
@@ -344,7 +411,12 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationDomainResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationDomainResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -386,6 +458,13 @@ class BetaOrganizationServiceApi extends BaseApi
     {
         $path = '/zitadel.org.v2beta.OrganizationService/DeleteOrganizationMetadata';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOrganizationServiceDeleteOrganizationMetadataRequest;
 
@@ -398,7 +477,12 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationMetadataResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceDeleteOrganizationMetadataResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -440,6 +524,13 @@ class BetaOrganizationServiceApi extends BaseApi
     {
         $path = '/zitadel.org.v2beta.OrganizationService/GenerateOrganizationDomainValidation';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOrganizationServiceGenerateOrganizationDomainValidationRequest;
 
@@ -452,7 +543,12 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceGenerateOrganizationDomainValidationResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceGenerateOrganizationDomainValidationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -494,6 +590,13 @@ class BetaOrganizationServiceApi extends BaseApi
     {
         $path = '/zitadel.org.v2beta.OrganizationService/ListOrganizationDomains';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOrganizationServiceListOrganizationDomainsRequest;
 
@@ -506,7 +609,12 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationDomainsResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationDomainsResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -548,6 +656,13 @@ class BetaOrganizationServiceApi extends BaseApi
     {
         $path = '/zitadel.org.v2beta.OrganizationService/ListOrganizationMetadata';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOrganizationServiceListOrganizationMetadataRequest;
 
@@ -560,7 +675,12 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationMetadataResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationMetadataResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -602,6 +722,13 @@ class BetaOrganizationServiceApi extends BaseApi
     {
         $path = '/zitadel.org.v2beta.OrganizationService/ListOrganizations';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOrganizationServiceListOrganizationsRequest;
 
@@ -614,7 +741,12 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationsResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceListOrganizationsResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -656,6 +788,13 @@ class BetaOrganizationServiceApi extends BaseApi
     {
         $path = '/zitadel.org.v2beta.OrganizationService/SetOrganizationMetadata';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOrganizationServiceSetOrganizationMetadataRequest;
 
@@ -668,7 +807,12 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceSetOrganizationMetadataResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceSetOrganizationMetadataResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -710,6 +854,13 @@ class BetaOrganizationServiceApi extends BaseApi
     {
         $path = '/zitadel.org.v2beta.OrganizationService/UpdateOrganization';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOrganizationServiceUpdateOrganizationRequest;
 
@@ -722,7 +873,12 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceUpdateOrganizationResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceUpdateOrganizationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -764,6 +920,13 @@ class BetaOrganizationServiceApi extends BaseApi
     {
         $path = '/zitadel.org.v2beta.OrganizationService/VerifyOrganizationDomain';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOrganizationServiceVerifyOrganizationDomainRequest;
 
@@ -776,7 +939,12 @@ class BetaOrganizationServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOrganizationServiceVerifyOrganizationDomainResponse::class
+            \Zitadel\Client\Models\BetaOrganizationServiceVerifyOrganizationDomainResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }

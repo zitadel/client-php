@@ -159,8 +159,8 @@ class ObjectSerializer
              * all variants' fields round-trips losslessly — a payload that
              * co-satisfied two variants re-emits both variants' fields rather
              * than silently dropping all but the first. Later variants win on a
-             * key collision, but anyOf branches that share a wire key carry the
-             * same value for it, so the merge is order-insensitive in practice. */
+             * key collision, so when two members declare the same wire key the
+             * last-declared member's value is the one emitted, exactly once. */
             if (method_exists($data, 'getActualInstances')) {
                 /** @var array<int, mixed> $instances */
                 $instances = $data->getActualInstances();
@@ -313,6 +313,13 @@ class ObjectSerializer
      */
     public static function deserialize(mixed $data, string $class, ?array $httpHeaders = null): mixed
     {
+        /* An empty response body decodes to null, like a bare JSON null and
+         * like the absent body the other 11 SDKs return null for. Guarded at
+         * the public entry point (not in the recursive internal path, where an
+         * empty string may be a legitimate primitive value). */
+        if ($data === null || $data === '') {
+            return null;
+        }
         try {
             return self::deserializeInternal($data, $class, $httpHeaders);
         } catch (SerializationException $e) {
@@ -387,7 +394,7 @@ class ObjectSerializer
         if (preg_match('/^Ds\\\\(Vector|Set|Map)<(.+)>$/', $class, $containerMatch)) {
             $container = $containerMatch[1];
             $inner = self::qualifySchemaName(trim($containerMatch[2]));
-            $data = is_string($data) ? json_decode($data, true) : $data;
+            $data = is_string($data) ? json_decode($data, true, self::MAX_JSON_DEPTH) : $data;
             if (!is_array($data)) {
                 throw new \InvalidArgumentException("Invalid container '$class'");
             }
@@ -410,7 +417,7 @@ class ObjectSerializer
         }
 
         if (str_ends_with($class, '[]')) {
-            $data = is_string($data) ? json_decode($data, true) : $data;
+            $data = is_string($data) ? json_decode($data, true, self::MAX_JSON_DEPTH) : $data;
 
             if (!is_array($data)) {
                 throw new \InvalidArgumentException("Invalid array '$class'");
@@ -425,7 +432,7 @@ class ObjectSerializer
         }
 
         if (preg_match('/^(array<|map\[)/', $class)) {
-            $data = is_string($data) ? json_decode($data, true) : $data;
+            $data = is_string($data) ? json_decode($data, true, self::MAX_JSON_DEPTH) : $data;
             $data = (array) $data;
             $inner = substr($class, 4, -1);
             /** @var array<mixed> $deserialized */
@@ -455,7 +462,7 @@ class ObjectSerializer
          * the un-decoded base64 string (or the quoted literal) would diverge
          * from the byte-decoding SDKs (python/go/java/rust). */
         if ($class === 'byte') {
-            $data = is_string($data) ? json_decode($data, true) : $data;
+            $data = is_string($data) ? json_decode($data, true, self::MAX_JSON_DEPTH) : $data;
             if ($data === null || $data === '') {
                 return null;
             }
@@ -464,8 +471,16 @@ class ObjectSerializer
                     "Expected a base64 string for 'byte' but got " . gettype($data)
                 );
             }
+            /* Invalid base64 is a wire-shape violation; throw rather than
+             * silently returning the raw undecoded string, matching the
+             * byte-decoding SDKs (ruby/elixir). */
             $decoded = base64_decode($data, true);
-            return $decoded === false ? $data : $decoded;
+            if ($decoded === false) {
+                throw new SerializationException(
+                    "Invalid base64 for 'byte': " . $data
+                );
+            }
+            return $decoded;
         }
 
         $primitives = [
@@ -483,7 +498,7 @@ class ObjectSerializer
              * so floats and bools deserialise as before. */
             if ($class === 'int' || $class === 'integer') {
                 if (is_string($data)) {
-                    $data = json_decode($data, true, 512, JSON_BIGINT_AS_STRING);
+                    $data = json_decode($data, true, self::MAX_JSON_DEPTH, JSON_BIGINT_AS_STRING);
                 }
                 if (is_string($data) && preg_match('/^-?\d+$/', $data)) {
                     $casted = (int) $data;
@@ -503,19 +518,19 @@ class ObjectSerializer
                 }
                 return 0;
             }
-            $data = is_string($data) ? json_decode($data, true) : $data;
+            $data = is_string($data) ? json_decode($data, true, self::MAX_JSON_DEPTH) : $data;
             settype($data, $class);
             return $data;
         }
 
         if ($class === 'object') {
-            $data = is_string($data) ? json_decode($data, true) : $data;
+            $data = is_string($data) ? json_decode($data, true, self::MAX_JSON_DEPTH) : $data;
             return (array) $data;
         }
 
         if ($class === 'DateTime') {
             if (is_string($data)) {
-                $decoded = json_decode($data, true);
+                $decoded = json_decode($data, true, self::MAX_JSON_DEPTH);
                 if (is_string($decoded)) {
                     $data = $decoded;
                 }
@@ -538,7 +553,7 @@ class ObjectSerializer
              * wire string with today's date implied and callers project
              * the time portion via format('H:i:s'). */
             if (is_string($data)) {
-                $decoded = json_decode($data, true);
+                $decoded = json_decode($data, true, self::MAX_JSON_DEPTH);
                 if (is_string($decoded)) {
                     $data = $decoded;
                 }
@@ -562,7 +577,7 @@ class ObjectSerializer
              * a round-tripping interval. Invalid strings surface as the
              * SerializationException used elsewhere for bad input. */
             if (is_string($data)) {
-                $decoded = json_decode($data, true);
+                $decoded = json_decode($data, true, self::MAX_JSON_DEPTH);
                 if (is_string($decoded)) {
                     $data = $decoded;
                 }
@@ -575,7 +590,7 @@ class ObjectSerializer
 
         if ($class === \Symfony\Component\Uid\Uuid::class) {
             if (is_string($data)) {
-                $decoded = json_decode($data, true);
+                $decoded = json_decode($data, true, self::MAX_JSON_DEPTH);
                 if (is_string($decoded)) {
                     $data = $decoded;
                 }
@@ -625,7 +640,7 @@ class ObjectSerializer
         }
 
         if (enum_exists($class)) {
-            $data = is_string($data) ? json_decode($data, true) : $data;
+            $data = is_string($data) ? json_decode($data, true, self::MAX_JSON_DEPTH) : $data;
             /** @var object $result */
             $result = self::getSerializer()->denormalize($data, $class);
             return $result;
@@ -648,7 +663,7 @@ class ObjectSerializer
             && method_exists($class, 'build')
             && method_exists($class, 'getActualInstance')
         ) {
-            $decoded = is_string($data) ? json_decode($data, true) : $data;
+            $decoded = is_string($data) ? json_decode($data, true, self::MAX_JSON_DEPTH) : $data;
             /** @var object $built */
             $built = $class::build($decoded);
             return $built;
@@ -656,7 +671,13 @@ class ObjectSerializer
 
         if (is_string($data)) {
             try {
-                $decoded = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+                $decoded = json_decode($data, true, self::MAX_JSON_DEPTH, JSON_THROW_ON_ERROR);
+                /* A bare JSON `null` body decodes to a null return, matching the
+                 * absent/null body the other 10 SDKs return null for, rather
+                 * than throwing "Expected a JSON object, got null". */
+                if ($decoded === null) {
+                    return null;
+                }
                 if (!is_array($decoded)) {
                     throw new \InvalidArgumentException(
                         sprintf('Expected a JSON object, got %s', get_debug_type($decoded))
@@ -1114,8 +1135,9 @@ class ObjectSerializer
 
     /**
      * 2.1 — Decode an OAS `format: byte` field value to its raw binary string.
-     * Returns null for null/empty input. Invalid base64 returns null rather
-     * than throwing so partially-populated payloads stay readable.
+     * Returns null for null/empty input. Invalid base64 THROWS a
+     * SerializationException (matching ruby/elixir), rather than silently
+     * returning null, so a wire-shape violation surfaces to the caller.
      *
      * The wire form for `format: byte` is a base64-encoded string; SDK users
      * call this helper to recover the underlying bytes.
@@ -1126,7 +1148,12 @@ class ObjectSerializer
             return null;
         }
         $decoded = base64_decode($encoded, true);
-        return $decoded === false ? null : $decoded;
+        if ($decoded === false) {
+            throw new SerializationException(
+                "Invalid base64 for format: byte: " . $encoded
+            );
+        }
+        return $decoded;
     }
 
     /**

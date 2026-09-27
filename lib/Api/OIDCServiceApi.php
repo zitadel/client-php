@@ -62,6 +62,13 @@ class OIDCServiceApi extends BaseApi
     {
         $path = '/zitadel.oidc.v2.OIDCService/AuthorizeOrDenyDeviceAuthorization';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $oidcServiceAuthorizeOrDenyDeviceAuthorizationRequest;
 
@@ -74,7 +81,12 @@ class OIDCServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            'object'
+            'object',
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -116,6 +128,13 @@ class OIDCServiceApi extends BaseApi
     {
         $path = '/zitadel.oidc.v2.OIDCService/CreateCallback';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $oidcServiceCreateCallbackRequest;
 
@@ -128,7 +147,12 @@ class OIDCServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\OIDCServiceCreateCallbackResponse::class
+            \Zitadel\Client\Models\OIDCServiceCreateCallbackResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -170,6 +194,13 @@ class OIDCServiceApi extends BaseApi
     {
         $path = '/zitadel.oidc.v2.OIDCService/GetAuthRequest';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $oidcServiceGetAuthRequestRequest;
 
@@ -182,7 +213,12 @@ class OIDCServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\OIDCServiceGetAuthRequestResponse::class
+            \Zitadel\Client\Models\OIDCServiceGetAuthRequestResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -224,6 +260,13 @@ class OIDCServiceApi extends BaseApi
     {
         $path = '/zitadel.oidc.v2.OIDCService/GetDeviceAuthorizationRequest';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $oidcServiceGetDeviceAuthorizationRequestRequest;
 
@@ -236,7 +279,12 @@ class OIDCServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\OIDCServiceGetDeviceAuthorizationRequestResponse::class
+            \Zitadel\Client\Models\OIDCServiceGetDeviceAuthorizationRequestResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }

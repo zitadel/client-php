@@ -61,6 +61,13 @@ class BetaFeatureServiceApi extends BaseApi
     {
         $path = '/zitadel.feature.v2beta.FeatureService/GetInstanceFeatures';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaFeatureServiceGetInstanceFeaturesRequest;
 
@@ -73,7 +80,12 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceGetInstanceFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceGetInstanceFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -114,6 +126,13 @@ class BetaFeatureServiceApi extends BaseApi
     {
         $path = '/zitadel.feature.v2beta.FeatureService/GetOrganizationFeatures';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaFeatureServiceGetOrganizationFeaturesRequest;
 
@@ -126,7 +145,12 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceGetOrganizationFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceGetOrganizationFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -167,6 +191,13 @@ class BetaFeatureServiceApi extends BaseApi
     {
         $path = '/zitadel.feature.v2beta.FeatureService/GetSystemFeatures';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $body;
 
@@ -179,7 +210,12 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceGetSystemFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceGetSystemFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -220,6 +256,13 @@ class BetaFeatureServiceApi extends BaseApi
     {
         $path = '/zitadel.feature.v2beta.FeatureService/GetUserFeatures';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaFeatureServiceGetUserFeaturesRequest;
 
@@ -232,7 +275,12 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceGetUserFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceGetUserFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -273,6 +321,13 @@ class BetaFeatureServiceApi extends BaseApi
     {
         $path = '/zitadel.feature.v2beta.FeatureService/ResetInstanceFeatures';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $body;
 
@@ -285,7 +340,12 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceResetInstanceFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceResetInstanceFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -326,6 +386,13 @@ class BetaFeatureServiceApi extends BaseApi
     {
         $path = '/zitadel.feature.v2beta.FeatureService/ResetOrganizationFeatures';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaFeatureServiceResetOrganizationFeaturesRequest;
 
@@ -338,7 +405,12 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceResetOrganizationFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceResetOrganizationFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -379,6 +451,13 @@ class BetaFeatureServiceApi extends BaseApi
     {
         $path = '/zitadel.feature.v2beta.FeatureService/ResetSystemFeatures';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $body;
 
@@ -391,7 +470,12 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceResetSystemFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceResetSystemFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -432,6 +516,13 @@ class BetaFeatureServiceApi extends BaseApi
     {
         $path = '/zitadel.feature.v2beta.FeatureService/ResetUserFeatures';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaFeatureServiceResetUserFeaturesRequest;
 
@@ -444,7 +535,12 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceResetUserFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceResetUserFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -485,6 +581,13 @@ class BetaFeatureServiceApi extends BaseApi
     {
         $path = '/zitadel.feature.v2beta.FeatureService/SetInstanceFeatures';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaFeatureServiceSetInstanceFeaturesRequest;
 
@@ -497,7 +600,12 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceSetInstanceFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceSetInstanceFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -538,6 +646,13 @@ class BetaFeatureServiceApi extends BaseApi
     {
         $path = '/zitadel.feature.v2beta.FeatureService/SetOrganizationFeatures';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaFeatureServiceSetOrganizationFeaturesRequest;
 
@@ -550,7 +665,12 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceSetOrganizationFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceSetOrganizationFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -591,6 +711,13 @@ class BetaFeatureServiceApi extends BaseApi
     {
         $path = '/zitadel.feature.v2beta.FeatureService/SetSystemFeatures';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaFeatureServiceSetSystemFeaturesRequest;
 
@@ -603,7 +730,12 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceSetSystemFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceSetSystemFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -644,6 +776,13 @@ class BetaFeatureServiceApi extends BaseApi
     {
         $path = '/zitadel.feature.v2beta.FeatureService/SetUserFeatures';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaFeatureServiceSetUserFeatureRequest;
 
@@ -656,7 +795,12 @@ class BetaFeatureServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaFeatureServiceSetUserFeaturesResponse::class
+            \Zitadel\Client\Models\BetaFeatureServiceSetUserFeaturesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }

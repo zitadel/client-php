@@ -68,6 +68,7 @@ lib/Models/ActionServiceAddPublicKeyResponse.php
 lib/Models/ActionServiceAny.php
 lib/Models/ActionServiceCondition.php
 lib/Models/ActionServiceConnectError.php
+lib/Models/ActionServiceConnectErrorCodeEnum.php
 lib/Models/ActionServiceCreateTargetRequest.php
 lib/Models/ActionServiceCreateTargetResponse.php
 lib/Models/ActionServiceDeactivatePublicKeyRequest.php
@@ -136,6 +137,7 @@ lib/Models/ApplicationServiceApplicationState.php
 lib/Models/ApplicationServiceApplicationType.php
 lib/Models/ApplicationServiceClientIDFilter.php
 lib/Models/ApplicationServiceConnectError.php
+lib/Models/ApplicationServiceConnectErrorCodeEnum.php
 lib/Models/ApplicationServiceCreateAPIApplicationRequest.php
 lib/Models/ApplicationServiceCreateAPIApplicationResponse.php
 lib/Models/ApplicationServiceCreateApplicationKeyRequest.php
@@ -191,6 +193,7 @@ lib/Models/AuthorizationServiceAuthorization.php
 lib/Models/AuthorizationServiceAuthorizationFieldName.php
 lib/Models/AuthorizationServiceAuthorizationsSearchFilter.php
 lib/Models/AuthorizationServiceConnectError.php
+lib/Models/AuthorizationServiceConnectErrorCodeEnum.php
 lib/Models/AuthorizationServiceCreateAuthorizationRequest.php
 lib/Models/AuthorizationServiceCreateAuthorizationResponse.php
 lib/Models/AuthorizationServiceDeactivateAuthorizationRequest.php
@@ -219,6 +222,7 @@ lib/Models/AuthorizationServiceUserPreferredLoginNameQuery.php
 lib/Models/BetaActionServiceAny.php
 lib/Models/BetaActionServiceCondition.php
 lib/Models/BetaActionServiceConnectError.php
+lib/Models/BetaActionServiceConnectErrorCodeEnum.php
 lib/Models/BetaActionServiceCreateTargetRequest.php
 lib/Models/BetaActionServiceCreateTargetResponse.php
 lib/Models/BetaActionServiceDeleteTargetRequest.php
@@ -268,6 +272,7 @@ lib/Models/BetaAppServiceApplicationKeysSorting.php
 lib/Models/BetaAppServiceApplicationNameQuery.php
 lib/Models/BetaAppServiceApplicationSearchFilter.php
 lib/Models/BetaAppServiceConnectError.php
+lib/Models/BetaAppServiceConnectErrorCodeEnum.php
 lib/Models/BetaAppServiceCreateAPIApplicationRequest.php
 lib/Models/BetaAppServiceCreateAPIApplicationResponse.php
 lib/Models/BetaAppServiceCreateApplicationKeyRequest.php
@@ -321,6 +326,7 @@ lib/Models/BetaAuthorizationServiceAuthorization.php
 lib/Models/BetaAuthorizationServiceAuthorizationFieldName.php
 lib/Models/BetaAuthorizationServiceAuthorizationsSearchFilter.php
 lib/Models/BetaAuthorizationServiceConnectError.php
+lib/Models/BetaAuthorizationServiceConnectErrorCodeEnum.php
 lib/Models/BetaAuthorizationServiceCreateAuthorizationRequest.php
 lib/Models/BetaAuthorizationServiceCreateAuthorizationResponse.php
 lib/Models/BetaAuthorizationServiceDeactivateAuthorizationRequest.php
@@ -345,6 +351,7 @@ lib/Models/BetaAuthorizationServiceUserDisplayNameQuery.php
 lib/Models/BetaAuthorizationServiceUserPreferredLoginNameQuery.php
 lib/Models/BetaFeatureServiceAny.php
 lib/Models/BetaFeatureServiceConnectError.php
+lib/Models/BetaFeatureServiceConnectErrorCodeEnum.php
 lib/Models/BetaFeatureServiceDetails.php
 lib/Models/BetaFeatureServiceFeatureFlag.php
 lib/Models/BetaFeatureServiceGetInstanceFeaturesRequest.php
@@ -377,6 +384,7 @@ lib/Models/BetaInstanceServiceAddTrustedDomainRequest.php
 lib/Models/BetaInstanceServiceAddTrustedDomainResponse.php
 lib/Models/BetaInstanceServiceAny.php
 lib/Models/BetaInstanceServiceConnectError.php
+lib/Models/BetaInstanceServiceConnectErrorCodeEnum.php
 lib/Models/BetaInstanceServiceDeleteInstanceRequest.php
 lib/Models/BetaInstanceServiceDeleteInstanceResponse.php
 lib/Models/BetaInstanceServiceDomain.php
@@ -417,6 +425,7 @@ lib/Models/BetaInternalPermissionServiceAdministratorSearchFilter.php
 lib/Models/BetaInternalPermissionServiceAndFilter.php
 lib/Models/BetaInternalPermissionServiceAny.php
 lib/Models/BetaInternalPermissionServiceConnectError.php
+lib/Models/BetaInternalPermissionServiceConnectErrorCodeEnum.php
 lib/Models/BetaInternalPermissionServiceCreateAdministratorRequest.php
 lib/Models/BetaInternalPermissionServiceCreateAdministratorResponse.php
 lib/Models/BetaInternalPermissionServiceDeleteAdministratorRequest.php
@@ -447,6 +456,7 @@ lib/Models/BetaOIDCServiceAny.php
 lib/Models/BetaOIDCServiceAuthRequest.php
 lib/Models/BetaOIDCServiceAuthorizationError.php
 lib/Models/BetaOIDCServiceConnectError.php
+lib/Models/BetaOIDCServiceConnectErrorCodeEnum.php
 lib/Models/BetaOIDCServiceCreateCallbackRequest.php
 lib/Models/BetaOIDCServiceCreateCallbackResponse.php
 lib/Models/BetaOIDCServiceDetails.php
@@ -464,6 +474,7 @@ lib/Models/BetaOrganizationServiceAdmin.php
 lib/Models/BetaOrganizationServiceAny.php
 lib/Models/BetaOrganizationServiceAssignedAdmin.php
 lib/Models/BetaOrganizationServiceConnectError.php
+lib/Models/BetaOrganizationServiceConnectErrorCodeEnum.php
 lib/Models/BetaOrganizationServiceCreateOrganizationRequest.php
 lib/Models/BetaOrganizationServiceCreateOrganizationResponse.php
 lib/Models/BetaOrganizationServiceCreatedAdmin.php
@@ -526,6 +537,7 @@ lib/Models/BetaProjectServiceAddProjectRoleResponse.php
 lib/Models/BetaProjectServiceAdmin.php
 lib/Models/BetaProjectServiceAny.php
 lib/Models/BetaProjectServiceConnectError.php
+lib/Models/BetaProjectServiceConnectErrorCodeEnum.php
 lib/Models/BetaProjectServiceCreateProjectGrantRequest.php
 lib/Models/BetaProjectServiceCreateProjectGrantResponse.php
 lib/Models/BetaProjectServiceCreateProjectRequest.php
@@ -585,6 +597,7 @@ lib/Models/BetaSessionServiceCheckUser.php
 lib/Models/BetaSessionServiceCheckWebAuthN.php
 lib/Models/BetaSessionServiceChecks.php
 lib/Models/BetaSessionServiceConnectError.php
+lib/Models/BetaSessionServiceConnectErrorCodeEnum.php
 lib/Models/BetaSessionServiceCreateSessionRequest.php
 lib/Models/BetaSessionServiceCreateSessionResponse.php
 lib/Models/BetaSessionServiceCreationDateQuery.php
@@ -623,6 +636,7 @@ lib/Models/BetaSessionServiceWebAuthNFactor.php
 lib/Models/BetaSettingsServiceAny.php
 lib/Models/BetaSettingsServiceBrandingSettings.php
 lib/Models/BetaSettingsServiceConnectError.php
+lib/Models/BetaSettingsServiceConnectErrorCodeEnum.php
 lib/Models/BetaSettingsServiceDetails.php
 lib/Models/BetaSettingsServiceDomainSettings.php
 lib/Models/BetaSettingsServiceEmbeddedIframeSettings.php
@@ -664,6 +678,7 @@ lib/Models/BetaSettingsServiceTheme.php
 lib/Models/BetaSettingsServiceThemeMode.php
 lib/Models/BetaTelemetryServiceAny.php
 lib/Models/BetaTelemetryServiceConnectError.php
+lib/Models/BetaTelemetryServiceConnectErrorCodeEnum.php
 lib/Models/BetaTelemetryServiceCountParentType.php
 lib/Models/BetaTelemetryServiceInstanceInformation.php
 lib/Models/BetaTelemetryServiceReportBaseInformationRequest.php
@@ -684,6 +699,7 @@ lib/Models/BetaUserServiceAndQuery.php
 lib/Models/BetaUserServiceAny.php
 lib/Models/BetaUserServiceAuthenticationMethodType.php
 lib/Models/BetaUserServiceConnectError.php
+lib/Models/BetaUserServiceConnectErrorCodeEnum.php
 lib/Models/BetaUserServiceCreatePasskeyRegistrationLinkRequest.php
 lib/Models/BetaUserServiceCreatePasskeyRegistrationLinkResponse.php
 lib/Models/BetaUserServiceDeactivateUserRequest.php
@@ -801,6 +817,7 @@ lib/Models/BetaWebKeyServiceActivateWebKeyRequest.php
 lib/Models/BetaWebKeyServiceActivateWebKeyResponse.php
 lib/Models/BetaWebKeyServiceAny.php
 lib/Models/BetaWebKeyServiceConnectError.php
+lib/Models/BetaWebKeyServiceConnectErrorCodeEnum.php
 lib/Models/BetaWebKeyServiceCreateWebKeyRequest.php
 lib/Models/BetaWebKeyServiceCreateWebKeyResponse.php
 lib/Models/BetaWebKeyServiceDeleteWebKeyRequest.php
@@ -815,6 +832,7 @@ lib/Models/BetaWebKeyServiceState.php
 lib/Models/BetaWebKeyServiceWebKey.php
 lib/Models/FeatureServiceAny.php
 lib/Models/FeatureServiceConnectError.php
+lib/Models/FeatureServiceConnectErrorCodeEnum.php
 lib/Models/FeatureServiceDetails.php
 lib/Models/FeatureServiceFeatureFlag.php
 lib/Models/FeatureServiceGetInstanceFeaturesRequest.php
@@ -850,6 +868,7 @@ lib/Models/IdentityProviderServiceAzureADConfig.php
 lib/Models/IdentityProviderServiceAzureADTenant.php
 lib/Models/IdentityProviderServiceAzureADTenantType.php
 lib/Models/IdentityProviderServiceConnectError.php
+lib/Models/IdentityProviderServiceConnectErrorCodeEnum.php
 lib/Models/IdentityProviderServiceDetails.php
 lib/Models/IdentityProviderServiceGenericOIDCConfig.php
 lib/Models/IdentityProviderServiceGetIDPByIDRequest.php
@@ -878,6 +897,7 @@ lib/Models/InstanceServiceAddTrustedDomainRequest.php
 lib/Models/InstanceServiceAddTrustedDomainResponse.php
 lib/Models/InstanceServiceAny.php
 lib/Models/InstanceServiceConnectError.php
+lib/Models/InstanceServiceConnectErrorCodeEnum.php
 lib/Models/InstanceServiceCustomDomain.php
 lib/Models/InstanceServiceCustomDomainFilter.php
 lib/Models/InstanceServiceCustomDomainsFilter.php
@@ -916,6 +936,7 @@ lib/Models/InternalPermissionServiceAdministratorSearchFilter.php
 lib/Models/InternalPermissionServiceAndFilter.php
 lib/Models/InternalPermissionServiceAny.php
 lib/Models/InternalPermissionServiceConnectError.php
+lib/Models/InternalPermissionServiceConnectErrorCodeEnum.php
 lib/Models/InternalPermissionServiceCreateAdministratorRequest.php
 lib/Models/InternalPermissionServiceCreateAdministratorResponse.php
 lib/Models/InternalPermissionServiceDeleteAdministratorRequest.php
@@ -947,6 +968,7 @@ lib/Models/OIDCServiceAuthRequest.php
 lib/Models/OIDCServiceAuthorizationError.php
 lib/Models/OIDCServiceAuthorizeOrDenyDeviceAuthorizationRequest.php
 lib/Models/OIDCServiceConnectError.php
+lib/Models/OIDCServiceConnectErrorCodeEnum.php
 lib/Models/OIDCServiceCreateCallbackRequest.php
 lib/Models/OIDCServiceCreateCallbackResponse.php
 lib/Models/OIDCServiceDetails.php
@@ -968,6 +990,7 @@ lib/Models/OrganizationServiceAddOrganizationResponse.php
 lib/Models/OrganizationServiceAdmin.php
 lib/Models/OrganizationServiceAny.php
 lib/Models/OrganizationServiceConnectError.php
+lib/Models/OrganizationServiceConnectErrorCodeEnum.php
 lib/Models/OrganizationServiceCreatedAdmin.php
 lib/Models/OrganizationServiceDeactivateOrganizationRequest.php
 lib/Models/OrganizationServiceDeactivateOrganizationResponse.php
@@ -1030,6 +1053,7 @@ lib/Models/ProjectServiceAddProjectRoleRequest.php
 lib/Models/ProjectServiceAddProjectRoleResponse.php
 lib/Models/ProjectServiceAny.php
 lib/Models/ProjectServiceConnectError.php
+lib/Models/ProjectServiceConnectErrorCodeEnum.php
 lib/Models/ProjectServiceCreateProjectGrantRequest.php
 lib/Models/ProjectServiceCreateProjectGrantResponse.php
 lib/Models/ProjectServiceCreateProjectRequest.php
@@ -1084,6 +1108,7 @@ lib/Models/ProjectServiceUpdateProjectRoleResponse.php
 lib/Models/SAMLServiceAny.php
 lib/Models/SAMLServiceAuthorizationError.php
 lib/Models/SAMLServiceConnectError.php
+lib/Models/SAMLServiceConnectErrorCodeEnum.php
 lib/Models/SAMLServiceCreateResponseRequest.php
 lib/Models/SAMLServiceCreateResponseResponse.php
 lib/Models/SAMLServiceDetails.php
@@ -1104,6 +1129,7 @@ lib/Models/SessionServiceCheckUser.php
 lib/Models/SessionServiceCheckWebAuthN.php
 lib/Models/SessionServiceChecks.php
 lib/Models/SessionServiceConnectError.php
+lib/Models/SessionServiceConnectErrorCodeEnum.php
 lib/Models/SessionServiceCreateSessionRequest.php
 lib/Models/SessionServiceCreateSessionResponse.php
 lib/Models/SessionServiceCreationDateQuery.php
@@ -1147,6 +1173,7 @@ lib/Models/SettingsServiceAny.php
 lib/Models/SettingsServiceAutoLinkingOption.php
 lib/Models/SettingsServiceBrandingSettings.php
 lib/Models/SettingsServiceConnectError.php
+lib/Models/SettingsServiceConnectErrorCodeEnum.php
 lib/Models/SettingsServiceDetails.php
 lib/Models/SettingsServiceDomainSettings.php
 lib/Models/SettingsServiceEmbeddedIframeSettings.php
@@ -1215,6 +1242,7 @@ lib/Models/UserServiceAuthFactors.php
 lib/Models/UserServiceAuthenticationMethodType.php
 lib/Models/UserServiceByteFilterMethod.php
 lib/Models/UserServiceConnectError.php
+lib/Models/UserServiceConnectErrorCodeEnum.php
 lib/Models/UserServiceCreateInviteCodeRequest.php
 lib/Models/UserServiceCreateInviteCodeResponse.php
 lib/Models/UserServiceCreatePasskeyRegistrationLinkRequest.php
@@ -1400,6 +1428,7 @@ lib/Models/WebKeyServiceActivateWebKeyRequest.php
 lib/Models/WebKeyServiceActivateWebKeyResponse.php
 lib/Models/WebKeyServiceAny.php
 lib/Models/WebKeyServiceConnectError.php
+lib/Models/WebKeyServiceConnectErrorCodeEnum.php
 lib/Models/WebKeyServiceCreateWebKeyRequest.php
 lib/Models/WebKeyServiceCreateWebKeyResponse.php
 lib/Models/WebKeyServiceDeleteWebKeyRequest.php

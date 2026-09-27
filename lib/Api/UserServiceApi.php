@@ -62,6 +62,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/AddHumanUser';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceAddHumanUserRequest;
 
@@ -74,7 +81,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceAddHumanUserResponse::class
+            \Zitadel\Client\Models\UserServiceAddHumanUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -116,6 +128,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/AddIDPLink';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceAddIDPLinkRequest;
 
@@ -128,7 +147,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceAddIDPLinkResponse::class
+            \Zitadel\Client\Models\UserServiceAddIDPLinkResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -170,6 +194,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/AddKey';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceAddKeyRequest;
 
@@ -182,7 +213,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceAddKeyResponse::class
+            \Zitadel\Client\Models\UserServiceAddKeyResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -224,6 +260,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/AddOTPEmail';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceAddOTPEmailRequest;
 
@@ -236,7 +279,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceAddOTPEmailResponse::class
+            \Zitadel\Client\Models\UserServiceAddOTPEmailResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -278,6 +326,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/AddOTPSMS';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceAddOTPSMSRequest;
 
@@ -290,7 +345,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceAddOTPSMSResponse::class
+            \Zitadel\Client\Models\UserServiceAddOTPSMSResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -332,6 +392,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/AddPersonalAccessToken';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceAddPersonalAccessTokenRequest;
 
@@ -344,7 +411,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceAddPersonalAccessTokenResponse::class
+            \Zitadel\Client\Models\UserServiceAddPersonalAccessTokenResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -386,6 +458,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/AddSecret';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceAddSecretRequest;
 
@@ -398,7 +477,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceAddSecretResponse::class
+            \Zitadel\Client\Models\UserServiceAddSecretResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -440,6 +524,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/CreateInviteCode';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceCreateInviteCodeRequest;
 
@@ -452,7 +543,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceCreateInviteCodeResponse::class
+            \Zitadel\Client\Models\UserServiceCreateInviteCodeResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -494,6 +590,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/CreatePasskeyRegistrationLink';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceCreatePasskeyRegistrationLinkRequest;
 
@@ -506,7 +609,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceCreatePasskeyRegistrationLinkResponse::class
+            \Zitadel\Client\Models\UserServiceCreatePasskeyRegistrationLinkResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -548,6 +656,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/CreateUser';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceCreateUserRequest;
 
@@ -560,7 +675,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceCreateUserResponse::class
+            \Zitadel\Client\Models\UserServiceCreateUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -602,6 +722,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/DeactivateUser';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceDeactivateUserRequest;
 
@@ -614,7 +741,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceDeactivateUserResponse::class
+            \Zitadel\Client\Models\UserServiceDeactivateUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -656,6 +788,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/DeleteUser';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceDeleteUserRequest;
 
@@ -668,7 +807,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceDeleteUserResponse::class
+            \Zitadel\Client\Models\UserServiceDeleteUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -710,6 +854,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/DeleteUserMetadata';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceDeleteUserMetadataRequest;
 
@@ -722,7 +873,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceDeleteUserMetadataResponse::class
+            \Zitadel\Client\Models\UserServiceDeleteUserMetadataResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -764,6 +920,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/GenerateRecoveryCodes';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceGenerateRecoveryCodesRequest;
 
@@ -776,7 +939,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceGenerateRecoveryCodesResponse::class
+            \Zitadel\Client\Models\UserServiceGenerateRecoveryCodesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -818,6 +986,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/GetUserByID';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceGetUserByIDRequest;
 
@@ -830,7 +1005,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceGetUserByIDResponse::class
+            \Zitadel\Client\Models\UserServiceGetUserByIDResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -872,6 +1052,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/HumanMFAInitSkipped';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceHumanMFAInitSkippedRequest;
 
@@ -884,7 +1071,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceHumanMFAInitSkippedResponse::class
+            \Zitadel\Client\Models\UserServiceHumanMFAInitSkippedResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -925,6 +1117,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/ListAuthenticationFactors';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceListAuthenticationFactorsRequest;
 
@@ -937,7 +1136,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceListAuthenticationFactorsResponse::class
+            \Zitadel\Client\Models\UserServiceListAuthenticationFactorsResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -979,6 +1183,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/ListAuthenticationMethodTypes';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceListAuthenticationMethodTypesRequest;
 
@@ -991,7 +1202,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceListAuthenticationMethodTypesResponse::class
+            \Zitadel\Client\Models\UserServiceListAuthenticationMethodTypesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1033,6 +1249,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/ListIDPLinks';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceListIDPLinksRequest;
 
@@ -1045,7 +1268,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceListIDPLinksResponse::class
+            \Zitadel\Client\Models\UserServiceListIDPLinksResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1087,6 +1315,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/ListKeys';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceListKeysRequest;
 
@@ -1099,7 +1334,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceListKeysResponse::class
+            \Zitadel\Client\Models\UserServiceListKeysResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1141,6 +1381,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/ListPasskeys';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceListPasskeysRequest;
 
@@ -1153,7 +1400,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceListPasskeysResponse::class
+            \Zitadel\Client\Models\UserServiceListPasskeysResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1195,6 +1447,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/ListPersonalAccessTokens';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceListPersonalAccessTokensRequest;
 
@@ -1207,7 +1466,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceListPersonalAccessTokensResponse::class
+            \Zitadel\Client\Models\UserServiceListPersonalAccessTokensResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1249,6 +1513,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/ListUserMetadata';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceListUserMetadataRequest;
 
@@ -1261,7 +1532,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceListUserMetadataResponse::class
+            \Zitadel\Client\Models\UserServiceListUserMetadataResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1303,6 +1579,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/ListUsers';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceListUsersRequest;
 
@@ -1315,7 +1598,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceListUsersResponse::class
+            \Zitadel\Client\Models\UserServiceListUsersResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1357,6 +1645,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/LockUser';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceLockUserRequest;
 
@@ -1369,7 +1664,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceLockUserResponse::class
+            \Zitadel\Client\Models\UserServiceLockUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1411,6 +1711,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/PasswordReset';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServicePasswordResetRequest;
 
@@ -1423,7 +1730,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServicePasswordResetResponse::class
+            \Zitadel\Client\Models\UserServicePasswordResetResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1465,6 +1777,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/ReactivateUser';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceReactivateUserRequest;
 
@@ -1477,7 +1796,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceReactivateUserResponse::class
+            \Zitadel\Client\Models\UserServiceReactivateUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1519,6 +1843,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/RegisterPasskey';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceRegisterPasskeyRequest;
 
@@ -1531,7 +1862,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceRegisterPasskeyResponse::class
+            \Zitadel\Client\Models\UserServiceRegisterPasskeyResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1573,6 +1909,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/RegisterTOTP';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceRegisterTOTPRequest;
 
@@ -1585,7 +1928,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceRegisterTOTPResponse::class
+            \Zitadel\Client\Models\UserServiceRegisterTOTPResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1627,6 +1975,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/RegisterU2F';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceRegisterU2FRequest;
 
@@ -1639,7 +1994,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceRegisterU2FResponse::class
+            \Zitadel\Client\Models\UserServiceRegisterU2FResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1681,6 +2041,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/RemoveIDPLink';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceRemoveIDPLinkRequest;
 
@@ -1693,7 +2060,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceRemoveIDPLinkResponse::class
+            \Zitadel\Client\Models\UserServiceRemoveIDPLinkResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1735,6 +2107,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/RemoveKey';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceRemoveKeyRequest;
 
@@ -1747,7 +2126,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceRemoveKeyResponse::class
+            \Zitadel\Client\Models\UserServiceRemoveKeyResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1789,6 +2173,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/RemoveOTPEmail';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceRemoveOTPEmailRequest;
 
@@ -1801,7 +2192,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceRemoveOTPEmailResponse::class
+            \Zitadel\Client\Models\UserServiceRemoveOTPEmailResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1843,6 +2239,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/RemoveOTPSMS';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceRemoveOTPSMSRequest;
 
@@ -1855,7 +2258,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceRemoveOTPSMSResponse::class
+            \Zitadel\Client\Models\UserServiceRemoveOTPSMSResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1897,6 +2305,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/RemovePasskey';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceRemovePasskeyRequest;
 
@@ -1909,7 +2324,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceRemovePasskeyResponse::class
+            \Zitadel\Client\Models\UserServiceRemovePasskeyResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -1951,6 +2371,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/RemovePersonalAccessToken';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceRemovePersonalAccessTokenRequest;
 
@@ -1963,7 +2390,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceRemovePersonalAccessTokenResponse::class
+            \Zitadel\Client\Models\UserServiceRemovePersonalAccessTokenResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2005,6 +2437,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/RemovePhone';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceRemovePhoneRequest;
 
@@ -2017,7 +2456,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceRemovePhoneResponse::class
+            \Zitadel\Client\Models\UserServiceRemovePhoneResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2059,6 +2503,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/RemoveRecoveryCodes';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceRemoveRecoveryCodesRequest;
 
@@ -2071,7 +2522,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceRemoveRecoveryCodesResponse::class
+            \Zitadel\Client\Models\UserServiceRemoveRecoveryCodesResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2113,6 +2569,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/RemoveSecret';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceRemoveSecretRequest;
 
@@ -2125,7 +2588,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceRemoveSecretResponse::class
+            \Zitadel\Client\Models\UserServiceRemoveSecretResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2167,6 +2635,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/RemoveTOTP';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceRemoveTOTPRequest;
 
@@ -2179,7 +2654,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceRemoveTOTPResponse::class
+            \Zitadel\Client\Models\UserServiceRemoveTOTPResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2221,6 +2701,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/RemoveU2F';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceRemoveU2FRequest;
 
@@ -2233,7 +2720,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceRemoveU2FResponse::class
+            \Zitadel\Client\Models\UserServiceRemoveU2FResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2275,6 +2767,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/ResendEmailCode';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceResendEmailCodeRequest;
 
@@ -2287,7 +2786,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceResendEmailCodeResponse::class
+            \Zitadel\Client\Models\UserServiceResendEmailCodeResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2329,6 +2833,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/ResendInviteCode';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceResendInviteCodeRequest;
 
@@ -2341,7 +2852,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceResendInviteCodeResponse::class
+            \Zitadel\Client\Models\UserServiceResendInviteCodeResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2383,6 +2899,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/ResendPhoneCode';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceResendPhoneCodeRequest;
 
@@ -2395,7 +2918,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceResendPhoneCodeResponse::class
+            \Zitadel\Client\Models\UserServiceResendPhoneCodeResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2437,6 +2965,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/RetrieveIdentityProviderIntent';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceRetrieveIdentityProviderIntentRequest;
 
@@ -2449,7 +2984,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceRetrieveIdentityProviderIntentResponse::class
+            \Zitadel\Client\Models\UserServiceRetrieveIdentityProviderIntentResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2491,6 +3031,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/SendEmailCode';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceSendEmailCodeRequest;
 
@@ -2503,7 +3050,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceSendEmailCodeResponse::class
+            \Zitadel\Client\Models\UserServiceSendEmailCodeResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2545,6 +3097,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/SetEmail';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceSetEmailRequest;
 
@@ -2557,7 +3116,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceSetEmailResponse::class
+            \Zitadel\Client\Models\UserServiceSetEmailResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2599,6 +3163,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/SetPassword';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceSetPasswordRequest;
 
@@ -2611,7 +3182,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceSetPasswordResponse::class
+            \Zitadel\Client\Models\UserServiceSetPasswordResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2653,6 +3229,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/SetPhone';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceSetPhoneRequest;
 
@@ -2665,7 +3248,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceSetPhoneResponse::class
+            \Zitadel\Client\Models\UserServiceSetPhoneResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2707,6 +3295,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/SetUserMetadata';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceSetUserMetadataRequest;
 
@@ -2719,7 +3314,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceSetUserMetadataResponse::class
+            \Zitadel\Client\Models\UserServiceSetUserMetadataResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2761,6 +3361,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/StartIdentityProviderIntent';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceStartIdentityProviderIntentRequest;
 
@@ -2773,7 +3380,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceStartIdentityProviderIntentResponse::class
+            \Zitadel\Client\Models\UserServiceStartIdentityProviderIntentResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2815,6 +3427,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/UnlockUser';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceUnlockUserRequest;
 
@@ -2827,7 +3446,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceUnlockUserResponse::class
+            \Zitadel\Client\Models\UserServiceUnlockUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2869,6 +3493,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/UpdateHumanUser';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceUpdateHumanUserRequest;
 
@@ -2881,7 +3512,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceUpdateHumanUserResponse::class
+            \Zitadel\Client\Models\UserServiceUpdateHumanUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2923,6 +3559,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/UpdateUser';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceUpdateUserRequest;
 
@@ -2935,7 +3578,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceUpdateUserResponse::class
+            \Zitadel\Client\Models\UserServiceUpdateUserResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -2977,6 +3625,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/VerifyEmail';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceVerifyEmailRequest;
 
@@ -2989,7 +3644,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceVerifyEmailResponse::class
+            \Zitadel\Client\Models\UserServiceVerifyEmailResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -3031,6 +3691,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/VerifyInviteCode';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceVerifyInviteCodeRequest;
 
@@ -3043,7 +3710,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceVerifyInviteCodeResponse::class
+            \Zitadel\Client\Models\UserServiceVerifyInviteCodeResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -3085,6 +3757,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/VerifyPasskeyRegistration';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceVerifyPasskeyRegistrationRequest;
 
@@ -3097,7 +3776,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceVerifyPasskeyRegistrationResponse::class
+            \Zitadel\Client\Models\UserServiceVerifyPasskeyRegistrationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -3139,6 +3823,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/VerifyPhone';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceVerifyPhoneRequest;
 
@@ -3151,7 +3842,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceVerifyPhoneResponse::class
+            \Zitadel\Client\Models\UserServiceVerifyPhoneResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -3193,6 +3889,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/VerifyTOTPRegistration';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceVerifyTOTPRegistrationRequest;
 
@@ -3205,7 +3908,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceVerifyTOTPRegistrationResponse::class
+            \Zitadel\Client\Models\UserServiceVerifyTOTPRegistrationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -3247,6 +3955,13 @@ class UserServiceApi extends BaseApi
     {
         $path = '/zitadel.user.v2.UserService/VerifyU2FRegistration';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $userServiceVerifyU2FRegistrationRequest;
 
@@ -3259,7 +3974,12 @@ class UserServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\UserServiceVerifyU2FRegistrationResponse::class
+            \Zitadel\Client\Models\UserServiceVerifyU2FRegistrationResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }

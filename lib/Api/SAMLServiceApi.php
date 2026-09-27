@@ -62,6 +62,13 @@ class SAMLServiceApi extends BaseApi
     {
         $path = '/zitadel.saml.v2.SAMLService/CreateResponse';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $samlServiceCreateResponseRequest;
 
@@ -74,7 +81,12 @@ class SAMLServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\SAMLServiceCreateResponseResponse::class
+            \Zitadel\Client\Models\SAMLServiceCreateResponseResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -116,6 +128,13 @@ class SAMLServiceApi extends BaseApi
     {
         $path = '/zitadel.saml.v2.SAMLService/GetSAMLRequest';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $samlServiceGetSAMLRequestRequest;
 
@@ -128,7 +147,12 @@ class SAMLServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\SAMLServiceGetSAMLRequestResponse::class
+            \Zitadel\Client\Models\SAMLServiceGetSAMLRequestResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }

@@ -62,6 +62,13 @@ class BetaWebKeyServiceApi extends BaseApi
     {
         $path = '/zitadel.webkey.v2beta.WebKeyService/ActivateWebKey';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaWebKeyServiceActivateWebKeyRequest;
 
@@ -74,7 +81,12 @@ class BetaWebKeyServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaWebKeyServiceActivateWebKeyResponse::class
+            \Zitadel\Client\Models\BetaWebKeyServiceActivateWebKeyResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -116,6 +128,13 @@ class BetaWebKeyServiceApi extends BaseApi
     {
         $path = '/zitadel.webkey.v2beta.WebKeyService/CreateWebKey';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaWebKeyServiceCreateWebKeyRequest;
 
@@ -128,7 +147,12 @@ class BetaWebKeyServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaWebKeyServiceCreateWebKeyResponse::class
+            \Zitadel\Client\Models\BetaWebKeyServiceCreateWebKeyResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -170,6 +194,13 @@ class BetaWebKeyServiceApi extends BaseApi
     {
         $path = '/zitadel.webkey.v2beta.WebKeyService/DeleteWebKey';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaWebKeyServiceDeleteWebKeyRequest;
 
@@ -182,7 +213,12 @@ class BetaWebKeyServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaWebKeyServiceDeleteWebKeyResponse::class
+            \Zitadel\Client\Models\BetaWebKeyServiceDeleteWebKeyResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -224,6 +260,13 @@ class BetaWebKeyServiceApi extends BaseApi
     {
         $path = '/zitadel.webkey.v2beta.WebKeyService/ListWebKeys';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $body;
 
@@ -236,7 +279,12 @@ class BetaWebKeyServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaWebKeyServiceListWebKeysResponse::class
+            \Zitadel\Client\Models\BetaWebKeyServiceListWebKeysResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }

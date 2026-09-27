@@ -165,3 +165,12 @@ test('should filter to a single entry', function (): void {
     );
     expect($headers['Accept'])->toEqual('application/json');
 });
+
+test('should drop whitespace-only entries', function (): void {
+    $headers = $this->headerSelector->selectHeaders(
+        ['   ', 'application/json'],
+        'application/json',
+        false
+    );
+    expect($headers['Accept'])->toEqual('application/json');
+});

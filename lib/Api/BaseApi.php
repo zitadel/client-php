@@ -22,6 +22,7 @@ use Zitadel\Client\DefaultApiClient;
 use Zitadel\Client\HeaderSelector;
 use Zitadel\Client\ObjectSerializer;
 use Zitadel\Client\TraceContextUtil;
+use Zitadel\Client\ValueSerializer;
 use Zitadel\Client\Auth\Authenticator;
 use Zitadel\Client\Auth\NoAuth;
 
@@ -75,6 +76,13 @@ class BaseApi
      *                                            null falls back to the client authenticator (secured
      *                                            op, no per-call override); a real Authenticator is a
      *                                            per-call override
+     * @param array<string, bool>   $allowReservedKeys Set of query parameter
+     *                                            names (baseName => true) declared
+     *                                            `allowReserved: true`; their values
+     *                                            keep RFC 3986 reserved characters
+     *                                            literal. Empty by default, so
+     *                                            omitting it encodes every value as
+     *                                            before.
      *
      * @return ApiResult<mixed> Result containing deserialized data, status code, raw body, and headers
      * @throws ApiException
@@ -88,7 +96,8 @@ class BaseApi
         array $accepts,
         ?string $contentType,
         ?string $returnType,
-        ?Authenticator $auth = null
+        ?Authenticator $auth = null,
+        array $allowReservedKeys = []
     ): ApiResult {
         if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
             $url = $path;
@@ -118,7 +127,7 @@ class BaseApi
             }
         }
 
-        $query = $this->buildQuery($queryParams);
+        $query = $this->buildQuery($queryParams, false, $allowReservedKeys);
         if ($query !== '') {
             $url .= '?' . $query;
         }
@@ -230,6 +239,13 @@ class BaseApi
      *                                            null falls back to the client authenticator (secured
      *                                            op, no per-call override); a real Authenticator is a
      *                                            per-call override
+     * @param array<string, bool>   $allowReservedKeys Set of query parameter
+     *                                            names (baseName => true) declared
+     *                                            `allowReserved: true`; their values
+     *                                            keep RFC 3986 reserved characters
+     *                                            literal. Empty by default, so
+     *                                            omitting it encodes every value as
+     *                                            before.
      *
      * @return mixed Deserialized response or null
      * @throws ApiException
@@ -243,7 +259,8 @@ class BaseApi
         array $accepts,
         ?string $contentType,
         ?string $returnType,
-        ?Authenticator $auth = null
+        ?Authenticator $auth = null,
+        array $allowReservedKeys = []
     ): mixed {
         return $this->invokeApiForResult(
             $method,
@@ -254,7 +271,8 @@ class BaseApi
             $accepts,
             $contentType,
             $returnType,
-            $auth
+            $auth,
+            $allowReservedKeys
         )->data;
     }
 
@@ -282,8 +300,13 @@ class BaseApi
      *
      * @param array<string, mixed> $params Query string parameters
      * @param bool                 $form   Encode as form body (space -> `+`)
+     * @param array<string, bool>  $allowReservedKeys Set of parameter names
+     *                                     (baseName => true) whose values keep RFC
+     *                                     3986 reserved characters literal (OAS
+     *                                     `allowReserved: true`). Empty by default,
+     *                                     so every value is encoded as before.
      */
-    private function buildQuery(array $params, bool $form = false): string
+    private function buildQuery(array $params, bool $form = false, array $allowReservedKeys = []): string
     {
         if ($params === []) {
             return '';
@@ -296,26 +319,35 @@ class BaseApi
         $qs = '';
         foreach ($params as $k => $v) {
             $key = $encode($k);
+            /* OAS allowReserved: values of a parameter declared
+             * `allowReserved: true` keep RFC 3986 reserved characters literal
+             * instead of percent-encoding them; everything else (spaces,
+             * control chars, non-ASCII) is still encoded. The key is always
+             * encoded normally. When the key is absent from the set the value
+             * encoder is the default one, so encoding is byte-identical. */
+            $encodeValue = isset($allowReservedKeys[$k])
+                ? ValueSerializer::encodeQueryAllowingReserved(...)
+                : $encode;
             if (is_array($v)) {
                 foreach ($v as $vv) {
                     $qs .= $key;
                     if (is_bool($vv)) {
-                        $qs .= '=' . $encode($vv ? 'true' : 'false');
+                        $qs .= '=' . $encodeValue($vv ? 'true' : 'false');
                     } elseif (is_scalar($vv)) {
-                        $qs .= '=' . $encode((string) $vv);
+                        $qs .= '=' . $encodeValue((string) $vv);
                     } else {
-                        $qs .= '=' . $encode((string) json_encode($vv, JSON_UNESCAPED_SLASHES));
+                        $qs .= '=' . $encodeValue((string) json_encode($vv, JSON_UNESCAPED_SLASHES));
                     }
                     $qs .= '&';
                 }
             } else {
                 $qs .= $key;
                 if (is_bool($v)) {
-                    $qs .= '=' . $encode($v ? 'true' : 'false');
+                    $qs .= '=' . $encodeValue($v ? 'true' : 'false');
                 } elseif (is_scalar($v)) {
-                    $qs .= '=' . $encode((string) $v);
+                    $qs .= '=' . $encodeValue((string) $v);
                 } elseif (!is_null($v)) {
-                    $qs .= '=' . $encode((string) json_encode($v, JSON_UNESCAPED_SLASHES));
+                    $qs .= '=' . $encodeValue((string) json_encode($v, JSON_UNESCAPED_SLASHES));
                 }
                 $qs .= '&';
             }

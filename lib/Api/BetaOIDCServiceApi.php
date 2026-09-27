@@ -62,6 +62,13 @@ class BetaOIDCServiceApi extends BaseApi
     {
         $path = '/zitadel.oidc.v2beta.OIDCService/CreateCallback';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOIDCServiceCreateCallbackRequest;
 
@@ -74,7 +81,12 @@ class BetaOIDCServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOIDCServiceCreateCallbackResponse::class
+            \Zitadel\Client\Models\BetaOIDCServiceCreateCallbackResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }
@@ -116,6 +128,13 @@ class BetaOIDCServiceApi extends BaseApi
     {
         $path = '/zitadel.oidc.v2beta.OIDCService/GetAuthRequest';
         $queryParams = [];
+        /* OAS allowReserved: query parameters declared `allowReserved: true`
+         * keep RFC 3986 reserved characters literal on the wire. Their names
+         * are collected here and threaded to the query-string builder, which
+         * swaps in the reserved-preserving encoder for exactly those values.
+         * The set is empty for every other operation, so encoding is
+         * unchanged. */
+        $allowReservedKeys = [];
         $headerParams = [];
         $requestBody = $betaOIDCServiceGetAuthRequestRequest;
 
@@ -128,7 +147,12 @@ class BetaOIDCServiceApi extends BaseApi
             $requestBody,
             ['application/json'],
             'application/json',
-            \Zitadel\Client\Models\BetaOIDCServiceGetAuthRequestResponse::class
+            \Zitadel\Client\Models\BetaOIDCServiceGetAuthRequestResponse::class,
+            /* security:[] — explicitly unauthenticated; pass the NoAuth
+             * sentinel so BaseApi suppresses the client credential instead
+             * of falling back to it. */
+            null,
+            $allowReservedKeys
         );
         return $result;
     }

@@ -114,6 +114,35 @@ final class ValueSerializer
     }
 
     /**
+     * Percent-encodes a query value while leaving RFC 3986 reserved characters
+     * literal (OAS `allowReserved: true`).
+     *
+     * Everything that is not RFC 3986 reserved or unreserved — spaces (encoded
+     * as `%20`, never `+`), control characters, non-ASCII — is still
+     * percent-encoded, so the result is always a valid URL query segment. Only
+     * the reserved set `: / ? # [ ] @ ! $ & ' ( ) * + , ; =` is restored to
+     * literal after rawurlencode() over-encodes it. rawurlencode() already
+     * leaves the RFC 3986 unreserved `~` literal, so it needs no restoring.
+     *
+     * @param string $value the raw value to encode
+     * @return string the encoded value with reserved characters preserved
+     */
+    public static function encodeQueryAllowingReserved(string $value): string
+    {
+        if ($value === '') {
+            return $value;
+        }
+
+        return strtr(rawurlencode($value), [
+            '%3A' => ':', '%2F' => '/', '%3F' => '?', '%23' => '#',
+            '%5B' => '[', '%5D' => ']', '%40' => '@', '%21' => '!',
+            '%24' => '$', '%26' => '&', '%27' => "'", '%28' => '(',
+            '%29' => ')', '%2A' => '*', '%2B' => '+', '%2C' => ',',
+            '%3B' => ';', '%3D' => '=',
+        ]);
+    }
+
+    /**
      * Serialize a value using the specified OAS 3.0 parameter style.
      *
      * Supports simple, form, matrix, label, spaceDelimited, and pipeDelimited
@@ -207,8 +236,8 @@ final class ValueSerializer
             'form' => $isList
                 ? self::serializeForm($items, $explode)
                 : $scalar,
-            'spaceDelimited' => $isList ? implode(' ', $items) : $scalar,
-            'pipeDelimited' => $isList ? implode('|', $items) : $scalar,
+            'spaceDelimited' => $isList ? ($explode ? $items : implode(' ', $items)) : $scalar,
+            'pipeDelimited' => $isList ? ($explode ? $items : implode('|', $items)) : $scalar,
             'simple' => $isList ? implode(',', $items) : $scalar,
             default => self::serialize($value, $location, $schemaType, $collectionFormat),
         };
