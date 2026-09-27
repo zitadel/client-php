@@ -3,10 +3,7 @@
 namespace Zitadel\Client\Test;
 
 use Docker\Docker;
-use Docker\API\Model\ContainerConfigExposedPortsItem;
 use Docker\API\Model\ContainersCreatePostBody;
-use Docker\API\Model\Mount;
-use Docker\API\Model\MountTmpfsOptions;
 use Docker\API\Model\NetworksCreatePostBody;
 use Docker\API\Model\NetworksCreatePostResponse201;
 use HaydenPierce\ClassFinder\ClassFinder;
@@ -75,19 +72,6 @@ class ZitadelTest extends TestCase
          * the auth port never opens. testcontainers-php has no tmpfs helper, so
          * the container is extended with one to stay aligned with the siblings. */
         $proxy = new class ("ubuntu/squid:6.10-24.10_beta") extends GenericContainer {
-            /** @param array<string, int> $mountsByTarget container path => octal mode */
-            public function withTmpfs(array $mountsByTarget): static
-            {
-                foreach ($mountsByTarget as $target => $mode) {
-                    $this->mounts[] = new Mount()
-                        ->setType('tmpfs')
-                        ->setTarget($target)
-                        ->setTmpfsOptions(new MountTmpfsOptions()->setMode($mode));
-                }
-
-                return $this;
-            }
-
             protected function createContainerConfig(): ContainersCreatePostBody
             {
                 /* testcontainers-php sets host PortBindings but never
@@ -95,18 +79,12 @@ class ZitadelTest extends TestCase
                  * already EXPOSEs. ubuntu/squid exposes 3128 but not the 3129 auth
                  * port, so on a strict daemon (CI) the 3129 binding is silently
                  * dropped while a lenient one (local Docker Desktop) still maps it.
-                 * Expose every requested port so both are published everywhere. */
+                 * Expose every requested port (each an empty object) so both are
+                 * published everywhere. */
                 $config = parent::createContainerConfig();
                 $exposed = [];
                 foreach ($this->exposedPorts as $port) {
-                    /* An empty ContainerConfigExposedPortsItem serialises to a
-                     * JSON array ([]); the daemon rejects that and wants an object
-                     * ({}). A single entry forces object serialisation, and Docker
-                     * reads each ExposedPorts value as an empty struct, ignoring
-                     * its contents. */
-                    $item = new ContainerConfigExposedPortsItem();
-                    $item['exposed'] = true;
-                    $exposed[$port] = $item;
+                    $exposed[$port] = [];
                 }
                 $config->setExposedPorts($exposed);
 
@@ -117,7 +95,8 @@ class ZitadelTest extends TestCase
         $proxy = $proxy
             ->withNetwork(self::$networkName)
             ->withMount($fixturesDir . '/squid.conf', '/etc/squid/squid.conf')
-            ->withTmpfs(['/var/log/squid' => 0o1777, '/var/spool/squid' => 0o1777])
+            ->withTmpfs('/var/log/squid', 'rw,mode=1777')
+            ->withTmpfs('/var/spool/squid', 'rw,mode=1777')
             ->withExposedPorts(3128, 3129)
             ->start();
         self::$proxy = $proxy;
