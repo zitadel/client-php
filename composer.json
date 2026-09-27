@@ -41,7 +41,7 @@
         "mrpunyapal/peststan": "^0.2.10"
     },
     "scripts": {
-        "test": "pest --testsuite unit --coverage --coverage-clover=build/coverage/clover.xml --log-junit=build/reports/junit.xml",
+        "test": "pest --coverage --coverage-clover=build/coverage/clover.xml --log-junit=build/reports/junit.xml",
         "phpstan": "phpstan analyse --memory-limit=-1",
         "rector": "rector process",
         "format": "php-cs-fixer fix",
