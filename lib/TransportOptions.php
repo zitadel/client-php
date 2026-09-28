@@ -21,7 +21,7 @@ namespace Zitadel\Client;
  * are independent of API-level concerns (base URL, authentication headers)
  * which belong in {@see Configuration}.
  *
- * This class is immutable. Use {@see TransportOptions::builder()} to create instances:
+ * This class is immutable and thread-safe. Use {@see TransportOptions::builder()} to create instances:
  *
  *     $transport = TransportOptions::builder()
  *         ->verifySsl(false)
@@ -39,11 +39,21 @@ final class TransportOptions
      * @param bool                  $verifySsl      Whether TLS certificate verification is enabled
      * @param string|null           $caCertPath     Path to a custom CA certificate bundle for TLS verification
      * @param string|null           $proxy          HTTP or HTTPS proxy URL for all outbound requests
-     * @param int|null              $timeout        End-to-end request timeout in milliseconds
+     * @param int|null              $timeout        End-to-end request timeout in milliseconds. Covers the
+     *                                               entire request lifecycle: connection, TLS handshake,
+     *                                               sending the request body, and reading the response.
+     *                                               Defaults to 10000 ms (10 seconds). `null` disables the
+     *                                               timeout (waits indefinitely)
      * @param bool                  $followRedirects Whether the client follows HTTP 3xx redirects automatically
-     * @param int|null              $maxRedirects   Maximum number of consecutive redirects to follow
+     * @param int|null              $maxRedirects   Maximum number of consecutive redirects to follow. Only
+     *                                               meaningful when $followRedirects is true. A value of
+     *                                               `null` uses the HTTP client's built-in default
      * @param string|null           $userAgent      Custom User-Agent header value
-     * @param array<string, string> $defaultHeaders Transport-level default headers included in every request
+     * @param array<string, string> $defaultHeaders Transport-level default headers included in every
+     *                                               request. These headers have the lowest priority:
+     *                                               API-level headers from
+     *                                               {@see Configuration::$defaultHeaders}, operation-specific
+     *                                               headers, and authentication headers all take precedence
      * @param bool                  $injectRequestId Whether to auto-inject an X-Request-ID header
      */
     public function __construct(

@@ -14,10 +14,11 @@ declare(strict_types=1);
 namespace Zitadel\Client;
 
 /**
- * Converts scalar values, arrays, and objects into string representations
- * suitable for different HTTP parameter locations (path, query, header).
- * Handles collection format serialization (csv, ssv, tsv, pipes, multi)
- * and URL-encoding for path parameters.
+ * Serializes parameter values for HTTP requests based on their location and format.
+ *
+ * Converts values into their string representations suitable for HTTP request
+ * paths, query strings, and headers. Handles null values, collections with various
+ * collection formats, and URL encoding.
  *
  * @internal This class is part of the SDK's internal serialization plumbing
  *           and is not part of the public API. It may change or be removed
@@ -68,7 +69,7 @@ final class ValueSerializer
                     'ssv' => implode(' ', $items),
                     'tsv' => implode("\t", $items),
                     'pipes' => implode('|', $items),
-                    default => implode(',', $items), // csv or default
+                    default => implode(',', $items), /* csv or default */
                 };
             }
 

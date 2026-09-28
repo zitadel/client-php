@@ -45,9 +45,11 @@ class BaseApi
     protected readonly ?Authenticator $authenticator;
 
     /**
+     * Create an API instance.
+     *
      * @param ApiClient|null     $apiClient     API client instance
      * @param Configuration|null $config        Configuration instance
-     * @param Authenticator|null $authenticator Default authenticator for all operations
+     * @param Authenticator|null $authenticator Default authenticator for operations without explicit auth
      */
     public function __construct(
         ?ApiClient $apiClient = null,
@@ -61,9 +63,10 @@ class BaseApi
     }
 
     /**
-     * Invoke an API operation and return the full result.
+     * Invoke an API operation and return the full result including status code,
+     * headers, and raw body alongside the deserialized data.
      *
-     * @param string                $method       HTTP method
+     * @param string                $method       HTTP method (GET, POST, PUT, DELETE, etc.)
      * @param string                $path         URL path (with path params already substituted)
      * @param array<string, mixed>  $queryParams  Query parameters
      * @param array<string, string> $headerParams Custom header parameters
@@ -226,7 +229,7 @@ class BaseApi
     /**
      * Invoke an API operation.
      *
-     * @param string                $method       HTTP method
+     * @param string                $method       HTTP method (GET, POST, PUT, DELETE, etc.)
      * @param string                $path         URL path (with path params already substituted)
      * @param array<string, mixed>  $queryParams  Query parameters
      * @param array<string, string> $headerParams Custom header parameters
@@ -330,6 +333,9 @@ class BaseApi
                 : $encode;
             if (is_array($v)) {
                 foreach ($v as $vv) {
+                    if (is_null($vv)) {
+                        continue;
+                    }
                     $qs .= $key;
                     if (is_bool($vv)) {
                         $qs .= '=' . $encodeValue($vv ? 'true' : 'false');
@@ -341,12 +347,22 @@ class BaseApi
                     $qs .= '&';
                 }
             } else {
+                if (is_null($v)) {
+                    /* A null query value is dropped entirely (no key, no `=`).
+                     * Every other SDK skips null query entries the same way
+                     * (java `if (value != null)`, node `if (value == null)
+                     * continue`, python pre-filters, ruby `query_params.compact`,
+                     * dotnet `if (value != null)`). Without this `continue` the
+                     * `$qs .= $key` below still ran for a null value, emitting a
+                     * valueless `key&` token — a php-only malformed query string. */
+                    continue;
+                }
                 $qs .= $key;
                 if (is_bool($v)) {
                     $qs .= '=' . $encodeValue($v ? 'true' : 'false');
                 } elseif (is_scalar($v)) {
                     $qs .= '=' . $encodeValue((string) $v);
-                } elseif (!is_null($v)) {
+                } else {
                     $qs .= '=' . $encodeValue((string) json_encode($v, JSON_UNESCAPED_SLASHES));
                 }
                 $qs .= '&';

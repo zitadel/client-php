@@ -14,12 +14,20 @@ declare(strict_types=1);
 namespace Zitadel\Client\Errors;
 
 /**
- * Typed representation of a non-2xx OAuth2 token endpoint answer. For an
- * RFC 6749 §5.2 error response the `errorCode` property carries the OAuth2
- * error code (e.g. `invalid_grant`, `invalid_client`); `description` and
- * `uri` are the optional human-readable description and a URL to a page
- * describing the error. `rawBody` preserves the original response payload
- * for diagnostics when the body is not a well-formed OAuth2 error object.
+ * Thrown when the OAuth2 token endpoint answers with a non-2xx status,
+ * including a 3xx redirect, which the token POST never follows. Typed
+ * representation of an RFC 6749 §5.2 OAuth2 error response. The
+ * `errorCode` property carries the OAuth2 error code (e.g.
+ * `invalid_grant`, `invalid_client`); `description` and `uri` are the
+ * optional human-readable description and a URL to a page describing the
+ * error. `rawBody` preserves the original response payload for
+ * diagnostics when the body is not a well-formed OAuth2 error object.
+ *
+ * The property is named `errorCode`, not `code` as in the other SDKs: PHP's
+ * SPL `\Exception` base already declares a `protected int $code`, so a
+ * `?string $code` here would clash with it and fail. The other SDKs' base
+ * error types have no such member and use `code`; this rename is language-forced
+ * and must not be "aligned" back to `code`.
  *
  * @category Class
  * @package  Zitadel\Client

@@ -20,7 +20,7 @@ namespace Zitadel\Client;
  * request. Transport-level settings (TLS, proxy, timeouts) belong in
  * {@see TransportOptions} and are configured on the {@see DefaultApiClient}.
  *
- * This class is immutable. Use {@see Configuration::builder()} to create instances:
+ * This class is immutable and thread-safe. Use {@see Configuration::builder()} to create instances:
  *
  *     $config = Configuration::builder()
  *         ->baseUrl('https://api.example.com')

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client\Auth;
 
 /**
- * Scheme-specific authenticator for the ZitadelAccessTokenAuthenticator security scheme.
+ * Scheme-specific authenticator for the zitadelAccessToken security scheme.
  */
 final class ZitadelAccessTokenAuthenticator extends BearerAuthenticator
 {

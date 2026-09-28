@@ -14,7 +14,10 @@ declare(strict_types=1);
 namespace Zitadel\Client;
 
 /**
- * ApiClient Interface
+ * Interface for API HTTP transport.
+ *
+ * Implementations handle the actual HTTP request/response cycle. The
+ * default implementation uses Symfony's HttpClient.
  *
  * @category Interface
  * @package  Zitadel\Client

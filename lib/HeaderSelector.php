@@ -14,7 +14,8 @@ declare(strict_types=1);
 namespace Zitadel\Client;
 
 /**
- * HeaderSelector
+ * Selects Accept and Content-Type headers for API requests based on the MIME types
+ * declared in the OpenAPI specification.
  *
  * @internal This class is part of the SDK's internal request plumbing and is
  *           not part of the public API. It may change or be removed in any

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Zitadel\Client;
 
 /**
- * ApiHttpResponse Class
+ * Represents an HTTP API response.
  *
  * @category Class
  * @package  Zitadel\Client
@@ -24,7 +24,7 @@ class ApiHttpResponse
     /**
      * @param int                    $statusCode HTTP status code
      * @param string                 $body       Response body
-     * @param array<string, string>  $headers    Response headers
+     * @param array<string, string>  $headers    Response headers (unmodifiable)
      */
     public function __construct(
         public readonly int $statusCode,

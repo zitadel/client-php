@@ -25,9 +25,9 @@ class ApiResult
 {
     /**
      * @param int                     $statusCode HTTP status code
-     * @param T|null                  $data       Deserialized response body
-     * @param string                  $rawBody    Raw response body string
-     * @param array<string, string>   $headers    Response headers
+     * @param T|null                  $data       Deserialized response body (null for void responses)
+     * @param string                  $rawBody    Raw response body string (never null; empty for no body)
+     * @param array<string, string>   $headers    Response headers (unmodifiable)
      */
     public function __construct(
         public readonly int $statusCode,

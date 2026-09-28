@@ -1038,7 +1038,18 @@ class ObjectSerializer
     }
 
     /**
-     * Resolve a oneOf schema by attempting deserialization against each candidate.
+     * Convert a value to a representation suitable for use as a form parameter.
+     */
+    public static function toFormValue(mixed $value): string
+    {
+        if ($value instanceof \SplFileObject) {
+            return $value->getRealPath();
+        }
+        return self::stringify($value);
+    }
+
+    /**
+     * Resolve a oneOf schema by trying each candidate deserializer in order.
      * Each candidate is a closure that accepts the raw data and returns a
      * deserialized value, or throws on failure.
      *
@@ -1067,14 +1078,16 @@ class ObjectSerializer
     }
 
     /**
-     * Resolve an anyOf schema by attempting deserialization against each candidate.
-     * Each candidate is a closure that accepts the raw data and returns a
-     * deserialized value, or throws on failure.
+     * Resolve an anyOf schema by trying each candidate deserializer in order.
+     * Delegates to {@see resolveOneOf}.
      *
      * @param mixed               $data       the data to match
      * @param array<callable>     $candidates list of deserializer closures
      *
-     * @return mixed the first successfully deserialized value, or null if none match
+     * @return mixed the first successfully deserialized value
+     *
+     * @throws \UnexpectedValueException when the data matches none of the
+     *         candidate schemas
      */
     public static function resolveAnyOf(mixed $data, array $candidates): mixed
     {
@@ -1314,16 +1327,5 @@ class ObjectSerializer
         }
 
         return $interval;
-    }
-
-    /**
-     * Convert a value to a representation suitable for use as a form parameter.
-     */
-    public static function toFormValue(mixed $value): string
-    {
-        if ($value instanceof \SplFileObject) {
-            return $value->getRealPath();
-        }
-        return self::stringify($value);
     }
 }

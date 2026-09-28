@@ -20,6 +20,8 @@ namespace Zitadel\Client;
  * - verifySsl: true
  * - followRedirects: true
  * - injectRequestId: false
+ * - timeout: 10000 (10 seconds)
+ * - userAgent: a package-specific default string
  * - All other fields: null or empty
  *
  * @category Class
