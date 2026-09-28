@@ -49,7 +49,7 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
      *
      * @throws ApiException on API error
      */
-    public function testRetrievesTheUserDetailsById(): void
+    public function testRetrievesUserDetailsById(): void
     {
         $request = new UserServiceGetUserByIDRequest();
         $request->userId = $this->user->userId;
@@ -67,7 +67,7 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
      *
      * @throws ApiException on API error
      */
-    public function testIncludesTheCreatedUserWhenListingAllUsers(): void
+    public function testIncludesCreatedUserWhenListing(): void
     {
         $request = new UserServiceListUsersRequest();
         $request->queries = new \Ds\Vector();
@@ -92,7 +92,7 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
      *
      * @throws ApiException on API error
      */
-    public function testUpdatesTheUserEmailAndReflectsInGet(): void
+    public function testUpdatesUserEmailAndReflectsInGet(): void
     {
         $email = new UserServiceSetHumanEmail();
         $email->email = 'updated' . uniqid() . '@example.com';
@@ -120,7 +120,7 @@ class UserServiceSanityCheckSpec extends AbstractIntegrationTest
     /**
      * Attempt to retrieve a non-existent user and expect an ApiException.
      */
-    public function testRaisesAnApiExceptionWhenRetrievingNonExistentUser(): void
+    public function testRaisesApiExceptionForNonexistentUser(): void
     {
         $this->expectException(ApiException::class);
 
