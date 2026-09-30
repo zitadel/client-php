@@ -447,6 +447,38 @@ test('path date only at year boundary emits yyyy mm dd', function (): void {
     expect(ValueSerializer::serialize($dt, 'path', '\\DateTime|date'))->toBe('2024-12-31');
 });
 
+/* -- date-only marker in non-path locations -- */
+
+test('query date only emits yyyy mm dd', function (): void {
+    $dt = new \DateTime('2024-01-01T10:30:45+00:00');
+    expect(ValueSerializer::serialize($dt, 'query', '\\DateTime|date'))->toBe('2024-01-01');
+    expect(ValueSerializer::serializeStyled('d', $dt, 'query', '\\DateTime|date', null, 'form', true))->toBe('2024-01-01');
+    expect(ValueSerializer::serializeStyled('d', $dt, 'query', '\\DateTime|date', null, null, false))->toBe('2024-01-01');
+});
+
+test('header date only emits yyyy mm dd', function (): void {
+    $dt = new \DateTime('2024-01-01T10:30:45+00:00');
+    expect(ValueSerializer::serializeStyled('Report-Date', $dt, 'header', '\\DateTime|date', null, 'simple', false))->toBe('2024-01-01');
+    expect(ValueSerializer::serializeStyled('Report-Date', $dt, 'header', '\\DateTime|date', null, null, false))->toBe('2024-01-01');
+});
+
+test('cookie date only emits yyyy mm dd', function (): void {
+    $dt = new \DateTime('2024-01-01T10:30:45+00:00');
+    expect(ValueSerializer::serializeStyled('c', $dt, 'cookie', '\\DateTime|date', null, 'form', true))->toBe('2024-01-01');
+});
+
+test('query date time without date marker keeps time', function (): void {
+    $dt = new \DateTime('2024-01-01T10:30:45+00:00');
+    expect(ValueSerializer::serialize($dt, 'query', '\\DateTime'))->toContain('10:30:45');
+});
+
+test('format date only helper drops the time component', function (): void {
+    expect(ValueSerializer::formatDateOnly(new \DateTime('2024-01-01T10:30:45+00:00')))->toBe('2024-01-01');
+    expect(ValueSerializer::formatDateOnly(new \DateTimeImmutable('2024-12-31T23:59:59+00:00')))->toBe('2024-12-31');
+    expect(ValueSerializer::formatDateOnly(null))->toBeNull();
+    expect(ValueSerializer::formatDateOnly('already-a-string'))->toBe('already-a-string');
+});
+
 // -- allowReserved query encoding --
 // OAS allowReserved: true leaves RFC 3986 reserved characters literal on the
 // wire; everything else (space, control, non-ASCII) is still percent-encoded.

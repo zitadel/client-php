@@ -56,8 +56,10 @@ final class ValueSerializer
             return '';
         }
 
-        if ($location === 'path' && str_ends_with($schemaType, '|date') && $value instanceof \DateTimeInterface) {
-            return rawurlencode($value->format('Y-m-d'));
+        if (str_ends_with($schemaType, '|date') && $value instanceof \DateTimeInterface) {
+            $formatted = $value->format('Y-m-d');
+
+            return $location === 'path' ? rawurlencode($formatted) : $formatted;
         }
 
         if (is_array($value)) {
@@ -85,6 +87,23 @@ final class ValueSerializer
         }
 
         return $str;
+    }
+
+    /**
+     * Formats a date-only (`format: date`) value as `YYYY-MM-DD`.
+     *
+     * PHP types both `format: date` and `format: date-time` as
+     * \DateTimeInterface, so the type alone cannot tell them apart; the
+     * generated operation code calls this only for date-only form fields, whose
+     * value would otherwise reach the form encoder as a full date-time.
+     * Non-date values (including null) pass through unchanged.
+     *
+     * @param mixed $value the raw form field value
+     * @return mixed the `Y-m-d` string for a date value, otherwise the value untouched
+     */
+    public static function formatDateOnly(mixed $value): mixed
+    {
+        return $value instanceof \DateTimeInterface ? $value->format('Y-m-d') : $value;
     }
 
     /**
