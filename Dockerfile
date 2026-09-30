@@ -1,8 +1,21 @@
-FROM composer/composer:2@sha256:b7ef481cbd284d30761fa6b29c0ec4e5fa56ecc7d77632f8151c513ca5214750
+# Interactive REPL image for poking at the SDK with psysh. The SDK requires
+# PHP 8.5, so base off the official php:8.5 image and pull composer from the
+# official composer image rather than the composer/composer base (which still
+# ships PHP 8.4).
+FROM php:8.5-cli
 
 WORKDIR /app
 
-# Set COMPOSER_HOME so global packages are in /root/.composer reliably.
+# Composer needs git and unzip to fetch and extract dist packages.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git unzip libzip-dev \
+    && docker-php-ext-install zip \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Set COMPOSER_HOME so global packages are in /root/.composer reliably. Keep the
+# WORKDIR as /app so psysh's CWD is the SDK project, not the composer home.
 ENV COMPOSER_HOME=/root/.composer
 ENV PATH="/root/.composer/vendor/bin:$PATH"
 
@@ -20,4 +33,8 @@ COPY . .
 RUN mkdir -p /root/.config/psysh && \
     echo "<?php require '/app/vendor/autoload.php';" > /root/.config/psysh/config.php
 
-CMD ["composer", "global", "exec", "psysh"]
+# Invoke psysh directly rather than via `composer global exec`. The composer exec
+# wrapper does not forward piped stdin to the child process (and chdirs to
+# COMPOSER_HOME), so `echo '...' | docker run -i` would silently print nothing.
+# Running the binary directly lets stdin reach the REPL and keeps CWD at /app.
+CMD ["psysh"]

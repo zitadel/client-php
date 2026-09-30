@@ -19,7 +19,7 @@ final class Setup implements Extension
 {
     public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
     {
-        $dotenv = Dotenv::createImmutable(getcwd());
+        $dotenv = Dotenv::createImmutable(getcwd() ?: '.');
         $dotenv->safeLoad();
 
         new JUnitReporter('build/reports/junit-raw.xml', 'build/reports/junit.xml');

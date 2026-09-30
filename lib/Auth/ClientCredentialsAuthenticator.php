@@ -1,79 +1,87 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zitadel\Client\Auth;
 
-use Exception;
-use GuzzleHttp\Client;
-use League\OAuth2\Client\Provider\GenericProvider;
-use Zitadel\Client\TransportOptions;
+use InvalidArgumentException;
 
 /**
- * OAuth2 Client Credentials Authenticator.
+ * OAuth authenticator implementing the client-credentials flow (RFC 6749 §4.4).
  *
- * Implements the OAuth2 client credentials grant to obtain an access token.
+ * Mints a bearer token by POSTing client_id / client_secret to the provider's
+ * token endpoint through the SDK's shared transport. See
+ * {@see OAuthAuthenticator} for the caching and HTTP-injection contract.
  */
 class ClientCredentialsAuthenticator extends OAuthAuthenticator
 {
-    private const GRANT_TYPE = "client_credentials";
+    private const string GRANT_TYPE = 'client_credentials';
 
     /**
-     * Constructs a ClientCredentialsAuthenticator.
-     *
-     * @param OpenId $hostName The base URL for the API endpoints.
-     * @param string $clientId The OAuth2 client identifier.
+     * @param OpenId $openId       The OpenID discovery helper for the target host.
+     * @param string $clientId     The OAuth2 client identifier.
      * @param string $clientSecret The OAuth2 client secret.
-     * @param string $scope The scope for the token request.
-     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
+     * @param string $scope        Space-delimited scope string for the token request.
      */
     public function __construct(
-        OpenId $hostName,
-        string $clientId,
-        string $clientSecret,
-        string $scope = 'openid urn:zitadel:iam:org:project:id:zitadel:aud',
-        ?TransportOptions $transportOptions = null
+        OpenId $openId,
+        private readonly string $clientId,
+        private readonly string $clientSecret,
+        string $scope = OAuthAuthenticatorBuilder::DEFAULT_SCOPE
     ) {
-        $transportOptions ??= TransportOptions::defaults();
-
-        $guzzleOpts = $transportOptions->toGuzzleOptions();
-        $collaborators = !empty($guzzleOpts) ? ['httpClient' => new Client($guzzleOpts)] : [];
-
-        parent::__construct($hostName, $clientId, $scope, new GenericProvider([
-            'clientId' => $clientId,
-            'clientSecret' => $clientSecret,
-            'urlAccessToken' => $hostName->getTokenEndpoint()->toString(),
-            'urlAuthorize' => $hostName->getAuthorizationEndpoint()->toString(),
-            'urlResourceOwnerDetails' => $hostName->getUserinfoEndpoint()->toString(),
-        ], $collaborators), $transportOptions);
+        parent::__construct($openId, $scope);
     }
 
     /**
-     * Returns a new builder instance for ClientCredentialsAuthenticator.
+     * Returns a builder for a ClientCredentialsAuthenticator.
      *
-     * @param string $host The base URL for API endpoints.
-     * @param string $clientId The OAuth2 client identifier.
+     * @param string $host         The base URL for the OAuth provider.
+     * @param string $clientId     The OAuth2 client identifier.
      * @param string $clientSecret The OAuth2 client secret.
-     * @param TransportOptions|null $transportOptions Optional transport options for TLS, proxy, and headers.
-     * @return ClientCredentialsAuthenticatorBuilder A new builder instance.
-     * @throws Exception
+     * @throws InvalidArgumentException If the host is not a valid http or https
+     *                                  URL, or the client identifier or secret is empty.
      */
     public static function builder(
         string $host,
         string $clientId,
         string $clientSecret,
-        ?TransportOptions $transportOptions = null,
     ): ClientCredentialsAuthenticatorBuilder {
-        return new ClientCredentialsAuthenticatorBuilder($host, $clientId, $clientSecret, $transportOptions);
+        return new ClientCredentialsAuthenticatorBuilder($host, $clientId, $clientSecret);
     }
 
+    #[\Override]
     protected function getGrantType(): string
     {
-        return ClientCredentialsAuthenticator::GRANT_TYPE;
+        return self::GRANT_TYPE;
     }
 
-    protected function getAccessTokenOptions(): array
+    /**
+     * @return array<string, string>
+     */
+    #[\Override]
+    protected function getTokenRequestParams(): array
     {
         return [
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
+        ];
+    }
+
+    /**
+     * Redacts the client secret and cached access token from var_dump() /
+     * print_r() output while keeping the client id visible.
+     *
+     * @return array<string, mixed>
+     */
+    #[\Override]
+    public function __debugInfo(): array
+    {
+        return [
+            'host' => $this->getHost(),
+            'clientId' => $this->clientId,
+            'clientSecret' => '***',
             'scope' => $this->scope,
+            'accessToken' => $this->maskedToken(),
         ];
     }
 }

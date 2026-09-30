@@ -1,16 +1,15 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.10.7/.schema/devbox.schema.json",
   "packages": [
-    "php@8.3",
-    "php83Extensions.xdebug@latest",
-    "lefthook@latest"
+    "php@8.5",
+    "php85Extensions.xdebug@latest",
+    "github:mridang/nixpkgs#qodana"
   ],
   "env": {
     "XDEBUG_MODE": "coverage"
   },
   "shell": {
     "init_hook": [
-      "lefthook install",
       "composer install"
     ],
     "scripts": {

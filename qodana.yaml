@@ -7,13 +7,128 @@ exclude:
   - name: All
     paths:
       - lib/Api
-      - lib/Model
+      - lib/Models
+      # Test code legitimately uses fixture classes, descriptive names and
+      # reaches into internals; production-grade IDE inspections are noise here.
+      - tests
+      - spec
+  # Style is owned by php-cs-fixer (the CI cs-fixer job is authoritative).
+  - name: PhpCSValidationInspection
+  # The PECL ext-ds (\Ds\*) is resolved at the root: php-ds/php-ds is a
+  # composer "require" polyfill that defines \Ds\Map/\Ds\Set/\Ds\Vector as
+  # PSR-4 classes, so the bootstrap's `composer install` gives the analyzer a
+  # real source for them. symfony/* and league/uri likewise resolve from the
+  # installed vendor tree. The only PhpUndefined* hits that survive are
+  # path-scoped below; the formerly-global excludes are gone.
+  #
+  # open-telemetry/api is composer "suggest" only (optional W3C Trace Context
+  # propagation), referenced behind class_exists(\OpenTelemetry\API\Globals).
+  # The analyzer cannot resolve an optional, not-installed dependency.
+  - name: PhpUndefinedClassInspection
+    paths:
+      - lib/TraceContextUtil.php
+  - name: PhpUndefinedNamespaceInspection
+    paths:
+      - lib/TraceContextUtil.php
+  # ext-zstd is composer "suggest" only; zstd_uncompress() is called behind a
+  # function_exists() guard. The optional extension is not loaded in the
+  # analyzer container, so the symbol is genuinely absent there.
+  - name: PhpUndefinedFunctionInspection
+    paths:
+      - lib/DefaultApiClient.php
+  # The JetBrains analyzer over-parses prose inside the Ds normalizer docblocks:
+  # the literal words in `@var ... PHPDoc`, the `\Ds\Vector<Inner>` example
+  # placeholder, and the `{@see \Symfony\Component\PropertyAccess}` namespace
+  # reference are read as real type/namespace targets. phpstan/php-cs-fixer/
+  # rector do not parse docblock prose this way and flag none of these.
+  - name: PhpUndefinedClassInspection
+    paths:
+      - lib/Serializer/DsVectorNormalizer.php
+      - lib/Serializer/DsAwareObjectNormalizer.php
+  - name: PhpUndefinedNamespaceInspection
+    paths:
+      - lib/Serializer/DsAwareObjectNormalizer.php
+  # The Serializer normalizers rename the interface parameter ($data -> $object)
+  # intentionally for readability; the Symfony contract is still satisfied.
+  - name: PhpParameterNameChangedDuringInheritanceInspection
+  # PreciseDuration deliberately bypasses \DateInterval::__construct() to avoid
+  # microsecond truncation; the parent constructor must not be called.
+  - name: PhpMissingParentConstructorInspection
+  # Import handling is intentionally left as-is across the SDKs (a deliberate
+  # decision, not a defect): the generator emits fully-qualified references
+  # rather than `use` imports. phpcs's import organisation is disabled too.
+  - name: PhpFullyQualifiedNameUsageInspection
+  - name: PhpUnnecessaryFullyQualifiedNameInspection
+  # PHP has no checked exceptions; exhaustive @throws / try-catch documentation
+  # is a completeness preference, not a correctness issue. The SDK intentionally
+  # propagates ApiException to the caller.
+  - name: PhpUnhandledExceptionInspection
+  - name: PhpDocMissingThrowsInspection
+  # `readonly` cannot be applied to the model/config classes: Symfony's
+  # Serializer denormalises by writing properties after construction, which a
+  # readonly class forbids (rector.php skips the readonly rules for the same
+  # reason).
+  - name: PhpClassCanBeReadonlyInspection
+  # The generated getters carry encode/decode logic, so they cannot collapse
+  # into plain PHP 8.4 property hooks.
+  - name: PhpGetterAndSetterCanBeReplacedWithPropertyHooksInspection
+  # IntelliJ-only idiom suggestions on valid generated code (pipe operator,
+  # PHPDoc shape, internal-entity use, optional-arg defaults). php-cs-fixer /
+  # rector / phpstan — the SDK's actual tools — do not flag these.
+  - name: PhpPipeOperatorCanBeUsedInspection
+  - name: PhpConditionCheckedByNextConditionInspection
+  - name: PhpDocSignatureInspection
+  - name: PhpInternalEntityUsedInspection
+  - name: PhpRedundantOptionalArgumentInspection
+  - name: PhpVarTagWithoutVariableNameInspection
+  # Code coverage is not a metric we gate on, and the bulk of the SDK is
+  # generated code that is untested by design. Qodana does not support
+  # path-scoped coverage exclusion (only full-inspection / .NET attribute
+  # excludes), so the coverage inspection is disabled outright.
+  - name: PhpCoverageInspection
+  # --- lib/ObjectSerializer.php: path-scoped IDE-only idiom suggestions on
+  # valid generated code. ObjectSerializer.php is NO LONGER whole-file hidden;
+  # only these specific JetBrains-only inspections are scoped to it. phpstan
+  # and rector both pass clean on this file, confirming none are real defects.
+  #
+  # The try/catch blocks first re-throw an already-wrapped SerializationException
+  # to avoid double-wrapping, then map native serde exceptions thrown by the
+  # Symfony serializer through dynamic dispatch the analyzer cannot see into; it
+  # therefore reads the guard re-throw as redundant and the typed catches as
+  # unreachable. The behaviour is deliberate cross-SDK exception normalisation.
+  - name: PhpExceptionImmediatelyRethrownInspection
+    paths:
       - lib/ObjectSerializer.php
-      - lib/HeaderSelector.php
+  - name: PhpRedundantCatchClauseInspection
+    paths:
+      - lib/ObjectSerializer.php
+  # \DateTime::ATOM is inherited from \DateTimeInterface; accessing it via the
+  # concrete \DateTime is a style nit, not a defect.
+  - name: PhpClassConstantAccessedViaChildClassInspection
+    paths:
+      - lib/ObjectSerializer.php
+  # toQueryValue() returns mixed by contract (csv string, array for `multi`, or
+  # null) to stay parity-identical with the other SDK query encoders; narrowing
+  # the declared return type would diverge the generated cross-SDK signature.
+  - name: PhpMixedReturnTypeCanBeReducedInspection
+    paths:
+      - lib/ObjectSerializer.php
+  # `@var array<mixed>` is the PHPStan-preferred generic-array form; the
+  # "replace with array" idiom would drop the value-type annotation.
+  - name: PhpPluralMixedCanBeReplacedWithArrayInspection
+    paths:
+      - lib/ObjectSerializer.php
+  # The SerializedName-attribute extraction loop is emitted twice by the
+  # generator (assertRequiredPresent + assertPrimitiveTypes). KNOWN generated-
+  # code duplication — pending a generator-template de-duplication; not hand-
+  # edited here because the file is generator-owned.
+  - name: DuplicatedCode
+    paths:
+      - lib/ObjectSerializer.php
 
 php:
-  version: '8.0'
+  version: '8.5'
 
 bootstrap: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
 
-linter: jetbrains/qodana-php:2025.1
+linter: jetbrains/qodana-php:2026.1
